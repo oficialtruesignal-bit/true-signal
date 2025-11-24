@@ -5,9 +5,11 @@ import { Play, AlertCircle, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useState } from "react";
+import { MatchCenterModal } from "@/components/match-center-modal";
 
 export default function LivePage() {
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: liveGames = [], isLoading, error } = useQuery({
     queryKey: ['live-games'],
@@ -17,8 +19,12 @@ export default function LivePage() {
 
   const handleMatchClick = (match: FootballMatch) => {
     setSelectedMatch(match);
-    // TODO: Open Match Center Modal
-    console.log('Open Match Center for:', match);
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedMatch(null);
   };
 
   return (
@@ -103,6 +109,13 @@ export default function LivePage() {
           ))}
         </div>
       )}
+
+      {/* Match Center Modal */}
+      <MatchCenterModal
+        match={selectedMatch}
+        open={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </Layout>
   );
 }

@@ -64,6 +64,14 @@ export interface FootballMatch {
   };
 }
 
+export interface FixtureStatistics {
+  team: Team;
+  statistics: Array<{
+    type: string;
+    value: number | string | null;
+  }>;
+}
+
 // MOCK DATA FOR FALLBACK
 const MOCK_LIVE_MATCHES: FootballMatch[] = [
   {
@@ -126,6 +134,71 @@ export const footballService = {
       return response.data.response;
     } catch (error) {
       console.error("Error fetching fixtures by date:", error);
+      return [];
+    }
+  },
+
+  getFixtureStatistics: async (fixtureId: number): Promise<FixtureStatistics[]> => {
+    if (!API_KEY) {
+      console.warn("No VITE_FOOTBALL_API_KEY found. Using Mock Statistics.");
+      // Return mock statistics for development
+      return new Promise((resolve) => setTimeout(() => resolve([
+        {
+          team: { id: 1, name: "Home Team", logo: "" },
+          statistics: [
+            { type: "Shots on Goal", value: 5 },
+            { type: "Shots off Goal", value: 3 },
+            { type: "Total Shots", value: 8 },
+            { type: "Blocked Shots", value: 2 },
+            { type: "Shots insidebox", value: 6 },
+            { type: "Shots outsidebox", value: 2 },
+            { type: "Fouls", value: 12 },
+            { type: "Corner Kicks", value: 4 },
+            { type: "Offsides", value: 2 },
+            { type: "Ball Possession", value: "52%" },
+            { type: "Yellow Cards", value: 2 },
+            { type: "Red Cards", value: 0 },
+            { type: "Goalkeeper Saves", value: 3 },
+            { type: "Total passes", value: 420 },
+            { type: "Passes accurate", value: 350 },
+            { type: "Passes %", value: "83%" },
+          ],
+        },
+        {
+          team: { id: 2, name: "Away Team", logo: "" },
+          statistics: [
+            { type: "Shots on Goal", value: 3 },
+            { type: "Shots off Goal", value: 5 },
+            { type: "Total Shots", value: 8 },
+            { type: "Blocked Shots", value: 1 },
+            { type: "Shots insidebox", value: 4 },
+            { type: "Shots outsidebox", value: 4 },
+            { type: "Fouls", value: 15 },
+            { type: "Corner Kicks", value: 6 },
+            { type: "Offsides", value: 3 },
+            { type: "Ball Possession", value: "48%" },
+            { type: "Yellow Cards", value: 3 },
+            { type: "Red Cards", value: 0 },
+            { type: "Goalkeeper Saves", value: 5 },
+            { type: "Total passes", value: 380 },
+            { type: "Passes accurate", value: 310 },
+            { type: "Passes %", value: "82%" },
+          ],
+        },
+      ]), 500));
+    }
+
+    try {
+      const response = await axios.get(`${BASE_URL}/fixtures/statistics`, {
+        params: { fixture: fixtureId },
+        headers: {
+          "x-rapidapi-key": API_KEY,
+          "x-rapidapi-host": "v3.football.api-sports.io",
+        },
+      });
+      return response.data.response;
+    } catch (error) {
+      console.error("Error fetching fixture statistics:", error);
       return [];
     }
   },
