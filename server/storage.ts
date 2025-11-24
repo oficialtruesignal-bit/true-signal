@@ -36,6 +36,7 @@ export class DatabaseStorage implements IStorage {
       .insert(profiles)
       .values({
         email: data.email,
+        passwordHash,
         firstName: data.firstName,
         role: data.role || 'user',
         subscriptionStatus: data.subscriptionStatus || 'free',
@@ -45,12 +46,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async verifyPassword(email: string, password: string): Promise<Profile | null> {
-    // Note: In a real app with proper auth, you'd store password hash
-    // For this demo, we'll just check if the profile exists
     const profile = await this.getProfileByEmail(email);
     if (!profile) return null;
-    // In production: const match = await bcrypt.compare(password, profile.passwordHash);
-    return profile; // Simplified for demo
+    
+    const match = await bcrypt.compare(password, profile.passwordHash);
+    if (!match) return null;
+    
+    return profile;
   }
 
   // Tips methods

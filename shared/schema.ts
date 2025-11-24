@@ -7,6 +7,7 @@ import { z } from "zod";
 export const profiles = pgTable("profiles", {
   id: uuid("id").primaryKey().defaultRandom(),
   email: text("email").notNull().unique(),
+  passwordHash: text("password_hash").notNull(),
   firstName: text("first_name").notNull(),
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   subscriptionStatus: text("subscription_status", { enum: ["free", "premium"] }).notNull().default("free"),
@@ -16,6 +17,7 @@ export const profiles = pgTable("profiles", {
 export const insertProfileSchema = createInsertSchema(profiles).omit({
   id: true,
   createdAt: true,
+  passwordHash: true,
 });
 
 export const selectProfileSchema = createSelectSchema(profiles);
