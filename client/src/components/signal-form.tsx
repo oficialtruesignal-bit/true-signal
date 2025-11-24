@@ -22,49 +22,56 @@ const formSchema = z.object({
   odd: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Must be a number",
   }),
+  betLink: z.string().url().optional().or(z.literal('')),
 });
 
-export function SignalForm({ onAdd }: { onAdd: (signal: Signal) => void }) {
+interface SignalFormProps {
+  onAdd: (signal: any) => void;
+  initialData?: Partial<Signal>;
+}
+
+export function SignalForm({ onAdd, initialData }: SignalFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      league: "",
-      homeTeam: "",
-      awayTeam: "",
+      league: initialData?.league || "",
+      homeTeam: initialData?.homeTeam || "",
+      awayTeam: initialData?.awayTeam || "",
       market: "",
       odd: "",
+      betLink: "",
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    const newSignal: Signal = {
-      id: Math.random().toString(36).substr(2, 9),
+    const newSignal = {
       ...values,
       odd: Number(values.odd),
       status: "pending",
-      timestamp: new Date().toISOString(),
+      isLive: false, // Default to pre-match, could be toggleable
     };
     
     onAdd(newSignal);
     form.reset();
     toast({
-      title: "Signal Created",
-      className: "bg-green-900 border-green-800 text-white",
+      title: "Sinal Criado com Sucesso",
+      className: "bg-primary/10 border-primary/20 text-primary",
     });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 bg-card p-6 rounded-xl border border-white/5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <FormField
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+           {/* Read-only fields mostly since they come from API */}
+           <FormField
             control={form.control}
             name="league"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">League</FormLabel>
+                <FormLabel className="text-white">Competição</FormLabel>
                 <FormControl>
-                  <Input placeholder="Premier League" {...field} className="bg-background border-white/10 text-white focus-visible:ring-primary" />
+                  <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -77,7 +84,7 @@ export function SignalForm({ onAdd }: { onAdd: (signal: Signal) => void }) {
               <FormItem>
                 <FormLabel className="text-white">Odd</FormLabel>
                 <FormControl>
-                  <Input placeholder="1.90" {...field} className="bg-background border-white/10 text-white focus-visible:ring-primary" />
+                  <Input placeholder="1.90" {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -85,15 +92,15 @@ export function SignalForm({ onAdd }: { onAdd: (signal: Signal) => void }) {
           />
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
             name="homeTeam"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Home Team</FormLabel>
+                <FormLabel className="text-white">Casa</FormLabel>
                 <FormControl>
-                  <Input placeholder="Arsenal" {...field} className="bg-background border-white/10 text-white focus-visible:ring-primary" />
+                  <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -104,9 +111,9 @@ export function SignalForm({ onAdd }: { onAdd: (signal: Signal) => void }) {
             name="awayTeam"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-white">Away Team</FormLabel>
+                <FormLabel className="text-white">Fora</FormLabel>
                 <FormControl>
-                  <Input placeholder="Liverpool" {...field} className="bg-background border-white/10 text-white focus-visible:ring-primary" />
+                  <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -119,16 +126,32 @@ export function SignalForm({ onAdd }: { onAdd: (signal: Signal) => void }) {
           name="market"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-white">Market</FormLabel>
+              <FormLabel className="text-white">Mercado (Entrada)</FormLabel>
               <FormControl>
-                <Input placeholder="Over 2.5 Goals" {...field} className="bg-background border-white/10 text-white focus-visible:ring-primary" />
+                <Input placeholder="Ex: Over 2.5 Gols" {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full bg-primary hover:bg-primary-dark text-white">Create Signal</Button>
+        <FormField
+          control={form.control}
+          name="betLink"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
+              <FormControl>
+                <Input placeholder="https://..." {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="w-full bg-primary hover:bg-primary-dark text-black font-bold shadow-glow">
+          Confirmar Sinal
+        </Button>
       </form>
     </Form>
   );

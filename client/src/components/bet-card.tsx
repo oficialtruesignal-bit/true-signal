@@ -10,17 +10,26 @@ interface BetCardProps {
 
 export function BetCard({ signal }: BetCardProps) {
   const handleBet = () => {
+    // Haptic Feedback (if supported)
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+
     if (signal.betLink) {
+      // Try to open link
       window.open(signal.betLink, "_blank");
       toast({
-        title: "Link copiado com sucesso!",
-        className: "bg-card border-primary/20 text-white",
+        title: "Link copiado!",
+        description: "Boa sorte na entrada.",
+        className: "bg-primary/10 border-primary/20 text-primary",
       });
     } else {
-      toast({
-        title: "Link indisponível",
-        description: "O link para esta aposta não foi fornecido.",
-        variant: "destructive",
+       // Just copy text if no link
+       navigator.clipboard.writeText(`${signal.homeTeam} x ${signal.awayTeam} - ${signal.market}`);
+       toast({
+        title: "Entrada Copiada!",
+        description: "Cole na sua casa de aposta.",
+        className: "bg-primary/10 border-primary/20 text-primary",
       });
     }
   };
@@ -42,7 +51,7 @@ export function BetCard({ signal }: BetCardProps) {
   };
 
   return (
-    <div className="group relative bg-[#121212] hover:bg-[#1a1a1a] border border-primary/20 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-[0_0_20px_rgba(51,184,100,0.1)] overflow-hidden flex flex-col h-full">
+    <div className="group relative bg-[#121212] hover:bg-[#1a1a1a] border border-primary/20 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-[0_0_20px_rgba(51,184,100,0.1)] overflow-hidden flex flex-col h-full animate-in zoom-in-95 duration-300">
       
       <div className="relative z-10 flex flex-col gap-4 flex-1">
         {/* Header */}
@@ -88,7 +97,7 @@ export function BetCard({ signal }: BetCardProps) {
         {/* Actions */}
         <button
           onClick={handleBet}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-black text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-[0_0_15px_rgba(51,184,100,0.2)] hover:shadow-[0_0_25px_rgba(51,184,100,0.4)] mt-2 group/btn border border-primary/50"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-black text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-[0_0_15px_rgba(51,184,100,0.2)] hover:shadow-[0_0_25px_rgba(51,184,100,0.4)] mt-2 group/btn border border-primary/50 active:scale-95"
         >
           COPIAR ENTRADA
           <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />

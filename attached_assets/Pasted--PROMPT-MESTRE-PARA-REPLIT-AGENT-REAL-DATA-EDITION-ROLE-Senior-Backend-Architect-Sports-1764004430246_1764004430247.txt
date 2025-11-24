@@ -1,0 +1,65 @@
+# PROMPT MESTRE PARA REPLIT AGENT - REAL DATA EDITION
+
+**ROLE:** Senior Backend Architect & Sports Data Integration Specialist.
+
+**TASK:** Evoluir o projeto "Tipster Hub" para uma aplicação **100% Funcional e Conectada**.
+O objetivo não é mais usar dados fictícios (mock), mas sim consumir uma API real de futebol para exibir jogos ao vivo e agendar partidas.
+
+**API ESCOLHIDA:** API-Football (via RapidAPI ou v3.football.api-sports.io).
+
+## 1. INFRAESTRUTURA DE DADOS (SUPABASE + API)
+
+### A. Banco de Dados (Supabase)
+Tabela `profiles`:
+* `id`: uuid (PK)
+* `email`: string
+* `role`: string (padrão 'user', mas pode ser 'admin'). **CRÍTICO:** O acesso ao painel de criação é restrito a `role = 'admin'`.
+
+Tabela `tips`:
+* `id`: uuid
+* `fixture_id`: integer (ID do jogo na API externa para linkar dados).
+* `match_name`: string (Ex: "Brasil vs Argentina").
+* `league`: string.
+* `market`: string.
+* `odd`: decimal.
+* `status`: string ('pending', 'green', 'red').
+* `bet_url`: string.
+
+### B. Integração Externa (Services)
+Crie um serviço `footballService.ts` que utiliza `axios` ou `fetch`.
+* Deve ler a chave de API do arquivo `.env` (`VITE_FOOTBALL_API_KEY`).
+* **Endpoints Necessários:**
+    1. `GET /fixtures?live=all` (Para aba "Ao Vivo").
+    2. `GET /fixtures?date=YYYY-MM-DD` (Para aba "Próximos Jogos" e para o Admin selecionar onde criar a tip).
+
+## 2. FUNCIONALIDADES DE ALTA UTILIDADE (UX)
+
+### Para o Usuário (Apostador):
+* **Live Scoreboard:** Na aba "Ao Vivo", mostre o placar real e o tempo de jogo (minuto) vindo da API.
+* **Filtro Rápido:** Botões no topo para filtrar por "Hoje", "Ao Vivo" e "Amanhã".
+* **One-Click Copy:** Ao clicar no card da Tip, copia o código/link imediatamente e vibra o celular (Haptic Feedback se possível).
+
+### Para o Admin (Tipster) - FLUXO INTELIGENTE:
+* **Não digitar, Selecionar:** O Admin não digita os nomes dos times.
+    1. O Admin entra na aba "Criar Tip".
+    2. O sistema carrega os jogos do dia da API Real.
+    3. O Admin clica em um jogo da lista.
+    4. Abre um modal já preenchido com "Time A x Time B".
+    5. O Admin só preenche: Mercado (ex: Over 2.5), Odd e Link.
+* **Validação de Status:** Botão fácil para marcar Green/Red.
+
+## 3. DESIGN SYSTEM (TIPSTER HUB - DARK & GREEN)
+* **Cores:**
+    * Primary: `#33b864` (Verde Neon).
+    * Background: `#0a0a0a`.
+    * Card: `#121212`.
+    * Text High Contrast: `#ffffff`.
+* **Componentes:** Use Skeleton Loaders (efeito de carregamento pulsante) enquanto a API busca os jogos reais. Não deixe a tela em branco.
+
+## 4. IMPLEMENTAÇÃO TÉCNICA
+1.  **Environment:** Configure o projeto para aceitar `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` e `VITE_FOOTBALL_API_KEY`.
+2.  **Auth Guard:** Crie um componente `<AdminRoute>` que verifica se `user.role === 'admin'`. Se não for, redireciona para a Home.
+3.  **Handling API Limits:** Como a API grátis tem limites, implemente um cache simples (React Query `staleTime: 60000` - 1 minuto) para não estourar o limite de requisições recarregando a página toda hora.
+
+## 5. REQUISITO FINAL
+O resultado deve ser um site onde eu logo como Admin, vejo os jogos que vão acontecer na vida real hoje, clico em um, crio a aposta, e o usuário comum vê essa aposta no painel dele instantaneamente.
