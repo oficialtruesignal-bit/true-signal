@@ -45,3 +45,8 @@ waitForPort = 5000
 
 [agent]
 mockupState = "FULLSTACK"
+
+[userenv]
+
+[userenv.shared]
+VITE_FOOTBALL_API_KEY = "7543ea3d64bdb259122624f04a58fc79"
