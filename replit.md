@@ -31,14 +31,19 @@ Preferred communication style: Simple, everyday language.
 - BetCard: Displays betting tips with match info, odds, and status indicators
 - Hero: Landing page hero section with generated imagery
 - LiveTicker: Animated ticker showing recent betting signals
-- LiveGamesList: Real-time match data display
-- SignalForm: Admin interface for creating betting tips
-- Layout: Main app shell with navigation and user context
+- LiveGamesList: Real-time match data display with Match Center modal
+- MatchCenterModal: Advanced match statistics with donut charts (possession/attacks/shots), stat panels (cards/corners), and SVG pitch heatmap
+- SignalForm: Admin interface for creating betting tips from real fixtures
+- Layout: Main app shell with responsive navigation (desktop sidebar + mobile bottom nav with 5 icons)
 
 **Routing Structure:**
 - `/` - Public landing page
 - `/auth` - Authentication (login/register)
-- `/app` - Protected dashboard for users
+- `/app` - Protected dashboard for users (main hub)
+- `/tips` - Tips feed page showing all betting signals
+- `/live` - Live matches page with real-time data
+- `/pregame` - Pre-game matches (72-hour window)
+- `/settings` - User settings and language preferences
 - `/admin` - Protected admin panel (role-based access)
 
 ### Backend Architecture
@@ -83,7 +88,9 @@ Preferred communication style: Simple, everyday language.
 **Notification Services:**
 - **OneSignal**: Push notification system for alerting users about new betting tips
   - React SDK integration with permission prompts
-  - Configured for both production and localhost development
+  - Configured via `VITE_ONESIGNAL_APP_ID` environment variable
+  - Fallback to Browser Notification API when OneSignal not configured
+  - Triggers notification when admin creates new tip
 
 **UI & Component Libraries:**
 - **Radix UI**: Headless UI primitives (dialogs, dropdowns, accordions, etc.)
@@ -107,3 +114,31 @@ Preferred communication style: Simple, everyday language.
 - React Hook Form for performant form state management
 - Zod for runtime type validation and schema definition
 - @hookform/resolvers for integration between the two libraries
+
+### Internationalization (i18n)
+
+**Language Support:**
+- 6 languages: Portuguese (PT), English (EN), Spanish (ES), French (FR), Italian (IT), Chinese (CN)
+- Context API-based language provider with hook (`useLanguage`)
+- Translation files in `client/src/i18n/translations.ts`
+- Language preference persisted in localStorage
+- HTML lang attribute updates automatically with language changes
+- Currently implemented in Settings page, expandable to other pages as needed
+
+### Recent Changes (Nov 2024)
+
+**Mobile Navigation:**
+- Bottom navigation on mobile with 5 icons: Home, Tips, Live, Pre-Game, Settings
+- Desktop sidebar includes all pages + Admin link (for admin users only)
+
+**Match Center Modal:**
+- Circular donut charts for attacks, shots on target, and ball possession
+- Stat panels displaying yellow cards, red cards, and corners
+- SVG-based pitch heatmap visualization
+- Integrated with Football API statistics endpoint
+
+**Admin Panel Enhancements:**
+- Real fixture selection via date picker
+- Integrates with Football API to fetch scheduled matches
+- Automatic notification sending when creating new tip
+- Role-based access control prevents non-admin access
