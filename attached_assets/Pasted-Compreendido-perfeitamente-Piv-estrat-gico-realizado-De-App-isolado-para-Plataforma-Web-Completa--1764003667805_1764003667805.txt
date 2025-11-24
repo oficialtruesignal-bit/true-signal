@@ -1,0 +1,114 @@
+Compreendido perfeitamente. Pivô estratégico realizado: De App isolado para Plataforma Web Completa (Landing Page de Alta Conversão + Dashboard Exclusivo).
+
+Isso é muito mais profissional. Você terá um "funil de vendas" na entrada e um "produto premium" por dentro.
+
+O que eu ajustei na arquitetura:
+
+Landing Page Integrada: Criei uma seção específica no prompt para a "Vitrine", focada em converter o visitante com a narrativa "IA + 20 Especialistas".
+
+API de Jogos ao Vivo: Instruí o agente a estruturar a aba "Ao Vivo" pronta para conectar com APIs de futebol (ou usar dados simulados inicialmente para não travar o desenvolvimento).
+
+Fluxo de "Copiar e Apostar": A funcionalidade do botão de ação está detalhada para garantir a melhor experiência (Deeplink para a casa de aposta).
+
+DNA Visual Tylty: Mantive a exigência rigorosa das variáveis CSS que você enviou (Roxo Neon e Dark Mode Absoluto).
+
+Copie o código abaixo e jogue no Replit Agent.
+
+PROMPT MESTRE PARA REPLIT AGENT
+ROLE: Senior Fullstack Developer & Conversion Designer.
+
+TASK: Desenvolver uma Plataforma Web de Inteligência Esportiva completa. O projeto é dividido em duas grandes áreas:
+
+Landing Page (Pública): Focada em vendas, apresentação do produto e conversão.
+
+Web App (Privada): Dashboard para assinantes com Tips, Jogos ao Vivo e Painel Admin.
+
+1. ESTRUTURA DA APLICAÇÃO (ROTAS)
+A. Landing Page (Acesso Público)
+Hero Section: Headline impactante ("Lucro com IA + 20 Especialistas"), Botão CTA "Começar Agora" (leva ao registro).
+
+Social Proof: Seção "Resultados" mostrando prints (placeholders) de greens recentes.
+
+Features: Explicação da metodologia (Análise de Dados + Curadoria Humana).
+
+Auth Modals/Pages: Login, Cadastro e Recuperação de Senha (via Supabase Auth).
+
+B. Dashboard do Usuário (Acesso Protegido)
+Aba 1: Tips do Dia (Curadoria): Feed vertical com as apostas enviadas pelos especialistas.
+
+Card da Tip: Competição, Times, Mercado, Odd, Status (Pendente/Green/Red) e Botão "Apostar Agora" (Link externo).
+
+Aba 2: Jogos ao Vivo (Live Data): Lista de jogos acontecendo agora (integrar com Mock Data robusto simulando uma API de Futebol para demonstração).
+
+Aba 3: Próximos Jogos: Agenda do dia.
+
+C. Painel Admin (Acesso Restrito)
+Criador de Tips: Formulário para você postar a dica (Time A vs Time B, Odd, Mercado, Link da Bet).
+
+Gerenciador de Status: Lista para dar "Check" (Green) ou "X" (Red) nas tips finalizadas.
+
+2. STACK TECNOLÓGICA & DESIGN SYSTEM
+Frontend: React (Vite) + Tailwind CSS + Lucide Icons.
+
+Backend: Supabase (Database, Auth, Realtime).
+
+Design Law (TyltyHub Clone):
+
+Tema: Ultra Dark Mode.
+
+Cores Obrigatórias:
+
+Background: #0a0a0a
+
+Card Surface: #121212
+
+Primary (Brand): #7221bf (Roxo Neon)
+
+Success: #1bed68
+
+Error: #f72626
+
+Estilo: Glassmorphism, bordas finas (border-white/10), fontes modernas sem serifa.
+
+3. REQUISITOS DE DADOS (SUPABASE)
+Tabela: tips
+
+id: uuid
+
+teams: string (ex: "Flamengo x Palmeiras")
+
+market: string (ex: "Over 2.5 Gols")
+
+odd: decimal
+
+status: string ('pending', 'green', 'red')
+
+bet_link: string (url da casa de aposta)
+
+is_live: boolean (se é uma tip ao vivo ou pré-jogo)
+
+created_at: timestamp
+
+4. DETALHAMENTO DE UX (USER EXPERIENCE)
+Landing Page: Deve ser visualmente agressiva e moderna. Use gradientes roxos no fundo (#7221bf com opacidade baixa) para dar profundidade.
+
+Botão "Copiar/Apostar": No card da tip, o botão deve ter destaque máximo. Ao clicar, ele deve abrir o link da casa de aposta em nova aba.
+
+Responsividade: O menu de navegação do Dashboard deve ser uma Bottom Bar (barra inferior fixa) no celular (Home, Ao Vivo, Tips, Perfil) e uma Sidebar no Desktop.
+
+Login Flow: O usuário cria conta e já cai direto no Dashboard. A recuperação de senha deve enviar email via Supabase.
+
+5. INSTRUÇÕES DE IMPLEMENTAÇÃO
+Configure o tailwind.config.js com as cores exatas listadas acima.
+
+Crie a estrutura de rotas com react-router-dom.
+
+Desenvolva a Landing Page primeiro para definir a identidade visual.
+
+Configure o Supabase Client.
+
+Construa o Dashboard consumindo a tabela tips em tempo real.
+
+Para a aba "Jogos ao Vivo", crie um arquivo mockData.ts com um array de jogos fictícios (ex: "Man City vs Arsenal - 65'") para popular a tela enquanto não conectamos uma API paga.
+
+NOTA FINAL: A estética é a prioridade #1. O site deve parecer um produto "Enterprise/Premium", não um site amador. Use sombras suaves e contrastes fortes.

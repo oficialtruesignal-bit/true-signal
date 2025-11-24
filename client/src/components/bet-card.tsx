@@ -1,5 +1,5 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Check, Trophy, XCircle, Clock } from "lucide-react";
+import { Copy, Check, Trophy, XCircle, Clock, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
@@ -9,17 +9,16 @@ interface BetCardProps {
 }
 
 export function BetCard({ signal }: BetCardProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(`${signal.homeTeam} vs ${signal.awayTeam} - ${signal.market} @${signal.odd}`);
-    setCopied(true);
-    toast({
-      title: "Aposta copiada!",
-      description: "Pronta para colar na sua casa de apostas.",
-      className: "bg-card border-white/10 text-white",
-    });
-    setTimeout(() => setCopied(false), 2000);
+  const handleBet = () => {
+    if (signal.betLink) {
+      window.open(signal.betLink, "_blank");
+    } else {
+      toast({
+        title: "Link indisponível",
+        description: "O link para esta aposta não foi fornecido.",
+        variant: "destructive",
+      });
+    }
   };
 
   const getStatusColor = (status: Signal["status"]) => {
@@ -39,11 +38,11 @@ export function BetCard({ signal }: BetCardProps) {
   };
 
   return (
-    <div className="group relative bg-card hover:bg-card-hover border border-white/5 hover:border-primary/30 transition-all duration-300 rounded-xl p-5 shadow-lg overflow-hidden">
+    <div className="group relative bg-card hover:bg-card-hover border border-white/5 hover:border-primary/30 transition-all duration-300 rounded-xl p-5 shadow-lg overflow-hidden flex flex-col h-full">
       {/* Hover Glow Effect */}
       <div className="absolute -inset-1 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
 
-      <div className="relative z-10 flex flex-col gap-4">
+      <div className="relative z-10 flex flex-col gap-4 flex-1">
         {/* Header */}
         <div className="flex justify-between items-start">
           <div className="flex flex-col">
@@ -62,7 +61,7 @@ export function BetCard({ signal }: BetCardProps) {
         </div>
 
         {/* Teams */}
-        <div className="flex flex-col gap-1 py-2">
+        <div className="flex flex-col gap-1 py-2 flex-1">
           <h3 className="text-lg font-display font-bold text-white leading-tight">
             {signal.homeTeam}
           </h3>
@@ -86,11 +85,11 @@ export function BetCard({ signal }: BetCardProps) {
 
         {/* Actions */}
         <button
-          onClick={handleCopy}
-          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-white/5 hover:bg-primary hover:text-white text-sm font-medium transition-all duration-200 border border-white/5 hover:border-primary/50 group/btn"
+          onClick={handleBet}
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-lg shadow-primary/20 hover:shadow-primary/40 mt-2 group/btn"
         >
-          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4 group-hover/btn:scale-110 transition-transform" />}
-          {copied ? "Copiado!" : "Copiar Aposta"}
+          Apostar Agora
+          <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>
     </div>

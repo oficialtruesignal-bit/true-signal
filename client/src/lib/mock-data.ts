@@ -15,6 +15,19 @@ export interface Signal {
   status: "pending" | "green" | "red";
   timestamp: string;
   isHot?: boolean;
+  betLink?: string;
+  isLive?: boolean;
+}
+
+export interface LiveGame {
+  id: string;
+  league: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeScore: number;
+  awayScore: number;
+  minute: number;
+  status: "live" | "ht" | "ft";
 }
 
 export const MOCK_SIGNALS: Signal[] = [
@@ -28,6 +41,8 @@ export const MOCK_SIGNALS: Signal[] = [
     status: "pending",
     timestamp: new Date().toISOString(),
     isHot: true,
+    betLink: "https://bet365.com",
+    isLive: false,
   },
   {
     id: "2",
@@ -38,6 +53,8 @@ export const MOCK_SIGNALS: Signal[] = [
     odd: 1.65,
     status: "green",
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
+    betLink: "https://bet365.com",
+    isLive: false,
   },
   {
     id: "3",
@@ -48,6 +65,8 @@ export const MOCK_SIGNALS: Signal[] = [
     odd: 2.10,
     status: "red",
     timestamp: new Date(Date.now() - 1000 * 60 * 60).toISOString(), // 1 hour ago
+    betLink: "https://bet365.com",
+    isLive: false,
   },
   {
     id: "4",
@@ -58,6 +77,8 @@ export const MOCK_SIGNALS: Signal[] = [
     odd: 1.90,
     status: "pending",
     timestamp: new Date().toISOString(),
+    betLink: "https://bet365.com",
+    isLive: true,
   },
   {
     id: "5",
@@ -68,5 +89,50 @@ export const MOCK_SIGNALS: Signal[] = [
     odd: 2.45,
     status: "pending",
     timestamp: new Date().toISOString(),
+    betLink: "https://bet365.com",
+    isLive: false,
+  },
+];
+
+export const MOCK_LIVE_GAMES: LiveGame[] = [
+  {
+    id: "1",
+    league: "Premier League",
+    homeTeam: "Man City",
+    awayTeam: "Arsenal",
+    homeScore: 1,
+    awayScore: 1,
+    minute: 65,
+    status: "live",
+  },
+  {
+    id: "2",
+    league: "La Liga",
+    homeTeam: "Real Betis",
+    awayTeam: "Sevilla",
+    homeScore: 0,
+    awayScore: 2,
+    minute: 32,
+    status: "live",
+  },
+  {
+    id: "3",
+    league: "Bundesliga",
+    homeTeam: "Dortmund",
+    awayTeam: "RB Leipzig",
+    homeScore: 2,
+    awayScore: 2,
+    minute: 45,
+    status: "ht",
+  },
+  {
+    id: "4",
+    league: "Serie A",
+    homeTeam: "Inter",
+    awayTeam: "Napoli",
+    homeScore: 1,
+    awayScore: 0,
+    minute: 88,
+    status: "live",
   },
 ];

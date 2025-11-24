@@ -14,7 +14,7 @@ export default function AuthPage() {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setLocation("/");
+      setLocation("/app"); // Redirect to dashboard (now /app)
     }, 1500);
   };
 
