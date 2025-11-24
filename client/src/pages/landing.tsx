@@ -19,7 +19,7 @@ export default function LandingPage() {
               <Button variant="ghost" className="text-white hover:bg-white/5">Login</Button>
             </Link>
             <Link href="/auth">
-              <Button className="bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_20px_rgba(51,184,100,0.3)] border border-primary/50">
+              <Button className="bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50">
                 Acessar Ocean Signal
               </Button>
             </Link>
@@ -54,7 +54,7 @@ export default function LandingPage() {
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Link href="/auth">
-              <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_25px_rgba(51,184,100,0.4)] rounded-xl w-full md:w-auto border border-primary/50 hover:scale-105 transition-transform duration-300">
+              <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary-dark text-black font-bold btn-glow rounded-xl w-full md:w-auto border border-primary/50">
                 Acessar Ocean Signal <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
@@ -166,7 +166,7 @@ export default function LandingPage() {
             Junte-se à elite dos investidores esportivos hoje mesmo.
           </p>
           <Link href="/auth">
-            <Button size="lg" className="h-14 px-12 text-lg bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_30px_rgba(51,184,100,0.4)] rounded-xl hover:scale-105 transition-transform duration-300 border border-primary/50">
+            <Button size="lg" className="h-14 px-12 text-lg bg-primary hover:bg-primary-dark text-black font-bold btn-glow rounded-xl border border-primary/50">
               Acessar Ocean Signal
             </Button>
           </Link>

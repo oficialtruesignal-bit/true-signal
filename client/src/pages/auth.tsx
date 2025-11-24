@@ -164,7 +164,7 @@ export default function AuthPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold transition-all duration-300 shadow-[0_0_20px_rgba(51,184,100,0.3)] hover:shadow-[0_0_30px_rgba(51,184,100,0.5)] border border-primary/50"
+                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -227,7 +227,7 @@ export default function AuthPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold transition-all duration-300 shadow-[0_0_20px_rgba(51,184,100,0.3)] hover:shadow-[0_0_30px_rgba(51,184,100,0.5)] border border-primary/50"
+                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50"
                 disabled={isLoading}
               >
                 {isLoading ? (
