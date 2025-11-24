@@ -1,10 +1,13 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3 } from "lucide-react";
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Cpu, Target } from "lucide-react";
 import generatedImage from '@assets/generated_images/dark_green_neon_tech_money_background.png';
 import { Logo } from "@/components/logo";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function LandingPage() {
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-hidden font-sans">
       {/* Navigation */}
@@ -53,12 +56,85 @@ export default function LandingPage() {
           </p>
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
-            <Link href="/auth">
+            <Link href={user ? "/app" : "/auth"}>
               <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary-dark text-black font-bold btn-glow rounded-xl w-full md:w-auto border border-primary/50">
-                Acessar Ocean Signal <ArrowRight className="ml-2 w-5 h-5" />
+                {user ? "Acessar Dashboard" : "Começar Agora"} <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
           </div>
+        </div>
+      </section>
+
+      {/* Benefits Grid */}
+      <section className="py-20 px-6 bg-gradient-to-b from-background to-black/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* AI Intelligence */}
+            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
+                <Cpu className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-display font-bold text-white mb-3">Inteligência Artificial</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Algoritmos que varrem 1000+ ligas em tempo real, identificando padrões invisíveis ao olho humano.
+              </p>
+            </div>
+
+            {/* Accuracy */}
+            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
+                <Target className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-display font-bold text-white mb-3">Assertividade</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Histórico comprovado de 80%+ de acerto. Cada sinal passa por dupla validação: IA + Especialista.
+              </p>
+            </div>
+
+            {/* Speed */}
+            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
+              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
+                <Zap className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-display font-bold text-white mb-3">Velocidade</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Receba sinais antes das casas de aposta ajustarem as odds. Timing é tudo no mercado.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Live Ticker - Recent Greens */}
+      <section className="py-4 bg-primary/5 border-y border-primary/20 overflow-hidden">
+        <div className="flex items-center gap-8 animate-marquee whitespace-nowrap">
+          {[
+            "✅ Flamengo vencer @ 1.80",
+            "✅ Real Madrid Over 2.5 @ 1.65", 
+            "✅ Liverpool BTTS @ 1.90",
+            "✅ Bayern Under 3.5 @ 1.75",
+            "✅ PSG -1 AH @ 2.10",
+            "✅ Barcelona Ambas Marcam @ 1.85",
+          ].map((green, i) => (
+            <div key={i} className="flex items-center gap-3 px-6">
+              <span className="text-primary font-bold text-sm">{green}</span>
+              <span className="text-primary/30">•</span>
+            </div>
+          ))}
+          {/* Duplicate for seamless loop */}
+          {[
+            "✅ Flamengo vencer @ 1.80",
+            "✅ Real Madrid Over 2.5 @ 1.65", 
+            "✅ Liverpool BTTS @ 1.90",
+            "✅ Bayern Under 3.5 @ 1.75",
+            "✅ PSG -1 AH @ 2.10",
+            "✅ Barcelona Ambas Marcam @ 1.85",
+          ].map((green, i) => (
+            <div key={`dup-${i}`} className="flex items-center gap-3 px-6">
+              <span className="text-primary font-bold text-sm">{green}</span>
+              <span className="text-primary/30">•</span>
+            </div>
+          ))}
         </div>
       </section>
 

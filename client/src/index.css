@@ -153,4 +153,22 @@
       inset 0 0 25px rgba(51, 184, 100, 0.15);
     transform: translateY(-2px);
   }
+  
+  /* Marquee Animation */
+  @keyframes marquee {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+  }
+  
+  .animate-marquee:hover {
+    animation-play-state: paused;
+  }
 }

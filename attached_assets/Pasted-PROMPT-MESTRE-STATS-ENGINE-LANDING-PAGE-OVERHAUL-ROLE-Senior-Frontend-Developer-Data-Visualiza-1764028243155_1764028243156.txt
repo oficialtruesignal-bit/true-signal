@@ -1,0 +1,97 @@
+PROMPT MESTRE: STATS ENGINE & LANDING PAGE OVERHAUL
+ROLE: Senior Frontend Developer & Data Visualization Expert.
+
+TASK: Realizar duas grandes atualizações no Ocean Signal:
+
+Match Stats Engine: Criar um componente de visualização de estatísticas de jogo IDÊNTICO ao layout de referência fornecido (circular charts + progress bars).
+
+Marketing Home: Transformar a página inicial vazia em uma Landing Page de alta conversão.
+
+1. COMPONENTE DE ESTATÍSTICAS (MATCH DETAILS)
+Crie um novo componente GameStats.tsx. Ele deve ser exibido quando o usuário clica em "Ver Estatísticas Detalhadas" dentro de um jogo.
+
+LAYOUT & DADOS (Fidelidade ao Print):
+
+A. Cabeçalho (xG - Expected Goals)
+Topo: Exibir xG (Gols Esperados) centralizado. Ex: 1.13 xG 0.85.
+
+Nota: Se a API não entregar xG para o jogo, oculte esta linha discretamente.
+
+B. Linha de Pressão (Círculos)
+Use SVG Circular Progress Bars para desenhar 3 círculos lado a lado:
+
+Ataques: Valor numérico Time A (esq) - Círculo com progresso - Valor Time B (dir).
+
+Ataques Perigosos: (Mesma estrutura).
+
+% de Posse: (Mesma estrutura).
+
+Estilo: O círculo deve ter fundo cinza escuro (#333) e a barra de progresso na cor Primary Neon (#33b864).
+
+C. Faixa de Eventos (Ícones)
+Uma linha horizontal contendo:
+
+Escanteios: Ícone de Bandeira (Lucide Flag).
+
+Cartões Vermelhos: Retângulo Vermelho Vertical (CSS puro).
+
+Cartões Amarelos: Retângulo Amarelo Vertical (CSS puro).
+
+Layout: Os ícones ficam alinhados com números abaixo indicando a quantidade para cada time.
+
+D. Finalizações (Lógica Específica)
+Exibir estatística de Chutes Total vs Chutes no Gol.
+
+Formato: Total / No Gol (Ex: "8/3").
+
+Visual: Uma barra de progresso dupla ou linear comparando os dois times.
+
+E. Áreas de Ação (Pitch Zones)
+Um retângulo largo dividido em 3 seções (Defesa / Meio / Ataque).
+
+Se a API fornecer esses dados, preencha as % dentro de cada seção.
+
+Se não fornecer, use este espaço para "Probabilidade de Vitória" baseada nas Odds.
+
+F. Barras Inferiores (Skills)
+Barras lineares horizontais comparando:
+
+Passes Chave.
+
+Defesas do Goleiro.
+
+Precisão de Passes (%).
+
+2. LANDING PAGE (HOME REWORK)
+A página / (Home) não pode ser apenas uma lista de jogos. Ela precisa vender o produto.
+
+Estrutura da Nova Home:
+
+Hero Banner (Topo):
+
+Imagem de fundo dark com opacidade baixa.
+
+H1: "Domine o Mercado com a Ocean Signal."
+
+Sub: "IA avançada e 20 Especialistas trabalhando pelo seu lucro."
+
+CTA Button: "Acessar Dashboard" (se logado) ou "Começar Agora" (se deslogado).
+
+Faixa de Benefícios (Grid de 3):
+
+[Icone CPU] Inteligência Artificial: "Algoritmos que varrem 1000+ ligas em tempo real."
+
+[Icone Target] Assertividade: "Histórico comprovado de 80%+ de acerto."
+
+[Icone Zap] Velocidade: "Receba sinais antes das casas de aposta ajustarem as odds."
+
+Live Ticker: Uma faixa animada mostrando "Greens Recentes" (Ex: ✅ Flamengo vencer @ 1.80).
+
+3. INTEGRAÇÃO TÉCNICA (API FOOTBALL)
+No arquivo footballService.ts, adicione a chamada para o endpoint /fixtures/statistics.
+
+Mapeie a resposta da API (que vem como array type: "Shots on Goal", value: 5) para o formato visual exigido acima.
+
+Tratamento de Nulos: Se um dado específico (ex: "Passes Chave") vier null da API, exiba "-" ou oculte a barra específica, mas não quebre a tela.
+
+ESTÉTICA: Mantenha o fundo #0a0a0a e use o Verde Neon #33b864 para todas as barras de progresso e destaques. O visual deve ser "Data Science Dark Mode".
