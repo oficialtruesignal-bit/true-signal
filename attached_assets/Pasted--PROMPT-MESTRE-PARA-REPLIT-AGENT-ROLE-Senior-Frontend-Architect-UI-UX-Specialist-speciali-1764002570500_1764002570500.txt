@@ -1,0 +1,72 @@
+# PROMPT MESTRE PARA REPLIT AGENT
+
+**ROLE:** Senior Frontend Architect & UI/UX Specialist specialized in Sports Betting SaaS.
+
+**TASK:** Construir uma plataforma de "Sports Betting Intelligence" (Clone funcional do TyltyHub) focada em análise de dados e sinais de apostas. A aplicação deve ser visualmente idêntica a um dashboard premium dark-mode.
+
+## 1. ESCOPO DO PROJETO
+Uma Web App (SPA) onde assinantes visualizam "Entradas" (Sinais de Apostas) e estatísticas de performance.
+* **User View:** Dashboard com cards de jogos, status (Green/Red), odds e timeline de sinais ao vivo.
+* **Admin View:** Painel para criar/editar sinais e marcar resultados (Win/Loss).
+
+## 2. STACK TECNOLÓGICA (MANDATÓRIO)
+* **Frontend:** React (Vite) + TypeScript.
+* **Styling:** Tailwind CSS (Configurado estritamente com as cores extraídas abaixo).
+* **Icons:** Lucide-React.
+* **Backend/Data:** Supabase (Postgres Database + Auth + Realtime Subscriptions).
+* **State Management:** React Query (TanStack Query).
+* **UI Components:** Shadcn/UI (modificado para o tema Dark/Purple).
+
+## 3. LEI VISUAL (DESIGN SYSTEM - EXTRAÍDO DO CÓDIGO FONTE)
+Você deve configurar o `tailwind.config.js` para usar EXATAMENTE estas variáveis de design:
+
+* **Backgrounds:**
+    * Main: `#0a0a0a` (Ultra Dark)
+    * Card: `#121212` (Surface)
+    * Card Hover: `#191919`
+* **Brand Colors:**
+    * Primary: `#7221bf` (Roxo Neon)
+    * Primary Dark: `#5a1a99`
+    * Gradient: `linear-gradient(135deg, #7221bf, #461478)`
+* **Status Indicators:**
+    * Success (Green): `#1bed68` (Texto) / `#102d1b` (Bg)
+    * Error (Red): `#f72626` (Texto) / `#2f0e0e` (Bg)
+* **Effects:**
+    * **Glassmorphism:** Uso intenso de `backdrop-filter: blur(10px)` em headers e modais.
+    * **Borders:** Bordas finas (1px) com opacidade baixa (`border-white/10`).
+
+## 4. DETALHAMENTO DAS FUNCIONALIDADES
+
+### A. Autenticação & Perfil
+* Login/Register via Supabase Auth (Email/Senha).
+* Proteção de rotas (Redirecionar não logados).
+
+### B. Dashboard (Home)
+* **Hero Section:** Cards de destaque ("Destaque do Dia") com gradiente roxo.
+* **Live Ticker:** Uma faixa animada ou card mostrando "Sinal Enviado há 2 min".
+* **Grid de Apostas:** Cards retangulares contendo:
+    * Competição/Liga.
+    * Times (Casa vs Fora).
+    * Mercado (Ex: "Over 2.5 Gols").
+    * Odd (Ex: "@1.90").
+    * Botão de Status: "Pendente", "Green" (Vitória), "Red" (Derrota).
+    * Badge de "Copiar Aposta".
+
+### C. Admin Panel (Backoffice)
+* Formulário para criar novo sinal (Times, Odd, Link da Bet).
+* Lista de sinais ativos para alterar status (marcar como Green ou Red).
+* Ao atualizar o status, o frontend do usuário deve atualizar automaticamente (use Supabase Realtime).
+
+## 5. REQUISITOS NÃO FUNCIONAIS
+* **Mobile-First:** A UI deve ser perfeita em celulares (onde 90% dos usuários de bet estão). O menu deve virar uma Bottom Bar ou Hamburger Menu no mobile.
+* **Performance:** Use `React.memo` em componentes de listagem pesada.
+* **Feedback:** Use `sonner` ou `react-hot-toast` para notificações (ex: "Aposta copiada!", "Novo sinal recebido").
+
+## 6. PASSO A PASSO DE IMPLEMENTAÇÃO
+1.  **Setup:** Inicializar Vite + Tailwind e configurar o tema de cores no `tailwind.config.js` primeiro.
+2.  **Database:** Criar tabela `signals` no Supabase (id, team_home, team_away, odd, market, status, created_at).
+3.  **Components:** Criar o `BetCard` com o design visual exato (bordas arredondadas, fundo dark, texto branco).
+4.  **Admin:** Construir a interface de criação de sinais.
+5.  **Realtime:** Conectar a lista de sinais ao Supabase para atualizações ao vivo.
+
+**IMPORTANTE:** Não use cinza padrão do Tailwind. Use estritamente a paleta `#0a0a0a`, `#121212` e `#7221bf` para garantir a fidelidade visual do "TyltyHub".
