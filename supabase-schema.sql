@@ -46,15 +46,40 @@ drop policy if exists "Public tips are viewable by everyone" on public.tips;
 create policy "Public tips are viewable by everyone" on public.tips
   for select using (true);
 
--- Tips: Usuários autenticados podem CRIAR tips
+-- Tips: APENAS ADMINS podem CRIAR tips
 drop policy if exists "Authenticated users can insert tips" on public.tips;
-create policy "Authenticated users can insert tips" on public.tips
-  for insert with check (auth.role() = 'authenticated');
+drop policy if exists "Only admins can insert tips" on public.tips;
+create policy "Only admins can insert tips" on public.tips
+  for insert with check (
+    exists (
+      select 1 from public.profiles 
+      where profiles.id = auth.uid() 
+      and profiles.role = 'admin'
+    )
+  );
 
--- Tips: Usuários autenticados podem ATUALIZAR tips
+-- Tips: APENAS ADMINS podem ATUALIZAR tips
 drop policy if exists "Authenticated users can update tips" on public.tips;
-create policy "Authenticated users can update tips" on public.tips
-  for update using (auth.role() = 'authenticated');
+drop policy if exists "Only admins can update tips" on public.tips;
+create policy "Only admins can update tips" on public.tips
+  for update using (
+    exists (
+      select 1 from public.profiles 
+      where profiles.id = auth.uid() 
+      and profiles.role = 'admin'
+    )
+  );
+
+-- Tips: APENAS ADMINS podem DELETAR tips
+drop policy if exists "Only admins can delete tips" on public.tips;
+create policy "Only admins can delete tips" on public.tips
+  for delete using (
+    exists (
+      select 1 from public.profiles 
+      where profiles.id = auth.uid() 
+      and profiles.role = 'admin'
+    )
+  );
 
 -- 5. Trigger para criar perfil automático ao cadastrar
 create or replace function public.handle_new_user()
@@ -74,11 +99,16 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure public.handle_new_user();
 
--- 6. Criar usuário admin padrão
--- IMPORTANTE: Execute isso DEPOIS de criar sua conta no Supabase Auth
--- Substitua 'SEU_UUID_AQUI' pelo UUID do seu usuário admin
--- Para encontrar: SELECT id FROM auth.users WHERE email = 'admin@tipster.com';
+-- 6. Desabilitar confirmação de email (Desenvolvimento)
+-- IMPORTANTE: No painel Supabase, vá em Authentication > Settings
+-- E desabilite "Enable email confirmations" para facilitar o desenvolvimento
+-- Ou execute este comando se tiver acesso ao CLI:
+-- supabase config email.enable_confirmations=false
 
+-- 7. Criar usuário admin padrão
+-- IMPORTANTE: Execute isso DEPOIS de criar sua conta no Supabase Auth
+-- Para encontrar o UUID: SELECT id FROM auth.users WHERE email = 'admin@tipster.com';
+-- Então execute:
 -- UPDATE public.profiles 
 -- SET role = 'admin' 
 -- WHERE email = 'admin@tipster.com';

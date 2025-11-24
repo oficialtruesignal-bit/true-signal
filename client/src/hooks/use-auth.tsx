@@ -45,6 +45,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loadUserProfile(session.user.id);
       } else {
         setUser(null);
+        setIsLoading(false);
       }
     });
 
@@ -103,22 +104,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.auth.signUp({
+      // Step 1: Sign up the user
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email,
         password,
         options: {
           data: {
             first_name: name,
           },
+          emailRedirectTo: window.location.origin + '/app',
         },
       });
 
-      if (error) throw error;
+      if (signUpError) throw signUpError;
 
-      if (data.user) {
-        // Profile is created automatically via trigger
-        toast.success("Conta criada com sucesso! Bem-vindo.");
-        setLocation("/app");
+      // Step 2: If email confirmation is disabled, immediately sign in
+      if (signUpData.session) {
+        // Session already established (email confirmation disabled)
+        if (signUpData.user) {
+          await loadUserProfile(signUpData.user.id);
+          toast.success("Conta criada com sucesso! Bem-vindo.");
+          setLocation("/app");
+        }
+      } else {
+        // Email confirmation required - sign in immediately to establish session
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+
+        if (signInError) {
+          // Email confirmation might be required
+          toast.info("Verifique seu email para confirmar a conta.");
+          setIsLoading(false);
+          return;
+        }
+
+        if (signInData.user) {
+          await loadUserProfile(signInData.user.id);
+          toast.success("Conta criada com sucesso! Bem-vindo.");
+          setLocation("/app");
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "Erro ao criar conta");
