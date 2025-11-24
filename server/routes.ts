@@ -34,13 +34,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Email and password required" });
       }
 
+      console.log(`[AUTH] Login attempt for email: ${email}`);
       const profile = await storage.verifyPassword(email, password);
+      
       if (!profile) {
+        console.log(`[AUTH] Login failed for email: ${email}`);
         return res.status(401).json({ error: "Invalid credentials" });
       }
 
+      console.log(`[AUTH] Login successful for email: ${email}, role: ${profile.role}`);
       return res.json({ profile });
     } catch (error: any) {
+      console.error(`[AUTH] Login error:`, error);
       return res.status(500).json({ error: error.message });
     }
   });

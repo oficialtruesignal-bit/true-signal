@@ -47,9 +47,15 @@ export class DatabaseStorage implements IStorage {
 
   async verifyPassword(email: string, password: string): Promise<Profile | null> {
     const profile = await this.getProfileByEmail(email);
-    if (!profile) return null;
+    if (!profile) {
+      console.log(`[STORAGE] Profile not found for email: ${email}`);
+      return null;
+    }
     
+    console.log(`[STORAGE] Verifying password for ${email}`);
     const match = await bcrypt.compare(password, profile.passwordHash);
+    console.log(`[STORAGE] Password match result: ${match}`);
+    
     if (!match) return null;
     
     return profile;

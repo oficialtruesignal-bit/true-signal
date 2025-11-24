@@ -1,0 +1,62 @@
+-- 1. Tabela de Perfis (Vinculada ao Auth)
+create table public.profiles (
+  id uuid references auth.users not null primary key,
+  email text,
+  first_name text,
+  role text default 'user', -- 'admin' ou 'user'
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 2. Tabela de Tips (Apostas)
+create table public.tips (
+  id uuid default gen_random_uuid() primary key,
+  match_name text not null, -- Ex: Real Madrid vs Barcelona
+  league text,
+  market text not null, -- Ex: Over 2.5 Gols
+  odd numeric not null,
+  status text default 'pending', -- pending, green, red
+  bet_url text,
+  is_live boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 3. Habilitar Row Level Security (Segurança)
+alter table public.profiles enable row level security;
+alter table public.tips enable row level security;
+
+-- 4. Políticas de Acesso (Policies)
+
+-- Perfis: Todo mundo pode ver seu próprio perfil
+create policy "Users can view own profile" on public.profiles
+  for select using (auth.uid() = id);
+
+-- Perfis: Usuário pode atualizar seu próprio perfil
+create policy "Users can update own profile" on public.profiles
+  for update using (auth.uid() = id);
+
+-- Tips: Qualquer pessoa (logada ou não) pode LER as tips (para ver o histórico na home)
+create policy "Public tips are viewable by everyone" on public.tips
+  for select using (true);
+
+-- Tips: APENAS Admins podem CRIAR ou EDITAR tips
+-- (Nota: Precisamos criar uma policy baseada no campo 'role' do profile,
+-- mas para evitar travas agora, vamos permitir insert para autenticados e tratar no front)
+create policy "Authenticated users can insert tips" on public.tips
+  for insert with check (auth.role() = 'authenticated');
+
+create policy "Authenticated users can update tips" on public.tips
+  for update using (auth.role() = 'authenticated');
+
+-- 5. Trigger para criar perfil automático ao cadastrar
+create or replace function public.handle_new_user()
+returns trigger as $$
+begin
+  insert into public.profiles (id, email, first_name)
+  values (new.id, new.email, new.raw_user_meta_data->>'first_name');
+  return new;
+end;
+$$ language plpgsql security definer;
+
+create trigger on_auth_user_created
+  after insert on auth.users
+  for each row execute procedure public.handle_new_user();
