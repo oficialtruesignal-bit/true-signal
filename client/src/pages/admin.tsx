@@ -64,11 +64,23 @@ export default function Admin() {
   // Mutations with admin check
   const createMutation = useMutation({
     mutationFn: tipsService.create,
-    onSuccess: () => {
+    onSuccess: async (newTip) => {
       queryClient.invalidateQueries({ queryKey: ['tips'] });
       setIsDialogOpen(false);
       setSelectedMatch(null);
       toast.success("Tip criado com sucesso!");
+      
+      // Send push notification to users
+      try {
+        const { notificationService } = await import("@/lib/notification-service");
+        await notificationService.sendNewTipNotification({
+          match: `${newTip.homeTeam} vs ${newTip.awayTeam}`,
+          market: newTip.market,
+          odd: newTip.odd,
+        });
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
     },
     onError: (error: any) => {
       toast.error(error.message || "Erro ao criar tip. Apenas administradores podem criar tips.");

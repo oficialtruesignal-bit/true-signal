@@ -10,22 +10,30 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
 
-  // Initial OneSignal Init (Mock or Real)
+  // Initial OneSignal Init
   useEffect(() => {
     const initOneSignal = async () => {
+      const appId = import.meta.env.VITE_ONESIGNAL_APP_ID;
+      
+      if (!appId) {
+        console.log("OneSignal: No APP_ID configured (notifications disabled)");
+        return;
+      }
+
       try {
         await OneSignal.init({
-          appId: "YOUR-ONESIGNAL-APP-ID", // In production this comes from env
+          appId,
           allowLocalhostAsSecureOrigin: true,
         });
-        // OneSignal.showSlidedownPrompt(); // Request permission
+        
+        console.log("OneSignal initialized successfully");
       } catch (error) {
-        console.log("OneSignal init skipped (Mock Mode)");
+        console.error("OneSignal init error:", error);
       }
     };
 
     initOneSignal();
-  }, []);
+  }, [user]);
 
   // Desktop Nav Items (with Admin)
   const desktopNavItems = [
@@ -100,9 +108,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <Bell className="w-4 h-4 text-primary" /> Notificações
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Ative para não perder nenhuma tip.
+              Ative para receber alertas de novas tips.
             </p>
-            <Button variant="outline" size="sm" className="w-full text-xs h-7 border-primary/20 text-primary hover:bg-primary/10">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={async () => {
+                const { notificationService } = await import("@/lib/notification-service");
+                await notificationService.requestPermission();
+              }}
+              className="w-full text-xs h-7 border-primary/20 text-primary hover:bg-primary/10"
+            >
               Ativar Agora
             </Button>
           </div>

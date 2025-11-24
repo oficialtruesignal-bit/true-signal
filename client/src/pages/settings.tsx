@@ -5,10 +5,12 @@ import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useLanguage } from "@/hooks/use-language";
+import { Language } from "@/i18n/translations";
 
 export default function SettingsPage() {
+  const { language, setLanguage, t } = useLanguage();
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-  const [language, setLanguage] = useState('pt');
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -22,18 +24,17 @@ export default function SettingsPage() {
   const handleThemeToggle = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
-    toast.success(`Tema alterado para ${newTheme === 'dark' ? 'Escuro' : 'Claro'}`);
+    toast.success(`${t.settings.theme}: ${newTheme === 'dark' ? t.settings.darkMode : t.settings.lightMode}`);
     // TODO: Implement actual theme switching
   };
 
-  const handleLanguageChange = (code: string) => {
+  const handleLanguageChange = (code: Language) => {
     setLanguage(code);
-    toast.success(`Idioma alterado para ${languages.find(l => l.code === code)?.name}`);
-    // TODO: Implement i18n
+    toast.success(`${languages.find(l => l.code === code)?.name}`);
   };
 
   const handlePasswordChange = () => {
-    toast.info('Funcionalidade de alteração de senha em breve!');
+    toast.info(t.settings.updatePassword);
     // TODO: Implement password change
   };
 
@@ -48,9 +49,9 @@ export default function SettingsPage() {
           <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
             <SettingsIcon className="w-5 h-5 text-purple-500" />
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">Configurações</h1>
+          <h1 className="text-2xl font-display font-bold text-white">{t.settings.title}</h1>
         </div>
-        <p className="text-muted-foreground">Personalize sua experiência</p>
+        <p className="text-muted-foreground">{t.settings.subtitle}</p>
       </div>
 
       <div className="space-y-6">
@@ -58,13 +59,13 @@ export default function SettingsPage() {
         <div className="bg-card border border-primary/10 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">Idioma</h3>
+            <h3 className="font-bold text-white">{t.settings.language}</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {languages.map((lang) => (
               <button
                 key={lang.code}
-                onClick={() => handleLanguageChange(lang.code)}
+                onClick={() => handleLanguageChange(lang.code as Language)}
                 data-testid={`language-${lang.code}`}
                 className={`p-3 rounded-lg border transition-all ${
                   language === lang.code
@@ -87,7 +88,7 @@ export default function SettingsPage() {
             ) : (
               <Sun className="w-5 h-5 text-primary" />
             )}
-            <h3 className="font-bold text-white">Tema</h3>
+            <h3 className="font-bold text-white">{t.settings.theme}</h3>
           </div>
           <button
             onClick={handleThemeToggle}
@@ -95,7 +96,7 @@ export default function SettingsPage() {
             className="w-full p-4 rounded-lg bg-black/20 border border-white/10 hover:border-primary/30 transition-all flex items-center justify-between group"
           >
             <span className="text-white font-medium">
-              {theme === 'dark' ? 'Modo Escuro' : 'Modo Claro'}
+              {theme === 'dark' ? t.settings.darkMode : t.settings.lightMode}
             </span>
             <div className={`w-12 h-6 rounded-full transition-all ${
               theme === 'dark' ? 'bg-primary' : 'bg-gray-400'
@@ -111,11 +112,11 @@ export default function SettingsPage() {
         <div className="bg-card border border-primary/10 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <Lock className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">Alterar Senha</h3>
+            <h3 className="font-bold text-white">{t.settings.password}</h3>
           </div>
           <div className="space-y-3">
             <div>
-              <Label htmlFor="current-password" className="text-sm text-muted-foreground">Senha Atual</Label>
+              <Label htmlFor="current-password" className="text-sm text-muted-foreground">{t.settings.currentPassword}</Label>
               <Input
                 id="current-password"
                 type="password"
@@ -125,7 +126,7 @@ export default function SettingsPage() {
               />
             </div>
             <div>
-              <Label htmlFor="new-password" className="text-sm text-muted-foreground">Nova Senha</Label>
+              <Label htmlFor="new-password" className="text-sm text-muted-foreground">{t.settings.newPassword}</Label>
               <Input
                 id="new-password"
                 type="password"
@@ -139,7 +140,7 @@ export default function SettingsPage() {
               data-testid="button-change-password"
               className="w-full bg-primary hover:bg-primary/90"
             >
-              Atualizar Senha
+              {t.settings.updatePassword}
             </Button>
           </div>
         </div>
@@ -148,7 +149,7 @@ export default function SettingsPage() {
         <div className="bg-card border border-primary/10 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <MessageCircle className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">Suporte</h3>
+            <h3 className="font-bold text-white">{t.settings.support}</h3>
           </div>
           <Button
             onClick={handleSupport}
@@ -156,7 +157,7 @@ export default function SettingsPage() {
             variant="outline"
             className="w-full border-primary/30 hover:bg-primary/10"
           >
-            Falar com Suporte via WhatsApp
+            {t.settings.contactSupport}
           </Button>
         </div>
       </div>
