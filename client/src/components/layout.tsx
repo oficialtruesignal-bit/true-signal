@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, LayoutDashboard, Settings, LogOut, Trophy, Bell } from "lucide-react";
+import { Home, LayoutDashboard, Settings, LogOut, Trophy, Bell, Target, Play, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
@@ -27,9 +27,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
     initOneSignal();
   }, []);
 
-  const navItems = [
+  // Desktop Nav Items (with Admin)
+  const desktopNavItems = [
     { icon: Home, label: "Home", path: "/app" },
+    { icon: Target, label: "Tips", path: "/tips" },
+    { icon: Play, label: "Ao Vivo", path: "/live" },
+    { icon: Calendar, label: "Pré-Jogo", path: "/pregame" },
+    { icon: Settings, label: "Config", path: "/settings" },
     { icon: LayoutDashboard, label: "Admin", path: "/admin", hidden: user?.role !== 'admin' },
+  ];
+
+  // Mobile Nav Items (5 icons only, no Admin)
+  const mobileNavItems = [
+    { icon: Home, label: "Home", path: "/app" },
+    { icon: Target, label: "Tips", path: "/tips" },
+    { icon: Play, label: "Ao Vivo", path: "/live" },
+    { icon: Calendar, label: "Pré", path: "/pregame" },
+    { icon: Settings, label: "Config", path: "/settings" },
   ];
 
   return (
@@ -58,7 +72,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="space-y-2 flex-1">
-          {navItems.filter(item => !item.hidden).map((item) => (
+          {desktopNavItems.filter(item => !item.hidden).map((item) => (
             <Link key={item.path} href={item.path}>
               <a
                 className={cn(
@@ -126,23 +140,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-primary/20 z-50 flex items-center justify-around px-2 pb-safe">
-        {navItems.filter(item => !item.hidden).map((item) => (
+      {/* Mobile Bottom Nav - 5 Icons */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-around px-2">
+        {mobileNavItems.map((item) => (
           <Link key={item.path} href={item.path}>
             <a
+              data-testid={`nav-${item.label.toLowerCase()}`}
               className={cn(
-                "flex flex-col items-center justify-center w-16 h-full gap-1",
+                "flex flex-col items-center justify-center w-16 h-full gap-1 transition-all",
                 location === item.path ? "text-primary" : "text-muted-foreground"
               )}
             >
               <item.icon
                 className={cn(
                   "w-5 h-5 transition-all",
-                  location === item.path ? "scale-110" : ""
+                  location === item.path ? "scale-110 drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" : ""
                 )}
               />
-              <span className="text-[10px] font-medium">{item.label}</span>
+              <span className={cn(
+                "text-[10px] font-medium transition-all",
+                location === item.path ? "font-bold" : ""
+              )}>{item.label}</span>
             </a>
           </Link>
         ))}

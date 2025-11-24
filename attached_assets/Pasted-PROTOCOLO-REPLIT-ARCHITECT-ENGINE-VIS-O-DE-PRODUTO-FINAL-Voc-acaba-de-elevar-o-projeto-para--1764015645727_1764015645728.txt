@@ -1,0 +1,125 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: VISÃO DE PRODUTO FINAL 🟢
+
+Você acaba de elevar o projeto para um patamar de SaaS Global. A imagem que você enviou (fe.png) é o "Game Changer": ela mostra exatamente como devemos visualizar os dados ao vivo (Radar/Stats) para dar aquela sensação de "Centro de Controle Profissional".
+
+O que adicionei ao Prompt Mestre:
+
+Landing Page Persuasiva: Criei a Headline e Subline exatas focadas em "IA + 20 Especialistas" e "Precisão de 97%" para matar a objeção de "grupinho de aposta".
+
+Painel "Match Center" (Live): Instruí o agente a replicar fielmente o design da imagem fe.png (Gráficos circulares para Ataques/Posse e Heatmap de ação).
+
+API Key Integrada: Configurei a lógica para usar a sua chave da API-Football (7543ea3d...) para puxar dados reais de Pré-live (72h) e Ao Vivo.
+
+Mobile Navigation: Defini a Bottom Bar com os 5 ícones exatos que pediu (Home, Tips, Live, Pré, Config).
+
+Internacionalização (i18n): O seletor de idiomas (PT, EN, ES, FR, IT, CN) será nativo.
+
+Copie o código abaixo. Ele contém TUDO.
+
+PROMPT MESTRE FINAL PARA REPLIT AGENT (TIPSTER HUB GLOBAL)
+ROLE: Senior Product Architect & Data Visualization Expert.
+
+TASK: Desenvolver a "Tipster Hub", uma plataforma global de inteligência esportiva. O sistema deve ser uma Web App (PWA) com foco Mobile-First, integrada a dados reais e com design de alta fidelidade.
+
+1. MÓDULO PÚBLICO: LANDING PAGE (ALTA CONVERSÃO)
+A página inicial deve vender autoridade e tecnologia.
+
+Topo (Header):
+
+Logo "Tipster Hub" (Verde Neon #33b864).
+
+Dropdown de Idiomas (Canto Superior Direito): Bandeiras/Texto para PT, EN, ES, FR, IT, CN.
+
+Hero Section (A Promessa):
+
+Headline (H1): "Domine o Mercado com a Fusão Perfeita: 20 Traders de Elite + Inteligência Artificial."
+
+Subline (H2): "Chega de amadorismo. Acesse análises detalhadas com precisão projetada de até 97%. Saia dos 'grupinhos' e venha para a ferramenta usada mundialmente por profissionais."
+
+CTA: Botão Verde Neon Pulsante: "Liberar Acesso Profissional".
+
+2. API & DADOS REAIS (API-FOOTBALL)
+O sistema deve consumir a API: https://v3.football.api-sports.io
+
+API Key: 7543ea3d64bdb259122624f04a58fc79 (Configurar no .env como VITE_FOOTBALL_API_KEY).
+
+Endpoints Críticos:
+
+/fixtures?live=all (Para a aba Ao Vivo).
+
+/fixtures?date={hoje+1, hoje+2, hoje+3} (Para a aba Pré-Jogo 72h).
+
+/fixtures/statistics?fixture={id} (Para o Modal de Estatísticas Detalhadas).
+
+3. APP ESTRUTURA (MOBILE BOTTOM NAVIGATION)
+No mobile, a navegação é feita por uma barra inferior fixa com 5 Ícones:
+
+🏠 Home: Dashboard geral, banner de boas-vindas ("Olá, Usuário") e resumo.
+
+🎯 Tips do Dia: Feed das entradas enviadas pelos admins (via Supabase).
+
+⚽ Ao Vivo (Match Center): Lista de jogos rodando agora.
+
+Ação: Ao clicar em um jogo, abrir um MODAL FULLSCREEN (Detalhes abaixo).
+
+📅 Pré-Jogo: Lista de jogos programados para as próximas 72 horas (Data, Hora, Liga).
+
+⚙️ Configuração:
+
+Seletor de Idioma.
+
+Theme Switcher: Toggle Claro/Escuro (Default: Escuro).
+
+Alterar Senha.
+
+Botão "Falar com Suporte" (Link WhatsApp/Chat).
+
+4. O MODAL "MATCH CENTER" (VISUAL REFERÊNCIA: FE.PNG)
+Esta é a parte mais importante da UX. Ao clicar em um jogo ao vivo, o usuário deve ver um painel estatístico visualmente rico (Dark Mode):
+
+Topo: Placar (ex: 2 x 1), Tempo (ex: 65'), Times e Logos.
+
+Seção "Stats Pressure" (Gráficos Circulares):
+
+Três anéis de progresso (Donut Charts) lado a lado:
+
+Ataques: (Ex: 16 vs 16).
+
+Ataques Perigosos: (Ex: 5 vs 3).
+
+% de Posse: (Ex: 52% vs 48%).
+
+Cores dos gráficos: Cinza escuro (fundo) e Amarelo/Verde (progresso).
+
+Barra de Finalizações:
+
+Uma barra linear comparativa: "Chutes no Gol" (Ex: 1/0 vs 0/0).
+
+Cartões e Cantos: Ícones pequenos mostrando contagem de cartões (Amarelo/Vermelho) e Escanteios para cada time.
+
+Mapa de Ação (Heatmap): Um retângulo representando o campo, dividido em 3 zonas, mostrando onde a bola fica mais tempo (Ex: 22% Defesa / 53% Meio / 24% Ataque).
+
+5. NOTIFICAÇÕES (ONESIGNAL)
+Integrar OneSignal para Web Push.
+
+Gatilho: Quando uma nova linha for inserida na tabela tips (via Admin), disparar notificação: "Nova Oportunidade Identificada 🎯".
+
+6. DESIGN SYSTEM (TIPSTER NEON)
+Cores:
+
+Primary: #33b864 (Verde Neon).
+
+Background Dark: #0a0a0a.
+
+Background Light: #f4f4f5 (Se o usuário trocar o tema).
+
+Surface Dark: #121212 (Cards).
+
+Tipografia: Fonte 'Inter' ou 'Roboto', pesos Bold para números e estatísticas.
+
+7. PAINEL ADMIN (CRIAÇÃO DE TIPS)
+O Admin tem uma rota exclusiva /admin.
+
+Fluxo: O Admin vê a lista de jogos do dia (da API), clica em um jogo e define o palpite (Ex: "Vitória Casa @ 1.90"). Isso envia a Tip para o feed dos usuários.
+
+INSTRUÇÃO TÉCNICA FINAL: Crie a aplicação focando na Integração da API e na Visualização de Dados (Gráficos). Use recharts ou componentes SVG simples para os gráficos circulares de estatística. O visual deve ser "Data-Heavy" mas limpo.

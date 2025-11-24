@@ -10,6 +10,10 @@ import { Loader2 } from "lucide-react";
 // Lazy Load Pages for Performance
 const LandingPage = React.lazy(() => import("@/pages/landing"));
 const Dashboard = React.lazy(() => import("@/pages/dashboard"));
+const TipsPage = React.lazy(() => import("@/pages/tips"));
+const LivePage = React.lazy(() => import("@/pages/live"));
+const PreGamePage = React.lazy(() => import("@/pages/pregame"));
+const SettingsPage = React.lazy(() => import("@/pages/settings"));
 const Admin = React.lazy(() => import("@/pages/admin"));
 const AuthPage = React.lazy(() => import("@/pages/auth"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
@@ -46,7 +50,22 @@ function Router() {
       
       {/* Protected Routes */}
       <Route path="/app">
+        {() => <ProtectedRoute component={TipsPage} />}
+      </Route>
+      <Route path="/tips">
+        {() => <ProtectedRoute component={TipsPage} />}
+      </Route>
+      <Route path="/dashboard">
         {() => <ProtectedRoute component={Dashboard} />}
+      </Route>
+      <Route path="/live">
+        {() => <ProtectedRoute component={LivePage} />}
+      </Route>
+      <Route path="/pregame">
+        {() => <ProtectedRoute component={PreGamePage} />}
+      </Route>
+      <Route path="/settings">
+        {() => <ProtectedRoute component={SettingsPage} />}
       </Route>
       <Route path="/admin">
         {() => <ProtectedRoute component={Admin} adminOnly={true} />}
