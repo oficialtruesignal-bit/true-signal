@@ -1,6 +1,17 @@
 import { Signal } from "./mock-data";
 import { supabase } from "./supabase";
 
+// Helper to convert Supabase errors to friendly messages
+const handleSupabaseError = (error: any, operation: string): never => {
+  // RLS policy violation (403)
+  if (error.code === '42501' || error.message?.includes('row-level security') || error.message?.includes('policy')) {
+    throw new Error(`Apenas administradores podem ${operation} tips.`);
+  }
+  
+  // Generic error
+  throw new Error(error.message || `Erro ao ${operation} tip.`);
+};
+
 export const tipsService = {
   getAll: async (): Promise<Signal[]> => {
     const { data, error } = await supabase
@@ -8,7 +19,7 @@ export const tipsService = {
       .select('*')
       .order('created_at', { ascending: false });
       
-    if (error) throw error;
+    if (error) handleSupabaseError(error, 'carregar');
     
     // Map Supabase tips to frontend Signal format
     return (data || []).map((tip: any) => ({
@@ -40,7 +51,7 @@ export const tipsService = {
       .select()
       .single();
       
-    if (error) throw error;
+    if (error) handleSupabaseError(error, 'criar');
 
     return {
       id: data.id,
@@ -62,7 +73,7 @@ export const tipsService = {
       .update({ status })
       .eq('id', id);
       
-    if (error) throw error;
+    if (error) handleSupabaseError(error, 'atualizar');
   },
 
   delete: async (id: string): Promise<void> => {
@@ -71,6 +82,6 @@ export const tipsService = {
       .delete()
       .eq('id', id);
       
-    if (error) throw error;
+    if (error) handleSupabaseError(error, 'deletar');
   },
 };

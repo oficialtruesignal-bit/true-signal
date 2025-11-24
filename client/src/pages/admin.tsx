@@ -2,10 +2,10 @@ import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
 import { tipsService } from "@/lib/tips-service";
 import { footballService, FootballMatch } from "@/lib/football-service";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, Calendar, Search, Loader2 } from "lucide-react";
+import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert } from "lucide-react";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -16,9 +16,35 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Signal } from "@/lib/mock-data";
+import { useAuth } from "@/hooks/use-auth";
+import { useLocation } from "wouter";
+import { toast } from "sonner";
 
 export default function Admin() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const [, setLocation] = useLocation();
+
+  // Redirect if not admin
+  useEffect(() => {
+    if (user && user.role !== 'admin') {
+      toast.error("Acesso negado. Apenas administradores podem acessar esta página.");
+      setLocation("/app");
+    }
+  }, [user, setLocation]);
+
+  // Show loading or access denied if not admin
+  if (!user || user.role !== 'admin') {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+          <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">Acesso Negado</h2>
+          <p className="text-muted-foreground">Apenas administradores podem acessar esta página.</p>
+        </div>
+      </Layout>
+    );
+  }
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -35,23 +61,37 @@ export default function Admin() {
     queryFn: () => footballService.getFixturesByDate(selectedDate),
   });
 
-  // Mutations
+  // Mutations with admin check
   const createMutation = useMutation({
     mutationFn: tipsService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tips'] });
       setIsDialogOpen(false);
       setSelectedMatch(null);
+      toast.success("Tip criado com sucesso!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao criar tip. Apenas administradores podem criar tips.");
     }
   });
 
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: Signal['status'] }) => 
       tipsService.updateStatus(id, status),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tips'] })
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
+      toast.success("Status atualizado!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao atualizar status. Apenas administradores podem editar tips.");
+    }
   });
 
   const handleCreateTip = (formData: any) => {
+    if (user?.role !== 'admin') {
+      toast.error("Apenas administradores podem criar tips.");
+      return;
+    }
     createMutation.mutate(formData);
   };
 
