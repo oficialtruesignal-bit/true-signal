@@ -1,0 +1,83 @@
+PROMPT MESTRE PARA REPLIT AGENT - VERSÃO "PRODUCTION READY"
+ROLE: Senior Software Architect & Quality Assurance (QA) Lead.
+
+TASK: Construir a plataforma "Tipster Hub" em nível de produção. O foco é funcionalidade real, segurança, personalização e retenção (notificações). O código deve ser robusto, livre de bugs amadores e totalmente integrado.
+
+1. BLINDAGEM DO SISTEMA & AUTENTICAÇÃO (SUPABASE)
+O sistema de login deve ser real e seguro.
+
+Fluxo de Cadastro: O formulário deve exigir Nome, Email e Senha.
+
+Banco de Dados:
+
+Ao criar conta no auth.users, um gatilho (Trigger) ou função deve criar automaticamente uma entrada na tabela public.profiles.
+
+Tabela profiles: Colunas id (FK), first_name, email, role (padrão 'user'), subscription_status.
+
+Personalização: No Dashboard, o Header OBRIGATORIAMENTE deve exibir: "Olá, {primeiro_nome} 👋". O usuário deve se sentir reconhecido.
+
+2. SISTEMA DE RETENÇÃO (PUSH NOTIFICATIONS)
+Implemente a biblioteca OneSignal (SDK React) para gerenciar notificações.
+
+Comportamento: Ao entrar no Dashboard pela primeira vez, o site deve pedir permissão: "O Tipster Hub deseja enviar alertas de novas Tips".
+
+Gatilho: Deixe preparado o gancho (hook) para que, quando o Admin criar uma Tip, o sistema possa disparar a notificação (mesmo que a lógica de server-side fique para depois, o frontend deve estar pronto para receber).
+
+3. INTEGRAÇÃO DE DADOS REAIS (FOOTBALL API)
+Mantenha a integração com a API-Football.
+
+Tratamento de Erros: Se a API falhar ou demorar, mostre "Skeleton Screens" (carregamento elegante) e não uma tela branca ou erro de código.
+
+Fallback: Se a API atingir o limite, exiba uma mensagem amigável: "Atualizando dados...".
+
+4. EXPERIÊNCIA DO USUÁRIO (UX PREMIUM)
+Toast Feedback: Use a biblioteca sonner.
+
+Errou a senha? Toast Vermelho: "Credenciais inválidas".
+
+Copiou a aposta? Toast Verde: "Link copiado! Boa sorte 🍀".
+
+Design System (Revisão Final):
+
+Cor Principal: Verde Neon (#33b864).
+
+Fundo: Dark Absoluto (#0a0a0a).
+
+Fontes: Inter (Google Fonts) para leitura perfeita.
+
+5. PASSO A PASSO TÉCNICO (ZERO ERROS)
+Passo A: Configuração e Validação
+Instale zod e react-hook-form. Valide TODOS os inputs. Não permita cadastro sem nome ou email inválido.
+
+Configure o Contexto de Autenticação (AuthProvider) para persistir a sessão mesmo se der refresh na página.
+
+Passo B: Desenvolvimento do Core
+Landing Page: Focada em conversão, com botões que levam direto ao Cadastro.
+
+Dashboard:
+
+Consumir tips do Supabase em Realtime.
+
+Consumir Jogos da API externa.
+
+Painel Admin (Secured): Só renderizar se profile.role === 'admin'.
+
+Passo C: Otimização
+Use React.Suspense e Lazy Loading para que o site carregue instantaneamente.
+
+Garanta que o botão de "Logout" funcione perfeitamente, limpando o cache e redirecionando para a Home.
+
+6. REVISÃO DE CÓDIGO (AUTO-AUDITORIA)
+Antes de finalizar, verifique:
+
+O usuário consegue logar e ver o próprio nome?
+
+O Admin consegue ver a lista real de jogos e criar uma tip?
+
+O botão "Copiar" funciona no Mobile?
+
+As cores estão fiéis ao Hex #33b864?
+
+Existe tratamento try/catch em todas as chamadas assíncronas?
+
+COMANDO FINAL: Gere uma aplicação completa, estável e pronta para receber tráfego real.

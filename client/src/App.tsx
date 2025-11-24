@@ -1,13 +1,41 @@
-import { Switch, Route } from "wouter";
+import React, { Suspense, useEffect } from "react";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
-import Dashboard from "@/pages/dashboard";
-import Admin from "@/pages/admin";
-import AuthPage from "@/pages/auth";
-import LandingPage from "@/pages/landing";
+import { AuthProvider, useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
+
+// Lazy Load Pages for Performance
+const LandingPage = React.lazy(() => import("@/pages/landing"));
+const Dashboard = React.lazy(() => import("@/pages/dashboard"));
+const Admin = React.lazy(() => import("@/pages/admin"));
+const AuthPage = React.lazy(() => import("@/pages/auth"));
+const NotFound = React.lazy(() => import("@/pages/not-found"));
+
+function ProtectedRoute({ component: Component, adminOnly = false }: { component: React.ComponentType<any>, adminOnly?: boolean }) {
+  const { user, isLoading } = useAuth();
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      setLocation("/auth");
+    } else if (!isLoading && user && adminOnly && user.role !== 'admin') {
+      setLocation("/app");
+    }
+  }, [user, isLoading, adminOnly, setLocation]);
+
+  if (isLoading || !user) {
+    return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+  }
+
+  if (adminOnly && user.role !== 'admin') {
+    return null; // Will redirect in useEffect
+  }
+
+  return <Component />;
+}
 
 function Router() {
   return (
@@ -16,9 +44,13 @@ function Router() {
       <Route path="/" component={LandingPage} />
       <Route path="/auth" component={AuthPage} />
       
-      {/* Private Routes (In a real app, these would be protected) */}
-      <Route path="/app" component={Dashboard} />
-      <Route path="/admin" component={Admin} />
+      {/* Protected Routes */}
+      <Route path="/app">
+        {() => <ProtectedRoute component={Dashboard} />}
+      </Route>
+      <Route path="/admin">
+        {() => <ProtectedRoute component={Admin} adminOnly={true} />}
+      </Route>
       
       <Route component={NotFound} />
     </Switch>
@@ -28,10 +60,14 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+            <Router />
+            <Toaster position="top-right" theme="dark" closeButton richColors />
+          </Suspense>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
