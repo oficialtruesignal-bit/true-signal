@@ -1,82 +1,76 @@
 import { Signal } from "./mock-data";
+import { supabase } from "./supabase";
 
 export const tipsService = {
   getAll: async (): Promise<Signal[]> => {
-    const response = await fetch("/api/tips");
-    if (!response.ok) {
-      throw new Error("Failed to fetch tips");
-    }
-    const data = await response.json();
+    const { data, error } = await supabase
+      .from('tips')
+      .select('*')
+      .order('created_at', { ascending: false });
+      
+    if (error) throw error;
     
-    // Map database Tip to frontend Signal
-    return data.tips.map((tip: any) => ({
+    // Map Supabase tips to frontend Signal format
+    return (data || []).map((tip: any) => ({
       id: tip.id,
-      league: tip.league,
-      homeTeam: tip.homeTeam,
-      awayTeam: tip.awayTeam,
+      league: tip.league || '',
+      homeTeam: tip.match_name?.split(' vs ')[0] || '',
+      awayTeam: tip.match_name?.split(' vs ')[1] || '',
       market: tip.market,
       odd: parseFloat(tip.odd),
       status: tip.status,
-      timestamp: tip.createdAt,
-      betLink: tip.betLink,
-      isLive: tip.isLive,
+      timestamp: tip.created_at,
+      betLink: tip.bet_url,
+      isLive: tip.is_live,
     }));
   },
 
   create: async (tip: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal> => {
-    const response = await fetch("/api/tips", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
+    const { data, error } = await supabase
+      .from('tips')
+      .insert([{
+        match_name: `${tip.homeTeam} vs ${tip.awayTeam}`,
         league: tip.league,
-        homeTeam: tip.homeTeam,
-        awayTeam: tip.awayTeam,
         market: tip.market,
-        odd: tip.odd.toString(),
-        status: tip.status || "pending",
-        betLink: tip.betLink,
-        isLive: tip.isLive || false,
-      }),
-    });
+        odd: tip.odd,
+        status: tip.status || 'pending',
+        bet_url: tip.betLink,
+        is_live: tip.isLive || false,
+      }])
+      .select()
+      .single();
+      
+    if (error) throw error;
 
-    if (!response.ok) {
-      throw new Error("Failed to create tip");
-    }
-
-    const data = await response.json();
     return {
-      id: data.tip.id,
-      league: data.tip.league,
-      homeTeam: data.tip.homeTeam,
-      awayTeam: data.tip.awayTeam,
-      market: data.tip.market,
-      odd: parseFloat(data.tip.odd),
-      status: data.tip.status,
-      timestamp: data.tip.createdAt,
-      betLink: data.tip.betLink,
-      isLive: data.tip.isLive,
+      id: data.id,
+      league: data.league || '',
+      homeTeam: data.match_name?.split(' vs ')[0] || '',
+      awayTeam: data.match_name?.split(' vs ')[1] || '',
+      market: data.market,
+      odd: parseFloat(data.odd),
+      status: data.status,
+      timestamp: data.created_at,
+      betLink: data.bet_url,
+      isLive: data.is_live,
     };
   },
 
   updateStatus: async (id: string, status: Signal['status']): Promise<void> => {
-    const response = await fetch(`/api/tips/${id}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to update tip status");
-    }
+    const { error } = await supabase
+      .from('tips')
+      .update({ status })
+      .eq('id', id);
+      
+    if (error) throw error;
   },
 
   delete: async (id: string): Promise<void> => {
-    const response = await fetch(`/api/tips/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to delete tip");
-    }
+    const { error } = await supabase
+      .from('tips')
+      .delete()
+      .eq('id', id);
+      
+    if (error) throw error;
   },
 };

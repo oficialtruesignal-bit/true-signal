@@ -1,6 +1,8 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 interface User {
   id: string;
@@ -26,46 +28,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // Check for stored user on mount
-    const storedUser = localStorage.getItem("tipster_user");
-    if (storedUser) {
-      try {
-        const parsed = JSON.parse(storedUser);
-        setUser(parsed);
-      } catch (e) {
-        localStorage.removeItem("tipster_user");
+    // Check active session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      } else {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        loadUserProfile(session.user.id);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+
+      if (data) {
+        setUser({
+          id: data.id,
+          email: data.email,
+          firstName: data.first_name,
+          role: data.role,
+          subscriptionStatus: 'free',
+        });
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      const data = await response.json();
+      if (error) throw error;
 
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
+      if (data.user) {
+        await loadUserProfile(data.user.id);
+        toast.success(`Bem-vindo de volta!`);
+        setLocation("/app");
       }
-
-      const userProfile: User = {
-        id: data.profile.id,
-        email: data.profile.email,
-        firstName: data.profile.firstName,
-        role: data.profile.role,
-        subscriptionStatus: data.profile.subscriptionStatus,
-      };
-
-      setUser(userProfile);
-      localStorage.setItem("tipster_user", JSON.stringify(userProfile));
-      toast.success(`Bem-vindo de volta, ${userProfile.firstName}!`);
-      setLocation("/app");
     } catch (error: any) {
       toast.error(error.message || "Credenciais inválidas");
       throw error;
@@ -77,36 +103,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: name,
-          email,
-          password,
-          role: "user",
-          subscriptionStatus: "free",
-        }),
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: name,
+          },
+        },
       });
 
-      const data = await response.json();
+      if (error) throw error;
 
-      if (!response.ok) {
-        throw new Error(data.error || "Registration failed");
+      if (data.user) {
+        // Profile is created automatically via trigger
+        toast.success("Conta criada com sucesso! Bem-vindo.");
+        setLocation("/app");
       }
-
-      const userProfile: User = {
-        id: data.profile.id,
-        email: data.profile.email,
-        firstName: data.profile.firstName,
-        role: data.profile.role,
-        subscriptionStatus: data.profile.subscriptionStatus,
-      };
-
-      setUser(userProfile);
-      localStorage.setItem("tipster_user", JSON.stringify(userProfile));
-      toast.success("Conta criada com sucesso! Bem-vindo.");
-      setLocation("/app");
     } catch (error: any) {
       toast.error(error.message || "Erro ao criar conta");
       throw error;
@@ -115,9 +128,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem("tipster_user");
     toast.info("Você saiu da conta.");
     setLocation("/auth");
   };
