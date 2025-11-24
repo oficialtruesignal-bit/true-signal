@@ -12,6 +12,10 @@ export function BetCard({ signal }: BetCardProps) {
   const handleBet = () => {
     if (signal.betLink) {
       window.open(signal.betLink, "_blank");
+      toast({
+        title: "Link copiado com sucesso!",
+        className: "bg-card border-primary/20 text-white",
+      });
     } else {
       toast({
         title: "Link indisponível",
@@ -23,8 +27,8 @@ export function BetCard({ signal }: BetCardProps) {
 
   const getStatusColor = (status: Signal["status"]) => {
     switch (status) {
-      case "green": return "text-signal-success border-signal-success/20 bg-signal-success-bg";
-      case "red": return "text-signal-error border-signal-error/20 bg-signal-error-bg";
+      case "green": return "text-primary border-primary/20 bg-primary/10";
+      case "red": return "text-red-500 border-red-500/20 bg-red-900/10";
       default: return "text-yellow-500 border-yellow-500/20 bg-yellow-500/10";
     }
   };
@@ -38,16 +42,14 @@ export function BetCard({ signal }: BetCardProps) {
   };
 
   return (
-    <div className="group relative bg-card hover:bg-card-hover border border-white/5 hover:border-primary/30 transition-all duration-300 rounded-xl p-5 shadow-lg overflow-hidden flex flex-col h-full">
-      {/* Hover Glow Effect */}
-      <div className="absolute -inset-1 bg-gradient-to-r from-primary/0 via-primary/10 to-primary/0 opacity-0 group-hover:opacity-100 blur-xl transition-opacity duration-500" />
-
+    <div className="group relative bg-[#121212] hover:bg-[#1a1a1a] border border-primary/20 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-[0_0_20px_rgba(51,184,100,0.1)] overflow-hidden flex flex-col h-full">
+      
       <div className="relative z-10 flex flex-col gap-4 flex-1">
         {/* Header */}
         <div className="flex justify-between items-start">
           <div className="flex flex-col">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1 flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_5px_#33b864]" />
               {signal.league}
             </span>
           </div>
@@ -72,23 +74,23 @@ export function BetCard({ signal }: BetCardProps) {
         </div>
 
         {/* Market & Odd */}
-        <div className="flex items-center justify-between bg-black/20 rounded-lg p-3 border border-white/5">
+        <div className="flex items-center justify-between bg-black/40 rounded-lg p-3 border border-white/5">
           <div className="flex flex-col">
             <span className="text-[10px] text-muted-foreground uppercase">Mercado</span>
             <span className="text-sm font-medium text-white">{signal.market}</span>
           </div>
           <div className="flex flex-col items-end">
             <span className="text-[10px] text-muted-foreground uppercase">Odd</span>
-            <span className="text-lg font-bold text-primary font-mono">@{signal.odd.toFixed(2)}</span>
+            <span className="text-lg font-bold text-primary font-mono drop-shadow-[0_0_5px_rgba(51,184,100,0.5)]">@{signal.odd.toFixed(2)}</span>
           </div>
         </div>
 
         {/* Actions */}
         <button
           onClick={handleBet}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-lg shadow-primary/20 hover:shadow-primary/40 mt-2 group/btn"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-black text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-[0_0_15px_rgba(51,184,100,0.2)] hover:shadow-[0_0_25px_rgba(51,184,100,0.4)] mt-2 group/btn border border-primary/50"
         >
-          Apostar Agora
+          COPIAR ENTRADA
           <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
         </button>
       </div>

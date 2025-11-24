@@ -19,13 +19,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground pb-20 md:pb-0 md:pl-64">
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-white/5 p-6 z-50">
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-primary/20 p-6 z-50">
         <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-            <Trophy className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <Trophy className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="font-display font-bold text-2xl tracking-tight text-white">
-            TYLTY<span className="text-primary">HUB</span>
+          <h1 className="font-display font-bold text-xl tracking-tight text-white">
+            TIPSTER <span className="text-primary">HUB</span>
           </h1>
         </div>
 
@@ -34,9 +34,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <Link key={item.path} href={item.path}>
               <a
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border border-transparent",
                   location === item.path
-                    ? "bg-primary/10 text-primary border border-primary/20"
+                    ? "bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.1)]"
                     : "text-muted-foreground hover:text-white hover:bg-white/5"
                 )}
               >
@@ -62,13 +62,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-white/5 z-50 flex items-center justify-between px-4">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-primary/20 z-50 flex items-center justify-between px-4">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
-             <Trophy className="w-5 h-5 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
+             <Trophy className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="font-display font-bold text-xl tracking-tight text-white">
-            TYLTY<span className="text-primary">HUB</span>
+          <h1 className="font-display font-bold text-lg tracking-tight text-white">
+            TIPSTER <span className="text-primary">HUB</span>
           </h1>
         </div>
         <button onClick={handleLogout} className="p-2 text-muted-foreground hover:text-white">
@@ -82,7 +82,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-white/5 z-50 flex items-center justify-around px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card border-t border-primary/20 z-50 flex items-center justify-around px-2">
         {navItems.map((item) => (
           <Link key={item.path} href={item.path}>
             <a

@@ -1,0 +1,68 @@
+# PROMPT MESTRE PARA REPLIT AGENT
+
+**ROLE:** Senior Fullstack Developer & UI/UX Specialist specialized in Betting Platforms.
+
+**TASK:** Desenvolver a plataforma web **"Tipster Hub"**. O projeto é uma Web App completa composta por uma Landing Page Institucional e um Dashboard Exclusivo para assinantes.
+
+**MUDANÇA VISUAL CRÍTICA:** A identidade visual é estritamente **Ultra Dark + Verde Neon (#33b864)**. Não use roxo ou azul como cores primárias.
+
+## 1. ESTRUTURA DO SITE (ROTAS)
+
+### A. Landing Page (Pública - Conversão)
+* **Design:** Estética "Tech/Money". Fundo preto profundo com detalhes em verde neon.
+* **Hero Section:** Headline: "A Inteligência Artificial a favor do seu bolso". Subheadline: "Análises de IA + 20 Especialistas".
+* **Call to Action (CTA):** Botões verdes brilhantes (#33b864) com texto "Acessar Tipster Hub".
+* **Prova Social:** Seção mostrando histórico de acertos (Greens) recentes.
+* **Auth:** Botões de Login e Cadastro visíveis no topo.
+
+### B. Dashboard "Tipster Hub" (Área Logada)
+* **Layout:** Sidebar (Desktop) / Bottom Bar (Mobile).
+* **Feed de Tips:** Lista vertical de cards com as entradas do dia.
+* **Ao Vivo:** Integração com dados simulados de jogos em andamento.
+* **Perfil:** Gestão de conta e senha.
+
+### C. Painel Admin (Gestão)
+* Interface simplificada para criar tips e atualizar o status (Green/Red) em tempo real.
+
+## 2. STACK TECNOLÓGICA
+* **Frontend:** React (Vite) + Tailwind CSS + Lucide Icons.
+* **Backend:** Supabase (Auth, Database, Realtime).
+* **Componentes:** Shadcn/UI (Customizado para o tema Dark/Green).
+
+## 3. LEI VISUAL (DESIGN SYSTEM OBRIGATÓRIO)
+Configure o `tailwind.config.js` com estas cores exatas:
+
+* **Brand Colors:**
+    * **Primary:** `#33b864` (Verde Neon - Cor Principal).
+    * **Primary Glow:** `rgba(51, 184, 100, 0.2)` (Para sombras e efeitos de vidro).
+    * **Primary Dark:** `#258a4b` (Hover states).
+* **Backgrounds:**
+    * **Page Bg:** `#0a0a0a` (Preto absoluto).
+    * **Card Surface:** `#121212` (Cinza quase preto).
+    * **Border:** `#33b864` (Com 20% de opacidade para bordas sutis).
+* **Status Colors:**
+    * **Win/Green:** `#33b864` (Mesma da marca).
+    * **Loss/Red:** `#f72626`.
+
+## 4. FUNCIONALIDADES DETALHADAS
+
+### Feature: Card de Aposta (O Coração do Site)
+O card deve ser um retângulo escuro (`#121212`) com borda fina verde (`border-[#33b864]/20`).
+* **Conteúdo:** Campeonato, Times (Time A x Time B), Mercado (ex: "Vitória Casa"), Odd (ex: "1.95").
+* **Ação:** Um botão grande **"COPIAR ENTRADA"** que:
+    1. Copia o link ou abre a casa de aposta em nova aba.
+    2. Dispara um toast "Link copiado com sucesso!".
+
+### Feature: Recuperação de Senha
+Implementar fluxo real do Supabase `resetPasswordForEmail`. O usuário clica em "Esqueci a senha", recebe o email e redefine.
+
+### Feature: Mock Data para "Ao Vivo"
+Como não temos API paga agora, crie um arquivo `liveGamesData.ts` com dados falsos mas realistas (ex: "Real Madrid 2 x 1 Barcelona - 75'") para popular a aba "Ao Vivo" e mostrar o potencial da plataforma.
+
+## 5. REGRAS DE IMPLEMENTAÇÃO
+1.  **Comece pelo CSS:** Configure as variáveis de cor `#33b864` antes de criar qualquer componente.
+2.  **Responsividade:** O site deve funcionar perfeitamente em Desktop (Landing Page larga) e Mobile (Dashboard parece um App nativo).
+3.  **Estilo:** Use fontes modernas (Inter ou Roboto).
+4.  **Admin:** O Admin deve ser capaz de marcar uma aposta como "Green" e o card do usuário deve ficar verde instantaneamente (use Supabase Realtime).
+
+**RESUMO VISUAL:** Pense em "Matrix moderno". Fundo preto, texto branco, detalhes em verde neon `#33b864`.
