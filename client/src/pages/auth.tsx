@@ -6,9 +6,10 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Trophy, ArrowRight, Lock, Mail, User, Loader2 } from "lucide-react";
+import { ArrowRight, Lock, Mail, User, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
+import { Logo } from "@/components/logo";
 import {
   Dialog,
   DialogContent,
@@ -82,16 +83,13 @@ export default function AuthPage() {
       <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/5 rounded-full blur-[128px]" />
 
       <div className="w-full max-w-md z-10 animate-in fade-in zoom-in-95 duration-500">
-        <div className="text-center mb-8 space-y-2">
-          <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 mb-4 shadow-[0_0_20px_rgba(51,184,100,0.2)]">
-            <Trophy className="w-6 h-6 text-primary" />
+        <div className="text-center mb-8 space-y-4">
+          <div className="flex justify-center mb-6">
+            <Logo size="lg" showText={true} />
           </div>
-          <h1 className="text-3xl font-display font-bold text-white tracking-tight">
-            Bem-vindo ao <span className="text-primary">Tipster Hub</span>
-          </h1>
-          <p className="text-muted-foreground">
-            {isLogin ? "Acesse a inteligência premium." : "Crie sua conta gratuita."}
-          </p>
+          <h2 className="text-xl font-medium text-muted-foreground">
+            {isLogin ? "Acesse a plataforma de sinais premium." : "Crie sua conta gratuita."}
+          </h2>
         </div>
 
         <div className="bg-[#121212] border border-primary/20 rounded-2xl p-8 shadow-2xl relative overflow-hidden">

@@ -1,8 +1,8 @@
-# Tipster Hub - Sports Betting Intelligence Platform
+# Ocean Signal - Sports Betting Intelligence Platform
 
 ## Overview
 
-Tipster Hub is a comprehensive sports betting intelligence platform that combines AI-powered analysis with expert curation. The platform consists of a public landing page for conversion, a protected dashboard for subscribers to view betting tips and live match data, and an admin panel for managing tips. The system integrates with the API-Football service to provide real-time match data and statistics.
+Ocean Signal is a comprehensive sports betting intelligence platform that combines AI-powered analysis with expert curation. The platform consists of a public landing page for conversion, a protected dashboard for subscribers to view betting tips and live match data, and an admin panel for managing tips. The system integrates with the API-Football service to provide real-time match data and statistics.
 
 ## User Preferences
 

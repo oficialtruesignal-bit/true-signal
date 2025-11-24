@@ -1,7 +1,8 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Trophy } from "lucide-react";
+import { ArrowRight, CheckCircle, Zap, Shield, BarChart3 } from "lucide-react";
 import generatedImage from '@assets/generated_images/dark_green_neon_tech_money_background.png';
+import { Logo } from "@/components/logo";
 
 export default function LandingPage() {
   return (
@@ -9,14 +10,7 @@ export default function LandingPage() {
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 border-b border-primary/20 bg-background/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_15px_rgba(51,184,100,0.2)]">
-              <Trophy className="w-6 h-6 text-primary" />
-            </div>
-            <span className="font-display font-bold text-2xl tracking-tight text-white">
-              TIPSTER <span className="text-primary">HUB</span>
-            </span>
-          </div>
+          <Logo size="md" showText={true} />
           
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors">Metodologia</a>
@@ -26,7 +20,7 @@ export default function LandingPage() {
             </Link>
             <Link href="/auth">
               <Button className="bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_20px_rgba(51,184,100,0.3)] border border-primary/50">
-                Acessar Tipster Hub
+                Acessar Ocean Signal
               </Button>
             </Link>
           </div>
@@ -50,18 +44,18 @@ export default function LandingPage() {
           </div>
           
           <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-            A Inteligência Artificial <br/>
-            a favor do <span className="text-primary drop-shadow-[0_0_15px_rgba(51,184,100,0.5)]">seu bolso</span>
+            Navegue no oceano de dados.<br/>
+            Encontre o <span className="text-primary drop-shadow-[0_0_15px_rgba(51,184,100,0.5)]">sinal de lucro</span>.
           </h1>
           
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-            Análises de IA + 20 Especialistas. A combinação perfeita para maximizar seus lucros com segurança e consistência.
+            Análise preditiva de IA + curadoria de especialistas. Identifique oportunidades lucrativas em tempo real.
           </p>
           
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
             <Link href="/auth">
               <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_25px_rgba(51,184,100,0.4)] rounded-xl w-full md:w-auto border border-primary/50 hover:scale-105 transition-transform duration-300">
-                Acessar Tipster Hub <ArrowRight className="ml-2 w-5 h-5" />
+                Acessar Ocean Signal <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
             </Link>
           </div>
@@ -173,7 +167,7 @@ export default function LandingPage() {
           </p>
           <Link href="/auth">
             <Button size="lg" className="h-14 px-12 text-lg bg-primary hover:bg-primary-dark text-black font-bold shadow-[0_0_30px_rgba(51,184,100,0.4)] rounded-xl hover:scale-105 transition-transform duration-300 border border-primary/50">
-              Acessar Tipster Hub
+              Acessar Ocean Signal
             </Button>
           </Link>
         </div>

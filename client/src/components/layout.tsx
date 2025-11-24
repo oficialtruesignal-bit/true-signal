@@ -1,10 +1,11 @@
 import { Link, useLocation } from "wouter";
-import { Home, LayoutDashboard, Settings, LogOut, Trophy, Bell, Target, Play, Calendar } from "lucide-react";
+import { Home, LayoutDashboard, Settings, LogOut, Bell, Target, Play, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
 import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
+import { Logo } from "./logo";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -58,14 +59,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background text-foreground pb-20 md:pb-0 md:pl-64 font-sans">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-primary/20 p-6 z-50">
-        <div className="flex items-center gap-3 mb-10 px-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center shadow-[0_0_10px_rgba(51,184,100,0.1)]">
-            <Trophy className="w-5 h-5 text-primary" />
-          </div>
-          <h1 className="font-display font-bold text-xl tracking-tight text-white">
-            TIPSTER <span className="text-primary">HUB</span>
-          </h1>
-        </div>
+        <Link href="/app">
+          <a className="mb-10 px-2 block">
+            <Logo size="md" showText={true} />
+          </a>
+        </Link>
 
         <div className="mb-6 px-2">
            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-3">
@@ -135,14 +133,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-primary/20 z-50 flex items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-             <Trophy className="w-5 h-5 text-primary" />
-          </div>
-          <h1 className="font-display font-bold text-lg tracking-tight text-white">
-            TIPSTER <span className="text-primary">HUB</span>
-          </h1>
-        </div>
+        <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
            <span className="text-sm font-bold text-white mr-2">Olá, {user?.firstName}</span>
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-white">
