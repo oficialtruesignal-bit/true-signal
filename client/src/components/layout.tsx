@@ -48,11 +48,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="mb-6 px-2">
            <div className="p-3 rounded-xl bg-primary/5 border border-primary/10 flex items-center gap-3">
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xs">
-                {user?.first_name?.charAt(0) || "U"}
+                {user?.firstName?.charAt(0) || "U"}
               </div>
               <div className="flex flex-col overflow-hidden">
                 <span className="text-xs text-muted-foreground">Bem-vindo,</span>
-                <span className="text-sm font-bold text-white truncate">{user?.first_name || "Convidado"}</span>
+                <span className="text-sm font-bold text-white truncate">{user?.firstName || "Convidado"}</span>
               </div>
            </div>
         </div>
@@ -114,7 +114,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </h1>
         </div>
         <div className="flex items-center gap-2">
-           <span className="text-sm font-bold text-white mr-2">Olá, {user?.first_name}</span>
+           <span className="text-sm font-bold text-white mr-2">Olá, {user?.firstName}</span>
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-white">
             <LogOut className="w-5 h-5" />
           </button>

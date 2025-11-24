@@ -1,87 +1,82 @@
 import { Signal } from "./mock-data";
-import { supabase, isSupabaseConfigured } from "./supabase";
-
-// In-memory store for development without Supabase keys
-let MOCK_STORE: Signal[] = [
-  {
-    id: "1",
-    league: "Premier League",
-    homeTeam: "Arsenal",
-    awayTeam: "Liverpool",
-    market: "Over 2.5 Goals",
-    odd: 1.85,
-    status: "pending",
-    timestamp: new Date().toISOString(),
-    isHot: true,
-    betLink: "https://bet365.com",
-    isLive: false,
-  },
-  {
-    id: "2",
-    league: "La Liga",
-    homeTeam: "Real Madrid",
-    awayTeam: "Barcelona",
-    market: "Both Teams to Score",
-    odd: 1.65,
-    status: "green",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
-    betLink: "https://bet365.com",
-    isLive: false,
-  }
-];
 
 export const tipsService = {
   getAll: async (): Promise<Signal[]> => {
-    if (isSupabaseConfigured()) {
-      const { data, error } = await supabase
-        .from('tips')
-        .select('*')
-        .order('created_at', { ascending: false });
-        
-      if (error) throw error;
-      return data || [];
+    const response = await fetch("/api/tips");
+    if (!response.ok) {
+      throw new Error("Failed to fetch tips");
     }
+    const data = await response.json();
     
-    // Fallback
-    return new Promise((resolve) => setTimeout(() => resolve([...MOCK_STORE]), 300));
+    // Map database Tip to frontend Signal
+    return data.tips.map((tip: any) => ({
+      id: tip.id,
+      league: tip.league,
+      homeTeam: tip.homeTeam,
+      awayTeam: tip.awayTeam,
+      market: tip.market,
+      odd: parseFloat(tip.odd),
+      status: tip.status,
+      timestamp: tip.createdAt,
+      betLink: tip.betLink,
+      isLive: tip.isLive,
+    }));
   },
 
   create: async (tip: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal> => {
-    const newTip = {
-      ...tip,
-      id: Math.random().toString(36).substr(2, 9),
-      timestamp: new Date().toISOString()
-    };
+    const response = await fetch("/api/tips", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        league: tip.league,
+        homeTeam: tip.homeTeam,
+        awayTeam: tip.awayTeam,
+        market: tip.market,
+        odd: tip.odd.toString(),
+        status: tip.status || "pending",
+        betLink: tip.betLink,
+        isLive: tip.isLive || false,
+      }),
+    });
 
-    if (isSupabaseConfigured()) {
-      const { data, error } = await supabase
-        .from('tips')
-        .insert([newTip])
-        .select()
-        .single();
-        
-      if (error) throw error;
-      return data;
+    if (!response.ok) {
+      throw new Error("Failed to create tip");
     }
 
-    // Fallback
-    MOCK_STORE = [newTip as Signal, ...MOCK_STORE];
-    return new Promise((resolve) => setTimeout(() => resolve(newTip as Signal), 300));
+    const data = await response.json();
+    return {
+      id: data.tip.id,
+      league: data.tip.league,
+      homeTeam: data.tip.homeTeam,
+      awayTeam: data.tip.awayTeam,
+      market: data.tip.market,
+      odd: parseFloat(data.tip.odd),
+      status: data.tip.status,
+      timestamp: data.tip.createdAt,
+      betLink: data.tip.betLink,
+      isLive: data.tip.isLive,
+    };
   },
 
   updateStatus: async (id: string, status: Signal['status']): Promise<void> => {
-    if (isSupabaseConfigured()) {
-      const { error } = await supabase
-        .from('tips')
-        .update({ status })
-        .eq('id', id);
-        
-      if (error) throw error;
-      return;
-    }
+    const response = await fetch(`/api/tips/${id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
 
-    // Fallback
-    MOCK_STORE = MOCK_STORE.map(t => t.id === id ? { ...t, status } : t);
-    return new Promise((resolve) => setTimeout(() => resolve(), 300));
-  }
+    if (!response.ok) {
+      throw new Error("Failed to update tip status");
+    }
+  },
+
+  delete: async (id: string): Promise<void> => {
+    const response = await fetch(`/api/tips/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to delete tip");
+    }
+  },
 };

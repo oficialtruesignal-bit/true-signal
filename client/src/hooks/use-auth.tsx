@@ -5,9 +5,9 @@ import { toast } from "sonner";
 interface User {
   id: string;
   email: string;
-  first_name: string;
+  firstName: string;
   role: 'user' | 'admin';
-  subscription_status: 'free' | 'premium';
+  subscriptionStatus: 'free' | 'premium';
 }
 
 interface AuthContextType {
@@ -20,81 +20,99 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// MOCK USER DATA
-const MOCK_ADMIN: User = {
-  id: "admin-123",
-  email: "admin@tipster.com",
-  first_name: "Admin",
-  role: "admin",
-  subscription_status: "premium"
-};
-
-const MOCK_USER: User = {
-  id: "user-123",
-  email: "user@tipster.com",
-  first_name: "Jogador",
-  role: "user",
-  subscription_status: "free"
-};
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    // Simulate session check on mount
+    // Check for stored user on mount
     const storedUser = localStorage.getItem("tipster_user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser));
+      try {
+        const parsed = JSON.parse(storedUser);
+        setUser(parsed);
+      } catch (e) {
+        localStorage.removeItem("tipster_user");
+      }
     }
     setIsLoading(false);
   }, []);
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
-    // Simulate API Call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (email.includes("admin")) {
-      setUser(MOCK_ADMIN);
-      localStorage.setItem("tipster_user", JSON.stringify(MOCK_ADMIN));
-      toast.success(`Bem-vindo de volta, ${MOCK_ADMIN.first_name}!`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      const userProfile: User = {
+        id: data.profile.id,
+        email: data.profile.email,
+        firstName: data.profile.firstName,
+        role: data.profile.role,
+        subscriptionStatus: data.profile.subscriptionStatus,
+      };
+
+      setUser(userProfile);
+      localStorage.setItem("tipster_user", JSON.stringify(userProfile));
+      toast.success(`Bem-vindo de volta, ${userProfile.firstName}!`);
       setLocation("/app");
-    } else if (email.includes("error")) {
-       toast.error("Credenciais inválidas");
-       setIsLoading(false);
-       throw new Error("Invalid credentials");
-    } else {
-      // Default to normal user for any other email for demo purposes
-      // In production this would validate against DB
-      const demoUser = { ...MOCK_USER, email, first_name: email.split('@')[0] };
-      setUser(demoUser);
-      localStorage.setItem("tipster_user", JSON.stringify(demoUser));
-      toast.success(`Bem-vindo de volta, ${demoUser.first_name}!`);
-      setLocation("/app");
+    } catch (error: any) {
+      toast.error(error.message || "Credenciais inválidas");
+      throw error;
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
-    // Simulate API Call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const newUser: User = {
-      id: Math.random().toString(36).substr(2, 9),
-      email,
-      first_name: name,
-      role: "user",
-      subscription_status: "free"
-    };
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: name,
+          email,
+          password,
+          role: "user",
+          subscriptionStatus: "free",
+        }),
+      });
 
-    setUser(newUser);
-    localStorage.setItem("tipster_user", JSON.stringify(newUser));
-    toast.success("Conta criada com sucesso! Bem-vindo.");
-    setLocation("/app");
-    setIsLoading(false);
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      const userProfile: User = {
+        id: data.profile.id,
+        email: data.profile.email,
+        firstName: data.profile.firstName,
+        role: data.profile.role,
+        subscriptionStatus: data.profile.subscriptionStatus,
+      };
+
+      setUser(userProfile);
+      localStorage.setItem("tipster_user", JSON.stringify(userProfile));
+      toast.success("Conta criada com sucesso! Bem-vindo.");
+      setLocation("/app");
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao criar conta");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const logout = () => {
