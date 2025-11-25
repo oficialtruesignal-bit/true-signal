@@ -6,7 +6,7 @@ export function CompactLiveHud() {
   const assertivityValue = stats.assertivity;
 
   return (
-    <div className="w-full max-w-lg mx-auto mb-8">
+    <div className="w-full mb-8">
       
       {/* GRID PRINCIPAL: CÍRCULO SOLTO + CARDS PADRÃO */}
       <div className="grid grid-cols-[45%_55%] gap-4 h-56 items-center">
