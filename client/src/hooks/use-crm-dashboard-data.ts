@@ -150,17 +150,53 @@ export function useCRMDashboardData(): CRMStats {
     return () => clearInterval(interval);
   }, []);
 
-  const greenCount = signals.filter((s) => s.status === 'green').length;
-  const assertivity = signals.length > 0 ? (greenCount / signals.length) * 100 : 0;
-  const roi = ((totalUnits - INITIAL_UNITS) / INITIAL_UNITS) * 100;
+  // Calcula métricas usando sinais reais do banco quando disponíveis
+  const finishedRealTips = realTips.filter(tip => tip.status === 'green' || tip.status === 'red');
+  const hasRealData = finishedRealTips.length > 0;
   
-  // Streak calculation (from newest to oldest)
+  let assertivity = 0;
+  let roi = 0;
   let wins = 0;
   let losses = 0;
-  for (let i = 0; i < signals.length; i++) {
-    if (signals[i].status === 'green') wins++;
-    else if (signals[i].status === 'red') { losses++; break; }
-    else break;
+  
+  if (hasRealData) {
+    // Usa dados reais do banco
+    const greenRealCount = finishedRealTips.filter(t => t.status === 'green').length;
+    assertivity = (greenRealCount / finishedRealTips.length) * 100;
+    
+    // ROI real: (lucro total - perda total) / investimento * 100
+    const greenTips = finishedRealTips.filter(t => t.status === 'green');
+    const redTips = finishedRealTips.filter(t => t.status === 'red');
+    const totalProfit = greenTips.reduce((sum, tip) => sum + (tip.odd - 1), 0);
+    const totalLoss = redTips.length;
+    const totalInvested = finishedRealTips.length;
+    roi = ((totalProfit - totalLoss) / totalInvested) * 100;
+    
+    // Sequência: últimos sinais ordenados
+    const sortedRealTips = [...finishedRealTips].sort((a, b) => 
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+    
+    for (const tip of sortedRealTips) {
+      if (tip.status === 'green') {
+        if (losses === 0) wins++;
+        else break;
+      } else if (tip.status === 'red') {
+        if (wins === 0) losses++;
+        else break;
+      }
+    }
+  } else {
+    // Fallback para dados simulados se não houver dados reais
+    const greenCount = signals.filter((s) => s.status === 'green').length;
+    assertivity = signals.length > 0 ? (greenCount / signals.length) * 100 : 0;
+    roi = ((totalUnits - INITIAL_UNITS) / INITIAL_UNITS) * 100;
+    
+    for (let i = 0; i < signals.length; i++) {
+      if (signals[i].status === 'green') wins++;
+      else if (signals[i].status === 'red') { losses++; break; }
+      else break;
+    }
   }
 
   // Units history (last 72 signals, oldest to newest for chart)
