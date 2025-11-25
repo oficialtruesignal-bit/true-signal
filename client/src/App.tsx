@@ -53,13 +53,13 @@ function Router() {
       
       {/* Protected Routes */}
       <Route path="/app">
-        {() => <ProtectedRoute component={TipsPage} />}
-      </Route>
-      <Route path="/tips">
-        {() => <ProtectedRoute component={TipsPage} />}
+        {() => <ProtectedRoute component={Dashboard} />}
       </Route>
       <Route path="/dashboard">
         {() => <ProtectedRoute component={Dashboard} />}
+      </Route>
+      <Route path="/tips">
+        {() => <ProtectedRoute component={TipsPage} />}
       </Route>
       <Route path="/live">
         {() => <ProtectedRoute component={LivePage} />}
