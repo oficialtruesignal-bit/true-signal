@@ -59,11 +59,11 @@ export default function DashboardCRM() {
               </p>
             </div>
 
-            {/* Investidores Online */}
+            {/* Usuarios Online */}
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Investidores Online</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">USUARIOS ONLINE</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
