@@ -43,63 +43,10 @@ export default function DashboardCRM() {
       {/* Compact Live HUD - Split View (Círculo + Cards) */}
       <CompactLiveHud />
 
-      {/* Main Dashboard - Full Width */}
-      <div className="flex flex-col gap-6 h-[calc(100vh-400px)]">
-          {/* Performance HUD - 4 Metrics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* ROI */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Percent className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">ROI</span>
-              </div>
-              <p className="text-2xl font-bold font-mono text-primary">
-                +{stats.roi.toFixed(1)}%
-              </p>
-            </div>
-
-            {/* Streak */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Sequência</span>
-              </div>
-              <p className="text-2xl font-bold font-mono text-white">
-                {stats.currentStreak.wins}V / {stats.currentStreak.losses}D
-              </p>
-            </div>
-
-            {/* Usuarios Online */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Users className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide whitespace-nowrap">USUARIOS ONLINE</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                <p className="text-2xl font-bold font-mono text-white">
-                  {usersOnline}
-                </p>
-              </div>
-            </div>
-
-            {/* Sinais Enviados */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Ticket className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Sinais Enviados</span>
-              </div>
-              <p className="text-2xl font-bold font-mono text-white">
-                {totalSignals}
-              </p>
-            </div>
-          </div>
-
-          {/* AI Scanner - Full Width */}
-          <div className="flex-1">
-            <AIScanner />
-          </div>
-        </div>
+      {/* AI Scanner - Full Width */}
+      <div className="flex-1">
+        <AIScanner />
+      </div>
     </Layout>
   );
 }

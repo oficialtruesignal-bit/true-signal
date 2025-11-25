@@ -6,7 +6,7 @@ export function CompactLiveHud() {
   const assertivityValue = stats.assertivity;
 
   return (
-    <div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-center mb-6">
+    <div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-stretch mb-6">
 
       {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
       <div className="flex items-center justify-center">
@@ -46,27 +46,25 @@ export function CompactLiveHud() {
         </div>
       </div>
 
-      {/* --- COLUNA DIREITA: PILHA DE CARDS (STACK) --- */}
-      <div className="flex flex-col gap-3">
+      {/* --- COLUNA DIREITA: PILHA PADRONIZADA --- */}
+      <div className="flex flex-col gap-3 h-full">
 
-        {/* Card Superior Direita: ROI */}
-        <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">ROI</span>
-          <div className="flex items-center gap-2 ml-2">
-            <TrendingUp className="w-4 h-4 text-[#33b864]" />
-            <span className="text-lg font-sora font-bold text-white">+{stats.roi.toFixed(1)}%</span>
+        {/* CARD 1: ROI (Estilo Padronizado) */}
+        <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <TrendingUp className="w-3 h-3 text-[#33b864]" />
+            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">ROI Total</span>
           </div>
+          <span className="text-xl font-sora font-bold text-[#33b864]">+{stats.roi.toFixed(1)}%</span>
         </div>
 
-        {/* Card Inferior Direita: SEQUÊNCIA */}
-        <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">Sequência Atual</span>
-          <div className="flex items-center gap-2 ml-2">
-            <Flame className="w-4 h-4 text-orange-500" />
-            <span className="text-lg font-sora font-bold text-white">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
+        {/* CARD 2: SEQUÊNCIA (Estilo Padronizado) */}
+        <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
+          <div className="flex items-center gap-2 mb-1">
+            <Flame className="w-3 h-3 text-orange-500" />
+            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Sequência</span>
           </div>
+          <span className="text-xl font-sora font-bold text-white">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
         </div>
 
       </div>

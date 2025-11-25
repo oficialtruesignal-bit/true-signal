@@ -1,0 +1,58 @@
+PROMPT MESTRE: UI STANDARDIZATION (CARD CLONING)
+ROLE: Senior UI/UX Designer.
+
+TASK: Padronizar os Cards do Dashboard no componente CompactLiveHud.tsx. PROBLEMA: Os cards da coluna superior direita estão com estilo diferente dos cards inferiores. OBJETIVO: Aplicar o exato mesmo CSS e Layout dos cards inferiores (Grid) nos cards superiores e remover a seção inferior duplicada.
+
+1. O ESTILO "GOLD STANDARD" (COPIAR ISTO)
+O estilo que o cliente aprovou é este:
+
+Background: #121212 (ou a cor exata do card de baixo).
+
+Borda: #33b864/20 (Bem sutil).
+
+Ícone: Pequeno, colorido, alinhado com o título.
+
+Valor: Fonte Sora, Branco, Grande.
+
+2. A NOVA ESTRUTURA (SPLIT VIEW CORRIGIDA)
+Mantenha o layout de 2 colunas (Círculo na Esquerda, Cards na Direita), mas atualize o código da Coluna da Direita para usar o estilo padronizado.
+
+TypeScript
+
+<div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-stretch mb-6">
+
+  {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
+  <div className="flex items-center justify-center">
+    {/* ... MANTENHA O CÓDIGO DO CÍRCULO DO JEITO QUE ESTÁ ... */}
+  </div>
+
+  {/* --- COLUNA DIREITA: A PILHA PADRONIZADA --- */}
+  <div className="flex flex-col gap-3 h-full">
+
+    {/* CARD 1: ROI (Estilo Idêntico ao de baixo) */}
+    <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
+       <div className="flex items-center gap-2 mb-1">
+         <TrendingUpIcon className="w-3 h-3 text-[#33b864]" />
+         <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">ROI Total</span>
+       </div>
+       <span className="text-xl font-sora font-bold text-[#33b864]">+106.2%</span>
+    </div>
+
+    {/* CARD 2: SEQUÊNCIA (Estilo Idêntico ao de baixo) */}
+    <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
+       <div className="flex items-center gap-2 mb-1">
+         <FlameIcon className="w-3 h-3 text-orange-500" />
+         <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Sequência</span>
+       </div>
+       <span className="text-xl font-sora font-bold text-white">2V / 0D</span>
+    </div>
+
+  </div>
+
+</div>
+3. LIMPEZA FINAL (DELETE TOTAL)
+Atenção: Agora que movemos os dados importantes para cima com o design correto, APAGUE todo o grid de 4 cards que existe na parte inferior do código (Usuarios Online, Sinais Enviados, etc).
+
+O componente deve terminar logo após o fechamento da div do Grid Principal. Logo abaixo, deve vir apenas o componente "Scanner IA" (Terminal).
+
+COMANDO: Execute a padronização. O topo do dashboard deve ter o Círculo na esquerda e 2 cards "padrão Ocean Signal" na direita. O resto da tela para baixo deve ser limpo.
