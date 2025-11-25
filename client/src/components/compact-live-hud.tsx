@@ -23,36 +23,8 @@ export function CompactLiveHud() {
   return (
     <div className="w-full max-w-md mx-auto flex flex-col gap-6 py-6">
 
-      {/* --- BLOCO 1: CARDS SUPERIORES (LADO A LADO) --- */}
-      <div className="flex flex-row items-stretch justify-center gap-4 w-full max-w-lg mx-auto">
-        
-        {/* CARD ESQUERDA: INVESTIDORES ONLINE */}
-        <div 
-          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
-          data-testid="hud-users"
-        >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Investidores Online</span>
-          <div className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#33b864] animate-ping"></span>
-            <span className="text-xl font-sora font-bold text-white">{usersOnline}</span>
-          </div>
-        </div>
-
-        {/* CARD DIREITA: SINAIS ENVIADOS */}
-        <div 
-          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
-          data-testid="hud-signals"
-        >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Sinais Enviados</span>
-          <span className="text-xl font-sora font-bold text-white">{totalSignals}</span>
-        </div>
-
-      </div>
-
-      {/* --- BLOCO 2: CÍRCULO CENTRAL (ASSERTIVIDADE) --- */}
-      <div className="flex items-center justify-center" data-testid="hud-assertivity">
+      {/* --- CÍRCULO CENTRAL DE ROI --- */}
+      <div className="flex items-center justify-center" data-testid="hud-roi">
         {/* Container do Círculo com efeito de brilho no fundo */}
         <div className="relative w-48 h-48 flex items-center justify-center">
           
