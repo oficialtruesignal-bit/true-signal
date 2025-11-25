@@ -2,7 +2,6 @@ import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { AIScanner } from "@/components/ai-scanner";
-import { BetCard } from "@/components/bet-card";
 import { TrendingUp, Target, Percent, Flame, Activity } from "lucide-react";
 
 export default function DashboardCRM() {
@@ -23,43 +22,8 @@ export default function DashboardCRM() {
         <CompactLiveHud />
       </div>
 
-      {/* Main CRM Layout: 40% Sidebar + 60% Main Area */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
-        {/* LEFT SIDEBAR: Premium Bet Cards Feed (40%) */}
-        <div className="lg:col-span-5 overflow-hidden flex flex-col">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-white uppercase tracking-wide">
-              Sinais Premium
-            </h2>
-            <span className="text-xs text-muted-foreground">
-              {stats.activeSignals.length} Ativos
-            </span>
-          </div>
-
-          {/* BetCard List - Scrollable */}
-          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-            {stats.recentSignals.slice(0, 5).map((signal) => {
-              // Convert CRM signal to BetCard-compatible format
-              const [homeTeam, awayTeam] = signal.matchName.split(' vs ');
-              const betCardSignal = {
-                id: signal.id,
-                league: signal.league,
-                homeTeam: homeTeam || signal.matchName,
-                awayTeam: awayTeam || '',
-                market: signal.market,
-                odd: signal.odd,
-                status: signal.status === 'processing' ? 'pending' as const : signal.status,
-                timestamp: signal.timestamp.toISOString(),
-                betLink: 'https://bet365.com'
-              };
-              
-              return <BetCard key={signal.id} signal={betCardSignal} />;
-            })}
-          </div>
-        </div>
-
-        {/* RIGHT AREA: Main Dashboard (60%) */}
-        <div className="lg:col-span-7 flex flex-col gap-6">
+      {/* Main Dashboard - Full Width */}
+      <div className="flex flex-col gap-6 h-[calc(100vh-280px)]">
           {/* Performance HUD - 4 Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Assertivity */}
@@ -130,7 +94,6 @@ export default function DashboardCRM() {
             </div>
           </div>
         </div>
-      </div>
     </Layout>
   );
 }
