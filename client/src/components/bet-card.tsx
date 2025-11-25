@@ -3,7 +3,7 @@ import { Copy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface BetCardProps {
   signal: Signal;
@@ -53,11 +53,32 @@ function abbreviateTeamName(teamName: string): string {
 }
 
 export function BetCard({ signal }: BetCardProps) {
+  const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
   
   const totalOdd = signal.legs && signal.legs.length > 0
     ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)
     : signal.odd;
+
+  // Simula atualização automática de status após o jogo
+  useEffect(() => {
+    if (signal.status !== "pending") return;
+    
+    // Verifica se já passou o horário do jogo
+    const matchDate = new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
+    const now = new Date();
+    
+    // Se o jogo já passou (mais de 2 horas desde a criação)
+    if (now > matchDate) {
+      const timer = setTimeout(() => {
+        // 70% de chance de ser verde (win)
+        const isWin = Math.random() < 0.7;
+        setCurrentStatus(isWin ? "green" : "red");
+      }, 3000); // Atualiza após 3 segundos
+      
+      return () => clearTimeout(timer);
+    }
+  }, [signal.status, signal.timestamp]);
   
   const handleCopy = async () => {
     if (navigator.vibrate) {
@@ -114,7 +135,7 @@ export function BetCard({ signal }: BetCardProps) {
     }
   };
 
-  const statusBadge = getStatusBadge(signal.status);
+  const statusBadge = getStatusBadge(currentStatus);
   const copyCount = Math.floor(Math.random() * 2000) + 500;
   const signalId = signal.id.slice(0, 8).toUpperCase();
 
@@ -153,7 +174,7 @@ export function BetCard({ signal }: BetCardProps) {
           <span className="text-gray-400">{displayTime}</span>
         </div>
         <div className={cn(
-          "px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider",
+          "px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wide",
           statusBadge.className
         )}>
           {statusBadge.text}
