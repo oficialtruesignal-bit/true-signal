@@ -9,28 +9,26 @@ interface BetCardProps {
   signal: Signal;
 }
 
-// TeamShield Component with Official Logos
+// TeamShield Component with Official Logos (40px)
 function TeamShield({ teamName }: { teamName: string }) {
   const [imageError, setImageError] = useState(false);
   const logoUrl = getTeamLogo(teamName);
   
-  // If logo exists and hasn't errored, show official logo
   if (logoUrl && !imageError) {
     return (
       <img 
         src={logoUrl} 
         alt={teamName}
-        className="w-8 h-8 rounded-full object-cover bg-white/5"
+        className="w-10 h-10 rounded-full object-cover bg-white/5"
         onError={() => setImageError(true)}
       />
     );
   }
   
-  // Fallback: Circle with team initial
   const initial = teamName.charAt(0).toUpperCase();
   return (
-    <div className="w-8 h-8 rounded-full bg-[#33b864]/20 flex items-center justify-center border border-[#33b864]/40">
-      <span className="text-[#33b864] font-sora font-bold text-sm">{initial}</span>
+    <div className="w-10 h-10 rounded-full bg-[#33b864]/20 flex items-center justify-center border border-[#33b864]/40">
+      <span className="text-[#33b864] font-sora font-bold text-lg">{initial}</span>
     </div>
   );
 }
@@ -38,7 +36,6 @@ function TeamShield({ teamName }: { teamName: string }) {
 export function BetCard({ signal }: BetCardProps) {
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
   
-  // Calculate total odd from legs (or use signal.odd for single bets)
   const totalOdd = signal.legs && signal.legs.length > 0
     ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)
     : signal.odd;
@@ -48,13 +45,12 @@ export function BetCard({ signal }: BetCardProps) {
       navigator.vibrate(50);
     }
 
-    // Build bet text
     let betText: string;
     if (hasMultipleLegs) {
       betText = `${signal.league}\nODD TOTAL: ${totalOdd.toFixed(2)}\n\n` + 
-        signal.legs!.map(leg => `${leg.homeTeam} x ${leg.awayTeam} - ${leg.market} @${leg.odd.toFixed(2)}`).join('\n');
+        signal.legs!.map(leg => `${leg.homeTeam} x ${leg.awayTeam} - ${leg.market} ODD ${leg.odd.toFixed(2)}`).join('\n');
     } else {
-      betText = `${signal.homeTeam} x ${signal.awayTeam} - ${signal.market} @${totalOdd.toFixed(2)}`;
+      betText = `${signal.homeTeam} x ${signal.awayTeam} - ${signal.market} ODD ${totalOdd.toFixed(2)}`;
     }
     
     try {
@@ -65,7 +61,6 @@ export function BetCard({ signal }: BetCardProps) {
         className: "bg-primary/10 border-primary/20 text-primary",
       });
       
-      // If there's a betLink, open it in background
       if (signal.betLink) {
         setTimeout(() => {
           window.open(signal.betLink, "_blank");
@@ -85,17 +80,17 @@ export function BetCard({ signal }: BetCardProps) {
       case "green":
         return {
           text: "VERDE",
-          className: "bg-[#33b864]/10 text-[#33b864] border-[#33b864]"
+          className: "bg-[#33b864]/5 text-[#33b864] border-[#33b864]"
         };
       case "red":
         return {
           text: "VERMELHO",
-          className: "bg-red-500/10 text-red-500 border-red-500"
+          className: "bg-red-500/5 text-red-500 border-red-500"
         };
       default:
         return {
           text: "PENDENTE",
-          className: "bg-[#121212] border-[#33b864] text-[#33b864]"
+          className: "bg-[#33b864]/5 border-[#33b864] text-[#33b864]"
         };
     }
   };
@@ -104,119 +99,87 @@ export function BetCard({ signal }: BetCardProps) {
   const copyCount = Math.floor(Math.random() * 2000) + 500;
   const signalId = signal.id.slice(0, 8).toUpperCase();
 
-  // Get first leg time or signal timestamp
   const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
     ? signal.legs[0].time 
     : new Date(signal.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div 
-      className="bg-[#0a0a0a] border border-[#33b864]/30 rounded-xl p-3 relative overflow-hidden hover:border-[#33b864]/50 transition-colors"
+      className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl p-5 shadow-lg shadow-[#33b864]/5 relative overflow-hidden group hover:border-[#33b864]/50 transition-all"
       data-testid={`bet-card-${signal.id}`}
     >
-      {/* ----- LINHA SUPERIOR: Liga, Hora e Status ----- */}
-      <div className="flex justify-between items-center mb-3">
-        <div className="flex items-center gap-2 text-xs text-gray-400 font-inter">
-          <span className="uppercase font-bold text-[#33b864] font-sora">{signal.league}</span>
-          <span>•</span>
-          <span className="font-mono">{displayTime}</span>
+      {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS) --- */}
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide">
+          <span className="text-[#33b864] uppercase">{signal.league}</span>
+          <span className="text-gray-500">•</span>
+          <span className="text-gray-400">{displayTime}</span>
         </div>
-        {/* Badge de Status */}
         <div className={cn(
-          "text-[10px] font-bold px-2 py-1 rounded-full uppercase border font-sora",
+          "px-3 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider",
           statusBadge.className
         )}>
           {statusBadge.text}
         </div>
       </div>
 
-      {/* ----- CORPO PRINCIPAL: GRID RÍGIDO ----- */}
-      {hasMultipleLegs ? (
-        // Multiple legs - show compact list
-        <div className="space-y-2 mb-3">
-          <div className="text-center text-sm font-sora font-bold text-white mb-2">
-            Múltipla ({signal.legs!.length} Jogos)
-          </div>
-          {signal.legs!.map((leg, index) => (
-            <div key={index} className="bg-[#121212] rounded-lg p-2 border border-white/5">
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
-                {/* Time Casa */}
-                <div className="flex items-center justify-end gap-2">
-                  <span className="font-sora font-semibold text-white text-sm text-right truncate">{leg.homeTeam}</span>
-                  <TeamShield teamName={leg.homeTeam} />
-                </div>
-                
-                {/* VS */}
-                <div className="text-gray-500 font-sora font-semibold text-xs text-center px-1">vs</div>
-                
-                {/* Time Visitante */}
-                <div className="flex items-center justify-start gap-2">
-                  <TeamShield teamName={leg.awayTeam} />
-                  <span className="font-sora font-semibold text-white text-sm text-left truncate">{leg.awayTeam}</span>
-                </div>
-              </div>
-              <div className="mt-1 text-xs text-gray-400 text-center font-sora">{leg.market}</div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        // Single match - Grid layout
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 mb-3">
-          {/* COLUNA 1: Time da Casa (Alinhado à Direita) */}
-          <div className="flex items-center justify-end gap-3">
-            <span className="font-sora font-bold text-white text-lg text-right truncate">{signal.homeTeam}</span>
-            <TeamShield teamName={signal.homeTeam} />
-          </div>
+      {/* --- 2. OS TIMES (HORIZONTAL E CENTRALIZADO) --- */}
+      <div className="flex items-center justify-center gap-4 mb-6">
+        {/* Time Casa */}
+        <span className="font-sora font-bold text-white text-xl md:text-2xl">{signal.homeTeam}</span>
+        
+        {/* Escudo Casa */}
+        <TeamShield teamName={signal.homeTeam} />
 
-          {/* COLUNA 2: VS (Centralizado Fixo) */}
-          <div className="text-gray-500 font-sora font-semibold text-sm text-center px-2">vs</div>
+        {/* VS */}
+        <span className="text-gray-600 font-sora font-medium text-sm">vs</span>
 
-          {/* COLUNA 3: Time Visitante (Alinhado à Esquerda) */}
-          <div className="flex items-center justify-start gap-3">
-            <TeamShield teamName={signal.awayTeam} />
-            <span className="font-sora font-bold text-white text-lg text-left truncate">{signal.awayTeam}</span>
-          </div>
-        </div>
-      )}
+        {/* Escudo Fora */}
+        <TeamShield teamName={signal.awayTeam} />
 
-      {/* ----- RODAPÉ: Mercado, ODD e Botão ----- */}
-      <div className="flex items-end justify-between bg-[#121212] rounded-lg p-2 border border-white/5">
+        {/* Time Fora */}
+        <span className="font-sora font-bold text-white text-xl md:text-2xl">{signal.awayTeam}</span>
+      </div>
+
+      {/* --- 3. CONTAINER DE INFORMAÇÃO (CAIXA ESCURA) --- */}
+      <div className="bg-[#121212] rounded-xl p-4 border border-white/5 flex items-center justify-between mb-4">
+        
         {/* Lado Esquerdo: Mercado */}
-        <div className="flex flex-col">
-          <span className="text-[#33b864] font-sora font-bold uppercase text-sm">
-            {hasMultipleLegs ? "Aposta Combinada" : signal.market}
+        <div className="flex flex-col gap-1">
+          <span className="text-[#33b864] font-sora font-extrabold text-lg uppercase leading-none">
+            {hasMultipleLegs ? "APOSTA COMBINADA" : signal.market}
           </span>
-          <span className="text-gray-500 text-[10px] font-sora">Mercado Principal</span>
+          <span className="text-gray-500 text-[10px] font-medium font-inter">
+            Mercado Principal
+          </span>
         </div>
 
-        {/* Lado Direito: ODD + Botão */}
-        <div className="flex flex-col items-end gap-2">
-          {/* Badge da ODD */}
-          <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg px-3 py-1 flex items-baseline gap-1">
-            <span className="text-[#33b864] text-[10px] font-bold font-sora">ODD</span>
-            <span className="text-[#33b864] text-lg font-extrabold font-sora">{totalOdd.toFixed(2)}</span>
-          </div>
-
-          {/* Botão de Ação */}
-          <button 
-            onClick={handleCopy}
-            data-testid={`button-copy-${signal.id}`}
-            className="bg-[#33b864] hover:bg-[#289a54] text-[#0a0a0a] font-sora font-bold text-xs py-2 px-4 rounded-lg flex items-center gap-2 transition-transform active:scale-95 shadow-[0_0_10px_rgba(51,184,100,0.4)]"
-          >
-            <Copy className="w-4 h-4" />
-            PEGAR BILHETE
-          </button>
+        {/* Lado Direito: ODD */}
+        <div className="border border-[#33b864]/50 rounded-lg px-3 py-2 bg-[#33b864]/5">
+          <span className="text-[#33b864] font-sora text-sm font-bold mr-1">ODD</span>
+          <span className="text-white font-sora text-xl font-extrabold">{totalOdd.toFixed(2)}</span>
         </div>
       </div>
 
-      {/* Rodapézinho discreto (IDs) */}
-      <div className="mt-2 text-[10px] text-gray-600 flex gap-3 font-mono">
-        <span>#{signalId}</span>
-        <span className="flex items-center gap-1">
+      {/* --- 4. O BOTÃO DE AÇÃO (FULL WIDTH) --- */}
+      <button 
+        onClick={handleCopy}
+        data-testid={`button-copy-${signal.id}`}
+        className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.3)]"
+      >
+        <Copy className="w-5 h-5 text-black" />
+        <span className="text-black font-sora font-bold text-sm tracking-wide">COPIAR BILHETE</span>
+      </button>
+
+      {/* --- 5. RODAPÉ (METADADOS) --- */}
+      <div className="mt-3 flex items-center gap-4 px-1">
+        <span className="text-[10px] text-gray-600 font-mono">#{signalId}</span>
+        <div className="flex items-center gap-1 text-[10px] text-gray-600">
           <Users className="w-3 h-3" />
-          {copyCount.toLocaleString()}
-        </span>
+          <span>{copyCount.toLocaleString()}</span>
+        </div>
       </div>
+
     </div>
   );
 }
