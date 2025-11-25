@@ -6,7 +6,7 @@ export function CompactLiveHud() {
   const assertivityValue = stats.assertivity;
 
   return (
-    <div className="w-full grid grid-cols-[45%_55%] gap-3 items-stretch mb-6">
+    <div className="w-full grid grid-cols-1 lg:grid-cols-2 gap-3 items-stretch mb-6">
 
       {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
       <div className="flex items-center justify-center">
@@ -46,11 +46,10 @@ export function CompactLiveHud() {
         </div>
       </div>
 
-      {/* --- COLUNA DIREITA: PILHA PADRONIZADA --- */}
-      <div className="flex flex-col gap-3 h-full">
-
+      {/* --- COLUNA DIREITA: CARDS EMPILHADOS --- */}
+      <div className="flex flex-col gap-3">
         {/* CARD 1: ROI (Estilo Idêntico aos cards de baixo) */}
-        <div className="flex-1 bg-[#121212] border border-[#333] rounded-lg p-4">
+        <div className="bg-[#121212] border border-[#333] rounded-lg p-4 flex-1">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-primary" strokeWidth={1.5} />
             <span className="text-xs text-muted-foreground uppercase tracking-wide">ROI</span>
@@ -61,7 +60,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* CARD 2: SEQUÊNCIA (Estilo Idêntico aos cards de baixo) */}
-        <div className="flex-1 bg-[#121212] border border-[#333] rounded-lg p-4">
+        <div className="bg-[#121212] border border-[#333] rounded-lg p-4 flex-1">
           <div className="flex items-center gap-2 mb-2">
             <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
             <span className="text-xs text-muted-foreground uppercase tracking-wide">Sequência</span>
@@ -70,7 +69,6 @@ export function CompactLiveHud() {
             {stats.currentStreak.wins}V / {stats.currentStreak.losses}D
           </p>
         </div>
-
       </div>
 
     </div>
