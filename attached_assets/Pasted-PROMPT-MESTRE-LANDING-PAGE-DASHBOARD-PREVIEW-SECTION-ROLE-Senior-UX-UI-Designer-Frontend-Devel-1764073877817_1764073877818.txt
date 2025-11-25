@@ -1,0 +1,59 @@
+PROMPT MESTRE: LANDING PAGE - DASHBOARD PREVIEW SECTION
+ROLE: Senior UX/UI Designer & Frontend Developer specialized in High-Conversion Landing Pages.
+
+TASK: Adicionar uma nova seção impactante na Página Inicial (Home.tsx), logo abaixo do Hero. O objetivo é mostrar um Preview de Alta Fidelidade do Dashboard, focando em complexidade técnica e profissionalismo, sem exibir valores monetários explícitos.
+
+1. ESTRUTURA DA NOVA SEÇÃO
+Crie um componente HomeDashboardPreview.tsx e insira na Home.
+
+Container: Fundo #0a0a0a com um brilho radial central muito sutil na cor #33b864 (opacidade 5%).
+
+Título (H2): "O Painel de Controle da Sua Liberdade Financeira." (Fonte Syne).
+
+Subtítulo: "Interface profissional projetada para clareza, velocidade e execução precisa. Veja o que te espera do outro lado."
+
+2. O COMPONENTE "MOCKUP VIVO" DO DASHBOARD
+Não use uma imagem estática. Construa um layout React que simula o dashboard, envolto em uma moldura "Glassmorphism" com um leve efeito de perspectiva 3D (CSS perspective e rotateX) para parecer que está flutuando.
+
+A. O Gráfico Complexo (Composed Chart - Recharts)
+Este será o centro das atenções. Substitua gráficos simples por um gráfico de análise técnica avançada.
+
+Lib: recharts (ComposedChart).
+
+Dados (Mockado Fixo): Crie um dataset de 30 dias mostrando crescimento consistente.
+
+Eixos:
+
+XAxis: Datas (ex: "01/Oct", "05/Oct").
+
+YAxis (Esquerda): "Assertividade (%)" (Escala 0-100%).
+
+YAxis (Direita): "Volume de Sinais" (Escala 0-50).
+
+Visualização:
+
+Linha Principal (Assertividade): <Line ... /> Cor #33b864 (Neon), grossa, com dot={false} e uma sombra (filter drop-shadow) verde neon. Deve mostrar uma curva ascendente suave chegando a 95%.
+
+Barras de Fundo (Volume): <Bar ... /> Cor #33b864 com opacidade muito baixa (ex: 20%). Barras finas atrás da linha.
+
+Grid: <CartesianGrid ... /> Cor #33b864 com opacidade 5% para dar um look de "blueprint" técnico.
+
+Tooltip: Um Tooltip customizado, escuro, que mostra "Assertividade: 94%" e "Sinais: 32" ao passar o mouse.
+
+B. Widgets Laterais (Simulados)
+Ao redor do gráfico, coloque versões simplificadas dos widgets para compor a cena, sem mostrar dinheiro:
+
+Topo (KPIs Técnicos): Em vez de valor da banca, mostre:
+
+[Ícone Target] "Assertividade Global: 94.8%"
+
+[Ícone Signal] "Sinais Hoje: 14"
+
+[Ícone Trophy] "Sequência: 12 Greens"
+
+Lateral Direita (AI Terminal): Um bloco de texto estilo terminal, com fonte monoespaçada, simulando logs da IA: [AI_CORE]: Scanning 842 matches... Pattern found in BRA_A. Validating... OK.
+
+3. ESTÉTICA GERAL
+O mockup deve parecer um sistema operacional futurista. Use bordas finas brilhantes (border border-[#33b864]/30), fundos semi-transparentes (bg-[#121212]/80 backdrop-blur-md) e luzes de destaque.
+
+OBJETIVO: O visitante deve olhar para essa seção e pensar que o software é incrivelmente poderoso e que ele está perdendo dinheiro por não ter acesso a essa tecnologia.
