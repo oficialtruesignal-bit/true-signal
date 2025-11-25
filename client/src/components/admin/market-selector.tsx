@@ -8,6 +8,14 @@ interface MarketGroup {
 
 const MARKET_OPTIONS: MarketGroup[] = [
   {
+    label: "🎯 MÚLTIPLAS (COMBO)",
+    options: [
+      "Múltipla Simples (2-5 Jogos)",
+      "Múltipla Combinada (6+ Jogos)",
+      "Múltipla Especial (Descrição Livre)"
+    ]
+  },
+  {
     label: "Principais (Resultado)",
     options: [
       "Vitória Casa (Home)",
@@ -43,6 +51,9 @@ const MARKET_OPTIONS: MarketGroup[] = [
       "HT - Empate",
       "HT - Mais de 0.5 Gols",
       "HT - Mais de 1.5 Gols",
+      "HT - Mais de 2.5 Gols",
+      "HT - Menos de 0.5 Gols",
+      "HT - Menos de 1.5 Gols",
       "HT - Ambas Marcam"
     ]
   },
@@ -72,13 +83,50 @@ const MARKET_OPTIONS: MarketGroup[] = [
     ]
   },
   {
-    label: "Especiais / Outros",
+    label: "Cartões (Cards)",
+    options: [
+      "Mais de 2.5 Cartões",
+      "Mais de 3.5 Cartões",
+      "Mais de 4.5 Cartões",
+      "Mais de 5.5 Cartões",
+      "Cartão Vermelho: SIM",
+      "Cartão Vermelho: NÃO",
+      "Ambas Equipes Levam Cartão"
+    ]
+  },
+  {
+    label: "Chutes / Finalizações",
+    options: [
+      "Casa - Mais de 4.5 Chutes no Gol",
+      "Casa - Mais de 5.5 Chutes no Gol",
+      "Visitante - Mais de 4.5 Chutes no Gol",
+      "Visitante - Mais de 5.5 Chutes no Gol",
+      "Total de Chutes - Mais de 9.5",
+      "Total de Chutes - Mais de 10.5"
+    ]
+  },
+  {
+    label: "Jogadores / Props",
+    options: [
+      "Qualquer Jogador Marcar",
+      "Jogador Específico Marcar",
+      "Jogador Marcar 2+ Gols",
+      "Assistência de Jogador",
+      "Jogador Levar Cartão Amarelo",
+      "Jogador Mais de X Chutes"
+    ]
+  },
+  {
+    label: "Especiais / Combos",
     options: [
       "Vitória Casa + Mais de 2.5 Gols",
       "Vitória Visitante + Mais de 2.5 Gols",
-      "Qualquer Jogador Marcar",
-      "Cartão Vermelho: SIM",
-      "Resultado Correto (Placar Exato)"
+      "Vitória Casa + Ambas Marcam",
+      "Vitória Visitante + Ambas Marcam",
+      "Empate + Menos de 2.5 Gols",
+      "Resultado Correto (Placar Exato)",
+      "Time Vencer Ambos Tempos",
+      "Ganhar de Zero (Win to Nil)"
     ]
   }
 ];
