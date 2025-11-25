@@ -71,6 +71,22 @@ export interface SportmonksV3Statistic {
   };
 }
 
+export interface SportmonksV3Period {
+  id: number;
+  fixture_id: number;
+  type_id: number;
+  started: number | null;
+  ended: number | null;
+  counts_from: number;
+  ticking: boolean;
+  description: string;
+  time_added: number | null;
+  period_length: number;
+  minutes: number | null;
+  seconds: number | null;
+  has_timer: boolean;
+}
+
 export interface SportmonksV3Fixture {
   id: number;
   sport_id: number;
@@ -91,6 +107,7 @@ export interface SportmonksV3Fixture {
   league?: SportmonksV3League;
   scores?: SportmonksV3Score[];
   statistics?: SportmonksV3Statistic[];
+  periods?: SportmonksV3Period[];
 }
 
 // Mapped types for compatibility with existing components
@@ -171,6 +188,21 @@ export interface FixtureStatistics {
   saves: number;
 }
 
+// Calculate elapsed minute from periods (Sportmonks v3)
+function calculateElapsedMinute(periods?: SportmonksV3Period[]): number | null {
+  if (!periods || periods.length === 0) return null;
+  
+  // Find the currently ticking period
+  const currentPeriod = periods.find(p => p.ticking);
+  
+  if (currentPeriod && currentPeriod.minutes !== null) {
+    // Current minute = counts_from + minutes
+    return currentPeriod.counts_from + currentPeriod.minutes;
+  }
+  
+  return null;
+}
+
 // Map Sportmonks V3 Fixture to our internal FootballMatch type
 function mapV3FixtureToFootballMatch(fixture: SportmonksV3Fixture): FootballMatch {
   const participants = fixture.participants || [];
@@ -185,15 +217,25 @@ function mapV3FixtureToFootballMatch(fixture: SportmonksV3Fixture): FootballMatc
   const htHomeScore = scores.find(s => s.location === "home" && s.description === "1ST_HALF");
   const htAwayScore = scores.find(s => s.location === "away" && s.description === "1ST_HALF");
 
-  // Map state_id to status
+  // Map state_id to status (Sportmonks v3 Official States)
   const stateMap: Record<number, { long: string; short: string }> = {
     1: { long: "Not Started", short: "NS" },
-    2: { long: "Live", short: "LIVE" },
-    3: { long: "Finished", short: "FT" },
-    4: { long: "Halftime", short: "HT" },
+    2: { long: "Live - 1st Half", short: "1H" },
+    3: { long: "Halftime", short: "HT" },
+    4: { long: "Live - Break", short: "BRK" },
     5: { long: "Match Finished", short: "FT" },
+    14: { long: "Live - Extra Time", short: "ET" },
+    18: { long: "Finished After Extra Time", short: "AET" },
+    7: { long: "Live - Penalties", short: "PEN" },
+    8: { long: "Finished After Penalties", short: "FT (PEN)" },
+    9: { long: "Postponed", short: "POSTP" },
+    11: { long: "Cancelled", short: "CANC" },
+    17: { long: "Interrupted", short: "INT" },
   };
   const statusInfo = stateMap[fixture.state_id] || { long: "Unknown", short: "?" };
+
+  // Calculate elapsed minute from periods
+  const elapsedMinute = calculateElapsedMinute(fixture.periods);
 
   return {
     fixture: {
@@ -211,7 +253,7 @@ function mapV3FixtureToFootballMatch(fixture: SportmonksV3Fixture): FootballMatc
       status: {
         long: statusInfo.long,
         short: statusInfo.short,
-        elapsed: null,
+        elapsed: elapsedMinute,
       },
     },
     league: {
@@ -265,17 +307,17 @@ function mapV3StatisticsToFixtureStats(
 
   return {
     team_id: participantId,
-    attacks: getStat(83),  // Type ID for Attacks
-    dangerous_attacks: getStat(84),  // Type ID for Dangerous Attacks
-    possession: getStat(42),  // Ball Possession %
-    shots_total: getStat(85),  // Total Shots
-    shots_on_goal: getStat(86),  // Shots On Target
-    corners: getStat(89),  // Corners
-    yellowcards: getStat(82),  // Yellow Cards
-    redcards: getStat(81),  // Red Cards
-    passes_accurate: getStat(88),  // Accurate Passes (corrected from 80)
-    passes_percentage: getStat(87),  // Pass Accuracy % (corrected from 80)
-    saves: getStat(91),  // Goalkeeper Saves
+    attacks: getStat(43),  // Type ID 43 = Attacks (Official Sportmonks v3)
+    dangerous_attacks: getStat(44),  // Type ID 44 = Dangerous Attacks (Official)
+    possession: getStat(45),  // Type ID 45 = Ball Possession % (Official)
+    shots_total: getStat(82),  // Type ID 82 = Total Shots
+    shots_on_goal: getStat(86),  // Type ID 86 = Shots On Target
+    corners: getStat(42),  // Type ID 42 = Corners
+    yellowcards: getStat(84),  // Type ID 84 = Yellow Cards
+    redcards: getStat(83),  // Type ID 83 = Red Cards
+    passes_accurate: getStat(88),  // Type ID 88 = Accurate Passes
+    passes_percentage: getStat(87),  // Type ID 87 = Pass Accuracy %
+    saves: getStat(57),  // Type ID 57 = Goalkeeper Saves (Official)
   };
 }
 

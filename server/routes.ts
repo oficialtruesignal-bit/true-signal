@@ -20,7 +20,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await axios.get(`${SPORTMONKS_BASE_URL}/livescores/inplay`, {
         params: {
           api_token: SPORTMONKS_API_KEY,
-          include: "participants;league;scores",
+          include: "participants;league;scores;periods",
         },
       });
       return res.json(response.data);
@@ -40,7 +40,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const response = await axios.get(`${SPORTMONKS_BASE_URL}/fixtures/date/${date}`, {
         params: {
           api_token: SPORTMONKS_API_KEY,
-          include: "participants;league;scores",
+          include: "participants;league;scores;periods",
         },
       });
       return res.json(response.data);
