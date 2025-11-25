@@ -14,10 +14,10 @@ if (!FOOTBALL_API_KEY) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // API-Football Proxy Routes (to avoid CORS and secure API key)
+  // API-Football Proxy Routes (RapidAPI endpoints - to avoid CORS and secure API key)
   app.get("/api/football/fixtures/live", async (req, res) => {
     try {
-      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures", {
         params: { live: "all" },
         headers: {
           "x-rapidapi-key": FOOTBALL_API_KEY,
@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/football/fixtures/date/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures", {
         params: { date },
         headers: {
           "x-rapidapi-key": FOOTBALL_API_KEY,
@@ -59,7 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/football/fixtures/statistics/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const response = await axios.get("https://v3.football.api-sports.io/fixtures/statistics", {
+      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures/statistics", {
         params: { fixture: id },
         headers: {
           "x-rapidapi-key": FOOTBALL_API_KEY,

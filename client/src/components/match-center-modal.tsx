@@ -1,4 +1,4 @@
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
 import { X, Loader2, AlertCircle } from "lucide-react";
@@ -22,18 +22,26 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
 
   if (!match) return null;
 
-  // Map API-Football stats to GameStats format
-  const mappedStats = stats ? mapFootballStatistics(stats) : {};
+  // Map API-Football stats to GameStats format (with team_id verification!)
+  const mappedStats = stats ? mapFootballStatistics(stats, match) : {};
   
   console.log('🎯 Match Center - Estatísticas API-Football mapeadas:', {
     fixtureId: match.fixture.id,
     teams: `${match.teams.home.name} vs ${match.teams.away.name}`,
+    teamIds: { home: match.teams.home.id, away: match.teams.away.id },
     mappedStats
   });
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background border-primary/20 p-0">
+        <DialogTitle className="sr-only">
+          {match.teams.home.name} vs {match.teams.away.name}
+        </DialogTitle>
+        <DialogDescription className="sr-only">
+          Estatísticas detalhadas da partida {match.league.name}
+        </DialogDescription>
+        
         {/* Header */}
         <div className="sticky top-0 bg-card border-b border-primary/20 p-6 z-10">
           <button

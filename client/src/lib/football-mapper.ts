@@ -1,4 +1,4 @@
-import { FixtureStatistics } from "./football-service";
+import { FixtureStatistics, FootballMatch } from "./football-service";
 
 export interface MappedGameStats {
   xg?: { home: number; away: number };
@@ -16,15 +16,29 @@ export interface MappedGameStats {
 }
 
 export function mapFootballStatistics(
-  stats: FixtureStatistics[]
+  stats: FixtureStatistics[],
+  match: FootballMatch
 ): MappedGameStats {
   if (!stats || stats.length < 2) {
     console.warn('⚠️ API-Football Mapper: Dados insuficientes', stats);
     return {};
   }
 
-  const homeStats = stats[0];
-  const awayStats = stats[1];
+  // Match stats to teams by team_id (API doesn't guarantee order!)
+  const homeTeamId = match.teams.home.id;
+  const awayTeamId = match.teams.away.id;
+  
+  const homeStats = stats.find(s => s.team_id === homeTeamId);
+  const awayStats = stats.find(s => s.team_id === awayTeamId);
+  
+  if (!homeStats || !awayStats) {
+    console.warn('⚠️ API-Football Mapper: Could not match team IDs', {
+      expectedHome: homeTeamId,
+      expectedAway: awayTeamId,
+      receivedStats: stats.map(s => s.team_id),
+    });
+    return {};
+  }
 
   console.log('📊 [API-Football] Mapeando estatísticas:', {
     home: {

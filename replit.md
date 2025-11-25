@@ -131,18 +131,22 @@ Preferred communication style: Simple, everyday language.
 
 ### Recent Changes (Nov 25, 2024)
 
-**API-Football v3 Integration (Current):**
-- ✅ **Backend Proxy**: Express endpoints (`/api/football/*`) handle CORS and secure API key management
-  - Endpoints: `/api/football/fixtures/live`, `/api/football/fixtures/date/:date`, `/api/football/fixtures/statistics/:id`
-  - Authentication via `FOOTBALL_API_KEY` environment variable (backend only, no client exposure)
-  - RapidAPI headers: `x-rapidapi-key` and `x-rapidapi-host`
+**API-Football v3 Integration (Current - Nov 25, 2024):**
+- ✅ **Backend Proxy**: Express endpoints (`/api/football/*`) using RapidAPI correctly
+  - Base URL: `https://api-football-v1.p.rapidapi.com/v3`
+  - Endpoints: `/fixtures` (live & scheduled), `/fixtures/statistics` (detailed stats)
+  - Authentication: `x-rapidapi-key` and `x-rapidapi-host` headers with `FOOTBALL_API_KEY` environment variable
+  - Backend-only API key storage (secure, no client exposure)
 - ✅ **Coverage**: 1200+ leagues including all major competitions (Premier League, La Liga, Champions League, etc.)
+  - Real-world testing: 200+ fixtures per day vs 1-2 with Sportmonks
 - ✅ **Statistics**: Real data for attacks, dangerous attacks, possession, shots, corners, cards, saves
-  - Statistics returned as array of stat types (e.g., "Total attacks", "Dangerous attacks", "Ball Possession")
+  - Team identification via team_id matching (prevents home/away inversion)
   - Mapper function extracts values and handles percentage strings (e.g., "52%")
+  - Resilient mapping: verifies team_id before assigning stats to home/away
 - ✅ **Rate Limits**: Free tier provides 100 requests/day (sufficient for MVP testing)
 - ✅ **Update Frequency**: Live matches update every 15 seconds
-- **Known Issue**: Nested `<a>` tags warning in Layout/Sidebar (non-critical, doesn't affect functionality)
+- ✅ **Accessibility**: DialogTitle/DialogDescription added to Match Center modal for screen readers
+- ✅ **HTML Compliance**: Fixed nested `<a>` tags in Layout component (Wouter Link pattern)
 
 ### Recent Changes (Nov 2024)
 
