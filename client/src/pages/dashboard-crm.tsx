@@ -3,7 +3,8 @@ import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { AIScanner } from "@/components/ai-scanner";
-import { TrendingUp, Target, Percent, Flame, Copy, Clock, Activity } from "lucide-react";
+import { BetCard } from "@/components/bet-card";
+import { TrendingUp, Target, Percent, Flame, Activity } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function DashboardCRM() {
@@ -24,78 +25,43 @@ export default function DashboardCRM() {
         <CompactLiveHud />
       </div>
 
-      {/* Main CRM Layout: 30% Sidebar + 70% Main Area */}
+      {/* Main CRM Layout: 40% Sidebar + 60% Main Area */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-[calc(100vh-280px)]">
-        {/* LEFT SIDEBAR: Signal Feed (30%) */}
-        <div className="lg:col-span-4 bg-[#121212] border border-[#333] rounded-lg p-4 overflow-hidden flex flex-col">
+        {/* LEFT SIDEBAR: Premium Bet Cards Feed (40%) */}
+        <div className="lg:col-span-5 overflow-hidden flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-white uppercase tracking-wide">
-              Feed de Sinais Ao Vivo
+              Sinais Premium
             </h2>
             <span className="text-xs text-muted-foreground">
               {stats.activeSignals.length} Ativos
             </span>
           </div>
 
-          {/* Signal List - Scrollable */}
-          <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
-            {stats.recentSignals.map((signal) => (
-              <div
-                key={signal.id}
-                className="bg-[#0a0a0a] border border-[#222] rounded p-3 hover:border-primary/30 transition-colors cursor-pointer"
-                data-testid={`signal-${signal.id}`}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[9px] font-bold text-muted-foreground bg-[#1a1a1a] px-1.5 py-0.5 rounded">
-                        {signal.leagueShort}
-                      </span>
-                      <Clock className="w-3 h-3 text-muted-foreground" />
-                      <span className="text-[9px] text-muted-foreground">{signal.time}</span>
-                    </div>
-                    <p className="text-xs font-semibold text-white truncate">
-                      {signal.matchName}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] text-primary">{signal.market}</span>
-                      <span className="text-[10px] text-muted-foreground">@{signal.odd.toFixed(2)}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex flex-col items-end gap-1">
-                    {signal.status === 'pending' && (
-                      <span className="text-[9px] font-bold bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20">
-                        PENDENTE
-                      </span>
-                    )}
-                    {signal.status === 'processing' && (
-                      <span className="text-[9px] font-bold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded border border-blue-500/20 animate-pulse">
-                        AO VIVO
-                      </span>
-                    )}
-                    {signal.status === 'green' && (
-                      <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">
-                        VERDE
-                      </span>
-                    )}
-                    {signal.status === 'red' && (
-                      <span className="text-[9px] font-bold bg-red-500/10 text-red-500 px-2 py-0.5 rounded border border-red-500/20">
-                        VERMELHO
-                      </span>
-                    )}
-                    <button className="p-1 hover:bg-[#1a1a1a] rounded transition-colors">
-                      <Copy className="w-3 h-3 text-muted-foreground" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
+          {/* BetCard List - Scrollable */}
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+            {stats.recentSignals.slice(0, 5).map((signal) => {
+              // Convert CRM signal to BetCard-compatible format
+              const [homeTeam, awayTeam] = signal.matchName.split(' vs ');
+              const betCardSignal = {
+                id: signal.id,
+                league: signal.league,
+                homeTeam: homeTeam || signal.matchName,
+                awayTeam: awayTeam || '',
+                market: signal.market,
+                odd: signal.odd,
+                status: signal.status === 'processing' ? 'pending' as const : signal.status,
+                timestamp: signal.timestamp.toISOString(),
+                betLink: 'https://bet365.com'
+              };
+              
+              return <BetCard key={signal.id} signal={betCardSignal} />;
+            })}
           </div>
         </div>
 
-        {/* RIGHT AREA: Main Dashboard (70%) */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
+        {/* RIGHT AREA: Main Dashboard (60%) */}
+        <div className="lg:col-span-7 flex flex-col gap-6">
           {/* Performance HUD - 4 Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Assertivity */}
