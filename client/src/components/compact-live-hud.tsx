@@ -9,11 +9,11 @@ export function CompactLiveHud() {
   return (
     <div className="w-full mb-8">
       
-      {/* GRID DE ALINHAMENTO PERFEITO */}
-      <div className="grid grid-cols-[40%_60%] gap-6 h-64 items-stretch">
+      {/* BLOCO SUPERIOR: CÍRCULO + 2 CARDS */}
+      <div className="grid grid-cols-[40%_60%] gap-4 h-60 items-stretch mb-4">
 
         {/* --- ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) --- */}
-        <div className="relative flex items-center justify-center">
+        <div className="relative flex items-center justify-center h-full">
           <div className="relative w-40 h-40 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -47,20 +47,20 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: COMANDO DE DADOS (NEON CARDS) --- */}
-        <div className="flex flex-col gap-4">
+        {/* --- DIREITA: 2 CARDS "MESTRES" (Altura Fixa h-28 cada) --- */}
+        <div className="flex flex-col gap-4 h-full justify-between">
           
           {/* Card Lucro Líquido (Brilho Intenso) */}
-          <NeonCard intensity="high" className="flex-1">
+          <NeonCard intensity="high" className="h-28 flex-shrink-0">
             <div className="flex items-center gap-2 mb-1 z-10 relative">
               <TrendingUp className="w-4 h-4 text-[#33b864]" />
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Líquido</span>
             </div>
-            <span className="text-4xl font-sora font-bold text-white z-10 relative drop-shadow-sm">+106.2u</span>
+            <span className="text-3xl font-sora font-bold text-white z-10 relative drop-shadow-sm">+106.2u</span>
           </NeonCard>
 
           {/* Card ROI (Brilho Suave) */}
-          <NeonCard intensity="low" className="flex-1">
+          <NeonCard intensity="low" className="h-28 flex-shrink-0">
             <div className="flex items-center gap-2 mb-1 z-10 relative">
               <Zap className="w-4 h-4 text-[#33b864]" />
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
