@@ -1,0 +1,53 @@
+PROMPT MESTRE: FORCE HORIZONTAL ALIGNMENT (SIDE-BY-SIDE)
+ROLE: Senior CSS Engineer & UI Specialist.
+
+TASK: Corrigir o layout do componente CompactLiveHud.tsx. PROBLEMA: Os cards "Online Agora" e "Total Sinais" estão aparecendo um em cima do outro. OBJETIVO: Eles devem ficar Lado a Lado (Horizontal) na mesma linha, ocupando a mesma largura (50% cada).
+
+1. A ESTRUTURA CORRETA (FLEX ROW)
+Substitua o container dos cards superiores por este código exato. A chave aqui é a classe flex-row e flex-1 nos filhos.
+
+TypeScript
+
+{/* Container Principal do HUD */}
+<div className="w-full max-w-md mx-auto flex flex-col gap-6 mb-8">
+
+  {/* --- BLOCO 1: CARDS SUPERIORES (LADO A LADO) --- */}
+  <div className="flex flex-row items-stretch justify-between gap-4 w-full">
+    
+    {/* Card Esquerda: Online */}
+    <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+      <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Online Agora</span>
+      <div className="flex items-center gap-2">
+         <span className="w-1.5 h-1.5 rounded-full bg-[#33b864] animate-ping"></span>
+         <span className="text-xl font-sora font-bold text-white">629</span>
+      </div>
+    </div>
+
+    {/* Card Direita: Total Sinais */}
+    <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20">
+       <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+      <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Total Sinais</span>
+      <span className="text-xl font-sora font-bold text-white">151</span>
+    </div>
+
+  </div>
+
+  {/* --- BLOCO 2: CÍRCULO CENTRAL (ASSERTIVIDADE) --- */}
+  {/* Mantenha o código do círculo aqui embaixo, centralizado */}
+  <div className="flex items-center justify-center">
+     {/* ... Seu código SVG do círculo ... */}
+  </div>
+
+  {/* --- IMPORTANTE: REMOVA TUDO QUE ESTIVER ABAIXO DAQUI --- */}
+  {/* Apague os cards antigos de Unidades, ROI e Sequência que ainda aparecem no print */}
+
+</div>
+2. REGRAS DE CSS
+flex-row: Obriga a ficar horizontal.
+
+flex-1: Obriga os dois cards a dividirem o espaço igualmente (50% / 50%).
+
+h-20: Define uma altura fixa para ambos ficarem iguais e retangulares.
+
+COMANDO: Aplique esta estrutura. O resultado será os dois retângulos alinhados perfeitamente no topo, com o círculo futurista logo abaixo.

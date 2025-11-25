@@ -19,14 +19,14 @@ export function CompactLiveHud() {
   const strokeDashoffset = circumference * (1 - assertivityPercentage / 100);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 max-w-4xl mx-auto py-6">
-      
-      {/* --- TOP CARDS HORIZONTAIS --- */}
-      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
+    <div className="w-full max-w-md mx-auto flex flex-col gap-6 py-6">
+
+      {/* --- BLOCO 1: CARDS SUPERIORES (LADO A LADO) --- */}
+      <div className="flex flex-row items-stretch justify-between gap-4 w-full">
         
-        {/* Card 1: Online */}
+        {/* Card Esquerda: Online */}
         <div 
-          className="flex-1 w-full bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden group"
+          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
           data-testid="hud-users"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
@@ -37,9 +37,9 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* Card 2: Sinais */}
+        {/* Card Direita: Total Sinais */}
         <div 
-          className="flex-1 w-full bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden"
+          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
           data-testid="hud-signals"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
@@ -49,8 +49,8 @@ export function CompactLiveHud() {
 
       </div>
 
-      {/* --- O CÍRCULO FUTURISTA (TECH RING) --- */}
-      <div className="relative flex items-center justify-center py-4" data-testid="hud-assertivity">
+      {/* --- BLOCO 2: CÍRCULO CENTRAL (ASSERTIVIDADE) --- */}
+      <div className="flex items-center justify-center" data-testid="hud-assertivity">
         {/* Container do Círculo com efeito de brilho no fundo */}
         <div className="relative w-48 h-48 flex items-center justify-center">
           
