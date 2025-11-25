@@ -89,24 +89,6 @@ export default function DashboardCRM() {
           <div className="flex-1">
             <AIScanner />
           </div>
-
-          {/* System Status Bar */}
-          <div className="bg-[#121212] border border-[#333] rounded-lg p-3 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <Activity className="w-3 h-3 text-primary animate-pulse" />
-                <span className="text-[10px] text-muted-foreground font-mono">
-                  Varredura de Mercado... {stats.systemStatus.gamesAnalyzed.toLocaleString()} jogos analisados
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-              <span className="text-[10px] text-muted-foreground">
-                Sincronizado há {Math.floor((Date.now() - stats.systemStatus.lastSync.getTime()) / 1000)}s
-              </span>
-            </div>
-          </div>
         </div>
     </Layout>
   );
