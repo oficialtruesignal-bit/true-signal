@@ -8,11 +8,11 @@ export function CompactLiveHud() {
   return (
     <div className="w-full max-w-lg mx-auto mb-8">
       
-      {/* CONTAINER PRINCIPAL: GRID ASSIMÉTRICO COM ALTURA FIXA */}
-      <div className="grid grid-cols-[45%_55%] gap-4 h-56">
+      {/* GRID PRINCIPAL: CÍRCULO SOLTO + CARDS PADRÃO */}
+      <div className="grid grid-cols-[45%_55%] gap-4 h-56 items-center">
 
-        {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
-        <div className="flex items-center justify-center bg-[#121212]/50 rounded-2xl border border-[#33b864]/10 h-full relative">
+        {/* --- COLUNA ESQUERDA: O CÍRCULO (SEM CARD, SEM BORDA) --- */}
+        <div className="flex items-center justify-center h-full relative">
           <div className="relative w-40 h-40 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -34,7 +34,7 @@ export function CompactLiveHud() {
             </svg>
 
             {/* Conteúdo Central (Texto) */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
               <div className="flex items-baseline">
                 <span className="text-4xl font-sora font-bold text-white tracking-tighter">
                   {assertivityValue.toFixed(1)}
@@ -49,29 +49,25 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- COLUNA DIREITA: PILHA DE CARDS ROBUSTOS --- */}
+        {/* --- COLUNA DIREITA: CARDS CLONADOS (ESTILO PADRÃO) --- */}
         <div className="flex flex-col gap-4 h-full">
 
-          {/* CARD 1: ROI (Ocupa 50% da altura exata) */}
-          <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg relative overflow-hidden">
-            <div className="absolute left-0 top-3 bottom-3 w-1 bg-[#33b864] rounded-r-full"></div>
-            
-            <div className="flex items-center gap-2 mb-2 ml-3">
+          {/* CARD 1: ROI TOTAL (Estilo Idêntico ao "Padrão de Baixo") */}
+          <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:border-[#33b864]/40 transition-colors">
+            <div className="flex items-center gap-2 mb-2">
               <TrendingUp className="w-4 h-4 text-[#33b864]" />
-              <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
             </div>
-            <span className="text-2xl font-sora font-bold text-white ml-3">+{stats.roi.toFixed(1)}%</span>
+            <span className="text-2xl font-sora font-bold text-white">+{stats.roi.toFixed(1)}%</span>
           </div>
 
-          {/* CARD 2: SEQUÊNCIA (Ocupa 50% da altura exata) */}
-          <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg relative overflow-hidden">
-            <div className="absolute left-0 top-3 bottom-3 w-1 bg-orange-500 rounded-r-full"></div>
-
-            <div className="flex items-center gap-2 mb-2 ml-3">
+          {/* CARD 2: SEQUÊNCIA (Estilo Idêntico ao "Padrão de Baixo") */}
+          <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:border-[#33b864]/40 transition-colors">
+            <div className="flex items-center gap-2 mb-2">
               <Flame className="w-4 h-4 text-orange-500" />
-              <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Sequência</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sequência</span>
             </div>
-            <span className="text-2xl font-sora font-bold text-white ml-3">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
+            <span className="text-2xl font-sora font-bold text-white">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
           </div>
 
         </div>

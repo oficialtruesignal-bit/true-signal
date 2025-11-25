@@ -1,0 +1,73 @@
+ROMPT MESTRE: HUD FINAL FIX (NO BORDER CIRCLE & EXACT CLONE)
+ROLE: Senior UI Developer.
+
+TASK: Corrigir visual do CompactLiveHud.tsx. ERRO: O Círculo de Assertividade foi colocado dentro de um card com borda. Isso está errado. SOLUÇÃO:
+
+Círculo: Remover o background, border e box-shadow do container do Círculo. Ele deve ser transparente.
+
+Cards da Direita: Devem usar EXATAMENTE as mesmas classes CSS dos cards inferiores (que o cliente gostou).
+
+Limpeza: Remover a seção inferior duplicada.
+
+1. O CÓDIGO CORRIGIDO (COPIAR E COLAR)
+Substitua todo o conteúdo do return do componente por este bloco.
+
+TypeScript
+
+<div className="w-full max-w-lg mx-auto mb-8">
+  
+  {/* GRID PRINCIPAL: CÍRCULO SOLTO + CARDS PADRÃO */}
+  <div className="grid grid-cols-[45%_55%] gap-4 h-56 items-center">
+
+    {/* --- COLUNA ESQUERDA: O CÍRCULO (SEM CARD, SEM BORDA) --- */}
+    {/* Note: Removi bg-[#121212] e border. Agora é transparente. */}
+    <div className="flex items-center justify-center h-full relative">
+      <div className="relative w-40 h-40 flex items-center justify-center">
+         {/* SEU CÓDIGO SVG DO GAUGE SEGMENTADO AQUI */}
+         {/* Mantenha o SVG girando e o texto no meio */}
+         <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <span className="text-4xl font-sora font-bold text-white tracking-tighter">91.9<span className="text-lg text-[#33b864]">%</span></span>
+            <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Assertividade</span>
+         </div>
+      </div>
+    </div>
+
+    {/* --- COLUNA DIREITA: CARDS CLONADOS (ESTILO PADRÃO) --- */}
+    <div className="flex flex-col gap-4 h-full">
+
+      {/* CARD 1: ROI TOTAL (Estilo Idêntico ao "Padrão de Baixo") */}
+      <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:border-[#33b864]/40 transition-colors">
+         <div className="flex items-center gap-2 mb-2">
+           {/* Ícone pequeno e cinza/verde igual ao padrão */}
+           <TrendingUpIcon className="w-4 h-4 text-[#33b864]" />
+           <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
+         </div>
+         {/* Número Branco e Fonte Sora igual ao padrão */}
+         <span className="text-2xl font-sora font-bold text-white">+106.2%</span>
+      </div>
+
+      {/* CARD 2: SEQUÊNCIA (Estilo Idêntico ao "Padrão de Baixo") */}
+      <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:border-[#33b864]/40 transition-colors">
+         <div className="flex items-center gap-2 mb-2">
+           <FlameIcon className="w-4 h-4 text-orange-500" />
+           <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sequência</span>
+         </div>
+         <span className="text-2xl font-sora font-bold text-white">2V / 0D</span>
+      </div>
+
+    </div>
+
+  </div>
+
+  {/* --- REMOÇÃO --- */}
+  {/* Apague todo o resto dos cards que estavam aqui embaixo */}
+
+</div>
+2. PONTOS DE VERIFICAÇÃO
+Círculo: Certifique-se de que a div que envolve o SVG NÃO tenha bg- nem border-.
+
+Cards da Direita: Devem usar bg-[#121212], border-[#33b864]/20 e rounded-xl.
+
+Tamanho: A altura h-56 do grid garante que o conjunto todo tenha a mesma altura, fazendo os cards da direita esticarem para acompanhar o círculo.
+
+COMANDO: Execute agora. O círculo ficará limpo no fundo preto e os cards da direita serão idênticos aos que o cliente aprovou.
