@@ -1,0 +1,71 @@
+PROMPT MESTRE: EXACT DIMENSION MATCHING & CLEANUP
+ROLE: Senior UI/UX Developer.
+
+TASK: Padronizar as dimensões dos cards no CompactLiveHud.tsx. PROBLEMA: Os cards superiores ("ROI" e "Sequência") estão menores (mais finos) que os cards padrão do sistema. OBJETIVO: Forçar esses cards a terem altura e "peso" idênticos aos cards inferiores, e remover a seção duplicada.
+
+1. ESTRUTURA DE GRID SIMÉTRICO (FIXED HEIGHT)
+Substitua todo o retorno do componente por esta estrutura exata. Note o uso de h-56 (Altura Fixa) no container pai e flex-1 nos cards filhos. Isso obriga eles a crescerem.
+
+TypeScript
+
+<div className="w-full max-w-lg mx-auto mb-8">
+  
+  {/* CONTAINER PRINCIPAL: GRID ASSIMÉTRICO COM ALTURA FIXA */}
+  {/* h-56 (224px) garante que haja espaço vertical suficiente para os cards ficarem grandes */}
+  <div className="grid grid-cols-[45%_55%] gap-4 h-56">
+
+    {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
+    <div className="flex items-center justify-center bg-[#121212]/50 rounded-2xl border border-[#33b864]/10 h-full relative">
+      {/* O SVG deve ocupar quase toda a altura disponível */}
+      <div className="relative w-40 h-40 flex items-center justify-center">
+         {/* ... SEU CÓDIGO SVG DO CÍRCULO AQUI ... */}
+         <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-4xl font-sora font-bold text-white tracking-tighter">91.9<span className="text-lg text-[#33b864]">%</span></span>
+            <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">Assertividade</span>
+         </div>
+      </div>
+    </div>
+
+    {/* --- COLUNA DIREITA: PILHA DE CARDS ROBUSTOS --- */}
+    <div className="flex flex-col gap-4 h-full">
+
+      {/* CARD 1: ROI (Ocupa 50% da altura exata) */}
+      <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg relative overflow-hidden">
+         {/* Faixa decorativa lateral */}
+         <div className="absolute left-0 top-3 bottom-3 w-1 bg-[#33b864] rounded-r-full"></div>
+         
+         <div className="flex items-center gap-2 mb-2 ml-3">
+           <TrendingUpIcon className="w-4 h-4 text-[#33b864]" />
+           <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
+         </div>
+         <span className="text-2xl font-sora font-bold text-white ml-3">+106.2%</span>
+      </div>
+
+      {/* CARD 2: SEQUÊNCIA (Ocupa 50% da altura exata) */}
+      <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg relative overflow-hidden">
+         {/* Faixa decorativa lateral */}
+         <div className="absolute left-0 top-3 bottom-3 w-1 bg-orange-500 rounded-r-full"></div>
+
+         <div className="flex items-center gap-2 mb-2 ml-3">
+           <FlameIcon className="w-4 h-4 text-orange-500" />
+           <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">Sequência</span>
+         </div>
+         <span className="text-2xl font-sora font-bold text-white ml-3">2V / 0D</span>
+      </div>
+
+    </div>
+
+  </div>
+  
+  {/* --- REMOÇÃO TOTAL --- */}
+  {/* APAGUE qualquer código que venha depois desta div que renderize outros cards de métricas */}
+
+</div>
+2. POR QUE ISSO FUNCIONA?
+h-56: Define que o bloco todo tem 224px de altura.
+
+flex-1: Diz aos cards da direita: "Cresçam até ocupar todo o espaço disponível". Como são 2 cards e tem um gap, cada um ficará com aprox. 100px de altura.
+
+Resultado: 100px de altura é exatamente a altura "robusta" que os cards de baixo tinham. Eles vão ficar idênticos.
+
+COMANDO: Substitua o código. Agora você terá simetria perfeita e cards do mesmo tamanho, sem duplicatas embaixo.
