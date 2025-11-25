@@ -4,11 +4,21 @@ import { CompactLiveHud } from "@/components/compact-live-hud";
 import { AIScanner } from "@/components/ai-scanner";
 import { TrendingUp, Target, Percent, Flame, Activity, Users, Ticket } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { tipsService } from "@/lib/tips-service";
 
 export default function DashboardCRM() {
   const stats = useCRMDashboardData();
   const [usersOnline, setUsersOnline] = useState(620);
-  const [totalSignals] = useState(151);
+  
+  // Busca sinais reais do banco de dados
+  const { data: tips = [] } = useQuery({
+    queryKey: ['tips'],
+    queryFn: tipsService.getAll,
+    refetchInterval: 30000, // Atualiza a cada 30s
+  });
+  
+  const totalSignals = tips.length;
 
   useEffect(() => {
     const interval = setInterval(() => {
