@@ -139,6 +139,8 @@ export const footballService = {
   },
 
   getFixtureStatistics: async (fixtureId: number): Promise<FixtureStatistics[]> => {
+    console.log(`🔄 Buscando estatísticas para fixture ${fixtureId}...`);
+    
     if (!API_KEY) {
       console.warn("No VITE_FOOTBALL_API_KEY found. Using Mock Statistics.");
       // Return mock statistics for development
@@ -196,9 +198,17 @@ export const footballService = {
           "x-rapidapi-host": "v3.football.api-sports.io",
         },
       });
-      return response.data.response;
+      
+      const stats = response.data.response;
+      console.log(`✅ Estatísticas recebidas para fixture ${fixtureId}:`, stats);
+      
+      return stats;
     } catch (error) {
-      console.error("Error fetching fixture statistics:", error);
+      console.error("❌ Error fetching fixture statistics:", error);
+      if (axios.isAxiosError(error)) {
+        console.error("API Error Response:", error.response?.data);
+        console.error("API Error Status:", error.response?.status);
+      }
       return [];
     }
   },

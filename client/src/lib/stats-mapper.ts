@@ -19,11 +19,19 @@ export function mapFixtureStatistics(
   apiStats: FixtureStatistics[]
 ): MappedGameStats {
   if (!apiStats || apiStats.length < 2) {
+    console.warn('Stats Mapper: Dados insuficientes', apiStats);
     return {};
   }
 
   const homeStats = apiStats[0].statistics;
   const awayStats = apiStats[1].statistics;
+  
+  console.log('📊 Stats Mapper - Dados da API:', {
+    home: apiStats[0].team.name,
+    away: apiStats[1].team.name,
+    homeStats: homeStats.map(s => `${s.type}: ${s.value}`),
+    awayStats: awayStats.map(s => `${s.type}: ${s.value}`)
+  });
 
   const getStat = (stats: any[], type: string): number | null => {
     const stat = stats.find((s) => s.type === type);

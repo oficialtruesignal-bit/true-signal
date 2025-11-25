@@ -15,13 +15,21 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
   const { data: stats, isLoading } = useQuery({
     queryKey: ['match-stats', match?.fixture.id],
     queryFn: () => footballService.getFixtureStatistics(match!.fixture.id),
-    enabled: !!match,
+    enabled: !!match && open,
+    refetchInterval: 10000, // Atualiza a cada 10 segundos
+    staleTime: 5000, // Considera dados obsoletos após 5 segundos
   });
 
   if (!match) return null;
 
   // Map API stats to GameStats format
   const mappedStats = stats ? mapFixtureStatistics(stats) : {};
+  
+  console.log('🎯 Match Center - Estatísticas mapeadas:', {
+    fixtureId: match.fixture.id,
+    teams: `${match.teams.home.name} vs ${match.teams.away.name}`,
+    mappedStats
+  });
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
