@@ -173,20 +173,28 @@ export function BetCard({ signal }: BetCardProps) {
     day: '2-digit', 
     month: '2-digit',
     hour: '2-digit', 
-    minute: '2-digit' 
+    minute: '2-digit',
+    timeZone: 'America/Sao_Paulo'
   });
 
-  // Hora do jogo para exibir no cabeçalho
+  // Hora do jogo para exibir no cabeçalho (horário de Brasília)
   const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
     ? signal.legs[0].time 
-    : matchDate.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+    : matchDate.toLocaleString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        timeZone: 'America/Sao_Paulo'
+      });
 
-  // Data/hora de criação do bilhete
+  // Data/hora de criação do bilhete (horário de Brasília)
   const createdDateTime = new Date(signal.timestamp).toLocaleString('pt-BR', { 
     day: '2-digit', 
     month: '2-digit',
     hour: '2-digit', 
-    minute: '2-digit' 
+    minute: '2-digit',
+    timeZone: 'America/Sao_Paulo'
   });
 
   return (
