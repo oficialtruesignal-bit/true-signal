@@ -1,0 +1,91 @@
+PROMPT MESTRE: UI STANDARDIZATION (SINGLE COMPONENT TRUTH)
+ROLE: Senior Design System Architect.
+
+TASK: Resolver definitivamente a inconsistência visual no Dashboard. PROBLEMA: Os cards superiores e inferiores estão com estilos (cores, bordas, sombras) diferentes. SOLUÇÃO: Criar um componente reutilizável StatCard e aplicar em TODOS os lugares. E remover a duplicidade de dados.
+
+1. CRIAR O COMPONENTE "MOLDE" (StatCard.tsx)
+Crie um novo componente em src/components/dashboard/StatCard.tsx. Este será a ÚNICA fonte de verdade para o design.
+
+Código Obrigatório (O Padrão Ouro):
+
+TypeScript
+
+import { ReactNode } from 'react';
+
+interface StatCardProps {
+  label: string;
+  value: string;
+  icon: ReactNode;
+  trendColor?: string; // Opcional para cor do texto (verde/branco)
+}
+
+export function StatCard({ label, value, icon, trendColor = "text-white" }: StatCardProps) {
+  return (
+    <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center shadow-lg hover:border-[#33b864]/40 transition-all h-full min-h-[90px]">
+      <div className="flex items-center gap-2 mb-2">
+        {icon}
+        <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">{label}</span>
+      </div>
+      <span className={`text-2xl font-sora font-bold ${trendColor}`}>
+        {value}
+      </span>
+    </div>
+  );
+}
+2. APLICAR NO HUD (RECONSTRUÇÃO TOTAL)
+Vá no CompactLiveHud.tsx e limpe tudo. Substitua pelo código abaixo que usa o Novo Componente. Isso garante que a altura e largura sejam calculadas automaticamente pelo Grid, ficando idênticas.
+
+TypeScript
+
+import { StatCard } from './StatCard'; // Importe o novo componente
+
+// ... dentro do componente CompactLiveHud ...
+
+return (
+  <div className="w-full max-w-lg mx-auto mb-8">
+    
+    {/* GRID DE ALINHAMENTO PERFEITO (Altura Fixa 220px) */}
+    <div className="grid grid-cols-[45%_55%] gap-4 h-[220px] items-stretch">
+
+      {/* --- ESQUERDA: CÍRCULO (SEM FUNDO, SEM BORDA) --- */}
+      <div className="flex items-center justify-center relative">
+         {/* SEU CÓDIGO SVG DO GAUGE AQUI (MANTENHA COMO ESTÁ) */}
+         {/* Certifique-se que ele não tem div pai com bg-color */}
+      </div>
+
+      {/* --- DIREITA: CARDS PADRONIZADOS --- */}
+      <div className="flex flex-col gap-4 h-full">
+        
+        {/* CARD 1: ROI */}
+        <StatCard 
+          label="ROI TOTAL" 
+          value="+106.2%" 
+          trendColor="text-[#33b864]"
+          icon={<TrendingUpIcon className="w-4 h-4 text-[#33b864]" />} 
+        />
+
+        {/* CARD 2: SEQUÊNCIA */}
+        <StatCard 
+          label="SEQUÊNCIA" 
+          value="2V / 0D" 
+          icon={<FlameIcon className="w-4 h-4 text-orange-500" />} 
+        />
+
+      </div>
+
+    </div>
+
+    {/* --- AÇÃO DE LIMPEZA --- */}
+    {/* IMPORTANTE: Remova QUALQUER código abaixo desta linha que gere cards antigos */}
+    {/* O Dashboard DEVE acabar aqui. Não mostre Usuários Online nem Sinais Enviados duplicados. */}
+
+  </div>
+);
+3. CHECKLIST FINAL
+Altura: O uso de h-[220px] no grid e h-full nos cards garante que eles ocupem todo o espaço vertical.
+
+Largura: O Grid define a largura.
+
+Estilo: Como ambos usam <StatCard />, é impossível ficarem diferentes.
+
+COMANDO: Implemente o componente StatCard e refatore o HUD. Quero ver simetria perfeita. Apague os cards duplicados da parte inferior da tela.
