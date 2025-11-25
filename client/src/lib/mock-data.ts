@@ -27,6 +27,7 @@ export interface Signal {
   betLink?: string;
   isLive?: boolean;
   legs?: BetLeg[]; // Multiple selections for combo bets
+  fixtureId?: number; // ID from API-Football to fetch official data
 }
 
 export interface LiveGame {
@@ -54,6 +55,7 @@ export const MOCK_SIGNALS: Signal[] = [
     isHot: true,
     betLink: "https://bet365.com",
     isLive: false,
+    fixtureId: 1035137, // ID da API-Football para buscar dados oficiais
     legs: [
       {
         homeTeam: "Arsenal",
@@ -92,6 +94,7 @@ export const MOCK_SIGNALS: Signal[] = [
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
     betLink: "https://bet365.com",
     isLive: false,
+    fixtureId: 1207655, // ID da API-Football
   },
   {
     id: "3",

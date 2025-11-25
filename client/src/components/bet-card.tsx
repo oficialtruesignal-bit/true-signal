@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
 import { useState, useEffect } from "react";
+import axios from "axios";
 
 interface BetCardProps {
   signal: Signal;
@@ -54,7 +55,31 @@ function abbreviateTeamName(teamName: string): string {
 
 export function BetCard({ signal }: BetCardProps) {
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
+  const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
+  const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
+
+  // Busca dados oficiais da API-Football se houver fixtureId
+  useEffect(() => {
+    if (!signal.fixtureId) return;
+
+    const fetchFixtureData = async () => {
+      try {
+        const response = await axios.get(`/api/football/fixtures/${signal.fixtureId}`);
+        const fixture = response.data.response?.[0];
+        
+        if (fixture) {
+          // Atualiza com dados oficiais
+          setOfficialLeague(fixture.league.name);
+          setOfficialMatchTime(fixture.fixture.date);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar dados da partida:', error);
+      }
+    };
+
+    fetchFixtureData();
+  }, [signal.fixtureId]);
   
   const totalOdd = signal.legs && signal.legs.length > 0
     ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)
@@ -139,8 +164,11 @@ export function BetCard({ signal }: BetCardProps) {
   const copyCount = Math.floor(Math.random() * 2000) + 500;
   const signalId = signal.id.slice(0, 8).toUpperCase();
 
-  // Data/hora do jogo (2 horas após criação do bilhete como exemplo)
-  const matchDate = new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
+  // Usa data oficial da API se disponível, senão usa 2h após criação
+  const matchDate = officialMatchTime 
+    ? new Date(officialMatchTime)
+    : new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
+  
   const matchDateTime = matchDate.toLocaleString('pt-BR', { 
     day: '2-digit', 
     month: '2-digit',
@@ -169,7 +197,7 @@ export function BetCard({ signal }: BetCardProps) {
       {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS) --- */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide whitespace-nowrap">
-          <span className="text-[#33b864] uppercase truncate">{signal.league}</span>
+          <span className="text-[#33b864] uppercase truncate">{officialLeague}</span>
           <span className="text-gray-500">•</span>
           <span className="text-gray-400">{displayTime}</span>
         </div>

@@ -53,6 +53,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/football/fixtures/:id", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+        params: { id },
+        headers: {
+          "x-apisports-key": FOOTBALL_API_KEY,
+        },
+      });
+      return res.json(response.data);
+    } catch (error: any) {
+      console.error(`[API-Football] Error fetching fixture ${req.params.id}:`, error.message);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("[API-Football] Response Status:", error.response.status);
+        console.error("[API-Football] Response Data:", error.response.data);
+      }
+      return res.status(500).json({ error: "Failed to fetch fixture", details: error.message });
+    }
+  });
+
   app.get("/api/football/fixtures/statistics/:id", async (req, res) => {
     try {
       const { id } = req.params;
