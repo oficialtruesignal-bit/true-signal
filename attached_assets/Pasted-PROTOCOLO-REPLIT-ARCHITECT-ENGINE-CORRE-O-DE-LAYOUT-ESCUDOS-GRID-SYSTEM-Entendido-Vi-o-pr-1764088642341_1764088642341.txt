@@ -1,0 +1,116 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: CORREÇÃO DE LAYOUT & ESCUDOS (GRID SYSTEM) 🔴
+
+Entendido. Vi o print (image_10.png). O layout quebrou porque o Flexbox não aguentou a complexidade, e a falta de imagens dos escudos deixou buracos feios.
+
+Vamos resolver isso com duas ações cirúrgicas:
+
+Escudos (Fallback Inteligente): Se não tiver imagem, vamos gerar automaticamente um círculo colorido com a inicial do time (Ex: "C" para Chelsea). Fica bonito e sempre funciona.
+
+Alinhamento (CSS Grid): Vamos abandonar o Flexbox complexo e usar um Grid Rígido. O Grid força os elementos a ficarem em suas "celas", garantindo que o "vs" fique sempre no meio e a ODD sempre alinhada, sem sambar.
+
+Aqui está o prompt de correção imediata.
+
+PROMPT DE CORREÇÃO: SIGNAL CARD ALIGNMENT & SHIELD FALLBACK
+ROLE: Senior UI Engineer & Tailwind Expert.
+
+TASK: Corrigir urgentemente o componente SignalCard.tsx. PROBLEMAS IDENTIFICADOS:
+
+Escudos Quebrados: As imagens dos times não carregam, deixando ícones de erro.
+
+Desalinhamento Grave: O layout horizontal está quebrado, com elementos fora de lugar e alturas inconsistentes (visto no print do usuário).
+
+1. SOLUÇÃO DOS ESCUDOS: COMPONENTE TeamShield
+Crie um pequeno componente auxiliar interno ou separado chamado TeamShield. Lógica:
+
+Recebe teamName (string) e imageUrl (string opcional).
+
+Se imageUrl existir: Renderiza a tag <img> normal com rounded-full.
+
+Se NÃO existir (Fallback): Renderiza uma div circular.
+
+Estilo: w-8 h-8 rounded-full bg-[#33b864]/20 flex items-center justify-center border border-[#33b864]/40.
+
+Conteúdo: A primeira letra do nome do time (teamName.charAt(0)).
+
+Fonte: text-[#33b864] font-sora font-bold.
+
+2. SOLUÇÃO DE LAYOUT: MIGRAÇÃO PARA CSS GRID
+Abandone a estrutura complexa de Flexbox aninhado. Use um Grid de 3 Colunas Principais para o corpo do card.
+
+Nova Estrutura do SignalCard.tsx:
+
+TypeScript
+
+// Container Principal do Card (Borda, Fundo, etc.)
+<div className="bg-[#0a0a0a] border border-[#33b864]/30 rounded-xl p-3 relative overflow-hidden">
+
+  {/* ----- LINHA SUPERIOR: Liga, Hora e Status ----- */}
+  <div className="flex justify-between items-center mb-3">
+    <div className="flex items-center gap-2 text-xs text-gray-400 font-inter">
+      <span className="uppercase font-bold text-[#33b864]">UEFA Champions League</span>
+      <span>•</span>
+      <span>11:59</span>
+    </div>
+    {/* Badge de Status (Pendente) */}
+    <div className="bg-[#121212] border border-[#33b864] text-[#33b864] text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+      Pendente
+    </div>
+  </div>
+
+  {/* ----- CORPO PRINCIPAL: GRID RÍGIDO (O CONSERTADOR) ----- */}
+  <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+
+    {/* COLUNA 1: Time da Casa (Alinhado à Direita) */}
+    <div className="flex items-center justify-end gap-3">
+      <span className="font-sora font-bold text-white text-lg text-right truncate">Chelsea</span>
+      <TeamShield teamName="Chelsea" /> {/* Usa o novo componente */}
+    </div>
+
+    {/* COLUNA 2: VS (Centralizado Fixo) */}
+    <div className="text-gray-500 font-sora font-semibold text-sm text-center px-2">
+      vs
+    </div>
+
+    {/* COLUNA 3: Time Visitante (Alinhado à Esquerda) */}
+    <div className="flex items-center justify-start gap-3">
+      <TeamShield teamName="Barcelona" /> {/* Usa o novo componente */}
+      <span className="font-sora font-bold text-white text-lg text-left truncate">Barcelona</span>
+    </div>
+
+  </div> {/* Fim do Grid dos Times */}
+
+
+  {/* ----- RODAPÉ: Mercado, ODD e Botão ----- */}
+  <div className="mt-4 flex items-center justify-between bg-[#121212] rounded-lg p-2 border border-white/5">
+
+    {/* Lado Esquerdo: Mercado */}
+    <div className="flex flex-col">
+      <span className="text-[#33b864] font-sora font-bold uppercase text-sm">
+        Vitória Visitante
+      </span>
+      <span className="text-gray-500 text-[10px]">Mercado Principal</span>
+    </div>
+
+    {/* Lado Direito: ODD + Botão (Agrupados) */}
+    <div className="flex items-center gap-2">
+      {/* Caixa da ODD */}
+      <div className="bg-[#33b864]/10 border border-[#33b864]/40 rounded-md px-3 py-1">
+        <span className="text-[#33b864] font-sora font-extrabold text-xl">@2.50</span>
+      </div>
+
+      {/* Botão de Copiar Compacto */}
+      <button className="bg-[#33b864] hover:bg-[#289a54] text-[#0a0a0a] rounded-md p-2 flex items-center justify-center transition-colors">
+        <CopyIcon className="w-5 h-5" /> {/* Use o ícone de cópia aqui */}
+      </button>
+    </div>
+
+  </div>
+
+  {/* Rodapézinho discreto (IDs) */}
+  <div className="mt-2 text-[10px] text-gray-600 flex gap-3">
+    <span>#C4187A56</span>
+    <span>👥 1568</span>
+  </div>
+
+</div>
+COMANDO: Implemente essa estrutura exata. O uso do Grid (grid-cols-[1fr_auto_1fr]) vai forçar o alinhamento central do "vs" e manter os times simétricos, independentemente do tamanho dos nomes. O componente TeamShield resolverá o problema das imagens quebradas.
