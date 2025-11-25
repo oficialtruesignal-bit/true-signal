@@ -1,5 +1,8 @@
 import { TrendingUp, Target, Zap } from "lucide-react";
 import { Card } from "./ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { kpiService } from "@/lib/kpi-service";
+import { Skeleton } from "./ui/skeleton";
 
 interface KPICardProps {
   icon: React.ReactNode;
@@ -7,9 +10,25 @@ interface KPICardProps {
   value: string;
   delta: string;
   positive?: boolean;
+  isLoading?: boolean;
 }
 
-function KPICard({ icon, label, value, delta, positive = true }: KPICardProps) {
+function KPICard({ icon, label, value, delta, positive = true, isLoading = false }: KPICardProps) {
+  if (isLoading) {
+    return (
+      <Card className="bg-black/40 backdrop-blur-md border-primary/20 p-6 rounded-2xl">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Skeleton className="w-12 h-12 rounded-xl bg-white/5" />
+            <Skeleton className="w-16 h-6 rounded-full bg-white/5" />
+          </div>
+          <Skeleton className="w-32 h-10 bg-white/5" />
+          <Skeleton className="w-24 h-4 bg-white/5" />
+        </div>
+      </Card>
+    );
+  }
+
   return (
     <div className="relative group">
       <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -46,12 +65,13 @@ function KPICard({ icon, label, value, delta, positive = true }: KPICardProps) {
 }
 
 export function DashboardCommandCenter() {
-  // Mock data - would be replaced with real API data
-  const kpis = {
-    greenRate: { value: "94.2%", delta: "+2.4%", positive: true },
-    roi: { value: "+187%", delta: "+12%", positive: true },
-    activeTips: { value: "8", delta: "LIVE", positive: true },
-  };
+  // Fetch real KPI data with auto-refresh every 10 seconds
+  const { data: kpis, isLoading } = useQuery({
+    queryKey: ['dashboard-kpis'],
+    queryFn: kpiService.getKPIs,
+    refetchInterval: 10000, // Refresh every 10 seconds
+    staleTime: 5000, // Consider data stale after 5 seconds
+  });
 
   return (
     <div className="relative mb-8 overflow-hidden rounded-3xl">
@@ -81,23 +101,26 @@ export function DashboardCommandCenter() {
           <KPICard
             icon={<Target className="w-6 h-6 text-primary" />}
             label="Green Rate"
-            value={kpis.greenRate.value}
-            delta={kpis.greenRate.delta}
-            positive={kpis.greenRate.positive}
+            value={isLoading ? "-" : `${kpis?.greenRate?.value ?? 0}%`}
+            delta={isLoading ? "-" : `${(kpis?.greenRate?.delta ?? 0) >= 0 ? '+' : ''}${kpis?.greenRate?.delta ?? 0}%`}
+            positive={kpis?.greenRate?.positive ?? true}
+            isLoading={isLoading}
           />
           <KPICard
             icon={<TrendingUp className="w-6 h-6 text-primary" />}
             label="ROI Total"
-            value={kpis.roi.value}
-            delta={kpis.roi.delta}
-            positive={kpis.roi.positive}
+            value={isLoading ? "-" : `${(kpis?.roi?.value ?? 0) >= 0 ? '+' : ''}${kpis?.roi?.value ?? 0}%`}
+            delta={isLoading ? "-" : `${(kpis?.roi?.delta ?? 0) >= 0 ? '+' : ''}${kpis?.roi?.delta ?? 0}%`}
+            positive={kpis?.roi?.positive ?? true}
+            isLoading={isLoading}
           />
           <KPICard
             icon={<Zap className="w-6 h-6 text-primary" />}
             label="Tips Ativos"
-            value={kpis.activeTips.value}
-            delta={kpis.activeTips.delta}
-            positive={kpis.activeTips.positive}
+            value={isLoading ? "-" : (kpis?.activeTips?.value ?? 0).toString()}
+            delta={(kpis?.activeTips?.isLive ?? false) ? "LIVE" : "PENDING"}
+            positive={true}
+            isLoading={isLoading}
           />
         </div>
       </div>
