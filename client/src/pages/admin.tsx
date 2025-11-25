@@ -5,7 +5,7 @@ import { footballService, FootballMatch } from "@/lib/football-service";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert } from "lucide-react";
+import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -102,6 +102,17 @@ export default function Admin() {
     }
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => tipsService.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
+      toast.success("Sinal deletado com sucesso!");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao deletar sinal.");
+    }
+  });
+
   const handleCreateTip = (formData: any) => {
     if (user?.role !== 'admin' && user?.email !== 'kwillianferreira@gmail.com') {
       toast.error("Apenas administradores podem criar tips.");
@@ -193,6 +204,7 @@ export default function Admin() {
                       variant="outline" 
                       className={`w-8 h-8 ${signal.status === 'green' ? 'bg-green-500/20 border-green-500 text-green-500' : 'border-white/10 hover:border-green-500 hover:text-green-500'}`}
                       onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'green' })}
+                      data-testid={`button-status-green-${signal.id}`}
                     >
                       <Trophy className="w-4 h-4" />
                     </Button>
@@ -201,6 +213,7 @@ export default function Admin() {
                       variant="outline" 
                       className={`w-8 h-8 ${signal.status === 'red' ? 'bg-red-500/20 border-red-500 text-red-500' : 'border-white/10 hover:border-red-500 hover:text-red-500'}`}
                       onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'red' })}
+                      data-testid={`button-status-red-${signal.id}`}
                     >
                       <XCircle className="w-4 h-4" />
                     </Button>
@@ -209,8 +222,22 @@ export default function Admin() {
                       variant="outline" 
                       className={`w-8 h-8 ${signal.status === 'pending' ? 'bg-yellow-500/20 border-yellow-500 text-yellow-500' : 'border-white/10 hover:border-yellow-500 hover:text-yellow-500'}`}
                       onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'pending' })}
+                      data-testid={`button-status-pending-${signal.id}`}
                     >
                       <Clock className="w-4 h-4" />
+                    </Button>
+                    <Button 
+                      size="icon" 
+                      variant="outline" 
+                      className="w-8 h-8 border-white/10 hover:border-red-500 hover:text-red-500 hover:bg-red-500/10"
+                      onClick={() => {
+                        if (confirm(`Deletar o sinal ${signal.homeTeam} vs ${signal.awayTeam}?`)) {
+                          deleteMutation.mutate(signal.id);
+                        }
+                      }}
+                      data-testid={`button-delete-${signal.id}`}
+                    >
+                      <Trash2 className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

@@ -6,6 +6,7 @@ import { getTeamLogo } from "@/lib/team-logos";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@/hooks/use-auth";
+import { useQueryClient } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import {
   DropdownMenu,
@@ -31,9 +32,10 @@ interface BetCardProps {
 }
 
 // TeamShield Component with Official Logos (40px)
-function TeamShield({ teamName }: { teamName: string }) {
+function TeamShield({ teamName, logoUrl: propLogoUrl }: { teamName: string; logoUrl?: string }) {
   const [imageError, setImageError] = useState(false);
-  const logoUrl = getTeamLogo(teamName);
+  const fallbackLogoUrl = getTeamLogo(teamName);
+  const logoUrl = propLogoUrl || fallbackLogoUrl;
   
   if (logoUrl && !imageError) {
     return (
@@ -75,10 +77,13 @@ function abbreviateTeamName(teamName: string): string {
 
 export function BetCard({ signal, onDelete }: BetCardProps) {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const isAdmin = user?.role === 'admin';
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
   const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
+  const [homeTeamLogo, setHomeTeamLogo] = useState<string | null>(null);
+  const [awayTeamLogo, setAwayTeamLogo] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
@@ -99,8 +104,12 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           // Atualiza com dados oficiais
           console.log('✅ Liga oficial:', fixture.league.name);
           console.log('✅ Data oficial:', fixture.fixture.date);
+          console.log('✅ Logo casa:', fixture.teams.home.logo);
+          console.log('✅ Logo fora:', fixture.teams.away.logo);
           setOfficialLeague(fixture.league.name);
           setOfficialMatchTime(fixture.fixture.date);
+          setHomeTeamLogo(fixture.teams.home.logo);
+          setAwayTeamLogo(fixture.teams.away.logo);
         } else {
           console.log('❌ Nenhum fixture encontrado');
         }
@@ -146,6 +155,9 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
       // Chama a API para persistir
       await tipsService.updateStatus(signal.id, newStatus);
       
+      // Invalida cache para refetch em outras páginas
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
+      
       toast({
         title: "Status atualizado!",
         description: `Bilhete marcado como ${newStatus.toUpperCase()}`,
@@ -164,6 +176,9 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
   const handleDelete = async () => {
     try {
       await tipsService.delete(signal.id);
+      
+      // Invalida cache para refetch
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
       
       toast({
         title: "Sinal deletado!",
@@ -347,13 +362,13 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.homeTeam)}</span>
         
         {/* Escudo Casa */}
-        <TeamShield teamName={signal.homeTeam} />
+        <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
 
         {/* VS */}
         <span className="text-gray-600 font-sora font-medium text-sm">vs</span>
 
         {/* Escudo Fora */}
-        <TeamShield teamName={signal.awayTeam} />
+        <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
 
         {/* Time Fora */}
         <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.awayTeam)}</span>

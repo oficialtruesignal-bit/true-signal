@@ -1,0 +1,108 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: ALINHAMENTO ESTRUTURAL DE ESTATÍSTICAS (GRID SYSTEM) 🟢
+
+Vi a imagem. Realmente, está "solto". O círculo de posse está flutuando sem eixo, os números estão jogados e as barras de progresso não têm um alinhamento central claro.
+
+Para consertar isso, precisamos tratar essa tela como uma Tabela de Engenharia. Tudo deve partir de um eixo central (o meio da tela).
+
+Vamos criar componentes específicos para garantir que, se você adicionar 10 estatísticas diferentes, todas fiquem idênticas.
+
+Aqui está o Prompt de Reconstrução Total do Modal de Estatísticas.
+
+PROMPT MESTRE: LIVE STATS REDESIGN (SYMMETRICAL GRID)
+ROLE: Senior UI/UX Designer & Data Visualization Specialist.
+
+TASK: Reconstruir completamente o componente de detalhes do jogo (LiveGameDetails.tsx ou similar). PROBLEMA: O layout atual está assimétrico, com elementos desalinhados e tipografia inconsistente. OBJETIVO: Criar um layout Simétrico e Tabular, onde o centro da tela é o eixo de equilíbrio.
+
+1. CABEÇALHO DO MODAL (FIXED SCOREBOARD)
+Reaplique a lógica de "Grid Blindado" que usamos no card anterior para o cabeçalho deste modal.
+
+Times e Placar alinhados em grid-cols-[1fr_auto_1fr].
+
+Garanta que o botão de fechar (X) não quebre o layout (use absolute top-4 right-4).
+
+2. O CÍRCULO DE POSSE (CENTERED GAUGE)
+O círculo deve ser o protagonista do topo.
+
+Container: Flex Column centralizado.
+
+Layout:
+
+TypeScript
+
+<div className="flex items-center justify-center gap-6 mb-6">
+  {/* Lado Esquerdo (Home) */}
+  <div className="text-right">
+    <span className="text-2xl font-sora font-bold text-[#33b864]">{homePossession}%</span>
+    <p className="text-[10px] text-gray-500 uppercase">Casa</p>
+  </div>
+
+  {/* O Círculo (Centro) */}
+  <div className="relative w-24 h-24">
+    <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+      {/* Fundo */}
+      <path className="text-gray-800" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+      {/* Progresso (Home - Verde) */}
+      <path className="text-[#33b864] drop-shadow-[0_0_5px_rgba(51,184,100,0.5)]" strokeDasharray={`${homePossession}, 100`} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" strokeWidth="3" />
+    </svg>
+    <div className="absolute inset-0 flex items-center justify-center">
+       <span className="text-[10px] font-bold text-gray-400">POSSE</span>
+    </div>
+  </div>
+
+  {/* Lado Direito (Away) */}
+  <div className="text-left">
+    <span className="text-2xl font-sora font-bold text-white">{awayPossession}%</span>
+    <p className="text-[10px] text-gray-500 uppercase">Fora</p>
+  </div>
+</div>
+3. GRID DE EVENTOS (ESCANTEIOS/CARTÕES)
+Use um Grid de 3 colunas com divisórias verticais sutis.
+
+Estilo: grid grid-cols-3 divide-x divide-white/10 bg-[#121212] rounded-xl p-4 mb-6.
+
+Conteúdo: Ícone em cima, Placar no meio ("5 - 2"), Label embaixo.
+
+4. BARRAS DE ESTATÍSTICAS (O ALINHAMENTO PERFEITO)
+Crie um sub-componente StatRow para padronizar todas as linhas (Chutes, Passes, Ataques).
+
+Estrutura do StatRow:
+
+TypeScript
+
+const StatRow = ({ label, homeValue, awayValue }) => {
+  // Cálculo de porcentagem para as barras
+  const total = homeValue + awayValue;
+  const homePct = total === 0 ? 0 : (homeValue / total) * 100;
+  const awayPct = total === 0 ? 0 : (awayValue / total) * 100;
+
+  return (
+    <div className="mb-5 w-full">
+      {/* Linha de Títulos e Valores */}
+      <div className="flex justify-between items-end mb-2 px-1">
+        <span className="text-lg font-sora font-bold text-[#33b864]">{homeValue}</span>
+        <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">{label}</span>
+        <span className="text-lg font-sora font-bold text-white">{awayValue}</span>
+      </div>
+
+      {/* As Barras (Visualização Split) */}
+      <div className="flex h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+        {/* Barra Home (Verde, cresce da esquerda) */}
+        <div style={{ width: `${homePct}%` }} className="bg-[#33b864] h-full shadow-[0_0_10px_#33b864]"></div>
+        {/* Espaço Vazio (Gap) */}
+        <div className="w-1 h-full bg-black"></div>
+        {/* Barra Away (Cinza/Branca, cresce da direita visualmente, mas no flex ocupa o resto) */}
+        <div style={{ width: `${awayPct}%` }} className="bg-gray-500 h-full"></div>
+      </div>
+    </div>
+  );
+};
+5. INSTRUÇÃO DE DADOS FALTANTES
+Condicional: Se a API retornar dados vazios ou nulos para estatísticas, mostre um container centralizado elegante:
+
+Ícone: BarChart (Cinza escuro).
+
+Texto: "Estatísticas detalhadas ainda não disponíveis para este jogo."
+
+Não mostre barras zeradas (0 vs 0), oculte a linha inteira se ambos forem 0.
+
+COMANDO: Implemente o layout simétrico. O eixo central (Labels e Círculo) deve dividir a tela perfeitamente em "Lado Verde (Casa)" e "Lado Branco/Cinza (Fora)".
