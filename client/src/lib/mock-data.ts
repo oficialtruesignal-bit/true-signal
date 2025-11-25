@@ -5,6 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export interface BetLeg {
+  homeTeam: string;
+  awayTeam: string;
+  league: string;
+  market: string;
+  odd: number;
+  time: string;
+}
+
 export interface Signal {
   id: string;
   league: string;
@@ -17,6 +26,7 @@ export interface Signal {
   isHot?: boolean;
   betLink?: string;
   isLive?: boolean;
+  legs?: BetLeg[]; // Multiple selections for combo bets
 }
 
 export interface LiveGame {
@@ -31,18 +41,45 @@ export interface LiveGame {
 }
 
 export const MOCK_SIGNALS: Signal[] = [
+  // Multi-leg bet (Combo)
   {
     id: "1",
-    league: "Premier League",
+    league: "Múltipla Premier League",
     homeTeam: "Arsenal",
     awayTeam: "Liverpool",
     market: "Over 2.5 Goals",
-    odd: 1.85,
+    odd: 10.04, // Total odd (1.85 x 2.20 x 2.45)
     status: "pending",
     timestamp: new Date().toISOString(),
     isHot: true,
     betLink: "https://bet365.com",
     isLive: false,
+    legs: [
+      {
+        homeTeam: "Arsenal",
+        awayTeam: "Liverpool",
+        league: "Premier League",
+        market: "Mais de 2.5 gols",
+        odd: 1.85,
+        time: "18:30"
+      },
+      {
+        homeTeam: "Manchester City",
+        awayTeam: "Chelsea",
+        league: "Premier League",
+        market: "Ambas Marcam",
+        odd: 2.20,
+        time: "19:00"
+      },
+      {
+        homeTeam: "Tottenham",
+        awayTeam: "Man United",
+        league: "Premier League",
+        market: "Vitória Casa",
+        odd: 2.45,
+        time: "20:45"
+      }
+    ]
   },
   {
     id: "2",

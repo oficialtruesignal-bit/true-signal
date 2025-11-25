@@ -1,9 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Activity, Brain, Database, Zap } from 'lucide-react';
 
-const LEAGUES = ['Liga Inglesa', 'Campeonato Espanhol', 'Série A Italiana', 'Bundesliga', 'Liga Francesa', 'Liga dos Campeões', 'Brasileirão'];
+// Separated leagues with their respective teams
+const LEAGUES_DATA = {
+  'Liga Inglesa': ['Manchester City', 'Arsenal', 'Liverpool', 'Chelsea', 'Tottenham', 'Man United'],
+  'Campeonato Espanhol': ['Real Madrid', 'Barcelona', 'Atlético Madrid', 'Sevilla', 'Valencia'],
+  'Série A Italiana': ['Inter de Milão', 'AC Milan', 'Juventus', 'Napoli', 'Roma'],
+  'Bundesliga': ['Bayern Munique', 'Borussia Dortmund', 'RB Leipzig', 'Bayer Leverkusen'],
+  'Liga Francesa': ['Paris SG', 'Olympique Marseille', 'Lyon', 'Monaco'],
+  'Brasileirão': ['Flamengo', 'Palmeiras', 'São Paulo', 'Corinthians', 'Atlético-MG', 'Fluminense'],
+  'Liga dos Campeões': ['Bayern Munique', 'Real Madrid', 'Manchester City', 'Barcelona', 'Liverpool']
+};
+
 const MARKETS = ['Mais de 0.5 gols 1T', 'Ambas Marcam', 'Mais de 1.5 gols', 'Vitória Casa', 'Empate Anula', 'Handicap Asiático'];
-const TEAMS = ['Manchester City (ING)', 'Arsenal (ING)', 'Real Madrid (ESP)', 'Barcelona (ESP)', 'Bayern Munique (ALE)', 'Paris SG (FRA)', 'Flamengo (BRA)', 'Liverpool (ING)'];
 
 interface ScanLine {
   id: string;
@@ -17,9 +26,21 @@ export function AIScanner() {
 
   useEffect(() => {
     const addLine = () => {
+      // Pick a random league
+      const leagueNames = Object.keys(LEAGUES_DATA);
+      const selectedLeague = leagueNames[Math.floor(Math.random() * leagueNames.length)];
+      const leagueTeams = LEAGUES_DATA[selectedLeague as keyof typeof LEAGUES_DATA];
+      
+      // Pick two different teams from the SAME league
+      const team1Index = Math.floor(Math.random() * leagueTeams.length);
+      let team2Index = Math.floor(Math.random() * leagueTeams.length);
+      while (team2Index === team1Index) {
+        team2Index = Math.floor(Math.random() * leagueTeams.length);
+      }
+      
       const templates = [
-        `Analisando ${TEAMS[Math.floor(Math.random() * TEAMS.length)]} vs ${TEAMS[Math.floor(Math.random() * TEAMS.length)]}...`,
-        `Varrendo partidas ${LEAGUES[Math.floor(Math.random() * LEAGUES.length)]}...`,
+        `Analisando ${leagueTeams[team1Index]} vs ${leagueTeams[team2Index]}...`,
+        `Varrendo partidas ${selectedLeague}...`,
         `Avaliando mercado ${MARKETS[Math.floor(Math.random() * MARKETS.length)]}...`,
         `Processando dados de cotações ao vivo (${Math.floor(Math.random() * 500) + 100} fontes)...`,
         `Confiança IA: ${(85 + Math.random() * 12).toFixed(1)}% - Sinal detectado`,

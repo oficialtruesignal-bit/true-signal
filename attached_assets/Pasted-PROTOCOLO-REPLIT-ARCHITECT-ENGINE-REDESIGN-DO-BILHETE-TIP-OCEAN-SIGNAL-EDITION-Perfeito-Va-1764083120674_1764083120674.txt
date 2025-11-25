@@ -1,0 +1,80 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: REDESIGN DO "BILHETE TIP" (OCEAN SIGNAL EDITION) 🟢
+
+Perfeito. Vamos pegar a estrutura excelente da referência (Tylty) e mergulhá-la no nosso tanque de Neon Verde e Matrix.
+
+O objetivo é que o card pareça um "Cartão de Acesso a um Cofre". Deve ser o elemento mais premium e desejável da interface.
+
+Aqui está o Prompt Mestre unificado para aplicar todas as correções de layout, realismo e, principalmente, este novo design matador do Bilhete.
+
+PROMPT MESTRE: FINAL DASHBOARD POLISH & THE ULTIMATE TIP CARD
+ROLE: Senior UI/UX Designer & Frontend Specialist.
+
+TASK: Executar um pacote final de refinamentos no Dashboard. FOCO PRINCIPAL: Recriar completamente o componente visual do "Bilhete da Tip" (Tip Card) seguindo a estrutura da referência fornecida, mas aplicando rigorosamente o Design System Ocean Signal.
+
+1. O NOVO "BILHETE TIP" (OCEAN SIGNAL CARD)
+Arquivo Alvo: src/components/SignalFeed.tsx (ou o componente de card individual).
+
+Baseado no print de referência ("Bingo ODD 10.04"), reconstrua o card com a seguinte estrutura e estilo:
+
+A. Estrutura do Container Principal
+Fundo: Preto profundo (bg-[#0a0a0a]).
+
+Borda: Fina e brilhante (border border-[#33b864]/40).
+
+Efeito: Adicione um leve box-shadow verde neon para ele "flutuar".
+
+Arredondamento: rounded-2xl.
+
+B. O Cabeçalho (Header)
+Título Principal: Fonte Syne, Bold, Branco. Ex: "Múltipla Premier League".
+
+Badges (Abaixo do título):
+
+ID: Pequeno, cinza. Ex: ID: #8F3A2G.
+
+Contador de Cópias: Ícone de cópia + número. Fundo transparente, borda fina verde. Ex: [Copy Icon] 1.240 Copiaram.
+
+Status (Canto Superior Direito):
+
+Badge estilo "Pílula".
+
+Pendente: Fundo #121212, Texto Verde Neon, Borda Verde Neon piscando devagar.
+
+C. A Caixa Central "ODD TOTAL" (O Destaque)
+Crie um container interno destacado, exatamente como na referência.
+
+Container: Fundo #121212, borda sutil verde, rounded-xl, padding generoso.
+
+Label: "ODD TOTAL" (Pequeno, fonte Inter, cinza claro, centralizado).
+
+Valor: GIGANTE. Fonte Syne, ExtraBold, cor Verde Neon (#33b864). Adicione um text-shadow neon para brilhar. Ex: 10.04.
+
+D. A Lista de Jogos (Rodapé do Card)
+Outro container interno abaixo da Odd Total.
+
+Container: Fundo #121212, rounded-xl.
+
+Cada Jogo (Item da Lista):
+
+Cabeçalho do Jogo: Nome dos times (Branco, Inter Bold) e Horário (Cinza pequeno).
+
+A Linha do Tempo (Bullet Points): Use uma linha vertical fina Verde Neon na esquerda, conectando pontos (dots) também Verde Neon.
+
+O Mercado: Texto do mercado (ex: "Over 2.5 Gols") em branco.
+
+A Odd Individual: No canto direito de cada mercado, coloque a odd individual em uma caixinha compacta com fundo verde translúcido (bg-[#33b864]/20 text-[#33b864]).
+
+2. REVISÃO GERAL DO DASHBOARD (LAYOUT & LÓGICA)
+Aproveite este prompt para garantir que o restante esteja alinhado:
+
+HUD Circular (Topo): Garanta que os 3 círculos estejam perfeitamente alinhados horizontalmente e centralizados (use flex justify-center items-center gap-8).
+
+Limpeza: Confirme a remoção dos gráficos de "Consistência" e "Calendário". O Dashboard deve ser limpo.
+
+IA Scanner Realista:
+
+Certifique-se de que a IA só gera jogos entre times da MESMA LIGA (implemente a lógica de arrays de ligas separadas: Premier League, La Liga, Brasileirão).
+
+Nunca mostre "Barcelona x Palmeiras".
+
+COMANDO FINAL: Execute a recriação do Tip Card. Ele deve ser a peça central visual do painel, parecendo um objeto de alto valor tecnológico. Mantenha todo o resto limpo e alinhado.
