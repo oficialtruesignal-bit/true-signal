@@ -99,10 +99,6 @@ export function BetCard({ signal }: BetCardProps) {
   const copyCount = Math.floor(Math.random() * 2000) + 500;
   const signalId = signal.id.slice(0, 8).toUpperCase();
 
-  const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
-    ? signal.legs[0].time 
-    : new Date(signal.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-
   // Data/hora do jogo (2 horas após criação do bilhete como exemplo)
   const matchDate = new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
   const matchDateTime = matchDate.toLocaleString('pt-BR', { 
@@ -111,6 +107,11 @@ export function BetCard({ signal }: BetCardProps) {
     hour: '2-digit', 
     minute: '2-digit' 
   });
+
+  // Hora do jogo para exibir no cabeçalho
+  const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
+    ? signal.legs[0].time 
+    : matchDate.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 
   // Data/hora de criação do bilhete
   const createdDateTime = new Date(signal.timestamp).toLocaleString('pt-BR', { 
