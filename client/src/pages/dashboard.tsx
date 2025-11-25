@@ -1,12 +1,13 @@
 import { Layout } from "@/components/layout";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
-import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles } from "lucide-react";
+import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
   const stats = useDashboardData();
   const [scannerMessages, setScannerMessages] = useState<string[]>([]);
+  const [showFullDashboard, setShowFullDashboard] = useState(false);
   
   // AI Scanner simulation
   useEffect(() => {
@@ -52,7 +53,45 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Performance de Investidor Profissional</p>
       </div>
 
-      {/* Bento Grid Layout */}
+      {/* Preview Card - Show when dashboard is locked */}
+      {!showFullDashboard ? (
+        <div className="max-w-3xl mx-auto">
+          <div 
+            onClick={() => setShowFullDashboard(true)}
+            className="bg-card border border-primary/20 rounded-2xl p-12 shadow-[0_0_60px_rgba(51,184,100,0.15)] hover:shadow-[0_0_80px_rgba(51,184,100,0.25)] transition-all duration-300 cursor-pointer group"
+            data-testid="dashboard-preview"
+          >
+            <div className="text-center space-y-6">
+              <div className="flex justify-center">
+                <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Activity className="w-12 h-12 text-primary" />
+                </div>
+              </div>
+              
+              <div>
+                <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mb-3">
+                  Dashboard Completo
+                </h2>
+                <p className="text-muted-foreground">
+                  Clique para acessar estatísticas em tempo real, gráficos de performance, AI Scanner e muito mais.
+                </p>
+              </div>
+
+              <div className="pt-4">
+                <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 border border-primary/20 rounded-full group-hover:bg-primary/20 transition-colors">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
+                  <span className="text-sm text-primary font-medium">
+                    Clique para desbloquear
+                  </span>
+                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Bento Grid Layout - Full Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* KPI Cards - Top (3 cards now - removed Banca) */}
         <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -261,6 +300,8 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+        </>
+      )}
     </Layout>
   );
 }
