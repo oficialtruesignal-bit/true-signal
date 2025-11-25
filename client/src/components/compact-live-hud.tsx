@@ -9,7 +9,7 @@ export function CompactLiveHud() {
     <div className="w-full mb-8">
       
       {/* GRID PRINCIPAL: CÍRCULO SOLTO + CARDS PADRÃO */}
-      <div className="grid grid-cols-[45%_55%] gap-4 h-56 items-center">
+      <div className="grid grid-cols-[45%_55%] gap-3 h-56 items-center">
 
         {/* --- COLUNA ESQUERDA: O CÍRCULO (SEM CARD, SEM BORDA) --- */}
         <div className="flex items-center justify-center h-full relative">
