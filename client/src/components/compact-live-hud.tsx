@@ -56,25 +56,14 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl mx-auto py-6">
+    <div className="flex flex-col items-center justify-center gap-6 max-w-4xl mx-auto py-6">
       
-      {/* ÁREA 1: O HERO CIRCLE (ASSERTIVIDADE) */}
-      <div className="relative flex flex-col items-center justify-center" data-testid="hud-assertivity">
-        <div className="w-32 h-32 md:w-40 md:h-40 relative">
-          <CircularProgress percentage={95} size={160} strokeWidth={14} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl md:text-4xl font-sora font-bold text-white">94.8%</span>
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-sora">Assertividade</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ÁREA 2: INFO STACK (OS RETÂNGULOS) */}
-      <div className="flex flex-col gap-4 w-full md:w-64">
+      {/* ÁREA 1: INFO STACK HORIZONTAL (OS RETÂNGULOS) */}
+      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
         
         {/* Retângulo 1: Usuários Online */}
         <div 
-          className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
           data-testid="hud-users"
         >
           <div className="flex flex-col">
@@ -89,7 +78,7 @@ export function CompactLiveHud() {
 
         {/* Retângulo 2: Total de Sinais */}
         <div 
-          className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
           data-testid="hud-signals"
         >
           <div className="flex flex-col">
@@ -99,6 +88,17 @@ export function CompactLiveHud() {
           <Ticket className="text-[#33b864] w-6 h-6 opacity-50" />
         </div>
 
+      </div>
+
+      {/* ÁREA 2: O HERO CIRCLE (ASSERTIVIDADE) - EMBAIXO */}
+      <div className="relative flex flex-col items-center justify-center" data-testid="hud-assertivity">
+        <div className="w-32 h-32 md:w-40 md:h-40 relative">
+          <CircularProgress percentage={95} size={160} strokeWidth={14} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
+            <span className="text-3xl md:text-4xl font-sora font-bold text-white">94.8%</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-sora">Assertividade</span>
+          </div>
+        </div>
       </div>
 
     </div>
