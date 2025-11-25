@@ -13,7 +13,7 @@ export function CompactLiveHud() {
       <div className="grid grid-cols-[40%_60%] gap-6 h-64 items-stretch">
 
         {/* --- ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) --- */}
-        <div className="relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#33b864]/10 to-transparent rounded-3xl border border-[#33b864]/20 shadow-[0_0_30px_rgba(51,184,100,0.1)]">
+        <div className="relative flex items-center justify-center">
           <div className="relative w-40 h-40 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -36,10 +36,10 @@ export function CompactLiveHud() {
 
             {/* Conteúdo Central (Texto) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <span className="text-5xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+              <span className="text-3xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
                 {assertivityValue.toFixed(1)}%
               </span>
-              <span className="text-[10px] font-mono text-[#33b864] tracking-[0.3em] mt-2 uppercase border border-[#33b864]/30 px-2 py-1 rounded bg-[#33b864]/5">
+              <span className="text-[9px] font-mono text-[#33b864] tracking-[0.2em] mt-1 uppercase">
                 Assertividade
               </span>
             </div>
