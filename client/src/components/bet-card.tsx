@@ -103,6 +103,23 @@ export function BetCard({ signal }: BetCardProps) {
     ? signal.legs[0].time 
     : new Date(signal.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
+  // Data/hora do jogo (2 horas após criação do bilhete como exemplo)
+  const matchDate = new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
+  const matchDateTime = matchDate.toLocaleString('pt-BR', { 
+    day: '2-digit', 
+    month: '2-digit',
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
+  // Data/hora de criação do bilhete
+  const createdDateTime = new Date(signal.timestamp).toLocaleString('pt-BR', { 
+    day: '2-digit', 
+    month: '2-digit',
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
+
   return (
     <div 
       className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl p-5 shadow-lg shadow-[#33b864]/5 relative overflow-hidden group hover:border-[#33b864]/50 transition-all"
@@ -172,11 +189,18 @@ export function BetCard({ signal }: BetCardProps) {
       </button>
 
       {/* --- 5. RODAPÉ (METADADOS) --- */}
-      <div className="mt-3 flex items-center gap-4 px-1">
-        <span className="text-[10px] text-gray-600 font-mono">#{signalId}</span>
-        <div className="flex items-center gap-1 text-[10px] text-gray-600">
-          <Users className="w-3 h-3" />
-          <span>{copyCount.toLocaleString()}</span>
+      <div className="mt-3 flex flex-col gap-1.5 px-1">
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] text-gray-600 font-mono">#{signalId}</span>
+          <div className="flex items-center gap-1 text-[10px] text-gray-600">
+            <Users className="w-3 h-3" />
+            <span>{copyCount.toLocaleString()}</span>
+          </div>
+        </div>
+        <div className="flex items-center gap-3 text-[9px] text-gray-500 font-mono">
+          <span>Jogo: {matchDateTime}</span>
+          <span>•</span>
+          <span>Criado: {createdDateTime}</span>
         </div>
       </div>
 
