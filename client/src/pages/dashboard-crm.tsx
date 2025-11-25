@@ -2,7 +2,7 @@ import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { AIScanner } from "@/components/ai-scanner";
-import { StatCard } from "@/components/dashboard/stat-card";
+import { NeonCard } from "@/components/dashboard/neon-card";
 import { Scale, Flame, Activity, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -47,32 +47,46 @@ export default function DashboardCRM() {
       {/* Main Dashboard - Full Width */}
       <div className="flex flex-col gap-6 h-[calc(100vh-400px)]">
           {/* Performance HUD - 4 Metrics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <StatCard 
-              label="ODD MÉDIA" 
-              value="@1.92"
-              trendColor="text-orange-500"
-              icon={<Scale className="w-4 h-4 text-orange-500" strokeWidth={1.5} />} 
-            />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <NeonCard intensity="low">
+              <div className="flex items-center gap-3 mb-1 z-10 relative">
+                <div className="p-1.5 bg-orange-500/20 rounded-md">
+                  <Scale className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Odd Média</span>
+              </div>
+              <span className="text-2xl font-sora font-bold text-orange-500 z-10 relative drop-shadow-sm">@1.92</span>
+            </NeonCard>
 
-            <StatCard 
-              label="SEQUÊNCIA ATUAL" 
-              value="5V - 0D"
-              icon={<Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />} 
-            />
+            <NeonCard intensity="low">
+              <div className="flex items-center gap-3 mb-1 z-10 relative">
+                <div className="p-1.5 bg-orange-500/20 rounded-md">
+                  <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sequência Atual</span>
+              </div>
+              <span className="text-2xl font-sora font-bold text-white z-10 relative drop-shadow-sm">5V - 0D</span>
+            </NeonCard>
 
-            <StatCard 
-              label="SINAIS (MÊS)" 
-              value={totalSignals.toString()}
-              icon={<Activity className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
-            />
+            <NeonCard intensity="low">
+              <div className="flex items-center gap-3 mb-1 z-10 relative">
+                <div className="p-1.5 bg-[#33b864]/20 rounded-md">
+                  <Activity className="w-4 h-4 text-[#33b864]" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sinais (Mês)</span>
+              </div>
+              <span className="text-2xl font-sora font-bold text-white z-10 relative drop-shadow-sm">{totalSignals}</span>
+            </NeonCard>
 
-            <StatCard 
-              label="INVESTIDORES" 
-              value={investors.toString()}
-              trendColor="text-primary"
-              icon={<Users className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
-            />
+            <NeonCard intensity="high">
+              <div className="flex items-center gap-3 mb-1 z-10 relative">
+                <div className="p-1.5 bg-[#33b864]/20 rounded-md">
+                  <Users className="w-4 h-4 text-[#33b864]" strokeWidth={1.5} />
+                </div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Investidores</span>
+              </div>
+              <span className="text-2xl font-sora font-bold text-[#33b864] z-10 relative drop-shadow-sm">{investors}</span>
+            </NeonCard>
           </div>
 
           {/* AI Scanner - Full Width */}
