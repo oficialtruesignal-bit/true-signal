@@ -59,7 +59,7 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="container mx-auto flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 md:gap-12 py-6 sm:py-8">
+    <div className="container mx-auto flex flex-row justify-center items-center gap-4 sm:gap-6 md:gap-12 py-6 sm:py-8">
       {/* Circle 1: Assertividade Global */}
       <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-assertivity">
         <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center">
