@@ -8,7 +8,6 @@ import { MatrixBackground } from "@/components/matrix-background";
 import { SalesToast } from "@/components/sales-toast";
 import { ProfitChart } from "@/components/profit-chart";
 import { StatsCircle } from "@/components/stats-circle";
-import { HomeDashboardPreview } from "@/components/home-dashboard-preview";
 import { useEffect, useState } from "react";
 
 export default function LandingPage() {
@@ -155,9 +154,6 @@ export default function LandingPage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Dashboard Preview Section */}
-      <HomeDashboardPreview />
 
       <section id="proof" className="py-24 px-6 relative">
         <div className="max-w-7xl mx-auto">
