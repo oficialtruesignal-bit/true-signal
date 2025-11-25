@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Signal } from "@/lib/mock-data";
+import { MarketSelector } from "@/components/admin/market-selector";
 
 const formSchema = z.object({
   league: z.string().min(2),
@@ -128,7 +129,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
             <FormItem>
               <FormLabel className="text-white">Mercado (Entrada)</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Over 2.5 Gols" {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
+                <MarketSelector value={field.value} onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
