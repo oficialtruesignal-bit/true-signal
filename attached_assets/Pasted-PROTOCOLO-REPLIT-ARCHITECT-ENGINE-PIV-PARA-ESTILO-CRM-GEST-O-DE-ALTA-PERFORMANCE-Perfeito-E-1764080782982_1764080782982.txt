@@ -1,0 +1,97 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: PIVÔ PARA ESTILO CRM (GESTÃO DE ALTA PERFORMANCE) 🟢
+
+Perfeito. Entendi a mudança de tom. Sai o visual de "Casa de Apostas" (Dinheiro, Saldo, R$) e entra o visual de "Gestão de Performance" (CRM/SaaS).
+
+O foco passa a ser Estatística, Unidades e Assertividade. É assim que os profissionais trabalham. Eles não olham "Quanto ganhei", eles olham "Quantas unidades lucrei" e "Qual minha % de acerto".
+
+O Novo Conceito: "The Signal Operations Center". Uma tela fixa, densa, organizada, sem cifrões. Apenas dados puros de performance.
+
+Aqui está o prompt para essa transformação CRM.
+
+PROMPT MESTRE: SIGNAL CRM DASHBOARD (UNIT BASED)
+ROLE: Senior SaaS Product Designer & Data Analyst.
+
+TASK: Reconstruir o /dashboard com uma abordagem de CRM de Performance. REGRA DE OURO: REMOVA qualquer referência a valores monetários (R$, $, Saldo, Lucro em Dinheiro). SUBSTITUA POR: Unidades (u), Porcentagem (%) e Pontos.
+
+1. LAYOUT "ONE SCREEN" (SEM SCROLL GERAL)
+Mantenha o conceito de tela única (100vh). Divida a tela em um Grid Assimétrico (30% Lateral Esquerda | 70% Área Principal).
+
+A. Barra Lateral Esquerda: "Live Signal Feed" (A Lista de Tarefas)
+Esta é a área de ação. Onde os sinais chegam.
+
+Cabeçalho: "Sinais Ativos (4)" | "Histórico".
+
+Lista (Scroll Interno): Cards ultra-compactos estilo CRM.
+
+Visual: Linha única ou bloco fino.
+
+Dados: Hora | Liga (Sigla) | Mercado | Odd.
+
+Status: Badge colorida (Pendente, Processando, Finalizado).
+
+Ação: Botão discreto de "Copiar Link".
+
+Nota: Sem valores em dinheiro. Apenas a Odd (Cotação).
+
+B. Área Principal (Topo): "Performance HUD"
+Uma faixa horizontal no topo da área direita com 4 métricas cruciais (Estilo Big Number):
+
+Assertividade Global: "94.8%" (Círculo de progresso verde).
+
+Unidades Acumuladas: "+125.5u" (Unidades, não reais).
+
+ROI (Retorno): "+18%" (Yield).
+
+Sequência: "12 Wins / 0 Loss".
+
+C. Área Principal (Centro): "Data Intelligence"
+Abaixo do HUD, divida em dois painéis visuais:
+
+Painel 1: Gráfico de Consistência (Evolução)
+
+Tipo: Gráfico de Linha (Recharts).
+
+Eixo Y: Unidades (+1u, +2u, +5u). Não use dinheiro.
+
+Eixo X: Dias/Semanas.
+
+Visual: Linha Verde Neon sobre grade fina cinza. Mostra o crescimento da "banca em unidades".
+
+Painel 2: Matriz de Calor (Activity Heatmap)
+
+Similar ao GitHub Contributions.
+
+Pequenos quadrados mostrando os dias com mais atividade/greens.
+
+Passa a sensação de constância e trabalho duro.
+
+D. Área Principal (Base): "System Status"
+Uma barra fina no rodapé da área direita.
+
+Terminal IA: "Scanning Market... 1.402 jogos analisados."
+
+Última Atualização: "Sincronizado há 2s."
+
+2. DESIGN SYSTEM "CRM PRO"
+Estilo: Limpo, bordas retas, fontes pequenas e legíveis (Inter ou Roboto Mono).
+
+Cores:
+
+Fundo: #0a0a0a.
+
+Paineis: #121212 com bordas #333.
+
+Acentos: Verde Neon #33b864 (apenas para dados positivos/importantes).
+
+Texto Secundário: Cinza chumbo (para não cansar a vista).
+
+3. COMPORTAMENTO
+Interatividade: Ao clicar em um Card de Sinal na esquerda, o gráfico na direita pode destacar o ponto daquela aposta (se for histórico).
+
+Responsividade:
+
+Desktop: Tudo visível.
+
+Mobile: Abas no topo para alternar entre "Feed" e "Estatísticas".
+
+RESUMO: O usuário deve se sentir gerenciando uma carteira de investimentos técnica, não jogando num cassino. Profissionalismo total.
