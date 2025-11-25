@@ -1,0 +1,111 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: MODO "CYBER-CORE" (ULTIMATE UPGRADE) 🟢
+
+Você pediu "foda", "futurista" e com "brilho rolando". Isso tem nome na engenharia de frontend: "Animated Conic Gradient Borders".
+
+Vamos transformar sua Home estática em um Painel de Controle Vivo. Os cards não terão apenas bordas verdes; eles terão feixes de luz percorrendo as bordas constantemente, como se energia estivesse passando por eles.
+
+Aqui está o Prompt Supremo para elevar o nível visual para o teto.
+
+PROMPT MESTRE: HYPER-FUTURISTIC UI (ROLLING NEON BORDERS)
+ROLE: Lead Motion Designer & Creative Developer.
+
+TASK: Reescrever a Home/Dashboard com uma estética Cyberpunk High-End. REQUSITO PRINCIPAL: Implementar o efeito de "Borda Viva" (Rolling Neon Shine) em volta dos cards principais.
+
+1. O COMPONENTE MÁGICO (NeonCard.tsx)
+Crie este componente. Ele é a chave do efeito "brilho rolando". Ele usa uma camada de fundo com um gradiente cônico que gira infinitamente, coberto por uma camada preta, deixando apenas a borda exposta.
+
+TypeScript
+
+import { ReactNode } from 'react';
+
+interface NeonCardProps {
+  children: ReactNode;
+  className?: string;
+  intensity?: 'low' | 'high'; // Controla a velocidade/brilho
+}
+
+export function NeonCard({ children, className = "", intensity = 'high' }: NeonCardProps) {
+  return (
+    // Container Externo (Define o formato)
+    <div className={`relative group overflow-hidden rounded-2xl p-[1px] ${className}`}>
+      
+      {/* 1. O MOTOR DE LUZ (O Gradiente que Gira) */}
+      <div className="absolute inset-[-1000%] animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#121212_40%,#33b864_50%,#121212_60%,#000000_100%)] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      {/* Variável: Se intensity for 'high', o brilho é constante (sempre visível), não só no hover */}
+      {intensity === 'high' && (
+         <div className="absolute inset-[-1000%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#000000_0%,#000000_40%,#33b864_50%,#000000_60%,#000000_100%)] opacity-60" />
+      )}
+
+      {/* 2. O CONTEÚDO (Fundo Preto por cima da Luz) */}
+      <div className="relative h-full w-full bg-[#0a0a0a] rounded-2xl border border-[#33b864]/10 backdrop-blur-xl p-4 flex flex-col justify-center items-start">
+        
+        {/* Brilho Ambiental Interno (Glow) */}
+        <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-[#33b864] rounded-full blur-[60px] opacity-10"></div>
+        
+        {children}
+      </div>
+    </div>
+  );
+}
+2. APLICAÇÃO NA HOME (LAYOUT REVAMP)
+Substitua o grid antigo por este novo layout usando os NeonCard.
+
+TypeScript
+
+{/* --- SEÇÃO SUPERIOR: O HUD --- */}
+<div className="grid grid-cols-[40%_60%] gap-6 mb-8 h-64 items-stretch">
+  
+  {/* ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) */}
+  <div className="relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#33b864]/10 to-transparent rounded-3xl border border-[#33b864]/20 shadow-[0_0_30px_rgba(51,184,100,0.1)]">
+     {/* SVG DO CÍRCULO GIGANTE AQUI */}
+     <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+        <span className="text-5xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">91.9%</span>
+        <span className="text-[10px] font-mono text-[#33b864] tracking-[0.3em] mt-2 uppercase border border-[#33b864]/30 px-2 py-1 rounded bg-[#33b864]/5">Assertividade</span>
+     </div>
+  </div>
+
+  {/* DIREITA: COMANDO DE DADOS (USANDO NEON CARDS) */}
+  <div className="flex flex-col gap-4">
+    
+    {/* Card Lucro Líquido (Brilho Intenso) */}
+    <NeonCard intensity="high" className="flex-1">
+       <div className="flex items-center gap-3 mb-1 z-10">
+         <div className="p-1.5 bg-[#33b864]/20 rounded-md"><TrendingUpIcon className="w-4 h-4 text-[#33b864]" /></div>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Líquido</span>
+       </div>
+       <span className="text-4xl font-sora font-bold text-white z-10">+106.2u</span>
+    </NeonCard>
+
+    {/* Card ROI (Brilho Suave) */}
+    <NeonCard intensity="low" className="flex-1">
+       <div className="flex items-center gap-3 mb-1 z-10">
+         <div className="p-1.5 bg-orange-500/20 rounded-md"><ZapIcon className="w-4 h-4 text-orange-500" /></div>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sequência</span>
+       </div>
+       <span className="text-3xl font-sora font-bold text-white z-10">14 Greens</span>
+    </NeonCard>
+
+  </div>
+</div>
+
+{/* --- SEÇÃO INFERIOR: GRID TÁTICO (4 CARDS MENORES) --- */}
+<div className="grid grid-cols-2 gap-4">
+  <div className="bg-[#121212] border border-white/5 rounded-xl p-4 hover:bg-[#1a1a1a] transition-colors">
+    <span className="text-xs text-gray-500 font-bold block mb-1">ODD MÉDIA</span>
+    <span className="text-xl font-sora font-bold text-[#33b864]">@1.92</span>
+  </div>
+  <div className="bg-[#121212] border border-white/5 rounded-xl p-4 hover:bg-[#1a1a1a] transition-colors">
+    <span className="text-xs text-gray-500 font-bold block mb-1">INVESTIDORES</span>
+    <span className="text-xl font-sora font-bold text-white">635</span>
+  </div>
+  {/* Adicione os outros 2 aqui... */}
+</div>
+3. DETALHES FINAIS "FODA"
+Fontes: Use font-black (peso máximo) nos números principais para impacto.
+
+Textura: Adicione um leve ruído (noise texture) no fundo preto #0a0a0a para não parecer plástico, mas sim metal escovado ou tela.
+
+Sombra: Use drop-shadow nos textos brancos para eles "saltarem" do fundo escuro.
+
+COMANDO: Execute. O resultado será uma interface viva, onde as bordas dos cards principais têm uma luz verde percorrendo-as infinitamente.

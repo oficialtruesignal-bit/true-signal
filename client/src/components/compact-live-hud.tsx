@@ -1,6 +1,6 @@
-import { TrendingUp, Flame } from 'lucide-react';
+import { TrendingUp, Zap } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
-import { HolographicCard } from './dashboard/holographic-card';
+import { NeonCard } from './dashboard/neon-card';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
@@ -10,10 +10,10 @@ export function CompactLiveHud() {
     <div className="w-full mb-8">
       
       {/* GRID DE ALINHAMENTO PERFEITO */}
-      <div className="grid grid-cols-[45%_55%] gap-3 h-[220px] items-stretch">
+      <div className="grid grid-cols-[40%_60%] gap-6 h-64 items-stretch">
 
-        {/* --- ESQUERDA: CÍRCULO (SEM FUNDO, SEM BORDA) --- */}
-        <div className="flex items-center justify-center relative">
+        {/* --- ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) --- */}
+        <div className="relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#33b864]/10 to-transparent rounded-3xl border border-[#33b864]/20 shadow-[0_0_30px_rgba(51,184,100,0.1)]">
           <div className="relative w-40 h-40 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -36,13 +36,10 @@ export function CompactLiveHud() {
 
             {/* Conteúdo Central (Texto) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <div className="flex items-baseline">
-                <span className="text-4xl font-sora font-bold text-white tracking-tighter">
-                  {assertivityValue.toFixed(1)}
-                </span>
-                <span className="text-lg font-sora text-[#33b864] font-bold ml-1">%</span>
-              </div>
-              <span className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+              <span className="text-5xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                {assertivityValue.toFixed(1)}%
+              </span>
+              <span className="text-[10px] font-mono text-[#33b864] tracking-[0.3em] mt-2 uppercase border border-[#33b864]/30 px-2 py-1 rounded bg-[#33b864]/5">
                 Assertividade
               </span>
             </div>
@@ -50,24 +47,30 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: CARDS HOLOGRÁFICOS --- */}
-        <div className="flex flex-col gap-4 h-full">
+        {/* --- DIREITA: COMANDO DE DADOS (NEON CARDS) --- */}
+        <div className="flex flex-col gap-4">
           
-          {/* CARD 1: LUCRO LÍQUIDO (Tema Verde/Neon) */}
-          <HolographicCard 
-            label="LUCRO LÍQUIDO" 
-            value="+106.2u"
-            color="green"
-            icon={<TrendingUp className="w-12 h-12" strokeWidth={1.5} />} 
-          />
+          {/* Card Lucro Líquido (Brilho Intenso) */}
+          <NeonCard intensity="high" className="flex-1">
+            <div className="flex items-center gap-3 mb-1 z-10 relative">
+              <div className="p-1.5 bg-[#33b864]/20 rounded-md">
+                <TrendingUp className="w-4 h-4 text-[#33b864]" />
+              </div>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Líquido</span>
+            </div>
+            <span className="text-4xl font-sora font-bold text-white z-10 relative drop-shadow-sm">+106.2u</span>
+          </NeonCard>
 
-          {/* CARD 2: ROI TOTAL (Tema Verde) */}
-          <HolographicCard 
-            label="ROI TOTAL" 
-            value="18.5%"
-            color="green"
-            icon={<TrendingUp className="w-12 h-12" strokeWidth={1.5} />} 
-          />
+          {/* Card ROI (Brilho Suave) */}
+          <NeonCard intensity="low" className="flex-1">
+            <div className="flex items-center gap-3 mb-1 z-10 relative">
+              <div className="p-1.5 bg-[#33b864]/20 rounded-md">
+                <Zap className="w-4 h-4 text-[#33b864]" />
+              </div>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
+            </div>
+            <span className="text-3xl font-sora font-bold text-white z-10 relative drop-shadow-sm">18.5%</span>
+          </NeonCard>
 
         </div>
 
