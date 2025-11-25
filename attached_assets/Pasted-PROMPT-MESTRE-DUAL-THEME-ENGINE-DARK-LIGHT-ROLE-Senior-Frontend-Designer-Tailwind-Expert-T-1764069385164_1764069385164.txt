@@ -1,0 +1,55 @@
+PROMPT MESTRE: DUAL THEME ENGINE (DARK & LIGHT)
+ROLE: Senior Frontend Designer & Tailwind Expert.
+
+TASK: Implementar um sistema robusto de troca de temas (Dark/Light Mode). O site deve salvar a preferência do usuário no localStorage e carregar o tema correto ao abrir.
+
+1. CONFIGURAÇÃO DO TAILWIND
+Verifique o tailwind.config.js. A propriedade darkMode deve estar definida como 'class'.
+
+2. DEFINIÇÃO DAS PALETAS DE COR
+O design deve se adaptar sem quebrar o contraste.
+
+MODO ESCURO (Padrão "Ocean Signal")
+Background: bg-[#0a0a0a] (Preto Profundo).
+
+Surface/Cards: bg-[#121212] (Cinza Escuro).
+
+Text: text-white ou text-gray-100.
+
+Border: border-[#33b864]/20 (Verde sutil).
+
+MODO CLARO (Novo "Daylight Trader")
+Background: bg-[#f8fafc] (Branco Gelo / Slate-50).
+
+Surface/Cards: bg-[#ffffff] (Branco Puro com Sombra Suave).
+
+Text: text-[#0f172a] (Slate-900 - Quase preto para leitura nítida).
+
+Border: border-gray-200 (Cinza claro).
+
+Primary (Botões): Mantenha o Verde #33b864. Ele funciona bem sobre branco e preto.
+
+3. COMPONENTE ThemeToggle
+Crie um botão de alternância (Toggle) elegante.
+
+Localização: No Header (Desktop) e no Menu/Perfil (Mobile).
+
+Ícones: Use Sun (Lucide) para ativar Light Mode e Moon para ativar Dark Mode.
+
+Animação: Transição suave (transition-colors duration-300) ao trocar de tema.
+
+4. REFATORAÇÃO DE COMPONENTES (CRÍTICO)
+Você precisará revisar os componentes principais (Card, Sidebar, Header) para usar prefixos dark:.
+
+Exemplo de lógica CSS: className="bg-white text-slate-900 dark:bg-[#121212] dark:text-white border border-gray-200 dark:border-[#33b864]/20"
+
+5. PERSISTÊNCIA
+Use um ThemeContext ou um Hook simples (useTheme) que:
+
+Verifique o localStorage ao iniciar.
+
+Se não houver preferência salva, verifique a preferência do sistema operacional (window.matchMedia).
+
+Adicione ou remova a classe dark na tag <html> raiz.
+
+OBJETIVO FINAL: O site deve ser legível e bonito nas duas versões. O modo escuro parece "Matrix", o modo claro parece um "Banco Fintech Moderno".
