@@ -36,6 +36,22 @@ export function Layout({ children }: { children: React.ReactNode }) {
     initOneSignal();
   }, [user]);
 
+  // Force reload profile (clear cache)
+  const reloadProfile = async () => {
+    if (user) {
+      const { data } = await (await import("@/lib/supabase")).supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      if (data) {
+        console.log('🔄 Profile reloaded:', data);
+        window.location.reload(); // Force full reload
+      }
+    }
+  };
+
   // Desktop Nav Items (with Admin)
   const desktopNavItems = [
     { icon: Home, label: "Home", path: "/app" },
@@ -182,6 +198,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <Plus className="w-6 h-6" strokeWidth={3} />
           </button>
         </Link>
+      )}
+
+      {/* Temporary: Force Reload Button (debug) */}
+      {user && user.role !== 'admin' && (
+        <button
+          onClick={reloadProfile}
+          className="fixed bottom-32 right-4 bg-yellow-500 text-black px-3 py-2 rounded-lg text-xs font-bold z-50"
+        >
+          🔄 Reload Admin
+        </button>
       )}
     </div>
   );
