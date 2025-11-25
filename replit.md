@@ -74,9 +74,12 @@ Preferred communication style: Simple, everyday language.
 ### External Dependencies
 
 **Third-Party APIs:**
-- **API-Football (v3.football.api-sports.io)**: Primary data source for live match data, fixtures, and statistics
-  - Endpoints: `/fixtures?live=all` for live matches, `/fixtures?date=YYYY-MM-DD` for scheduled matches
-  - Authentication via API key in environment variable `VITE_FOOTBALL_API_KEY`
+- **Sportmonks API v3 (api.sportmonks.com)**: Primary data source for live match data, fixtures, and real statistics (attacks, dangerous attacks)
+  - Endpoints: `/v3/football/livescores/inplay` for live matches, `/v3/football/fixtures/date/{date}` for scheduled matches, `/v3/football/fixtures/{id}` for statistics
+  - Authentication via API key in environment variable `VITE_SPORTMONKS_API_KEY`
+  - Proxied through backend (`/api/sportmonks/*`) to avoid CORS issues
+  - Free plan: Danish Superliga (ID:271) and Scottish Premiership (ID:501)
+  - Real data fields: `attacks`, `dangerous_attacks`, `possession`, `shots_on_goal`, etc. (Type IDs: 83, 84, 42, 86)
   - Graceful degradation with skeleton loaders and fallback messaging on API failures
 
 **Authentication & Database Services:**
@@ -124,6 +127,16 @@ Preferred communication style: Simple, everyday language.
 - Language preference persisted in localStorage
 - HTML lang attribute updates automatically with language changes
 - Currently implemented in Settings page, expandable to other pages as needed
+
+### Recent Changes (Nov 25, 2024)
+
+**Sportmonks API v3 Migration:**
+- Migrated from API-Football to Sportmonks API v3 for real "Attacks" and "Dangerous Attacks" data
+- Created backend proxy endpoints (`/api/sportmonks/*`) to handle CORS and API key security
+- Implemented real data mapping (no estimations) with Type IDs: attacks (83), dangerous_attacks (84), possession (42), shots_on_goal (86)
+- Updated Match Center Modal to fetch real statistics with 10-second auto-refresh
+- Enhanced GameStats UI with directional arrows showing dominant team
+- Labels: "Ataque Perigoso" (dangerous attacks), "Posse de Bola" (ball possession)
 
 ### Recent Changes (Nov 2024)
 
