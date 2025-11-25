@@ -1,47 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Users, Ticket } from 'lucide-react';
-
-interface CircularProgressProps {
-  percentage: number;
-  size: number;
-  strokeWidth?: number;
-}
-
-function CircularProgress({ percentage, size, strokeWidth = 12 }: CircularProgressProps) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (percentage / 100) * circumference;
-
-  return (
-    <svg width={size} height={size} className="transform -rotate-90">
-      {/* Background Track */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#222"
-        strokeWidth={strokeWidth}
-        fill="none"
-      />
-      {/* Progress Ring with Glow */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        stroke="#33b864"
-        strokeWidth={strokeWidth}
-        fill="none"
-        strokeLinecap="round"
-        strokeDasharray={circumference}
-        strokeDashoffset={offset}
-        style={{
-          filter: 'drop-shadow(0 0 8px #33b864)',
-          transition: 'stroke-dashoffset 0.5s ease',
-        }}
-      />
-    </svg>
-  );
-}
 
 export function CompactLiveHud() {
   const [usersOnline, setUsersOnline] = useState(620);
@@ -55,49 +12,84 @@ export function CompactLiveHud() {
     return () => clearInterval(interval);
   }, []);
 
+  // Progress calculation for 94.8%
+  const assertivityPercentage = 94.8;
+  const radius = 80;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference * (1 - assertivityPercentage / 100);
+
   return (
-    <div className="flex flex-col items-center justify-center gap-6 max-w-4xl mx-auto py-6">
+    <div className="flex flex-col items-center justify-center gap-8 max-w-4xl mx-auto py-6">
       
-      {/* ÁREA 1: INFO STACK HORIZONTAL (OS RETÂNGULOS) */}
-      <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl">
+      {/* --- TOP CARDS HORIZONTAIS --- */}
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto">
         
-        {/* Retângulo 1: Usuários Online */}
+        {/* Card 1: Online */}
         <div 
-          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          className="flex-1 w-full bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden group"
           data-testid="hud-users"
         >
-          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 uppercase font-bold font-inter">Investidores Online</span>
-            <div className="flex items-center gap-2 mt-1">
-              <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
-              <span className="text-xl font-sora font-bold text-white">{usersOnline}</span>
-            </div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Online Agora</span>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#33b864] animate-ping"></span>
+            <span className="text-xl font-sora font-bold text-white">{usersOnline}</span>
           </div>
-          <Users className="text-[#33b864] w-6 h-6 opacity-50" />
         </div>
 
-        {/* Retângulo 2: Total de Sinais */}
+        {/* Card 2: Sinais */}
         <div 
-          className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          className="flex-1 w-full bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden"
           data-testid="hud-signals"
         >
-          <div className="flex flex-col">
-            <span className="text-[10px] text-gray-400 uppercase font-bold font-inter">Sinais Enviados</span>
-            <span className="text-xl font-sora font-bold text-white mt-1">{totalSignals}</span>
-          </div>
-          <Ticket className="text-[#33b864] w-6 h-6 opacity-50" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Total Sinais</span>
+          <span className="text-xl font-sora font-bold text-white">{totalSignals}</span>
         </div>
 
       </div>
 
-      {/* ÁREA 2: O HERO CIRCLE (ASSERTIVIDADE) - EMBAIXO */}
-      <div className="relative flex flex-col items-center justify-center" data-testid="hud-assertivity">
-        <div className="w-32 h-32 md:w-40 md:h-40 relative">
-          <CircularProgress percentage={95} size={160} strokeWidth={14} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl md:text-4xl font-sora font-bold text-white">94.8%</span>
-            <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-sora">Assertividade</span>
+      {/* --- O CÍRCULO FUTURISTA (TECH RING) --- */}
+      <div className="relative flex items-center justify-center py-4" data-testid="hud-assertivity">
+        {/* Container do Círculo com efeito de brilho no fundo */}
+        <div className="relative w-48 h-48 flex items-center justify-center">
+          
+          {/* SVG com Track + Progress Ring */}
+          <svg className="absolute w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(51,184,100,0.15)]">
+            {/* 1. Círculo de Fundo (Track) - Mais escuro e fino */}
+            <circle
+              cx="96" 
+              cy="96" 
+              r={radius}
+              fill="transparent"
+              stroke="#1a1a1a"
+              strokeWidth="4"
+            />
+            {/* 2. Círculo de Progresso (Neon) - Com Glow */}
+            <circle
+              cx="96" 
+              cy="96" 
+              r={radius}
+              fill="transparent"
+              stroke="#33b864"
+              strokeWidth="8"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              style={{ filter: "drop-shadow(0 0 6px #33b864)" }}
+            />
+          </svg>
+
+          {/* 3. Conteúdo Central */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <span className="text-5xl font-sora font-extrabold text-white tracking-tighter drop-shadow-lg">
+              94.8<span className="text-2xl text-[#33b864]">%</span>
+            </span>
+            <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-2 font-medium bg-[#121212] px-2 py-1 rounded border border-white/5 font-inter">
+              Assertividade
+            </span>
           </div>
+
         </div>
       </div>
 

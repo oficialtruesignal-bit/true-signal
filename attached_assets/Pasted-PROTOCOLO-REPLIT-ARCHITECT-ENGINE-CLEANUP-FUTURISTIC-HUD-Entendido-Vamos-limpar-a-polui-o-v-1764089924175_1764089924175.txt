@@ -1,0 +1,92 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: CLEANUP & FUTURISTIC HUD 🟢
+
+Entendido. Vamos limpar a poluição visual e focar no que importa. Você quer:
+
+Eliminar os cards duplicados de baixo (Assertividade/Unidades).
+
+Alinhar os cards de cima (Online/Sinais) lado a lado (Horizontal).
+
+Futurizar o círculo central.
+
+Para o "Círculo Futurista", não vamos usar apenas uma linha grossa. Vamos criar um efeito de "Anel de Energia" com brilho neon (Glow) e talvez um fundo semi-transparente para parecer um HUD do Homem de Ferro.
+
+Aqui está o Prompt de Redesign.
+
+PROMPT MESTRE: FUTURISTIC HUD & LAYOUT CLEANUP
+ROLE: Senior UI/UX Designer & SVG Animator.
+
+TASK: Refatorar o componente CompactLiveHud.tsx. OBJETIVO: Limpar a interface removendo duplicatas, alinhar os cards superiores horizontalmente e criar um visual "Sci-Fi" para o círculo de assertividade.
+
+1. LIMPEZA (REMOÇÃO)
+AÇÃO: Remova completamente a seção inferior que contém os 4 cards grandes (Assertividade, Unidades, ROI, Sequência).
+
+Motivo: Esses dados já estão representados ou não são necessários agora. O painel deve acabar logo após o Círculo Principal.
+
+2. NOVA ESTRUTURA (TOP CARDS HORIZONTAIS)
+Os dois cards superiores ("Investidores Online" e "Sinais Enviados") devem ficar lado a lado, compactos.
+
+TypeScript
+
+<div className="flex flex-row items-center justify-center gap-4 w-full max-w-lg mx-auto mb-8">
+  
+  {/* Card 1: Online */}
+  <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden group">
+    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Online Agora</span>
+    <div className="flex items-center gap-2">
+       <span className="w-1.5 h-1.5 rounded-full bg-[#33b864] animate-ping"></span>
+       <span className="text-xl font-sora font-bold text-white">616</span>
+    </div>
+  </div>
+
+  {/* Card 2: Sinais */}
+  <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden">
+     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Total Sinais</span>
+    <span className="text-xl font-sora font-bold text-white">151</span>
+  </div>
+
+</div>
+3. O CÍRCULO FUTURISTA (TECH RING)
+O círculo de assertividade deve ser a peça central. Use filtros SVG para criar brilho.
+
+TypeScript
+
+<div className="relative flex items-center justify-center py-4">
+  {/* Container do Círculo com efeito de brilho no fundo */}
+  <div className="relative w-48 h-48 flex items-center justify-center">
+    
+    {/* 1. Círculo de Fundo (Track) - Mais escuro e fino */}
+    <svg className="absolute w-full h-full transform -rotate-90 drop-shadow-[0_0_15px_rgba(51,184,100,0.15)]">
+      <circle
+        cx="96" cy="96" r="80"
+        fill="transparent"
+        stroke="#1a1a1a"
+        strokeWidth="4"
+      />
+      {/* 2. Círculo de Progresso (Neon) - Com Glow */}
+      <circle
+        cx="96" cy="96" r="80"
+        fill="transparent"
+        stroke="#33b864"
+        strokeWidth="8"
+        strokeDasharray={2 * Math.PI * 80}
+        strokeDashoffset={2 * Math.PI * 80 * (1 - 0.948)} // 94.8%
+        strokeLinecap="round"
+        style={{ filter: "drop-shadow(0 0 6px #33b864)" }} // O BRILHO FUTURISTA
+      />
+    </svg>
+
+    {/* 3. Conteúdo Central */}
+    <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+      <span className="text-5xl font-sora font-extrabold text-white tracking-tighter drop-shadow-lg">
+        94.8<span className="text-2xl text-[#33b864]">%</span>
+      </span>
+      <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-2 font-medium bg-[#121212] px-2 py-1 rounded border border-white/5">
+        Assertividade
+      </span>
+    </div>
+
+  </div>
+</div>
+COMANDO: Substitua o código atual por essa nova estrutura. O resultado deve ser limpo: Dois cards retangulares em cima, e um "Reator Nuclear" de assertividade brilhando embaixo. Nada mais.
