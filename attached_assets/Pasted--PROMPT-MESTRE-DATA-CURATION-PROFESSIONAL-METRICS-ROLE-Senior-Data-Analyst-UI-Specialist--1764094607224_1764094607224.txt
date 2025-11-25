@@ -1,0 +1,50 @@
+# PROMPT MESTRE: DATA CURATION (PROFESSIONAL METRICS)
+
+*ROLE:* Senior Data Analyst & UI Specialist.
+
+*TASK:* Preencher os 6 Cards do Dashboard com métricas financeiras profissionais, eliminando duplicatas.
+*OBJETIVO:* Transmitir credibilidade de um "Fundo de Investimento Esportivo", usando terminologia técnica (CRM).
+
+## 1. DISTRIBUIÇÃO DOS DADOS
+
+Preencha os slots do layout exato do print (CompactLiveHud.tsx) com os seguintes dados:
+
+### BLOCO A: AO LADO DO CÍRCULO (Coluna Vertical)
+* *Slot 1 (Topo):* LUCRO LÍQUIDO
+    * *Valor:* +106.2u (Unidades).
+    * *Ícone:* TrendingUp (Verde).
+    * *Por que:* É a métrica final de sucesso.
+* *Slot 2 (Baixo):* ROI TOTAL
+    * *Valor:* 18.5% (Yield realista).
+    * *Ícone:* Percent ou PieChart (Verde).
+    * *Por que:* Mostra a rentabilidade sobre o capital girado.
+
+### BLOCO B: LINHA INTERMEDIÁRIA (Grid 2 Colunas)
+* *Slot 3 (Esquerda):* ODD MÉDIA
+    * *Valor:* @1.92
+    * *Ícone:* Scale ou Anchor (Amarelo/Laranja - cor de atenção).
+    * *Por que:* Indica consistência técnica. Odds altas com acerto alto = Profissionalismo.
+* *Slot 4 (Direita):* SEQUÊNCIA ATUAL
+    * *Valor:* 5V - 0D (5 Vitórias, 0 Derrotas).
+    * *Ícone:* Flame (Laranja/Vermelho).
+    * *Por que:* Indica o "momento" atual da IA.
+
+### BLOCO C: LINHA INFERIOR (Grid 2 Colunas)
+* *Slot 5 (Esquerda):* SINAIS (MÊS)
+    * *Valor:* 151 (Ou o valor acumulado do mês).
+    * *Ícone:* Activity ou Layers (Azul/Branco).
+    * *Por que:* Mostra volume de trabalho e oportunidades geradas.
+* *Slot 6 (Direita):* INVESTIDORES
+    * *Valor:* 624 (Oscilando com o hook useSimulation).
+    * *Ícone:* Users (Verde - Social Proof).
+    * *Por que:* Gatilho de prova social e comunidade.
+
+## 2. REGRAS DE ESTILO
+* *Padronização:* Todos os 6 cards (os 2 do lado do círculo e os 4 de baixo) devem ter *exatamente o mesmo design visual*:
+    * Fundo: #121212.
+    * Borda: #33b864/20.
+    * Fonte do Número: Sora Bold (Branco).
+    * Fonte do Label: Inter (Cinza, Uppercase, Texto Pequeno).
+* *Alinhamento:* Garanta que os grids de baixo tenham a mesma largura total do bloco de cima, criando um alinhamento vertical perfeito nas laterais.
+
+*COMANDO:* Atualize os textos, ícones e valores simulados conforme esta lista técnica. O painel deve parecer um terminal da Bloomberg para apostas.

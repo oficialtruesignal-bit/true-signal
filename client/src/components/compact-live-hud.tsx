@@ -53,20 +53,20 @@ export function CompactLiveHud() {
         {/* --- DIREITA: CARDS HOLOGRÁFICOS --- */}
         <div className="flex flex-col gap-4 h-full">
           
-          {/* CARD 1: ROI (Tema Verde/Neon) */}
+          {/* CARD 1: LUCRO LÍQUIDO (Tema Verde/Neon) */}
           <HolographicCard 
-            label="ROI TOTAL" 
-            value={`+${stats.roi.toFixed(1)}%`}
+            label="LUCRO LÍQUIDO" 
+            value="+106.2u"
             color="green"
             icon={<TrendingUp className="w-12 h-12" strokeWidth={1.5} />} 
           />
 
-          {/* CARD 2: SEQUÊNCIA (Tema Laranja/Fogo) */}
+          {/* CARD 2: ROI TOTAL (Tema Verde) */}
           <HolographicCard 
-            label="SEQUÊNCIA" 
-            value={`${stats.currentStreak.wins}V / ${stats.currentStreak.losses}D`}
-            color="orange"
-            icon={<Flame className="w-12 h-12" strokeWidth={1.5} />} 
+            label="ROI TOTAL" 
+            value="18.5%"
+            color="green"
+            icon={<TrendingUp className="w-12 h-12" strokeWidth={1.5} />} 
           />
 
         </div>

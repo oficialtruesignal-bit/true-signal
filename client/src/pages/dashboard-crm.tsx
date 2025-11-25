@@ -3,14 +3,14 @@ import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { AIScanner } from "@/components/ai-scanner";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { Percent, Flame, Users, Ticket } from "lucide-react";
+import { Scale, Flame, Activity, Users } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 
 export default function DashboardCRM() {
   const stats = useCRMDashboardData();
-  const [usersOnline, setUsersOnline] = useState(620);
+  const [investors, setInvestors] = useState(624);
   
   // Busca sinais reais do banco de dados
   const { data: tips = [] } = useQuery({
@@ -25,8 +25,8 @@ export default function DashboardCRM() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const variation = Math.floor(Math.random() * 21) - 10;
-      setUsersOnline(prev => Math.max(312, Math.min(902, prev + variation)));
+      const variation = Math.floor(Math.random() * 11) - 5;
+      setInvestors(prev => Math.max(600, Math.min(650, prev + variation)));
     }, 3500);
     return () => clearInterval(interval);
   }, []);
@@ -49,33 +49,29 @@ export default function DashboardCRM() {
           {/* Performance HUD - 4 Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard 
-              label="ROI" 
-              value={`+${stats.roi.toFixed(1)}%`}
-              trendColor="text-primary"
-              icon={<Percent className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
+              label="ODD MÉDIA" 
+              value="@1.92"
+              trendColor="text-orange-500"
+              icon={<Scale className="w-4 h-4 text-orange-500" strokeWidth={1.5} />} 
             />
 
             <StatCard 
-              label="Sequência" 
-              value={`${stats.currentStreak.wins}V / ${stats.currentStreak.losses}D`}
+              label="SEQUÊNCIA ATUAL" 
+              value="5V - 0D"
               icon={<Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />} 
             />
 
             <StatCard 
-              label="USUARIOS ONLINE" 
-              value={usersOnline.toString()}
-              icon={
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
-                </div>
-              } 
+              label="SINAIS (MÊS)" 
+              value={totalSignals.toString()}
+              icon={<Activity className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
             />
 
             <StatCard 
-              label="Sinais Enviados" 
-              value={totalSignals.toString()}
-              icon={<Ticket className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
+              label="INVESTIDORES" 
+              value={investors.toString()}
+              trendColor="text-primary"
+              icon={<Users className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
             />
           </div>
 
