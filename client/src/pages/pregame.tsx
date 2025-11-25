@@ -3,25 +3,33 @@ import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, AlertCircle, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { format, addDays } from "date-fns";
+import { format, addDays, isAfter, addMinutes } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
 export default function PreGamePage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
 
-  // Today + Next 2 days (72h window)
-  const dates = [
-    new Date(), // Today (remaining hours)
-    addDays(new Date(), 1), // Tomorrow
-    addDays(new Date(), 2), // Day after tomorrow
-  ];
+  // Today + Next 6 days (7 days window)
+  const dates = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
 
-  const { data: fixtures = [], isLoading, error } = useQuery({
+  const { data: rawFixtures = [], isLoading, error } = useQuery({
     queryKey: ['football-fixtures-pregame', selectedDate],
     queryFn: () => footballService.getFixturesByDate(format(selectedDate, 'yyyy-MM-dd')),
-    refetchInterval: 300000, // Refresh every 5 min
+    refetchInterval: 60000, // Refresh every 1 min (to catch matches starting soon)
   });
+
+  // Filtro temporal rigoroso: apenas jogos que começam em mais de 1 minuto
+  const fixtures = useMemo(() => {
+    const now = new Date();
+    const oneMinuteFromNow = addMinutes(now, 1);
+    
+    return rawFixtures.filter((match) => {
+      const matchDate = new Date(match.fixture.date);
+      // Mantém apenas jogos que começam DEPOIS de 1 minuto a partir de agora
+      return isAfter(matchDate, oneMinuteFromNow);
+    });
+  }, [rawFixtures]);
 
   return (
     <Layout>
@@ -33,27 +41,27 @@ export default function PreGamePage() {
           <h1 className="text-2xl font-display font-bold text-white">Pré-Jogo</h1>
         </div>
         <p className="text-muted-foreground">
-          Jogos programados para as próximas 72 horas
+          Jogos programados para os próximos 7 dias • Filtro: apenas jogos futuros
         </p>
       </div>
 
       {/* Date Selector */}
-      <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
         {dates.map((date) => (
           <button
             key={date.toISOString()}
             onClick={() => setSelectedDate(date)}
             data-testid={`date-${format(date, 'yyyy-MM-dd')}`}
-            className={`px-6 py-3 rounded-xl border transition-all whitespace-nowrap ${
+            className={`px-4 py-2 rounded-xl border transition-all whitespace-nowrap flex-shrink-0 ${
               format(selectedDate, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
                 ? 'bg-primary/20 border-primary text-primary font-bold'
                 : 'bg-card border-white/10 text-muted-foreground hover:border-primary/30'
             }`}
           >
-            <div className="text-xs font-medium mb-1">
-              {format(date, 'EEEE', { locale: ptBR })}
+            <div className="text-[10px] font-medium mb-0.5 uppercase">
+              {format(date, 'EEE', { locale: ptBR })}
             </div>
-            <div className="text-lg font-display font-bold">
+            <div className="text-sm font-display font-bold">
               {format(date, 'dd/MM')}
             </div>
           </button>
@@ -101,18 +109,18 @@ export default function PreGamePage() {
 
               {/* Teams */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1">
-                  <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-10 h-10 object-contain" />
-                  <span className="font-display font-bold text-white">{match.teams.home.name}</span>
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                  <span className="font-display font-bold text-white truncate max-w-[180px] block">{match.teams.home.name}</span>
                 </div>
 
-                <div className="px-6">
+                <div className="px-6 flex-shrink-0">
                   <span className="text-lg text-muted-foreground font-bold">vs</span>
                 </div>
 
-                <div className="flex items-center gap-3 flex-1 justify-end">
-                  <span className="font-display font-bold text-white text-right">{match.teams.away.name}</span>
-                  <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-10 h-10 object-contain" />
+                <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                  <span className="font-display font-bold text-white text-right truncate max-w-[180px] block">{match.teams.away.name}</span>
+                  <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-10 h-10 object-contain flex-shrink-0" />
                 </div>
               </div>
             </div>
