@@ -1,10 +1,17 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users } from "lucide-react";
+import { Copy, Users, Pencil } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface BetCardProps {
   signal: Signal;
@@ -54,6 +61,8 @@ function abbreviateTeamName(teamName: string): string {
 }
 
 export function BetCard({ signal }: BetCardProps) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
   const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
@@ -112,6 +121,25 @@ export function BetCard({ signal }: BetCardProps) {
     }
   }, [signal.status, signal.timestamp]);
   
+  const handleStatusChange = async (newStatus: Signal["status"]) => {
+    try {
+      // TODO: Implementar chamada à API para atualizar status
+      // await axios.patch(`/api/tips/${signal.id}`, { status: newStatus });
+      
+      setCurrentStatus(newStatus);
+      toast({
+        title: "Status atualizado!",
+        description: `Bilhete marcado como ${newStatus.toUpperCase()}`,
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível atualizar o status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleCopy = async () => {
     if (navigator.vibrate) {
       navigator.vibrate(50);
@@ -207,18 +235,54 @@ export function BetCard({ signal }: BetCardProps) {
       className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl p-5 shadow-lg shadow-[#33b864]/5 relative overflow-hidden group hover:border-[#33b864]/50 transition-all"
       data-testid={`bet-card-${signal.id}`}
     >
-      {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS) --- */}
+      {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS + EDITOR ADMIN) --- */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide whitespace-nowrap">
           <span className="text-[#33b864] uppercase truncate">{officialLeague}</span>
           <span className="text-gray-500">•</span>
           <span className="text-gray-400">{displayTime}</span>
         </div>
-        <div className={cn(
-          "px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wide",
-          statusBadge.className
-        )}>
-          {statusBadge.text}
+        <div className="flex items-center gap-2">
+          <div className={cn(
+            "px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wide",
+            statusBadge.className
+          )}>
+            {statusBadge.text}
+          </div>
+          
+          {/* Botão de edição (apenas para admin) */}
+          {isAdmin && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="p-1.5 rounded-lg hover:bg-[#33b864]/10 transition-colors"
+                  data-testid="edit-status-button"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-[#33b864]" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30">
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('pending')}
+                  className="text-[#33b864] cursor-pointer hover:bg-[#33b864]/10"
+                >
+                  ⏳ PENDENTE
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('green')}
+                  className="text-green-500 cursor-pointer hover:bg-green-500/10"
+                >
+                  ✅ GREEN
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleStatusChange('red')}
+                  className="text-red-500 cursor-pointer hover:bg-red-500/10"
+                >
+                  ❌ RED
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
 
