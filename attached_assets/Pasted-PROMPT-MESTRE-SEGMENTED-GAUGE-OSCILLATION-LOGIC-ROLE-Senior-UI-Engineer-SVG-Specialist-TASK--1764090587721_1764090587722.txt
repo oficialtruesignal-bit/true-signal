@@ -1,0 +1,86 @@
+PROMPT MESTRE: SEGMENTED GAUGE & OSCILLATION LOGIC
+ROLE: Senior UI Engineer & SVG Specialist.
+
+TASK: Substituir o Círculo Central do CompactLiveHud.tsx por um Medidor Segmentado (Tick-based) idêntico à referência visual. LÓGICA: O valor deve iniciar em 89% e oscilar aleatoriamente entre 86% e 92%.
+
+1. O MOTOR DE OSCILAÇÃO (REACT HOOK)
+Dentro do componente, crie o estado e o efeito para variar o número.
+
+TypeScript
+
+const [roiValue, setRoiValue] = useState(89.0);
+
+useEffect(() => {
+  const interval = setInterval(() => {
+    // Gera um número aleatório entre -3.0 e +3.0
+    const variation = (Math.random() * 6) - 3; 
+    // Aplica ao base 89, mantendo entre 86 e 92
+    let newValue = 89 + variation;
+    // Trava os limites por segurança
+    if (newValue > 92) newValue = 92;
+    if (newValue < 86) newValue = 86;
+    
+    setRoiValue(newValue);
+  }, 3000); // Atualiza a cada 3 segundos para não ficar frenético
+
+  return () => clearInterval(interval);
+}, []);
+2. O DESIGN VISUAL (SVG SEGMENTADO)
+Não use bordas CSS. Use um SVG com linhas radiais. O componente deve renderizar ~60 "tracinhos" (ticks) em círculo.
+
+Lógica de Renderização do SVG:
+
+Defina totalTicks = 60.
+
+Calcule quantos ticks representam a porcentagem atual: activeTicks = Math.round((roiValue / 100) * totalTicks).
+
+Faça um .map para gerar as linhas.
+
+Código do Componente Visual (Copie esta estrutura):
+
+TypeScript
+
+<div className="relative flex items-center justify-center py-6">
+  {/* Container do Gauge */}
+  <div className="relative w-48 h-48 md:w-56 md:h-56">
+    
+    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+      {Array.from({ length: 60 }).map((_, i) => {
+        // Lógica de Cor: Se o índice for menor que o ativo, é VERDE. Senão, é CINZA ESCURO.
+        const isActive = i < Math.round((roiValue / 100) * 60);
+        const color = isActive ? "#33b864" : "#222222"; 
+        
+        return (
+          <line
+            key={i}
+            x1="50" y1="10" x2="50" y2="20" // Define o comprimento do tracinho (10% do raio)
+            stroke={color}
+            strokeWidth="2" // Espessura do tracinho
+            transform={`rotate(${i * (360 / 60)} 50 50)`} // Rotaciona ao redor do centro (50,50)
+            style={{ transition: 'stroke 0.5s ease' }} // Animação suave de cor
+          />
+        );
+      })}
+    </svg>
+
+    {/* Conteúdo Central (Texto) */}
+    <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+      <div className="flex items-baseline">
+        <span className="text-5xl md:text-6xl font-sora font-bold text-white tracking-tighter">
+          {roiValue.toFixed(1)}
+        </span>
+        <span className="text-xl md:text-2xl font-sora text-[#33b864] font-bold ml-1">%</span>
+      </div>
+      <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-1 font-medium">
+        ROI TOTAL
+      </span>
+    </div>
+
+  </div>
+</div>
+3. INTEGRAÇÃO NO LAYOUT
+Mantenha o layout que definimos antes: Cards de Assertividade e Unidades lado a lado no topo, e este novo Gauge Segmentado logo abaixo, centralizado e imponente.
+
+O visual final deve parecer um tacômetro de carro esportivo digital.
+
+COMANDO: Implemente a lógica de oscilação e a renderização do SVG segmentado. O resultado deve ser idêntico à imagem de referência: traços grossos, definidos e uma leitura clara no centro.
