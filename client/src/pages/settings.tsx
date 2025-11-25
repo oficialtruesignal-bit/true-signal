@@ -1,7 +1,6 @@
 import { Layout } from "@/components/layout";
-import { Settings as SettingsIcon, Globe, Moon, Sun, Lock, MessageCircle } from "lucide-react";
+import { Settings as SettingsIcon, Globe, Lock, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -10,7 +9,6 @@ import { Language } from "@/i18n/translations";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark');
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -20,13 +18,6 @@ export default function SettingsPage() {
     { code: 'it', name: 'Italiano', flag: '🇮🇹' },
     { code: 'cn', name: '中文', flag: '🇨🇳' },
   ];
-
-  const handleThemeToggle = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    toast.success(`${t.settings.theme}: ${newTheme === 'dark' ? t.settings.darkMode : t.settings.lightMode}`);
-    // TODO: Implement actual theme switching
-  };
 
   const handleLanguageChange = (code: Language) => {
     setLanguage(code);
@@ -78,34 +69,6 @@ export default function SettingsPage() {
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Theme Switcher */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            {theme === 'dark' ? (
-              <Moon className="w-5 h-5 text-primary" />
-            ) : (
-              <Sun className="w-5 h-5 text-primary" />
-            )}
-            <h3 className="font-bold text-white">{t.settings.theme}</h3>
-          </div>
-          <button
-            onClick={handleThemeToggle}
-            data-testid="theme-toggle"
-            className="w-full p-4 rounded-lg bg-black/20 border border-white/10 hover:border-primary/30 transition-all flex items-center justify-between group"
-          >
-            <span className="text-white font-medium">
-              {theme === 'dark' ? t.settings.darkMode : t.settings.lightMode}
-            </span>
-            <div className={`w-12 h-6 rounded-full transition-all ${
-              theme === 'dark' ? 'bg-primary' : 'bg-gray-400'
-            } relative`}>
-              <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${
-                theme === 'dark' ? 'right-0.5' : 'left-0.5'
-              }`} />
-            </div>
-          </button>
         </div>
 
         {/* Change Password */}

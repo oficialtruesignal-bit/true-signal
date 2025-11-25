@@ -1,0 +1,53 @@
+PROMPT DE CORREÇÃO: ADMIN FLOW & THEME LOCK
+ROLE: Senior React Developer & Supabase Expert.
+
+TASK: Realizar duas correções críticas de infraestrutura e UX.
+
+1. SISTEMA DE TEMAS (THEME LOCK)
+O Design System "Ocean Signal" (Verde Neon + Preto Absoluto) não funciona em fundo branco.
+
+AÇÃO: Remova qualquer botão de "Toggle Theme" (Sol/Lua) do Header ou Configurações.
+
+AÇÃO: No arquivo index.html ou App.tsx, force a classe dark na tag raiz <html>.
+
+RESULTADO: A aplicação deve ser Permanent Dark Mode. Garanta que o fundo seja sempre #0a0a0a e o texto #ffffff.
+
+2. FLUXO ADMIN -> USUÁRIO (CRITICAL FIX)
+A funcionalidade de criar Tips não está refletindo para os usuários ou está falhando silenciosamente. Vamos reconstruir o fluxo.
+
+A. Página Admin (/admin/create-tip)
+Revisar o formulário de criação. Ao clicar em "Publicar Green":
+
+Validação: Verifique se os campos (Time A, Time B, Odd, Mercado) estão preenchidos.
+
+Envio: Faça a chamada supabase.from('tips').insert(...).
+
+Tratamento de Erro: Envolva em try/catch. Se der erro (ex: permissão negada), mostre um Toast Vermelho com a mensagem real do erro.
+
+Sucesso: Se funcionar, limpe o formulário e mostre Toast Verde.
+
+B. Página Feed do Usuário (/dashboard/tips)
+O usuário não pode precisar dar F5 para ver novas tips.
+
+Realtime: Implemente um useEffect que subscreva ao canal do Supabase:
+
+TypeScript
+
+supabase.channel('public:tips')
+.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'tips' }, (payload) => {
+    setTips((current) => [payload.new, ...current])
+})
+.subscribe()
+Visual: Assim que a Tip chegar, ela deve aparecer no topo da lista com uma animação suave.
+
+3. CHECKLIST DE PERMISSÕES (RLS)
+Verifique se o arquivo de definições SQL (que eu pedi para rodar antes) permite que o Admin faça INSERT.
+
+Se o Admin receber erro "new row violates row-level security policy", o frontend deve alertar: "Erro de Permissão: Verifique se sua conta tem role='admin' no banco de dados."
+
+4. REVISÃO GERAL
+Teste se o botão de "Logout" limpa a sessão corretamente.
+
+Garanta que a navegação Mobile (Bottom Bar) não cubra o conteúdo da última Tip (adicione padding-bottom na lista).
+
+OBJETIVO: O Admin posta, o Usuário vê na hora. O site é sempre preto e verde, sem exceções.

@@ -1,17 +1,58 @@
 import { Layout } from "@/components/layout";
 import { BetCard } from "@/components/bet-card";
 import { tipsService } from "@/lib/tips-service";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Target, Loader2, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DashboardCommandCenter } from "@/components/dashboard-command-center";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function TipsPage() {
+  const queryClient = useQueryClient();
+  
   const { data: tips = [], isLoading, error } = useQuery({
     queryKey: ['tips'],
     queryFn: tipsService.getAll,
     refetchInterval: 30000, // Refresh every 30s
   });
+
+  // Realtime subscription for new tips
+  useEffect(() => {
+    const channel = supabase
+      .channel('public:tips')
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'tips' 
+      }, (payload) => {
+        console.log('🔔 Nova tip recebida:', payload.new);
+        
+        // Invalidate and refetch to get the new tip
+        queryClient.invalidateQueries({ queryKey: ['tips'] });
+        
+        // Show toast notification
+        toast.success('Nova Tip Disponível!', {
+          description: `${payload.new.match_name} - ${payload.new.market}`,
+        });
+      })
+      .on('postgres_changes', {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'tips'
+      }, (payload) => {
+        console.log('🔄 Tip atualizada:', payload.new);
+        
+        // Invalidate and refetch to get the updated tip
+        queryClient.invalidateQueries({ queryKey: ['tips'] });
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [queryClient]);
 
   return (
     <Layout>
@@ -56,7 +97,7 @@ export default function TipsPage() {
       )}
 
       {!isLoading && !error && tips.length > 0 && (
-        <div className="space-y-4">
+        <div className="space-y-4 pb-24 md:pb-4">
           {tips.map((tip) => (
             <BetCard key={tip.id} signal={tip} />
           ))}
