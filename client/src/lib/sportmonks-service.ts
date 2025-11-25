@@ -17,6 +17,11 @@ export interface SportmonksV3Participant {
   type: string;
   placeholder: boolean;
   last_played_at: string;
+  meta?: {
+    location: "home" | "away";
+    winner?: boolean;
+    position?: number;
+  };
 }
 
 export interface SportmonksV3League {
@@ -170,10 +175,9 @@ export interface FixtureStatistics {
 function mapV3FixtureToFootballMatch(fixture: SportmonksV3Fixture): FootballMatch {
   const participants = fixture.participants || [];
   
-  // Find home and away based on participant order (first is home, second is away)
-  // In Sportmonks v3, participants array is ordered [home, away]
-  const homeParticipant = participants[0];
-  const awayParticipant = participants[1];
+  // Find home and away using meta.location (not array order!)
+  const homeParticipant = participants.find(p => p.meta?.location === "home");
+  const awayParticipant = participants.find(p => p.meta?.location === "away");
 
   const scores = fixture.scores || [];
   const homeScore = scores.find(s => s.location === "home" && s.description === "CURRENT");
@@ -345,9 +349,18 @@ export const sportmonksService = {
         return [];
       }
 
+      // Find home and away participants using meta.location
+      const homeParticipant = participants.find(p => p.meta?.location === "home");
+      const awayParticipant = participants.find(p => p.meta?.location === "away");
+
+      if (!homeParticipant || !awayParticipant) {
+        console.warn('⚠️ Participantes home/away não identificados');
+        return [];
+      }
+
       return [
-        mapV3StatisticsToFixtureStats(stats, participants[0].id),
-        mapV3StatisticsToFixtureStats(stats, participants[1].id),
+        mapV3StatisticsToFixtureStats(stats, homeParticipant.id),
+        mapV3StatisticsToFixtureStats(stats, awayParticipant.id),
       ];
     } catch (error) {
       console.error('❌ [Sportmonks] Erro ao buscar estatísticas:', error);
