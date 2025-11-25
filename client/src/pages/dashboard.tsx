@@ -28,7 +28,7 @@ export default function Dashboard() {
       
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-display font-bold text-white mb-2">Dashboard</h1>
+          <h1 className="text-3xl font-display font-bold text-foreground mb-2">Dashboard</h1>
           <p className="text-muted-foreground">Bem-vindo ao QG do Investidor.</p>
         </div>
         
@@ -37,21 +37,21 @@ export default function Dashboard() {
           <Button variant="outline" size="sm" className="border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary">
             <Filter className="w-4 h-4 mr-2" /> Hoje
           </Button>
-          <Button variant="outline" size="sm" className="border-white/10 hover:bg-white/5 text-muted-foreground">
+          <Button variant="outline" size="sm" className="border-gray-200 dark:border-white/10 hover:bg-primary/5 dark:hover:bg-white/5 text-muted-foreground">
             Amanhã
           </Button>
         </div>
       </div>
 
       <Tabs defaultValue="tips" className="space-y-6">
-        <TabsList className="bg-card border border-primary/20 p-1 rounded-xl w-full md:w-auto grid grid-cols-3 md:flex">
-          <TabsTrigger value="tips" className="data-[state=active]:bg-primary data-[state=active]:text-black font-bold rounded-lg transition-all">
+        <TabsList className="bg-card border border-primary/20 dark:border-primary/20 border-gray-200 p-1 rounded-xl w-full md:w-auto grid grid-cols-3 md:flex">
+          <TabsTrigger value="tips" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold rounded-lg transition-all">
             <Zap className="w-4 h-4 mr-2" /> Tips do Dia
           </TabsTrigger>
-          <TabsTrigger value="live" className="data-[state=active]:bg-primary data-[state=active]:text-black font-bold rounded-lg transition-all">
+          <TabsTrigger value="live" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold rounded-lg transition-all">
             <Activity className="w-4 h-4 mr-2" /> Ao Vivo
           </TabsTrigger>
-          <TabsTrigger value="upcoming" className="data-[state=active]:bg-primary data-[state=active]:text-black font-bold rounded-lg transition-all">
+          <TabsTrigger value="upcoming" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground font-bold rounded-lg transition-all">
             <Calendar className="w-4 h-4 mr-2" /> Próximos
           </TabsTrigger>
         </TabsList>
@@ -60,7 +60,7 @@ export default function Dashboard() {
           <Hero />
           <div className="flex items-center gap-2 mb-4">
             <Zap className="w-5 h-5 text-primary" />
-            <h2 className="text-xl font-display font-bold text-white">Sinais Quentes</h2>
+            <h2 className="text-xl font-display font-bold text-foreground">Sinais Quentes</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {signals.map((signal) => (
@@ -70,9 +70,9 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="live" className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-card border border-primary/20 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.05)]">
+          <div className="bg-card border border-primary/20 dark:border-primary/20 border-gray-200 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.05)]">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-display font-bold text-white flex items-center gap-2">
+              <h2 className="text-xl font-display font-bold text-foreground flex items-center gap-2">
                 <Activity className="w-5 h-5 text-primary" />
                 Painel ao Vivo
               </h2>
@@ -85,18 +85,18 @@ export default function Dashboard() {
         </TabsContent>
 
         <TabsContent value="upcoming" className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-          <div className="bg-card border border-primary/20 rounded-2xl p-6">
-             <h2 className="text-xl font-display font-bold text-white mb-6 flex items-center gap-2">
+          <div className="bg-card border border-primary/20 dark:border-primary/20 border-gray-200 rounded-2xl p-6">
+             <h2 className="text-xl font-display font-bold text-foreground mb-6 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-primary" />
                 Jogos de Hoje
               </h2>
               <div className="space-y-3">
                 {upcomingGames.length > 0 ? upcomingGames.map((match: any) => (
-                  <div key={match.fixture.id} className="flex items-center justify-between p-3 hover:bg-white/5 rounded-lg border border-white/5 transition-colors">
+                  <div key={match.fixture.id} className="flex items-center justify-between p-3 hover:bg-primary/5 dark:hover:bg-white/5 rounded-lg border border-gray-200 dark:border-white/5 transition-colors">
                      <div className="flex items-center gap-4">
                        <span className="text-xs text-muted-foreground w-12">{format(new Date(match.fixture.date), 'HH:mm')}</span>
                        <div className="flex flex-col">
-                         <span className="text-white font-medium text-sm">{match.teams.home.name} vs {match.teams.away.name}</span>
+                         <span className="text-foreground font-medium text-sm">{match.teams.home.name} vs {match.teams.away.name}</span>
                          <span className="text-[10px] text-primary">{match.league.name}</span>
                        </div>
                      </div>

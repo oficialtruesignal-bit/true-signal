@@ -87,7 +87,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </div>
               <div className="flex flex-col overflow-hidden">
                 <span className="text-xs text-muted-foreground">Bem-vindo,</span>
-                <span className="text-sm font-bold text-white truncate">{user?.firstName || "Convidado"}</span>
+                <span className="text-sm font-bold text-foreground truncate">{user?.firstName || "Convidado"}</span>
               </div>
            </div>
         </div>
@@ -101,13 +101,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border border-transparent",
                 location === item.path
                   ? "bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.1)]"
-                  : "text-muted-foreground hover:text-white hover:bg-white/5"
+                  : "text-muted-foreground hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
               )}
             >
               <item.icon
                 className={cn(
                   "w-5 h-5 transition-colors",
-                  location === item.path ? "text-primary" : "text-muted-foreground group-hover:text-white"
+                  location === item.path ? "text-primary" : "text-muted-foreground group-hover:text-primary dark:group-hover:text-white"
                 )}
               />
               <span className="font-medium">{item.label}</span>
@@ -116,7 +116,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="mt-auto space-y-2">
-          <div className="bg-black/40 dark:bg-black/40 bg-white/60 dark:border-white/5 border-gray-200 rounded-xl p-4 border">
+          <div className="bg-white/60 dark:bg-black/40 border-gray-200 dark:border-white/5 rounded-xl p-4 border">
             <div className="flex items-center gap-2 text-foreground text-sm font-bold mb-2">
               <Bell className="w-4 h-4 text-primary" /> Notificações
             </div>
@@ -150,7 +150,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-primary/20 dark:border-primary/20 border-gray-200 z-50 flex items-center justify-between px-4">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-gray-200 dark:border-primary/20 z-50 flex items-center justify-between px-4">
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
            <span className="text-sm font-bold text-foreground mr-2">Olá, {user?.firstName}</span>

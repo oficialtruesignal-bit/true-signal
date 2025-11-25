@@ -51,7 +51,7 @@ export function BetCard({ signal }: BetCardProps) {
   };
 
   return (
-    <div className="group relative bg-[#121212] hover:bg-[#1a1a1a] border border-primary/20 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-[0_0_20px_rgba(51,184,100,0.1)] overflow-hidden flex flex-col h-full animate-in zoom-in-95 duration-300">
+    <div className="group relative bg-card hover:bg-card-hover border border-primary/20 dark:border-primary/20 border-gray-200 transition-all duration-300 rounded-xl p-5 shadow-lg hover:shadow-[0_0_20px_rgba(51,184,100,0.1)] overflow-hidden flex flex-col h-full animate-in zoom-in-95 duration-300">
       
       <div className="relative z-10 flex flex-col gap-4 flex-1">
         {/* Header */}
@@ -73,20 +73,20 @@ export function BetCard({ signal }: BetCardProps) {
 
         {/* Teams */}
         <div className="flex flex-col gap-1 py-2 flex-1">
-          <h3 className="text-lg font-display font-bold text-white leading-tight">
+          <h3 className="text-lg font-display font-bold text-foreground leading-tight">
             {signal.homeTeam}
           </h3>
           <span className="text-xs text-muted-foreground font-mono">vs</span>
-          <h3 className="text-lg font-display font-bold text-white leading-tight">
+          <h3 className="text-lg font-display font-bold text-foreground leading-tight">
             {signal.awayTeam}
           </h3>
         </div>
 
         {/* Market & Odd */}
-        <div className="flex items-center justify-between bg-black/40 rounded-lg p-3 border border-white/5">
+        <div className="flex items-center justify-between bg-black/40 dark:bg-black/40 bg-white/60 rounded-lg p-3 border border-gray-200 dark:border-white/5">
           <div className="flex flex-col">
             <span className="text-[10px] text-muted-foreground uppercase">Mercado</span>
-            <span className="text-sm font-medium text-white">{signal.market}</span>
+            <span className="text-sm font-medium text-foreground">{signal.market}</span>
           </div>
           <div className="flex flex-col items-end">
             <span className="text-[10px] text-muted-foreground uppercase">Odd</span>
@@ -97,7 +97,7 @@ export function BetCard({ signal }: BetCardProps) {
         {/* Actions */}
         <button
           onClick={handleBet}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-black text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-[0_0_15px_rgba(51,184,100,0.2)] hover:shadow-[0_0_25px_rgba(51,184,100,0.4)] mt-2 group/btn border border-primary/50 active:scale-95"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-lg bg-primary hover:bg-primary-dark text-primary-foreground text-sm font-bold uppercase tracking-wide transition-all duration-200 shadow-[0_0_15px_rgba(51,184,100,0.2)] hover:shadow-[0_0_25px_rgba(51,184,100,0.4)] mt-2 group/btn border border-primary/50 active:scale-95"
         >
           COPIAR ENTRADA
           <ExternalLink className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
