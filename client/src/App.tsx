@@ -11,7 +11,7 @@ import { Loader2 } from "lucide-react";
 
 // Lazy Load Pages for Performance
 const LandingPage = React.lazy(() => import("@/pages/landing"));
-const Dashboard = React.lazy(() => import("@/pages/dashboard"));
+const Dashboard = React.lazy(() => import("@/pages/dashboard-crm"));
 const TipsPage = React.lazy(() => import("@/pages/tips"));
 const LivePage = React.lazy(() => import("@/pages/live"));
 const PreGamePage = React.lazy(() => import("@/pages/pregame"));
