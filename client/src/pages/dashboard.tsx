@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LiveMetricsBar } from "@/components/live-metrics-bar";
 import { useState, useEffect } from "react";
 
 export default function Dashboard() {
@@ -56,6 +57,9 @@ export default function Dashboard() {
       {/* Dashboard Preview - Clean & Professional */}
       {!showFullDashboard ? (
         <div className="space-y-6">
+          {/* Live Metrics Bar */}
+          <LiveMetricsBar />
+          
           {/* Performance Chart Preview - Professional */}
           <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_40px_rgba(51,184,100,0.1)]">
             <div className="flex items-center justify-between mb-4">
