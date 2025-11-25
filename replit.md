@@ -74,12 +74,14 @@ Preferred communication style: Simple, everyday language.
 ### External Dependencies
 
 **Third-Party APIs:**
-- **Sportmonks API v3 (api.sportmonks.com)**: Primary data source for live match data, fixtures, and real statistics (attacks, dangerous attacks)
-  - Endpoints: `/v3/football/livescores/inplay` for live matches, `/v3/football/fixtures/date/{date}` for scheduled matches, `/v3/football/fixtures/{id}` for statistics
-  - Authentication via API key in environment variable `VITE_SPORTMONKS_API_KEY`
-  - Proxied through backend (`/api/sportmonks/*`) to avoid CORS issues
+- **Sportmonks API v3 (api.sportmonks.com)**: Primary data source for live match data, fixtures, and real statistics
+  - Endpoints: `/v3/football/livescores/inplay` (live), `/v3/football/fixtures/date/{date}` (scheduled), `/v3/football/fixtures/{id}` (stats)
+  - Authentication: Backend proxy with `SPORTMONKS_API_TOKEN` environment variable (secure, no client exposure)
+  - Includes: `participants;league;scores;periods;statistics` (semicolon separated)
   - Free plan: Danish Superliga (ID:271) and Scottish Premiership (ID:501)
-  - Real data fields: `attacks`, `dangerous_attacks`, `possession`, `shots_on_goal`, etc. (Type IDs: 83, 84, 42, 86)
+  - Type IDs (Official): attacks (43), dangerous_attacks (44), possession (45), shots_on_target (86), corners (42), saves (57)
+  - Participant mapping: Uses `meta.location` ("home"/"away") for accurate team identification
+  - Live time: Calculated from `periods` data (counts_from + minutes)
   - Graceful degradation with skeleton loaders and fallback messaging on API failures
 
 **Authentication & Database Services:**
@@ -130,13 +132,33 @@ Preferred communication style: Simple, everyday language.
 
 ### Recent Changes (Nov 25, 2024)
 
-**Sportmonks API v3 Migration:**
-- Migrated from API-Football to Sportmonks API v3 for real "Attacks" and "Dangerous Attacks" data
-- Created backend proxy endpoints (`/api/sportmonks/*`) to handle CORS and API key security
-- Implemented real data mapping (no estimations) with Type IDs: attacks (83), dangerous_attacks (84), possession (42), shots_on_goal (86)
-- Updated Match Center Modal to fetch real statistics with 10-second auto-refresh
-- Enhanced GameStats UI with directional arrows showing dominant team
-- Labels: "Ataque Perigoso" (dangerous attacks), "Posse de Bola" (ball possession)
+**Sportmonks API v3 Complete Migration (Final):**
+- ✅ **Backend Proxy**: Created Express endpoints (`/api/sportmonks/*`) to handle CORS and secure API key management
+  - Endpoints: `/api/sportmonks/livescores/inplay`, `/api/sportmonks/fixtures/date/:date`, `/api/sportmonks/fixtures/:id`
+  - Uses semicolon separators for includes: `participants;league;scores;periods;statistics`
+  - API token stored securely as `SPORTMONKS_API_TOKEN` environment variable (backend only)
+- ✅ **Participant Mapping**: Fixed home/away team identification using `meta.location` field (not array index)
+  - Prevents team flipping when API returns teams in non-standard order
+  - Extended TypeScript interfaces to include `meta` field with location/winner/position data
+- ✅ **Official Type IDs**: Corrected all statistics Type IDs to match Sportmonks v3 documentation
+  - Attacks: Type ID 43 (was 83)
+  - Dangerous Attacks: Type ID 44 (was 84)
+  - Ball Possession: Type ID 45 (was 42)
+  - Shots On Target: Type ID 86 ✓
+  - Corners: Type ID 42 ✓
+  - Yellow Cards: Type ID 84 ✓
+  - Red Cards: Type ID 83 ✓
+  - Goalkeeper Saves: Type ID 57 (was 91)
+- ✅ **Live Match Time**: Implemented elapsed minute calculation from `periods` data
+  - Parses `ticking` period with `counts_from + minutes` formula
+  - Supports 1st half, 2nd half, extra time, and penalties
+- ✅ **State Mapping**: Fixed fixture state_id mapping for accurate match status
+  - 1: Not Started (NS), 2: Live - 1st Half (1H), 3: Halftime (HT), 4: Live - Break (BRK)
+  - 5: Match Finished (FT), 14: Live - Extra Time (ET), 18: Finished After Extra Time (AET)
+  - 7: Live - Penalties (PEN), 8: Finished After Penalties (FT (PEN))
+  - 9: Postponed (POSTP), 11: Cancelled (CANC), 17: Interrupted (INT)
+- **Testing Notes**: Free plan limited to Danish Superliga (ID:271) and Scottish Premiership (ID:501)
+- **Known Issue**: Nested `<a>` tags warning in Layout/Sidebar (non-critical, doesn't affect functionality)
 
 ### Recent Changes (Nov 2024)
 
