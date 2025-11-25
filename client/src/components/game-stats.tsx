@@ -115,7 +115,7 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
           <div className="flex items-center justify-center gap-4 text-lg font-bold">
             <span className="text-primary">{stats.xg.home.toFixed(2)} xG</span>
             <span className="text-muted-foreground">-</span>
-            <span className="text-blue-500">{stats.xg.away.toFixed(2)} xG</span>
+            <span className="text-primary/70">{stats.xg.away.toFixed(2)} xG</span>
           </div>
           <p className="text-xs text-muted-foreground mt-1">Expected Goals</p>
         </div>
@@ -128,7 +128,7 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center justify-between w-full px-2">
               <span className="text-sm font-bold text-primary">{stats.attacks.home}</span>
-              <span className="text-sm font-bold text-blue-500">{stats.attacks.away}</span>
+              <span className="text-sm font-bold text-primary/60">{stats.attacks.away}</span>
             </div>
             <div className="relative">
               <CircularProgress 
@@ -154,7 +154,7 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center justify-between w-full px-2">
               <span className="text-sm font-bold text-primary">{stats.dangerousAttacks.home}</span>
-              <span className="text-sm font-bold text-blue-500">{stats.dangerousAttacks.away}</span>
+              <span className="text-sm font-bold text-primary/60">{stats.dangerousAttacks.away}</span>
             </div>
             <div className="relative">
               <CircularProgress 
@@ -180,7 +180,7 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
           <div className="flex flex-col items-center gap-2">
             <div className="flex items-center justify-between w-full px-2">
               <span className="text-sm font-bold text-primary">{stats.possession.home}%</span>
-              <span className="text-sm font-bold text-blue-500">{stats.possession.away}%</span>
+              <span className="text-sm font-bold text-primary/60">{stats.possession.away}%</span>
             </div>
             <div className="relative">
               <CircularProgress 

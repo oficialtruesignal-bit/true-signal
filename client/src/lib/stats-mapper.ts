@@ -61,8 +61,9 @@ export function mapFixtureStatistics(
   let homeDangerous = getStat(homeStats, "Dangerous Attacks");
   let awayDangerous = getStat(awayStats, "Dangerous Attacks");
   if (homeDangerous === null || awayDangerous === null) {
-    homeDangerous = getStat(homeStats, "Shots insidebox") || 0;
-    awayDangerous = getStat(awayStats, "Shots insidebox") || 0;
+    // Try both variations of the field name
+    homeDangerous = getStat(homeStats, "Shots inside box") || getStat(homeStats, "Shots insidebox") || 0;
+    awayDangerous = getStat(awayStats, "Shots inside box") || getStat(awayStats, "Shots insidebox") || 0;
   }
   if ((homeDangerous !== null && homeDangerous > 0) || (awayDangerous !== null && awayDangerous > 0)) {
     mapped.dangerousAttacks = { home: homeDangerous || 0, away: awayDangerous || 0 };
