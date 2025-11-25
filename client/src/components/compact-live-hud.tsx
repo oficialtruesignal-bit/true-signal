@@ -61,7 +61,7 @@ export function CompactLiveHud() {
             <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
               bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
             }`}>
-              {bankroll.totalProfit > 0 ? '+' : ''}{bankroll.totalProfitUnits.toFixed(1)}u
+              R$ {bankroll.currentBankroll.toFixed(2)}
             </span>
           </NeonCard>
 
