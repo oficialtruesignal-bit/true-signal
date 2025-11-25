@@ -54,31 +54,8 @@ export default function Dashboard() {
 
       {/* Bento Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* KPI Cards - Top */}
-        <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Banca Simulada */}
-          <div 
-            className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
-            data-testid="kpi-balance"
-          >
-            <div className="flex items-center justify-between mb-3">
-              <TrendingUp className="w-5 h-5 text-primary" />
-              <span className="text-[10px] font-bold bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20">
-                LIVE
-              </span>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs text-muted-foreground font-medium">Banca Atual</p>
-              <p className="text-3xl font-bold text-primary font-mono">
-                R$ {stats.balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-              </p>
-              <p className="text-[10px] text-green-500 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" />
-                +{((stats.balance - 1000) / 1000 * 100).toFixed(1)}% ROI
-              </p>
-            </div>
-          </div>
-
+        {/* KPI Cards - Top (3 cards now - removed Banca) */}
+        <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Assertividade */}
           <div 
             className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
@@ -145,13 +122,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Profit Chart - Center */}
+        {/* Performance Chart - Center */}
         <div className="lg:col-span-8 bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)]">
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-xl font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-primary" />
-                Evolução de Lucro
+                Evolução de Performance
               </h2>
               <p className="text-xs text-muted-foreground mt-1">Últimas 24 horas • Atualização em tempo real</p>
             </div>
@@ -177,7 +154,7 @@ export default function Dashboard() {
                   stroke="rgba(148, 163, 184, 0.5)" 
                   style={{ fontSize: '10px' }}
                   tick={{ fill: 'rgba(148, 163, 184, 0.7)' }}
-                  tickFormatter={(value) => `R$ ${value}`}
+                  tickFormatter={(value) => `${value} pts`}
                 />
                 <Tooltip 
                   contentStyle={{ 
@@ -186,7 +163,7 @@ export default function Dashboard() {
                     borderRadius: '8px',
                     color: '#fff'
                   }}
-                  formatter={(value: number) => [`R$ ${value.toFixed(2)}`, 'Lucro']}
+                  formatter={(value: number) => [`${value.toFixed(0)} pontos`, 'Performance']}
                 />
                 <Area 
                   type="monotone" 
