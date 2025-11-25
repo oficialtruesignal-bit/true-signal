@@ -106,6 +106,22 @@ function LinearBar({
 
 export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
   const stats = statistics;
+  
+  // Verifica se há alguma estatística disponível
+  const hasAnyStats = Object.keys(stats).length > 0 && Object.values(stats).some(stat => stat !== null && stat !== undefined);
+  
+  if (!hasAnyStats) {
+    return (
+      <Card className="bg-[#0a0a0a] border-primary/20 p-12 text-center">
+        <p className="text-muted-foreground text-sm">
+          Dados estatísticos indisponíveis no momento
+        </p>
+        <p className="text-xs text-muted-foreground/60 mt-2">
+          As estatísticas serão atualizadas conforme o jogo avança
+        </p>
+      </Card>
+    );
+  }
 
   return (
     <Card className="bg-[#0a0a0a] border-primary/20 p-6 space-y-6">

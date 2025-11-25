@@ -54,25 +54,25 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
 
           {/* Score */}
           <div className="flex items-center justify-center gap-8">
-            <div className="flex items-center gap-3">
-              <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-12 h-12" />
-              <div className="text-right">
-                <div className="text-sm text-muted-foreground">{match.teams.home.name}</div>
+            <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
+              <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-12 h-12 flex-shrink-0" />
+              <div className="text-right min-w-0">
+                <div className="text-sm text-muted-foreground truncate max-w-[120px]">{match.teams.home.name}</div>
                 <div className="text-4xl font-display font-black text-white">{match.goals.home ?? 0}</div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center">
+            <div className="flex flex-col items-center flex-shrink-0">
               <div className="text-sm text-primary font-bold">{match.fixture.status.elapsed}'</div>
               <div className="text-xs text-muted-foreground">{match.fixture.status.short}</div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="text-left">
-                <div className="text-sm text-muted-foreground">{match.teams.away.name}</div>
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="text-left min-w-0">
+                <div className="text-sm text-muted-foreground truncate max-w-[120px]">{match.teams.away.name}</div>
                 <div className="text-4xl font-display font-black text-white">{match.goals.away ?? 0}</div>
               </div>
-              <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-12 h-12" />
+              <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-12 h-12 flex-shrink-0" />
             </div>
           </div>
 

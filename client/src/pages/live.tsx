@@ -83,20 +83,20 @@ export default function LivePage() {
 
               {/* Teams & Score */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3 flex-1">
-                  <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-10 h-10 object-contain" />
-                  <span className="font-display font-bold text-white">{match.teams.home.name}</span>
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                  <span className="font-display font-bold text-white truncate max-w-[180px] block">{match.teams.home.name}</span>
                 </div>
 
-                <div className="px-6 flex items-center gap-3">
+                <div className="px-6 flex items-center gap-3 flex-shrink-0">
                   <span className="text-3xl font-display font-black text-white">{match.goals.home ?? 0}</span>
                   <span className="text-lg text-muted-foreground">:</span>
                   <span className="text-3xl font-display font-black text-white">{match.goals.away ?? 0}</span>
                 </div>
 
-                <div className="flex items-center gap-3 flex-1 justify-end">
-                  <span className="font-display font-bold text-white text-right">{match.teams.away.name}</span>
-                  <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-10 h-10 object-contain" />
+                <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
+                  <span className="font-display font-bold text-white text-right truncate max-w-[180px] block">{match.teams.away.name}</span>
+                  <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-10 h-10 object-contain flex-shrink-0" />
                 </div>
               </div>
 
