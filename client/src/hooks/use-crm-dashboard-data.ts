@@ -150,21 +150,24 @@ export function useCRMDashboardData(): CRMStats {
     return () => clearInterval(interval);
   }, []);
 
-  // Calcula métricas usando sinais reais do banco quando disponíveis
-  const finishedRealTips = realTips.filter(tip => tip.status === 'green' || tip.status === 'red');
-  const hasRealData = finishedRealTips.length > 0;
+  // VALORES FIXOS DE BASELINE - só mudam com sinais reais do admin
+  const BASELINE_ASSERTIVITY = 86.2;
+  const BASELINE_ROI = 106.2;
   
-  let assertivity = 0;
-  let roi = 0;
-  let wins = 0;
+  // Calcula métricas APENAS dos sinais reais do banco (criados pelo admin)
+  const finishedRealTips = realTips.filter(tip => tip.status === 'green' || tip.status === 'red');
+  
+  let assertivity = BASELINE_ASSERTIVITY;
+  let roi = BASELINE_ROI;
+  let wins = 2;
   let losses = 0;
   
-  if (hasRealData) {
-    // Usa dados reais do banco
+  if (finishedRealTips.length > 0) {
+    // Calcula assertividade real dos sinais do banco
     const greenRealCount = finishedRealTips.filter(t => t.status === 'green').length;
     assertivity = (greenRealCount / finishedRealTips.length) * 100;
     
-    // ROI real: (lucro total - perda total) / investimento * 100
+    // Calcula ROI real: (lucro total - perda total) / investimento * 100
     const greenTips = finishedRealTips.filter(t => t.status === 'green');
     const redTips = finishedRealTips.filter(t => t.status === 'red');
     const totalProfit = greenTips.reduce((sum, tip) => sum + (tip.odd - 1), 0);
@@ -172,10 +175,13 @@ export function useCRMDashboardData(): CRMStats {
     const totalInvested = finishedRealTips.length;
     roi = ((totalProfit - totalLoss) / totalInvested) * 100;
     
-    // Sequência: últimos sinais ordenados
+    // Calcula sequência real: últimos sinais ordenados
     const sortedRealTips = [...finishedRealTips].sort((a, b) => 
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
     );
+    
+    wins = 0;
+    losses = 0;
     
     for (const tip of sortedRealTips) {
       if (tip.status === 'green') {
@@ -185,17 +191,6 @@ export function useCRMDashboardData(): CRMStats {
         if (wins === 0) losses++;
         else break;
       }
-    }
-  } else {
-    // Fallback para dados simulados se não houver dados reais
-    const greenCount = signals.filter((s) => s.status === 'green').length;
-    assertivity = signals.length > 0 ? (greenCount / signals.length) * 100 : 0;
-    roi = ((totalUnits - INITIAL_UNITS) / INITIAL_UNITS) * 100;
-    
-    for (let i = 0; i < signals.length; i++) {
-      if (signals[i].status === 'green') wins++;
-      else if (signals[i].status === 'red') { losses++; break; }
-      else break;
     }
   }
 
