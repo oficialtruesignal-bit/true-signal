@@ -16,6 +16,7 @@ const LivePage = React.lazy(() => import("@/pages/live"));
 const PreGamePage = React.lazy(() => import("@/pages/pregame"));
 const SettingsPage = React.lazy(() => import("@/pages/settings"));
 const Admin = React.lazy(() => import("@/pages/admin"));
+const AdminCreate = React.lazy(() => import("@/pages/admin-create"));
 const AuthPage = React.lazy(() => import("@/pages/auth"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
@@ -70,6 +71,9 @@ function Router() {
       </Route>
       <Route path="/admin">
         {() => <ProtectedRoute component={Admin} adminOnly={true} />}
+      </Route>
+      <Route path="/admin/create">
+        {() => <ProtectedRoute component={AdminCreate} adminOnly={true} />}
       </Route>
       
       <Route component={NotFound} />

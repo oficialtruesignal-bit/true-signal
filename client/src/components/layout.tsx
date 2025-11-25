@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, LayoutDashboard, Settings, LogOut, Bell, Target, Play, Calendar } from "lucide-react";
+import { Home, LayoutDashboard, Settings, LogOut, Bell, Target, Play, Calendar, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useEffect } from "react";
@@ -170,6 +170,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </Link>
         ))}
       </nav>
+
+      {/* Admin FAB (Floating Action Button) */}
+      {user?.role === 'admin' && (
+        <Link href="/admin/create">
+          <button
+            data-testid="fab-create-tip"
+            className="fixed bottom-20 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-primary hover:bg-primary/90 text-black rounded-full shadow-[0_0_30px_rgba(51,184,100,0.4)] hover:shadow-[0_0_40px_rgba(51,184,100,0.6)] flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 z-40 border-2 border-primary/50"
+            aria-label="Criar Nova Tip"
+          >
+            <Plus className="w-6 h-6" strokeWidth={3} />
+          </button>
+        </Link>
+      )}
     </div>
   );
 }

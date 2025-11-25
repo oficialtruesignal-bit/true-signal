@@ -1,0 +1,41 @@
+# PROMPT MESTRE: ADMIN TIP CREATOR STUDIO
+
+**ROLE:** Senior React Developer & UX Designer.
+
+**TASK:** Desenvolver a interface **"Admin Studio"** para criação de Tips.
+Esta funcionalidade é **CRÍTICA**. O Admin precisa ter um botão claro e acessível para abrir o criador de apostas.
+
+## 1. ACESSO E VISIBILIDADE
+* **Botão Flutuante (FAB):** Adicione um botão flutuante com ícone de `+` (Plus) no canto inferior direito do Dashboard.
+* **Lógica de Proteção:** Este botão deve ser **renderizado condicionalmente**.
+    * `if (user.role === 'admin') showButton()`
+    * `else return null`
+* **Rota:** O botão leva para `/admin/create` ou abre um Modal Fullscreen.
+
+## 2. A INTERFACE DE CRIAÇÃO (FORMULÁRIO)
+O formulário deve ser moderno, escuro e intuitivo.
+
+### Campos Obrigatórios:
+1.  **Seleção de Jogo:**
+    * *Ideal:* Um Dropdown que busca os jogos de hoje na API (`footballService`).
+    * *Fallback (Manual):* Inputs de texto para "Time da Casa" e "Time Visitante" (caso a API falhe).
+2.  **Detalhes da Aposta:**
+    * **Competição/Liga:** Input de texto (ex: "Premier League").
+    * **Mercado:** Input ou Select (ex: "Over 2.5", "Vitória Casa", "Ambas Marcam").
+    * **Odd (Cotação):** Input numérico (ex: 1.80). Destaque este campo em verde neon.
+    * **Link da Bet:** Campo para colar o URL da casa de aposta.
+
+### Botão de Publicação:
+* Texto: **"DISPARAR SINAL 🚀"**.
+* Cor: Fundo Verde Neon (`#33b864`) com texto preto (contraste alto).
+* **Ação:** Ao clicar, salva na tabela `tips` do Supabase e redireciona o Admin de volta para o Feed para ver a tip criada.
+
+## 3. FEEDBACK VISUAL
+* Ao criar a Tip, mostre um Toast/Notificação: *"Sinal enviado para todos os usuários!"*.
+* Se houver erro (ex: campo vazio), mostre borda vermelha no input errado.
+
+## 4. REVISÃO DO CÓDIGO
+* Verifique no arquivo `Routes` ou `App.tsx` se a rota `/admin` está protegida.
+* Garanta que o componente de criação use o hook `useAuth` para verificar se o `profile.role` é realmente 'admin' antes de permitir o envio.
+
+**ESTÉTICA:** Mantenha o padrão "Ocean Signal". Fundo `#0a0a0a`, Inputs com fundo `#121212` e borda foco `#33b864`.
