@@ -20,13 +20,41 @@ import { toast } from "sonner";
 import { format } from "date-fns";
 
 export default function AdminCreate() {
-  const { user } = useAuth();
+  const { user, reloadProfile } = useAuth();
   const [, setLocation] = useLocation();
   const queryClient = useQueryClient();
+
+  // Debug log to see what user data we have
+  useEffect(() => {
+    console.log('🎯 [ADMIN-CREATE DEBUG] Current user object:', user);
+    console.log('🎯 [ADMIN-CREATE DEBUG] User role:', user?.role);
+    console.log('🎯 [ADMIN-CREATE DEBUG] User email:', user?.email);
+    console.log('🎯 [ADMIN-CREATE DEBUG] Is admin?', user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com');
+  }, [user]);
+
+  // Force reload profile on mount to ensure fresh data
+  useEffect(() => {
+    const forceReload = async () => {
+      console.log('🔄 [ADMIN-CREATE DEBUG] Forcing profile reload on mount...');
+      await reloadProfile();
+      
+      // Check if we need to reload the page to clear Supabase cache
+      const hasReloaded = sessionStorage.getItem('admin-create-reloaded');
+      if (!hasReloaded && user) {
+        console.log('🔄 [ADMIN-CREATE DEBUG] First load - will reload page to clear cache...');
+        sessionStorage.setItem('admin-create-reloaded', 'true');
+        window.location.reload();
+      }
+    };
+    
+    forceReload();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Redirect if not admin
   useEffect(() => {
     if (user && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
+      console.log('❌ [ADMIN-CREATE DEBUG] Access denied - redirecting to /app');
       toast.error("Acesso negado. Apenas administradores podem criar tips.");
       setLocation("/app");
     }

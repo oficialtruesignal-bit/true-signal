@@ -18,6 +18,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
+  reloadProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -52,27 +53,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const loadUserProfile = async (userId: string) => {
+  const loadUserProfile = async (userId: string, forceReload = false) => {
     try {
-      const { data, error } = await supabase
+      console.log('🔄 [AUTH DEBUG] Loading profile for userId:', userId);
+      console.log('🔄 [AUTH DEBUG] Force reload:', forceReload);
+      
+      // Force fresh data by adding timestamp or using maybeSingle instead of single
+      const query = supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
-        .single();
+        .eq('id', userId);
+      
+      // Disable caching for admin checks
+      const { data, error } = forceReload 
+        ? await query.maybeSingle()
+        : await query.single();
+
+      console.log('📊 [AUTH DEBUG] Profile data from database:', data);
+      console.log('❌ [AUTH DEBUG] Profile error:', error);
 
       if (error) throw error;
 
       if (data) {
-        setUser({
+        const userData = {
           id: data.id,
           email: data.email,
           firstName: data.first_name,
-          role: data.role,
-          subscriptionStatus: 'free',
-        });
+          role: data.role as 'user' | 'admin',
+          subscriptionStatus: 'free' as 'free' | 'premium',
+        };
+        
+        console.log('✅ [AUTH DEBUG] Setting user state with role:', userData.role);
+        console.log('👤 [AUTH DEBUG] Full user object:', userData);
+        
+        setUser(userData);
       }
     } catch (error) {
-      console.error('Error loading profile:', error);
+      console.error('💥 [AUTH DEBUG] Error loading profile:', error);
     } finally {
       setIsLoading(false);
     }
@@ -161,8 +178,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLocation("/auth");
   };
 
+  const reloadProfile = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      console.log('🔄 [AUTH DEBUG] Forcing profile reload...');
+      await loadUserProfile(session.user.id, true);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, reloadProfile }}>
       {children}
     </AuthContext.Provider>
   );
