@@ -1,27 +1,16 @@
 import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
+import { useBankroll } from "@/hooks/use-bankroll";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { AIScanner } from "@/components/ai-scanner";
 import { NeonCard } from "@/components/dashboard/neon-card";
 import { Scale, Flame, Activity, Users } from "lucide-react";
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { tipsService } from "@/lib/tips-service";
 
 export default function DashboardCRM() {
   const stats = useCRMDashboardData();
+  const bankroll = useBankroll();
   const [investors, setInvestors] = useState(624);
-  
-  // Busca sinais reais do banco de dados
-  const { data: tips = [] } = useQuery({
-    queryKey: ['tips'],
-    queryFn: tipsService.getAll,
-    refetchInterval: 30000, // Atualiza a cada 30s
-  });
-  
-  // Começa em 124 e adiciona os sinais reais criados pelo admin
-  const BASE_SIGNALS = 124;
-  const totalSignals = BASE_SIGNALS + tips.length;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -53,7 +42,9 @@ export default function DashboardCRM() {
                 <Scale className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
                 <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Odd Média</span>
               </div>
-              <span className="text-2xl font-sora font-bold text-orange-500 z-10 relative drop-shadow-sm">1.92</span>
+              <span className="text-2xl font-sora font-bold text-orange-500 z-10 relative drop-shadow-sm">
+                {bankroll.averageOdd > 0 ? bankroll.averageOdd.toFixed(2) : '--'}
+              </span>
             </NeonCard>
 
             <NeonCard intensity="low" className="h-28 flex-shrink-0">
@@ -71,7 +62,7 @@ export default function DashboardCRM() {
                 <Activity className="w-4 h-4 text-[#33b864]" strokeWidth={1.5} />
                 <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sinais (Mês)</span>
               </div>
-              <span className="text-2xl font-sora font-bold text-white z-10 relative drop-shadow-sm">{totalSignals}</span>
+              <span className="text-2xl font-sora font-bold text-white z-10 relative drop-shadow-sm">{bankroll.monthTips}</span>
             </NeonCard>
 
             <NeonCard intensity="high" className="h-28 flex-shrink-0">

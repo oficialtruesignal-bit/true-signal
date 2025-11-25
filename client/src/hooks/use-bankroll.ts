@@ -14,6 +14,8 @@ export interface BankrollStats {
   redCount: number;
   pendingCount: number;
   totalTips: number;
+  monthTips: number;
+  averageOdd: number;
 }
 
 export function useBankroll(): BankrollStats {
@@ -45,6 +47,21 @@ export function useBankroll(): BankrollStats {
   const totalProfitUnits = totalProfit / UNIT_VALUE;
   const currentBankroll = INITIAL_BANKROLL + totalProfit;
 
+  // Calcula odd média de TODOS os sinais com odd válida
+  const tipsWithValidOdd = tips.filter(tip => tip.odd != null && !isNaN(tip.odd));
+  const averageOdd = tipsWithValidOdd.length > 0
+    ? tipsWithValidOdd.reduce((sum, tip) => sum + tip.odd, 0) / tipsWithValidOdd.length
+    : 0;
+
+  // Conta sinais do mês atual
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const monthTips = tips.filter(tip => {
+    const tipDate = new Date(tip.timestamp);
+    return tipDate >= monthStart;
+  }).length;
+
   return {
     initialBankroll: INITIAL_BANKROLL,
     unitValue: UNIT_VALUE,
@@ -55,5 +72,7 @@ export function useBankroll(): BankrollStats {
     redCount,
     pendingCount,
     totalTips: tips.length,
+    monthTips,
+    averageOdd,
   };
 }
