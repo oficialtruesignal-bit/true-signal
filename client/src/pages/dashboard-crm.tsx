@@ -41,32 +41,35 @@ export default function DashboardCRM() {
       </div>
 
       {/* Top Section: Círculo de Assertividade + 2 Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-6">
         {/* Círculo de Assertividade - Esquerda */}
-        <div className="flex justify-center lg:justify-start">
+        <div className="flex items-center justify-center">
           <CompactLiveHud />
         </div>
 
-        {/* Card 1 - Direita Superior */}
-        <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Target className="w-4 h-4 text-primary" strokeWidth={1.5} />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 1</span>
+        {/* Cards Empilhados - Direita */}
+        <div className="flex flex-col gap-3">
+          {/* Card 1 */}
+          <div className="bg-[#121212] border border-[#333] rounded-lg p-4 flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 1</span>
+            </div>
+            <p className="text-2xl font-bold font-mono text-white">
+              --
+            </p>
           </div>
-          <p className="text-2xl font-bold font-mono text-white">
-            --
-          </p>
-        </div>
 
-        {/* Card 2 - Direita Inferior */}
-        <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Activity className="w-4 h-4 text-primary" strokeWidth={1.5} />
-            <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 2</span>
+          {/* Card 2 */}
+          <div className="bg-[#121212] border border-[#333] rounded-lg p-4 flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="w-4 h-4 text-primary" strokeWidth={1.5} />
+              <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 2</span>
+            </div>
+            <p className="text-2xl font-bold font-mono text-white">
+              --
+            </p>
           </div>
-          <p className="text-2xl font-bold font-mono text-white">
-            --
-          </p>
         </div>
       </div>
 
