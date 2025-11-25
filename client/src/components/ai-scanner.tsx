@@ -80,7 +80,7 @@ export function AIScanner() {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Brain className="w-4 h-4 text-primary animate-pulse" />
-          <h3 className="text-xs font-bold text-white uppercase tracking-wide">
+          <h3 className="text-[10px] font-bold text-white uppercase tracking-wide whitespace-nowrap">
             SCANNER PROCURANDO ALTAS PROBABILIDADES
           </h3>
         </div>
