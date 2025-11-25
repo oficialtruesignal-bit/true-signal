@@ -1,0 +1,50 @@
+PROMPT MESTRE: LIVE METRICS BAR (OSCILLATION ENGINE)
+ROLE: Senior Frontend Developer & Interaction Designer.
+
+TASK: Adicionar uma Barra de Métricas em Tempo Real na Landing Page (Home.tsx). O objetivo é fornecer Prova Social dinâmica e gerar "FOMO" (Medo de ficar de fora).
+
+1. O COMPONENTE LiveMetricsBar
+Crie um componente que exibe 3 métricas horizontalmente. Design: Estilo "Pílula de Vidro". Fundo preto translúcido (bg-[#121212]/50), borda fina (border-[#33b864]/20), arredondado (rounded-full).
+
+Métrica 1: Usuários Online (O "Oscilador")
+Ícone: Users (Lucide) - Verde Neon.
+
+Lógica (Simulation Hook):
+
+Valor Inicial: ~3.420 usuários.
+
+Comportamento: A cada 3 a 5 segundos, o número deve variar aleatoriamente entre -15 e +25.
+
+Objetivo: O número deve parecer vivo, nunca estático, mas sem pulos bruscos irreais.
+
+Texto: "3.425 Online Agora" (com bolinha verde pulsando ao lado).
+
+Métrica 2: Total de Tips Enviadas (A Autoridade)
+Ícone: Send ou Zap (Lucide).
+
+Valor: "18.940+" (Valor fixo alto para mostrar solidez).
+
+Texto: "Sinais Enviados".
+
+Métrica 3: Assertividade Média (A Qualidade)
+Ícone: Target ou Crosshair (Lucide).
+
+Valor: "94.8%" (Cor Verde Neon Brilhante).
+
+Texto: "Assertividade Global".
+
+2. POSICIONAMENTO E ESTILO
+Insira este componente logo abaixo do Subtítulo da Hero Section e acima (ou logo abaixo) do Botão CTA principal.
+
+Mobile: No celular, as métricas podem empilhar ou ficar em um carrossel horizontal (scroll). No desktop, devem ficar lado a lado com separadores verticais sutis.
+
+Animação: Ao carregar a página, os números devem fazer uma contagem rápida ("CountUp") do zero até o valor final.
+
+3. REFATORAÇÃO VISUAL DA HOME
+Certifique-se de que esses ícones sejam minimalistas ("Tops de Linha").
+
+Use stroke-width={1.5} nos ícones para ficarem finos e elegantes.
+
+O texto deve ser pequeno (text-sm), fonte Inter, cor cinza claro (text-gray-300), com apenas os NÚMEROS em destaque branco ou verde.
+
+RESULTADO ESPERADO: Um elemento discreto, mas poderoso, que mostra ao visitante que a plataforma está viva, cheia de gente e entregando resultados massivos.
