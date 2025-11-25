@@ -1,0 +1,86 @@
+Efeito Matrix High-End: Nada de letras verdes caindo de forma brega. Vamos usar "Data Streams" (fluxos de dados) sutis e elegantes no fundo, como se o usuário estivesse dentro do servidor da IA.
+
+Gatilhos de FOMO (Medo de Perder): Notificações pop-up falsas ("Pedro de São Paulo acabou de lucrar R$ 500") aparecendo no canto.
+
+Visualização de Lucro: Um gráfico de linha animado (SVG) que nunca para de subir, comparando o "Apostador Comum" (linha vermelha caindo) com o "Membro Ocean Signal" (linha verde subindo).
+
+A Fusão (Híbrido): Uma seção visual destacando "20 Mentes Humanas + 1 Cérebro Digital".
+
+Botões Líquidos: Botões com brilho interno que parecem vidro radioativo.
+
+Copie este prompt. Ele é complexo e exige que o Replit instale bibliotecas de animação (framer-motion).
+
+PROMPT MESTRE: LANDING PAGE "BILLION DOLLAR MATRIX"
+ROLE: Creative Director & Lead Motion Developer (Award Winning).
+
+TASK: Reescrever completamente a Landing Page (/) do Ocean Signal. O objetivo é criar uma página de Ultra-Alta Conversão com estética "Cyberpunk Financial".
+
+REQUISITOS TÉCNICOS OBRIGATÓRIOS:
+
+Lib de Animação: Instalar e usar framer-motion para todas as entradas de texto e gráficos.
+
+Fundo: Criar um componente MatrixBackground que renderiza partículas de dados ou linhas de grade sutis se movendo (Canvas ou SVG).
+
+Tipografia: Syne (Títulos) e Inter (Corpo).
+
+1. HERO SECTION (IMPACTO IMEDIATO)
+Headline: "A Única IA do Mundo com Validação de 20 Especialistas." (Animada: As letras aparecem digitalmente).
+
+Subheadline: "Chegamos a 95% de assertividade. Pare de apostar com a sorte. Invista com a Ciência."
+
+Visual: Fundo preto profundo (#000000). Efeito de "Luz de Spot" verde neon atrás do texto.
+
+CTA Principal: Botão gigante, com borda brilhante e efeito de "pulso". Texto: "LIBERAR MEU ACESSO AGORA".
+
+2. SEÇÃO "LIVE PROOF" (PROVA SOCIAL DINÂMICA)
+Esta seção deve parecer um painel de controle vivo.
+
+O Gráfico de Lucro: Um gráfico SVG animado onde a linha verde (Ocean Signal) sobe exponencialmente enquanto a linha cinza (Mercado) fica estagnada. Legenda: "Performance Acumulada 2024".
+
+O Contador Circular: Um círculo de progresso animado que gira até parar em 95%. Título: "Taxa de Assertividade Atual".
+
+Usuários Ativos: Um contador numérico que sobe rapidamente de 0 até +12.450 Membros Lucrando.
+
+3. SEÇÃO "HYBRID INTELLIGENCE" (IA + HUMANOS)
+Crie um layout "Bento Grid" (caixas de vidro organizadas).
+
+Card 1 (A Máquina): "Processamento de 1000+ ligas/segundo." Ícone de Chip pulsando.
+
+Card 2 (O Humano): "Curadoria de 20 Traders Profissionais." Texto: "A IA encontra o padrão. O Especialista confirma o Green."
+
+Card 3 (O Resultado): Imagem (mockup) de um celular recebendo uma notificação "Green Confirmado ✅".
+
+4. GATILHOS DE URGÊNCIA (NOTIFICAÇÕES FLUTUANTES)
+Implemente um componente SalesToast que aparece no canto inferior esquerdo a cada 15-30 segundos.
+
+Exemplos de texto:
+
+"Ricardo (SP) acabou de entrar no plano Pro."
+
+"Nova Tip confirmada com Odd @ 2.10."
+
+"Ana (RJ) sacou R$ 1.200,00."
+
+Design: Estilo vidro escuro (Glassmorphism), ícone de check verde, texto pequeno e elegante.
+
+5. DESIGN SYSTEM "MATRIX LUXURY"
+Cores: Preto absoluto (#000), Cinza Carvão (#121212) e o Verde Neon da marca (#33b864).
+
+Acabamentos:
+
+Botões com backdrop-filter: blur(10px) e bordas finas com gradiente.
+
+Títulos com efeito de "Glitch" sutil ao passar o mouse.
+
+Banners com textura de "Noise" (ruído) bem leve para dar aspecto de filme.
+
+6. TEXTO DE VENDAS (COPYWRITING)
+Substitua os textos genéricos por:
+
+"O mercado de apostas foi projetado para você perder. O Ocean Signal foi projetado para quebrar o banco."
+
+"Não é mágica. É Big Data."
+
+"Você tem duas escolhas: Continuar adivinhando ou seguir a inteligência de 20 especialistas apoiados por IA."
+
+EXECUÇÃO: Apague o conteúdo atual da Home e reconstrua do zero usando estas diretrizes. O resultado deve ser visualmente chocante, passando a sensação de uma tecnologia alienígena ou militar de tão avançada.
