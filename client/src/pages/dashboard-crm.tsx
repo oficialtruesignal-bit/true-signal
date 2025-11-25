@@ -24,30 +24,8 @@ export default function DashboardCRM() {
 
       {/* Main Dashboard - Full Width */}
       <div className="flex flex-col gap-6 h-[calc(100vh-280px)]">
-          {/* Performance HUD - 4 Metrics */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            {/* Assertivity */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <Target className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Assertividade</span>
-              </div>
-              <p className="text-2xl font-bold font-mono text-primary">
-                {stats.assertivity.toFixed(1)}%
-              </p>
-            </div>
-
-            {/* Units Accumulated */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Unidades</span>
-              </div>
-              <p className="text-2xl font-bold font-mono text-white">
-                +{(stats.totalUnits - 100).toFixed(1)}u
-              </p>
-            </div>
-
+          {/* Performance HUD - 2 Metrics */}
+          <div className="grid grid-cols-2 gap-3">
             {/* ROI */}
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
