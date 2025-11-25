@@ -184,14 +184,12 @@ export function BetCard({ signal }: BetCardProps) {
     timeZone: 'America/Sao_Paulo'
   });
 
-  // Hora do jogo para exibir no cabeçalho (horário de Brasília)
+  // Data do jogo para exibir no cabeçalho (apenas DD/MM)
   const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
     ? signal.legs[0].time 
     : matchDate.toLocaleString('pt-BR', { 
         day: '2-digit', 
-        month: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit',
+        month: '2-digit',
         timeZone: 'America/Sao_Paulo'
       });
 
