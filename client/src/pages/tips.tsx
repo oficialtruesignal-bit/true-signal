@@ -1,11 +1,12 @@
 import { Layout } from "@/components/layout";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, AlertCircle, Copy } from "lucide-react";
+import { Target, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
+import { BetCard } from "@/components/bet-card";
 
 export default function TipsPage() {
   const queryClient = useQueryClient();
@@ -63,12 +64,6 @@ export default function TipsPage() {
     };
   }, [queryClient]);
 
-  const copyBetLink = (tip: any) => {
-    if (tip.betLink) {
-      navigator.clipboard.writeText(tip.betLink);
-      toast.success('Link copiado! Boa sorte 🍀');
-    }
-  };
 
   return (
     <Layout>
@@ -103,61 +98,10 @@ export default function TipsPage() {
       )}
 
       {!isLoading && !error && tips.length > 0 && (
-        <div className="space-y-0">
-          {tips.map((tip) => {
-            const matchTime = new Date(tip.timestamp).toLocaleTimeString('pt-BR', { 
-              hour: '2-digit', 
-              minute: '2-digit' 
-            });
-            
-            return (
-              <div
-                key={tip.id}
-                className="bg-[#121212] border-b border-[#333] p-3 hover:bg-[#1a1a1a] transition-colors flex items-center gap-3 text-sm"
-                data-testid={`tip-row-${tip.id}`}
-              >
-                {/* Hora */}
-                <div className="w-16 flex-shrink-0">
-                  <span className="text-xs text-muted-foreground font-mono">{matchTime}</span>
-                </div>
-
-                {/* Liga */}
-                <div className="w-20 flex-shrink-0">
-                  <span className="text-xs font-bold text-muted-foreground bg-[#1a1a1a] px-2 py-1 rounded">
-                    {tip.league.length > 8 ? tip.league.substring(0, 8) : tip.league}
-                  </span>
-                </div>
-
-                {/* Jogo */}
-                <div className="flex-1 min-w-0">
-                  <span className="text-sm text-white font-medium truncate block">
-                    {tip.homeTeam} vs {tip.awayTeam}
-                  </span>
-                </div>
-
-                {/* Mercado */}
-                <div className="w-32 flex-shrink-0">
-                  <span className="text-xs text-primary">{tip.market}</span>
-                </div>
-
-                {/* Odd */}
-                <div className="w-16 flex-shrink-0">
-                  <span className="text-sm text-white font-mono">@{tip.odd.toFixed(2)}</span>
-                </div>
-
-                {/* Botão Copiar */}
-                <div className="w-10 flex-shrink-0">
-                  <button
-                    onClick={() => copyBetLink(tip)}
-                    className="p-2 hover:bg-[#222] rounded transition-colors"
-                    data-testid={`copy-btn-${tip.id}`}
-                  >
-                    <Copy className="w-4 h-4 text-muted-foreground" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {tips.map((tip) => (
+            <BetCard key={tip.id} signal={tip} />
+          ))}
         </div>
       )}
     </Layout>
