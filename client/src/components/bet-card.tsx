@@ -66,6 +66,7 @@ export function BetCard({ signal }: BetCardProps) {
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
   const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
+  const [isCopied, setIsCopied] = useState(false);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
 
   // Busca dados oficiais da API-Football se houver fixtureId
@@ -155,6 +156,11 @@ export function BetCard({ signal }: BetCardProps) {
     
     try {
       await navigator.clipboard.writeText(betText);
+      
+      // Muda para "COPIADO" por 2 segundos
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+      
       toast({
         title: "Entrada Copiada!",
         description: "Boa sorte na entrada 🍀",
@@ -331,7 +337,9 @@ export function BetCard({ signal }: BetCardProps) {
         className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.3)]"
       >
         <Copy className="w-5 h-5 text-black" />
-        <span className="text-black font-sora font-bold text-sm tracking-wide">COPIAR BILHETE</span>
+        <span className="text-black font-sora font-bold text-sm tracking-wide">
+          {isCopied ? "COPIADO" : "COPIAR BILHETE"}
+        </span>
       </button>
 
       {/* --- 5. RODAPÉ (METADADOS) --- */}
