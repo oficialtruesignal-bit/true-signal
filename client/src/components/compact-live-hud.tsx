@@ -6,7 +6,7 @@ export function CompactLiveHud() {
   const assertivityValue = stats.assertivity;
 
   return (
-    <div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-stretch mb-6">
+    <div className="w-full grid grid-cols-[45%_55%] gap-3 items-stretch mb-6">
 
       {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
       <div className="flex items-center justify-center">
