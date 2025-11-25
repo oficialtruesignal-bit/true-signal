@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
-import { LiveMetricsBar } from "@/components/live-metrics-bar";
+import { CompactLiveHud } from "@/components/compact-live-hud";
 import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { TrendingUp, Target, Percent, Flame, Copy, Clock, Activity } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -18,9 +18,9 @@ export default function DashboardCRM() {
         <p className="text-sm text-muted-foreground">Unit-Based Performance Management</p>
       </div>
 
-      {/* Live Metrics Bar */}
+      {/* Compact Live HUD */}
       <div className="mb-6">
-        <LiveMetricsBar />
+        <CompactLiveHud />
       </div>
 
       {/* Main CRM Layout: 30% Sidebar + 70% Main Area */}

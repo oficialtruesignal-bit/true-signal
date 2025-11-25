@@ -1,0 +1,53 @@
+PROMPT MESTRE: COMPACT LIVE HUD (CIRCULAR DESIGN)
+ROLE: Senior UI/UX Designer & Frontend Specialist.
+
+TASK: Substituir o componente atual de métricas na Home por um novo, chamado CompactLiveHud.tsx. REFERÊNCIA VISUAL: Baseie-se estritamente no design de Círculos de Progresso da imagem fornecida (seção "WEIGHT" do app dark mode). OBJETIVO: Tornar a seção muito mais compacta verticalmente, usando anéis visuais fortes em vez de retângulos largos.
+
+1. ESTRUTURA DO COMPONENTE
+Crie um container flex horizontal centralizado, com espaçamento equilibrado entre os itens.
+
+container mx-auto flex justify-center items-center gap-6 md:gap-12 py-8
+
+2. O ELEMENTO "ANEL DE NEON" (PARA OS 3 ITENS)
+Cada métrica será um círculo. O Agente deve usar SVG (ou uma lib leve como react-circular-progressbar customizada) para desenhar esses anéis com precisão.
+
+Estilo do Anel Base:
+
+Tamanho: Compacto (aprox. w-24 h-24 ou w-28 h-28).
+
+Trilha de Fundo (Track): Cinza escuro bem sutil (stroke-[#222]), espessura grossa (ex: strokeWidth={12}).
+
+Anel de Progresso (Indicator): Verde Neon (stroke-[#33b864]), mesma espessura, com extremidades arredondadas (strokeLinecap="round").
+
+Efeito Glow: Adicione um filtro CSS drop-shadow(0 0 4px #33b864) no SVG do anel de progresso para ele "brilhar".
+
+3. CONTEÚDO DOS CÍRCULOS
+Círculo 1: Assertividade Global (O Foco da Referência)
+Este é o que mais se parece com a referência.
+
+Anel: Progresso fixo em 95% (quase completo).
+
+Centro: Número grande branco (text-2xl font-bold) "94.8". Ao lado, um % menor verde.
+
+Label Inferior: Texto pequeno (text-xs text-gray-400) abaixo do círculo: "Assertividade".
+
+Círculo 2: Usuários Online (Live Oscillation)
+Anel: Um anel verde completo que pulsa levemente a opacidade (animate-pulse-slow).
+
+Centro:
+
+O número oscilante (ex: "3.420") grande e branco.
+
+Importante: Mantenha o ponto verde piscante (w-2 h-2 bg-[#33b864] animate-ping) dentro do círculo, ao lado ou acima do número, para indicar "Ao Vivo".
+
+Label Inferior: "Online Agora".
+
+Círculo 3: Sinais Enviados (Volume)
+Anel: Progresso fixo em 100% (círculo completo verde).
+
+Centro: Número grande branco "18.9K". Um + pequeno verde ao lado.
+
+Label Inferior: "Total de Sinais".
+
+4. RESUMO VISUAL
+O resultado deve ser três "reatores" de energia verde alinhados no centro da tela, ocupando pouca altura, mas chamando muita atenção pelo contraste do neon sobre o fundo preto. É o design exato da referência, adaptado para a sua marca Ocean Signal.
