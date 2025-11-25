@@ -68,7 +68,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { icon: Home, label: "Painel", path: "/app" },
     { icon: Target, label: "Sinais", path: "/tips" },
     { icon: Play, label: "Ao Vivo", path: "/live" },
-    { icon: Calendar, label: "Pré", path: "/pregame" },
+    { icon: Calendar, label: "Pré-Live", path: "/pregame" },
     { icon: Settings, label: "Configurações", path: "/settings" },
   ];
 
