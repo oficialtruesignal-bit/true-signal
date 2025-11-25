@@ -1,0 +1,72 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: LAYOUT ASSIMÉTRICO (SPLIT VIEW) 🟢
+
+Entendido. Você quer sair do layout centralizado e ir para um layout "Hero Split". Isso é muito comum em Dashboards de alta densidade:
+
+Esquerda (40-50%): O Medidor Visual (Gráfico).
+
+Direita (50-60%): Os Dados Numéricos Detalhados (Cards).
+
+Isso resolve o problema dos espaços vazios e deixa o visual muito mais dinâmico.
+
+Aqui está o Prompt para o Replit montar esse quebra-cabeça exatamente como você desenhou.
+
+PROMPT MESTRE: SPLIT HUD LAYOUT (CIRCLE LEFT + CARDS RIGHT)
+ROLE: Senior UI Developer.
+
+TASK: Reestruturar o CompactLiveHud.tsx para um layout de Duas Colunas Assimétricas. REFERÊNCIA: O círculo de Assertividade deve ficar na Esquerda. À direita dele, deve haver uma coluna vertical com 2 Cards Retangulares.
+
+1. ESTRUTURA DE GRID (O ESQUELETO)
+Substitua o container principal por um Grid de 2 colunas.
+
+TypeScript
+
+<div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-center mb-6">
+
+  {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
+  <div className="flex items-center justify-center">
+    {/* O componente SVG do Medidor Segmentado (Círculo) */}
+    {/* Mantenha a lógica de oscilação aqui */}
+    {/* Importante: Ajuste o tamanho para caber na coluna (w-36 h-36 ou w-40 h-40) */}
+    <div className="relative w-36 h-36">
+       {/* ... SVG Code ... */}
+       <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-sora font-bold text-white">94.8<span className="text-sm text-[#33b864]">%</span></span>
+          <span className="text-[8px] text-gray-500 uppercase tracking-widest mt-1">Assertividade</span>
+       </div>
+    </div>
+  </div>
+
+  {/* --- COLUNA DIREITA: PILHA DE CARDS (STACK) --- */}
+  <div className="flex flex-col gap-3">
+
+    {/* Card Superior Direita: UNIDADES (LUCRO) */}
+    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
+       <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div> {/* Faixa lateral verde */}
+       <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">Lucro Unidades</span>
+       <div className="flex items-center gap-2 ml-2">
+         <TrendingUpIcon className="w-4 h-4 text-[#33b864]" />
+         <span className="text-lg font-sora font-bold text-white">+105.2u</span>
+       </div>
+    </div>
+
+    {/* Card Inferior Direita: SEQUÊNCIA (WINS) */}
+    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
+       <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div>
+       <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">Sequência Atual</span>
+       <div className="flex items-center gap-2 ml-2">
+         <FlameIcon className="w-4 h-4 text-orange-500" />
+         <span className="text-lg font-sora font-bold text-white">14V / 0D</span>
+       </div>
+    </div>
+
+  </div>
+
+</div>
+2. DETALHES DE AJUSTE
+Tamanho do Círculo: Como ele agora divide espaço com os cards, reduza levemente o diâmetro do SVG (de w-56 para w-36 ou w-40) para não quebrar o layout em celulares pequenos.
+
+Cards da Direita: Devem ter altura fixa (ex: h-[70px]) para que a soma da altura dos dois (+ o gap) fique alinhada com a altura do círculo.
+
+Alinhamento: Use items-center no Grid para garantir que o círculo fique centralizado verticalmente em relação aos cards da direita.
+
+COMANDO: Aplique este layout. O painel deve ficar compacto, com a métrica visual na esquerda e os dados analíticos na direita, preenchendo os espaços vazios que o cliente apontou.

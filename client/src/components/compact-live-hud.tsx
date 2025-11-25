@@ -1,36 +1,19 @@
-import { useState, useEffect } from 'react';
-import { Users, Ticket } from 'lucide-react';
+import { TrendingUp, Flame } from 'lucide-react';
+import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
 
 export function CompactLiveHud() {
-  const [assertivityValue, setAssertivityValue] = useState(89.0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Gera um número aleatório entre -3.0 e +3.0
-      const variation = (Math.random() * 6) - 3; 
-      // Aplica ao base 89, mantendo entre 86 e 92
-      let newValue = 89 + variation;
-      // Trava os limites por segurança
-      if (newValue > 92) newValue = 92;
-      if (newValue < 86) newValue = 86;
-      
-      setAssertivityValue(newValue);
-    }, 3000); // Atualiza a cada 3 segundos
-
-    return () => clearInterval(interval);
-  }, []);
+  const stats = useCRMDashboardData();
+  const assertivityValue = stats.assertivity;
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col gap-2 py-2">
+    <div className="w-full max-w-lg mx-auto grid grid-cols-[45%_55%] gap-4 items-center mb-6">
 
-      {/* --- MEDIDOR SEGMENTADO DE ASSERTIVIDADE --- */}
-      <div className="relative flex items-center justify-center py-2" data-testid="hud-assertivity">
-        {/* Container do Gauge */}
-        <div className="relative w-48 h-48 md:w-56 md:h-56">
+      {/* --- COLUNA ESQUERDA: O GAUGE (ASSERTIVIDADE) --- */}
+      <div className="flex items-center justify-center">
+        <div className="relative w-40 h-40">
           
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
             {Array.from({ length: 60 }).map((_, i) => {
-              // Lógica de Cor: Se o índice for menor que o ativo, é VERDE. Senão, é CINZA ESCURO.
               const isActive = i < Math.round((assertivityValue / 100) * 60);
               const color = isActive ? "#33b864" : "#222222"; 
               
@@ -48,19 +31,44 @@ export function CompactLiveHud() {
           </svg>
 
           {/* Conteúdo Central (Texto) */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline">
-              <span className="text-5xl md:text-6xl font-sora font-bold text-white tracking-tighter">
+              <span className="text-4xl font-sora font-bold text-white tracking-tighter">
                 {assertivityValue.toFixed(1)}
               </span>
-              <span className="text-xl md:text-2xl font-sora text-[#33b864] font-bold ml-1">%</span>
+              <span className="text-lg font-sora text-[#33b864] font-bold ml-1">%</span>
             </div>
-            <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-1 font-medium">
+            <span className="text-[8px] text-gray-500 uppercase tracking-widest mt-1">
               Assertividade
             </span>
           </div>
 
         </div>
+      </div>
+
+      {/* --- COLUNA DIREITA: PILHA DE CARDS (STACK) --- */}
+      <div className="flex flex-col gap-3">
+
+        {/* Card Superior Direita: ROI */}
+        <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">ROI</span>
+          <div className="flex items-center gap-2 ml-2">
+            <TrendingUp className="w-4 h-4 text-[#33b864]" />
+            <span className="text-lg font-sora font-bold text-white">+{stats.roi.toFixed(1)}%</span>
+          </div>
+        </div>
+
+        {/* Card Inferior Direita: SEQUÊNCIA */}
+        <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative overflow-hidden h-[70px]">
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#33b864]"></div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold ml-2">Sequência Atual</span>
+          <div className="flex items-center gap-2 ml-2">
+            <Flame className="w-4 h-4 text-orange-500" />
+            <span className="text-lg font-sora font-bold text-white">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
+          </div>
+        </div>
+
       </div>
 
     </div>
