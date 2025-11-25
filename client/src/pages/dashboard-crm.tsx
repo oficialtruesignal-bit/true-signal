@@ -18,7 +18,9 @@ export default function DashboardCRM() {
     refetchInterval: 30000, // Atualiza a cada 30s
   });
   
-  const totalSignals = tips.length;
+  // Começa em 124 e adiciona os sinais reais criados pelo admin
+  const BASE_SIGNALS = 124;
+  const totalSignals = BASE_SIGNALS + tips.length;
 
   useEffect(() => {
     const interval = setInterval(() => {
