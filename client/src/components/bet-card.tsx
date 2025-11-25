@@ -2,23 +2,26 @@ import { Signal } from "@/lib/mock-data";
 import { Copy, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { getTeamLogo } from "@/lib/team-logos";
+import { useState } from "react";
 
 interface BetCardProps {
   signal: Signal;
 }
 
-// TeamShield Component with Fallback
-function TeamShield({ teamName, imageUrl }: { teamName: string; imageUrl?: string }) {
-  if (imageUrl) {
+// TeamShield Component with Official Logos
+function TeamShield({ teamName }: { teamName: string }) {
+  const [imageError, setImageError] = useState(false);
+  const logoUrl = getTeamLogo(teamName);
+  
+  // If logo exists and hasn't errored, show official logo
+  if (logoUrl && !imageError) {
     return (
       <img 
-        src={imageUrl} 
+        src={logoUrl} 
         alt={teamName}
-        className="w-8 h-8 rounded-full object-cover"
-        onError={(e) => {
-          // If image fails to load, hide it and show fallback
-          e.currentTarget.style.display = 'none';
-        }}
+        className="w-8 h-8 rounded-full object-cover bg-white/5"
+        onError={() => setImageError(true)}
       />
     );
   }
