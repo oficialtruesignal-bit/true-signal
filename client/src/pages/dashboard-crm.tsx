@@ -7,13 +7,13 @@ import { useState, useEffect } from "react";
 
 export default function DashboardCRM() {
   const stats = useCRMDashboardData();
-  const [usersOnline, setUsersOnline] = useState(620);
+  const [usersOnline, setUsersOnline] = useState(15);
   const [totalSignals] = useState(151);
 
   useEffect(() => {
     const interval = setInterval(() => {
       const variation = Math.floor(Math.random() * 21) - 10;
-      setUsersOnline(prev => Math.max(340, Math.min(900, prev + variation)));
+      setUsersOnline(prev => Math.max(12, Math.min(18, prev + variation)));
     }, 3500);
     return () => clearInterval(interval);
   }, []);
@@ -63,7 +63,7 @@ export default function DashboardCRM() {
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">USUARIOS ONLINE</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide whitespace-nowrap">ANALISTAS TRABALHANDO</span>
               </div>
               <div className="flex items-center gap-2">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping"></span>
