@@ -1,11 +1,9 @@
 import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
-import { ActivityHeatmap } from "@/components/activity-heatmap";
 import { AIScanner } from "@/components/ai-scanner";
 import { BetCard } from "@/components/bet-card";
 import { TrendingUp, Target, Percent, Flame, Activity } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function DashboardCRM() {
   const stats = useCRMDashboardData();
@@ -20,8 +18,8 @@ export default function DashboardCRM() {
         <p className="text-sm text-muted-foreground">Gestão de Performance em Unidades</p>
       </div>
 
-      {/* Compact Live HUD */}
-      <div className="mb-6">
+      {/* Compact Live HUD - 3 círculos horizontais */}
+      <div className="mb-6 flex justify-center">
         <CompactLiveHud />
       </div>
 
@@ -109,62 +107,9 @@ export default function DashboardCRM() {
             </div>
           </div>
 
-          {/* Data Intelligence: Chart + AI Scanner + Heatmap */}
-          <div className="grid lg:grid-cols-3 gap-4 flex-1">
-            {/* Units Evolution Chart */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wide">
-                Gráfico de Consistência
-              </h3>
-              <div className="h-[200px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={stats.unitsHistory}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#222" />
-                    <XAxis 
-                      dataKey="time" 
-                      stroke="#555"
-                      style={{ fontSize: '9px' }}
-                      tick={{ fill: '#666' }}
-                    />
-                    <YAxis 
-                      stroke="#555"
-                      style={{ fontSize: '9px' }}
-                      tick={{ fill: '#666' }}
-                      tickFormatter={(value) => `${value}u`}
-                    />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: '#0a0a0a',
-                        border: '1px solid #333',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                      }}
-                      formatter={(value: number) => [`${value.toFixed(1)}u`, 'Unidades']}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="units" 
-                      stroke="#33b864" 
-                      strokeWidth={2}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-
-            {/* AI Scanner Matrix */}
-            <div>
-              <AIScanner />
-            </div>
-
-            {/* Activity Heatmap */}
-            <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
-              <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wide">
-                Calendário de Atividade
-              </h3>
-              <ActivityHeatmap data={stats.activityDays} />
-            </div>
+          {/* AI Scanner - Full Width */}
+          <div className="flex-1">
+            <AIScanner />
           </div>
 
           {/* System Status Bar */}

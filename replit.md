@@ -131,6 +131,23 @@ Preferred communication style: Simple, everyday language.
 
 ### Recent Changes (Nov 25, 2024)
 
+**BetCard Premium Redesign & Dashboard Updates (Nov 25, 2024):**
+- ✅ **Bilhete Tip Premium Redesign**: Novo design "Cartão de Cofre" com container #0a0a0a, borda verde neon
+  - ODD TOTAL gigante centralizada (5xl) com double text-shadow para brilho intenso
+  - Suporte a apostas múltiplas (multi-leg): campo opcional `legs` em Signal
+  - Timeline vertical dinâmica: linha verde conectando dots apenas entre legs (não após o último)
+  - Cálculo automático de ODD TOTAL: multiplica odds de todas as pernas
+  - Badges: ID do sinal, contador de cópias (Users)
+  - Botão COPIAR ENTRADA: copia texto formatado + abre betLink em background
+- ✅ **Dashboard (Central de Operações) Otimizado**:
+  - Feed de Sinais Premium: renderiza BetCards no sidebar (40% layout)
+  - Removido: Gráfico de Consistência e Calendário de Atividade (foco em simplicidade)
+  - 3 círculos HUD mantidos horizontais: Assertividade, Online Agora, Total de Sinais
+  - AIScanner simplificado: sem referências a jogos específicos (evita confusão com partidas irreais)
+  - Layout 5-7 (40% sidebar BetCards + 60% métricas/AIScanner)
+- ✅ **Página /tips**: Grid de BetCards (1 coluna mobile, 2 colunas desktop)
+- ✅ **BetLeg Interface**: homeTeam, awayTeam, league, market, odd, time para suporte multi-leg
+
 **Localização 100% PT-BR (Nov 25, 2024):**
 - ✅ **Interface Completa em Português**: Todos os textos visíveis ao usuário traduzidos
   - Navegação: Painel, Sinais, Ao Vivo, Pré-Jogo, Configurações, Gestão, Sair

@@ -39,14 +39,13 @@ export function AIScanner() {
       }
       
       const templates = [
-        `Analisando ${leagueTeams[team1Index]} vs ${leagueTeams[team2Index]}...`,
         `Varrendo partidas ${selectedLeague}...`,
         `Avaliando mercado ${MARKETS[Math.floor(Math.random() * MARKETS.length)]}...`,
-        `Processando dados de cotações ao vivo (${Math.floor(Math.random() * 500) + 100} fontes)...`,
+        `Processando dados de cotações ao vivo...`,
         `Confiança IA: ${(85 + Math.random() * 12).toFixed(1)}% - Sinal detectado`,
-        `Validação cruzada com 20 especialistas...`,
+        `Validação cruzada com especialistas...`,
         `Convergência do modelo estatístico: ${(92 + Math.random() * 7).toFixed(1)}%`,
-        `Reconhecimento de padrões: ${Math.floor(Math.random() * 15) + 5} oportunidades encontradas`,
+        `Reconhecimento de padrões: ${Math.floor(Math.random() * 15) + 5} oportunidades`,
       ];
 
       const newLine: ScanLine = {
