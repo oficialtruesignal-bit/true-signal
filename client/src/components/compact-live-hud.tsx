@@ -63,7 +63,7 @@ export function CompactLiveHud() {
       {/* Circle 1: Assertividade Global */}
       <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-assertivity">
         <div className="relative w-28 h-28 flex items-center justify-center">
-          <CircularProgress percentage={95} strokeWidth={10} showGlow={false} />
+          <CircularProgress percentage={95} size={112} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
               <span className="text-xl sm:text-2xl font-bold text-white">94.8</span>
@@ -78,7 +78,7 @@ export function CompactLiveHud() {
       <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-users">
         <div className="relative w-28 h-28 flex items-center justify-center">
           <div className="animate-pulse-slow">
-            <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
+            <CircularProgress percentage={100} size={112} strokeWidth={10} showGlow={false} />
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-center gap-1 sm:gap-1.5">
@@ -95,7 +95,7 @@ export function CompactLiveHud() {
       {/* Circle 3: Total Sinais */}
       <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-signals">
         <div className="relative w-28 h-28 flex items-center justify-center">
-          <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
+          <CircularProgress percentage={100} size={112} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
               <span className="text-xl sm:text-2xl font-bold text-white">{totalSignals}</span>

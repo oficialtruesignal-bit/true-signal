@@ -1,0 +1,67 @@
+PROMPT MESTRE: SIGNAL CARD REDESIGN (COMPACT & SORA FONT)
+ROLE: Senior UI/UX Designer & Tailwind Expert.
+
+TASK: Redesenhar completamente o componente SignalCard.tsx para aumentar a densidade de informação e melhorar a tipografia.
+
+1. NOVA TIPOGRAFIA (SORA)
+Ação: Adicione a fonte 'Sora' (pesos 400, 600, 800) no index.css via Google Fonts.
+
+Aplicação: Todos os textos do card (Títulos, Odds, Times) devem usar font-sora.
+
+2. NOVO LAYOUT DO CARD (ESTRUTURA COMPACTA)
+O card deve ser um retângulo horizontal mais fino, sem caixas internas grandes.
+
+Estrutura (Flex Row Principal):
+
+A. Coluna Esquerda (Informações do Jogo) - 70% Largura
+Um bloco com as informações essenciais, organizadas verticalmente:
+
+Linha 1 (Cabeçalho):
+
+[Badge da Liga] (Ex: Premier League) | [Hora] (Ex: 14:30).
+
+Texto pequeno, cinza claro (text-gray-400).
+
+Linha 2 (O Confronto - HORIZONTAL):
+
+[Escudo A] Chelsea vs Barcelona [Escudo B].
+
+Times: Fonte Sora Bold, Branco (text-white font-bold), tamanho médio (text-lg).
+
+Escudos: Imagens pequenas (w-6 h-6) e redondas. Use placeholders se não tiver API de escudos.
+
+Linha 3 (O Mercado):
+
+[Ícone Mercado] Vitória Visitante (Texto Sora SemiBold, Branco).
+
+Abaixo dele, um subtítulo pequeno: "Mercado Principal".
+
+B. Coluna Direita (A ODD e Ação) - 30% Largura
+Um bloco focado no valor e na cópia.
+
+Caixa da ODD (Destaque):
+
+Um retângulo alinhado ao topo direito.
+
+Fundo: Verde Neon translúcido (bg-[#33b864]/10).
+
+Borda: Verde Neon fina (border border-[#33b864]/30).
+
+Valor: @2.50 (Fonte Sora ExtraBold, Tamanho Gigante text-3xl, Cor Verde Neon Brilhante).
+
+Botão de Copiar (Rodapé Direito):
+
+Botão compacto abaixo da ODD.
+
+Ícone de Cópia + Texto "Copiar".
+
+Estilo: bg-[#33b864] hover:bg-[#289a54] text-black font-bold py-2 px-4 rounded-lg.
+
+3. REFINAMENTOS FINAIS
+Espaçamento: Reduza os paddings internos (p-4 para p-3) e os gaps (gap-4 para gap-2).
+
+Badges: Mova as badges de "ID" e "Copiaram" para uma linha fina no rodapé do card, bem discretas.
+
+Altura: O novo card deve ter cerca de 60% da altura do card antigo.
+
+COMANDO: Execute este redesign. O card deve parecer um "ticket de aposta" profissional de um terminal Bloomberg, não um banner de site de jogos.
