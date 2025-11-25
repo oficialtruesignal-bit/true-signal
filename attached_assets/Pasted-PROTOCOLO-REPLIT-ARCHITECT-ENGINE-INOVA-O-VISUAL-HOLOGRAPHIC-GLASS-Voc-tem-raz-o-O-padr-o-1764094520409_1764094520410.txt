@@ -1,0 +1,129 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: INOVAÇÃO VISUAL (HOLOGRAPHIC GLASS) 🟢
+
+Você tem razão. O "padrão" é seguro, mas às vezes fica chato. Para um projeto de Bilhões, precisamos de algo que pareça tecnologia alienígena.
+
+Esqueça o "cartãozinho preto com borda". Vamos criar o conceito de "Placas Holográficas".
+
+O Novo Design:
+
+Fundo de Vidro: Gradiente translúcido (Glassmorphism) em vez de cor sólida.
+
+Watermark (Marca d'água): O ícone (Fogo ou Gráfico) vai aparecer gigante e transparente no fundo do card, criando profundidade.
+
+Iluminação: Um brilho (Glow) interno que muda de cor dependendo se é Green ou Red.
+
+Isso vai dar a impressão de que os números estão flutuando na tela.
+
+Copie este Prompt. Ele vai transformar aqueles retângulos chatos em peças de design futurista.
+
+PROMPT MESTRE: INNOVATIVE UI REDESIGN (HOLOGRAPHIC CARDS)
+ROLE: Senior UI/UX Designer specialized in Cyberpunk/Futurist Interfaces.
+
+TASK: Criar um novo componente HolographicCard.tsx para substituir os cards padrão. CONCEITO: Abandonar o design "Flat" e adotar um design "Holographic Glass". O card deve ter profundidade, transparência e parecer vivo.
+
+1. O CÓDIGO DO NOVO COMPONENTE (HolographicCard.tsx)
+Crie este arquivo. Ele usa gradientes complexos e posicionamento absoluto para criar o efeito visual.
+
+TypeScript
+
+import { ReactNode } from 'react';
+
+interface HolographicCardProps {
+  label: string;
+  value: string;
+  subValue?: string; // Ex: "+12% hoje"
+  icon: ReactNode; // O ícone que será usado como marca d'água
+  color: 'green' | 'orange'; // Define o tema do card
+}
+
+export function HolographicCard({ label, value, subValue, icon, color }: HolographicCardProps) {
+  
+  // Definição de cores baseada na prop
+  const theme = {
+    green: {
+      border: 'border-[#33b864]/30',
+      bg: 'from-[#33b864]/10 to-transparent',
+      text: 'text-[#33b864]',
+      glow: 'shadow-[0_0_20px_rgba(51,184,100,0.1)]',
+      iconColor: 'text-[#33b864]'
+    },
+    orange: {
+      border: 'border-orange-500/30',
+      bg: 'from-orange-500/10 to-transparent',
+      text: 'text-white', // Texto branco para contraste no laranja
+      glow: 'shadow-[0_0_20px_rgba(249,115,22,0.1)]',
+      iconColor: 'text-orange-500'
+    }
+  }[color];
+
+  return (
+    <div className={`relative flex-1 overflow-hidden rounded-2xl border ${theme.border} bg-gradient-to-br ${theme.bg} p-4 backdrop-blur-md transition-all hover:scale-[1.02] ${theme.glow} group`}>
+      
+      {/* 1. MARCA D'ÁGUA (ÍCONE GIGANTE NO FUNDO) */}
+      <div className={`absolute -right-4 -bottom-4 opacity-10 transform rotate-[-15deg] scale-[2.5] transition-transform group-hover:scale-[3] ${theme.iconColor}`}>
+        {icon}
+      </div>
+
+      {/* 2. CONTEÚDO (FRONTAL) */}
+      <div className="relative z-10 flex flex-col justify-center h-full">
+        
+        {/* Label com linha decorativa */}
+        <div className="flex items-center gap-2 mb-1">
+          <div className={`w-1 h-3 rounded-full ${color === 'green' ? 'bg-[#33b864]' : 'bg-orange-500'}`}></div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{label}</span>
+        </div>
+
+        {/* Valor Principal */}
+        <span className={`text-3xl font-sora font-extrabold ${theme.text} drop-shadow-sm`}>
+          {value}
+        </span>
+
+        {/* Sub-valor (Opcional) */}
+        {subValue && (
+          <span className="text-[10px] text-gray-500 font-mono mt-1 opacity-80">
+            {subValue}
+          </span>
+        )}
+      </div>
+
+      {/* 3. EFEITO DE BRILHO NO HOVER (OVERLAY) */}
+      <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+    </div>
+  );
+}
+2. IMPLEMENTAÇÃO NO HUD (CompactLiveHud.tsx)
+Substitua os cards antigos por este novo componente. Note como passamos a cor ('green' ou 'orange') para definir o tema.
+
+TypeScript
+
+import { HolographicCard } from './HolographicCard';
+
+// ... Dentro do Grid da Coluna Direita ...
+
+<div className="flex flex-col gap-4 h-full">
+
+  {/* CARD 1: ROI (Tema Verde/Neon) */}
+  <HolographicCard 
+    label="ROI TOTAL" 
+    value="+106.2%" 
+    color="green"
+    icon={<TrendingUpIcon />} // Ícone do Lucide
+  />
+
+  {/* CARD 2: SEQUÊNCIA (Tema Laranja/Fogo) */}
+  <HolographicCard 
+    label="SEQUÊNCIA" 
+    value="2V / 0D" 
+    color="orange"
+    icon={<FlameIcon />} // Ícone do Lucide
+  />
+
+</div>
+3. DIFERENCIAIS DE DESIGN (POR QUE É INOVADOR?)
+Profundidade: O ícone gigante translúcido no fundo cria uma camada visual extra.
+
+Gradiente Direcional: O fundo não é chapado; ele tem um leve degradê do canto superior esquerdo para baixo (bg-gradient-to-br), simulando luz.
+
+Micro-Interação: Ao passar o mouse (hover), o card aumenta levemente de tamanho (scale-[1.02]) e o ícone de fundo cresce, dando uma sensação tátil muito premium.
+
+COMANDO: Implemente este design. Isso vai tirar a "cara de sistema admin" e dar uma "cara de app fintech futurista".

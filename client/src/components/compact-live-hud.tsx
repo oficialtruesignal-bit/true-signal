@@ -1,6 +1,6 @@
 import { TrendingUp, Flame } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
-import { StatCard } from './dashboard/stat-card';
+import { HolographicCard } from './dashboard/holographic-card';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
@@ -50,22 +50,23 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: CARDS PADRONIZADOS --- */}
-        <div className="flex flex-col gap-3 h-full">
+        {/* --- DIREITA: CARDS HOLOGRÁFICOS --- */}
+        <div className="flex flex-col gap-4 h-full">
           
-          {/* CARD 1: ROI */}
-          <StatCard 
-            label="ROI" 
+          {/* CARD 1: ROI (Tema Verde/Neon) */}
+          <HolographicCard 
+            label="ROI TOTAL" 
             value={`+${stats.roi.toFixed(1)}%`}
-            trendColor="text-primary"
-            icon={<TrendingUp className="w-4 h-4 text-primary" strokeWidth={1.5} />} 
+            color="green"
+            icon={<TrendingUp className="w-12 h-12" strokeWidth={1.5} />} 
           />
 
-          {/* CARD 2: SEQUÊNCIA */}
-          <StatCard 
-            label="Sequência" 
+          {/* CARD 2: SEQUÊNCIA (Tema Laranja/Fogo) */}
+          <HolographicCard 
+            label="SEQUÊNCIA" 
             value={`${stats.currentStreak.wins}V / ${stats.currentStreak.losses}D`}
-            icon={<Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />} 
+            color="orange"
+            icon={<Flame className="w-12 h-12" strokeWidth={1.5} />} 
           />
 
         </div>
