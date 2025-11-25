@@ -185,12 +185,12 @@ export function BetCard({ signal }: BetCardProps) {
     switch (status) {
       case "green":
         return {
-          text: "VERDE",
+          text: "GANHOU",
           className: "bg-[#33b864]/5 text-[#33b864] border-[#33b864]"
         };
       case "red":
         return {
-          text: "VERMELHO",
+          text: "PERDIDA",
           className: "bg-red-500/5 text-red-500 border-red-500"
         };
       default:
@@ -278,13 +278,13 @@ export function BetCard({ signal }: BetCardProps) {
                   onClick={() => handleStatusChange('green')}
                   className="text-green-500 cursor-pointer hover:bg-green-500/10"
                 >
-                  ✅ GREEN
+                  ✅ GANHOU
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => handleStatusChange('red')}
                   className="text-red-500 cursor-pointer hover:bg-red-500/10"
                 >
-                  ❌ RED
+                  ❌ PERDIDA
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
