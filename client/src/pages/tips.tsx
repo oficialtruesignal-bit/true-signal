@@ -21,7 +21,7 @@ export default function TipsPage() {
   // Realtime subscription for new tips
   useEffect(() => {
     const channel = supabase
-      .channel('public:tips')
+      .channel('tips')
       .on('postgres_changes', { 
         event: 'INSERT', 
         schema: 'public', 
@@ -32,10 +32,13 @@ export default function TipsPage() {
         // Invalidate and refetch to get the new tip
         queryClient.invalidateQueries({ queryKey: ['tips'] });
         
-        // Show toast notification
-        toast.success('Nova Tip Disponível!', {
-          description: `${payload.new.match_name} - ${payload.new.market}`,
-        });
+        // Show toast notification with correct field names
+        const newTip = payload.new as any;
+        if (newTip.home_team && newTip.away_team && newTip.market) {
+          toast.success('Nova Tip Disponível!', {
+            description: `${newTip.home_team} vs ${newTip.away_team} - ${newTip.market}`,
+          });
+        }
       })
       .on('postgres_changes', {
         event: 'UPDATE',
@@ -44,13 +47,21 @@ export default function TipsPage() {
       }, (payload) => {
         console.log('🔄 Tip atualizada:', payload.new);
         
-        // Invalidate and refetch to get the updated tip
-        queryClient.invalidateQueries({ queryKey: ['tips'] });
+        // Only invalidate if status or odd changed (avoid unnecessary refetches)
+        const oldTip = payload.old as any;
+        const newTip = payload.new as any;
+        if (oldTip?.status !== newTip?.status || oldTip?.odd !== newTip?.odd) {
+          queryClient.invalidateQueries({ queryKey: ['tips'] });
+        }
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') {
+          console.log('✅ Realtime subscription ativa para tips');
+        }
+      });
 
     return () => {
-      supabase.removeChannel(channel);
+      channel.unsubscribe();
     };
   }, [queryClient]);
 
