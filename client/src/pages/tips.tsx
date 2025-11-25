@@ -53,6 +53,18 @@ export default function TipsPage() {
           queryClient.invalidateQueries({ queryKey: ['tips'] });
         }
       })
+      .on('postgres_changes', {
+        event: 'DELETE',
+        schema: 'public',
+        table: 'tips'
+      }, (payload) => {
+        console.log('🗑️ Sinal deletado:', payload.old);
+        
+        // Invalidate to remove deleted signal
+        queryClient.invalidateQueries({ queryKey: ['tips'] });
+        
+        toast.info('Sinal removido');
+      })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
           console.log('✅ Realtime subscription ativa para sinais');
@@ -100,7 +112,11 @@ export default function TipsPage() {
       {!isLoading && !error && tips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {tips.map((tip) => (
-            <BetCard key={tip.id} signal={tip} />
+            <BetCard 
+              key={tip.id} 
+              signal={tip}
+              onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
+            />
           ))}
         </div>
       )}

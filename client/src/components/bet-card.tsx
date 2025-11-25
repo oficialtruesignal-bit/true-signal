@@ -1,20 +1,33 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users, Pencil } from "lucide-react";
+import { Copy, Users, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@/hooks/use-auth";
+import { tipsService } from "@/lib/tips-service";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface BetCardProps {
   signal: Signal;
+  onDelete?: () => void;
 }
 
 // TeamShield Component with Official Logos (40px)
@@ -60,13 +73,14 @@ function abbreviateTeamName(teamName: string): string {
   return cleaned.substring(0, 11) + '.';
 }
 
-export function BetCard({ signal }: BetCardProps) {
+export function BetCard({ signal, onDelete }: BetCardProps) {
   const { user } = useAuth();
   const isAdmin = user?.role === 'admin';
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
   const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
 
   // Busca dados oficiais da API-Football se houver fixtureId
@@ -123,19 +137,45 @@ export function BetCard({ signal }: BetCardProps) {
   }, [signal.status, signal.timestamp]);
   
   const handleStatusChange = async (newStatus: Signal["status"]) => {
+    const previousStatus = currentStatus;
+    
     try {
-      // TODO: Implementar chamada à API para atualizar status
-      // await axios.patch(`/api/tips/${signal.id}`, { status: newStatus });
-      
+      // Optimistic UI: atualiza imediatamente
       setCurrentStatus(newStatus);
+      
+      // Chama a API para persistir
+      await tipsService.updateStatus(signal.id, newStatus);
+      
       toast({
         title: "Status atualizado!",
         description: `Bilhete marcado como ${newStatus.toUpperCase()}`,
       });
     } catch (error) {
+      // Rollback em caso de erro
+      setCurrentStatus(previousStatus);
       toast({
         title: "Erro",
         description: "Não foi possível atualizar o status",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await tipsService.delete(signal.id);
+      
+      toast({
+        title: "Sinal deletado!",
+        description: "O sinal foi removido com sucesso",
+      });
+      
+      // Callback para atualizar lista
+      onDelete?.();
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível deletar o sinal",
         variant: "destructive",
       });
     }
@@ -286,6 +326,15 @@ export function BetCard({ signal }: BetCardProps) {
                 >
                   ❌ PERDIDA
                 </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="text-red-500 cursor-pointer hover:bg-red-500/10"
+                  data-testid="delete-signal-button"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-2" />
+                  DELETAR
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )}
@@ -348,6 +397,29 @@ export function BetCard({ signal }: BetCardProps) {
         <span>•</span>
         <span>Criado: {createdDateTime}</span>
       </div>
+
+      {/* Dialog de confirmação de delete */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent className="bg-[#121212] border-[#33b864]/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-white">Deletar Sinal?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400">
+              Esta ação não pode ser desfeita. O sinal será permanentemente removido do sistema.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-white/5 border-white/10 text-white hover:bg-white/10">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-red-500 hover:bg-red-600 text-white"
+            >
+              Deletar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
     </div>
   );
