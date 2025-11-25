@@ -65,16 +65,23 @@ export function BetCard({ signal }: BetCardProps) {
 
     const fetchFixtureData = async () => {
       try {
+        console.log(`🔄 Buscando dados do fixture ${signal.fixtureId}...`);
         const response = await axios.get(`/api/football/fixtures/${signal.fixtureId}`);
         const fixture = response.data.response?.[0];
         
+        console.log('📊 Dados da API-Football:', fixture);
+        
         if (fixture) {
           // Atualiza com dados oficiais
+          console.log('✅ Liga oficial:', fixture.league.name);
+          console.log('✅ Data oficial:', fixture.fixture.date);
           setOfficialLeague(fixture.league.name);
           setOfficialMatchTime(fixture.fixture.date);
+        } else {
+          console.log('❌ Nenhum fixture encontrado');
         }
       } catch (error) {
-        console.error('Erro ao buscar dados da partida:', error);
+        console.error('❌ Erro ao buscar dados da partida:', error);
       }
     };
 

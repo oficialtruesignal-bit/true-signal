@@ -55,7 +55,7 @@ export const MOCK_SIGNALS: Signal[] = [
     isHot: true,
     betLink: "https://bet365.com",
     isLive: false,
-    fixtureId: 1035137, // ID da API-Football para buscar dados oficiais
+    fixtureId: 1386749, // ID real da API-Football (Championship 25/11/2025 19:45 UTC)
     legs: [
       {
         homeTeam: "Arsenal",
@@ -94,7 +94,7 @@ export const MOCK_SIGNALS: Signal[] = [
     timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(), // 30 mins ago
     betLink: "https://bet365.com",
     isLive: false,
-    fixtureId: 1207655, // ID da API-Football
+    fixtureId: 1386754, // ID real da API-Football (Championship 25/11/2025 19:45 UTC)
   },
   {
     id: "3",
