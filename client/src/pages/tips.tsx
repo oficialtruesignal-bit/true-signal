@@ -4,6 +4,7 @@ import { tipsService } from "@/lib/tips-service";
 import { useQuery } from "@tanstack/react-query";
 import { Target, Loader2, AlertCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardCommandCenter } from "@/components/dashboard-command-center";
 
 export default function TipsPage() {
   const { data: tips = [], isLoading, error } = useQuery({
@@ -14,6 +15,9 @@ export default function TipsPage() {
 
   return (
     <Layout>
+      {/* Command Center Hero */}
+      <DashboardCommandCenter />
+
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
