@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -48,6 +49,7 @@
 
   --font-sans: 'Inter', sans-serif;
   --font-display: 'Syne', sans-serif;
+  --font-sora: 'Sora', sans-serif;
   
   --radius: 0.5rem;
 }
