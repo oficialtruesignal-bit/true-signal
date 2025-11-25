@@ -99,6 +99,7 @@ export function ProfitChart() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 2.5, type: "spring" }}
           className="text-2xl font-bold text-primary drop-shadow-[0_0_10px_rgba(51,184,100,0.5)]"
+          data-testid="text-roi-percentage"
         >
           +450%
         </motion.div>

@@ -7,18 +7,23 @@ export function StatsCircle() {
 
   useEffect(() => {
     setMounted(true);
+    let interval: NodeJS.Timeout | null = null;
+    
     const timer = setTimeout(() => {
       let current = 0;
-      const interval = setInterval(() => {
+      interval = setInterval(() => {
         current += 1;
         setPercentage(current);
         if (current >= 95) {
-          clearInterval(interval);
+          if (interval) clearInterval(interval);
         }
       }, 20);
     }, 500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      if (interval) clearInterval(interval);
+    };
   }, []);
 
   const radius = 80;
@@ -72,6 +77,7 @@ export function StatsCircle() {
               animate={{ scale: 1 }}
               transition={{ delay: 0.5, type: "spring", stiffness: 200 }}
               className="text-5xl font-bold text-primary drop-shadow-[0_0_15px_rgba(51,184,100,0.6)]"
+              data-testid="text-accuracy-percentage"
             >
               {percentage}%
             </motion.div>

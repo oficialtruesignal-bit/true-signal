@@ -1,253 +1,351 @@
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, CheckCircle, Zap, Shield, BarChart3, Cpu, Target } from "lucide-react";
-import generatedImage from '@assets/generated_images/dark_green_neon_tech_money_background.png';
+import { motion } from "framer-motion";
+import { ArrowRight, Cpu, Users, Target, Zap, CheckCircle2 } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { useAuth } from "@/hooks/use-auth";
+import { MatrixBackground } from "@/components/matrix-background";
+import { SalesToast } from "@/components/sales-toast";
+import { ProfitChart } from "@/components/profit-chart";
+import { StatsCircle } from "@/components/stats-circle";
+import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const { user } = useAuth();
+  const [activeUsers, setActiveUsers] = useState(0);
+
+  useEffect(() => {
+    let current = 0;
+    const target = 12450;
+    const duration = 2000;
+    const increment = target / (duration / 16);
+
+    const interval = setInterval(() => {
+      current += increment;
+      if (current >= target) {
+        setActiveUsers(target);
+        clearInterval(interval);
+      } else {
+        setActiveUsers(Math.floor(current));
+      }
+    }, 16);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground overflow-hidden font-sans">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 border-b border-primary/20 bg-background/80 backdrop-blur-md">
+    <div className="min-h-screen bg-[#000000] text-white overflow-hidden font-sans relative">
+      <MatrixBackground />
+      <SalesToast />
+
+      <nav className="fixed top-0 w-full z-50 border-b border-primary/10 bg-black/50 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
           <Logo size="md" showText={true} />
           
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors">Metodologia</a>
-            <a href="#results" className="text-sm font-medium text-muted-foreground hover:text-white transition-colors">Resultados</a>
+            <a href="#proof" className="text-sm font-medium text-gray-400 hover:text-primary transition-colors" data-testid="link-resultados">Resultados</a>
+            <a href="#hybrid" className="text-sm font-medium text-gray-400 hover:text-primary transition-colors" data-testid="link-tecnologia">Tecnologia</a>
             <Link href="/auth">
-              <Button variant="ghost" className="text-white hover:bg-white/5">Login</Button>
+              <Button 
+                variant="ghost" 
+                className="text-white hover:bg-white/5"
+                data-testid="button-login"
+              >
+                Login
+              </Button>
             </Link>
             <Link href="/auth">
-              <Button className="bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50">
-                Acessar Ocean Signal
+              <Button 
+                className="bg-primary hover:bg-primary/90 text-black font-bold border border-primary shadow-[0_0_20px_rgba(51,184,100,0.3)] hover:shadow-[0_0_30px_rgba(51,184,100,0.5)] transition-all"
+                data-testid="button-access"
+              >
+                Liberar Acesso
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
       <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6">
-        {/* Background Elements */}
-        <div className="absolute inset-0 -z-20 opacity-40">
-           <img src={generatedImage} className="w-full h-full object-cover" alt="Background" />
-           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/90 to-background" />
-        </div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
         
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-[600px] bg-primary/10 blur-[120px] -z-10 rounded-full opacity-30" />
-        
-        <div className="max-w-5xl mx-auto text-center space-y-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 backdrop-blur-sm animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_#33b864]" />
-            <span className="text-sm font-bold text-primary tracking-wide uppercase">Sistema IA Ativo</span>
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-display font-bold text-white leading-[1.1] tracking-tight animate-in fade-in slide-in-from-bottom-8 duration-700 delay-100">
-            Navegue no oceano de dados.<br/>
-            Encontre o <span className="text-primary drop-shadow-[0_0_15px_rgba(51,184,100,0.5)]">sinal de lucro</span>.
-          </h1>
-          
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-            Análise preditiva de IA + curadoria de especialistas. Identifique oportunidades lucrativas em tempo real.
-          </p>
-          
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-300">
+        <div className="max-w-6xl mx-auto text-center space-y-10 relative z-10">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-primary/30 backdrop-blur-md bg-black/40"
+          >
+            <div className="relative">
+              <span className="w-3 h-3 rounded-full bg-primary block animate-ping absolute" />
+              <span className="w-3 h-3 rounded-full bg-primary block relative" />
+            </div>
+            <span className="text-sm font-bold text-primary tracking-widest uppercase">Sistema IA + 20 Especialistas Ativo</span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white leading-[1.05] tracking-tight"
+            style={{ textShadow: "0 0 40px rgba(51,184,100,0.2)" }}
+          >
+            A Única IA do Mundo<br />
+            com <span className="text-primary relative inline-block">
+              Validação
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: "100%" }}
+                transition={{ duration: 0.8, delay: 1 }}
+                className="absolute bottom-0 left-0 h-1 bg-primary/50 blur-sm"
+              />
+            </span> de <br/>20 Especialistas
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
+          >
+            Chegamos a <span className="text-primary font-bold">95% de assertividade</span>. 
+            Pare de apostar com a sorte. <span className="text-white font-semibold">Invista com a Ciência.</span>
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="pt-4"
+          >
             <Link href={user ? "/app" : "/auth"}>
-              <Button size="lg" className="h-14 px-8 text-lg bg-primary hover:bg-primary-dark text-black font-bold btn-glow rounded-xl w-full md:w-auto border border-primary/50">
-                {user ? "Acessar Dashboard" : "Começar Agora"} <ArrowRight className="ml-2 w-5 h-5" />
+              <Button 
+                size="lg" 
+                className="h-16 px-12 text-xl bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-wider relative overflow-hidden group border-2 border-primary"
+                data-testid="button-cta-hero"
+              >
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  animate={{
+                    x: ["-200%", "200%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                />
+                <span className="relative z-10 flex items-center gap-3">
+                  Liberar Meu Acesso Agora
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                </span>
               </Button>
             </Link>
-          </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            className="text-sm text-gray-500"
+          >
+            O mercado de apostas foi projetado para você perder.<br />
+            <span className="text-primary font-semibold">O Ocean Signal foi projetado para quebrar o banco.</span>
+          </motion.div>
         </div>
       </section>
 
-      {/* Benefits Grid */}
-      <section className="py-20 px-6 bg-gradient-to-b from-background to-black/50">
+      <section id="proof" className="py-24 px-6 relative">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* AI Intelligence */}
-            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
-                <Cpu className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-white mb-3">Inteligência Artificial</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Algoritmos que varrem 1000+ ligas em tempo real, identificando padrões invisíveis ao olho humano.
-              </p>
-            </div>
-
-            {/* Accuracy */}
-            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
-                <Target className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-white mb-3">Assertividade</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Histórico comprovado de 80%+ de acerto. Cada sinal passa por dupla validação: IA + Especialista.
-              </p>
-            </div>
-
-            {/* Speed */}
-            <div className="p-8 rounded-2xl bg-card/40 border border-primary/10 hover:border-primary/30 transition-all duration-300 group backdrop-blur-sm">
-              <div className="w-14 h-14 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-glow">
-                <Zap className="w-7 h-7 text-primary" />
-              </div>
-              <h3 className="text-xl font-display font-bold text-white mb-3">Velocidade</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Receba sinais antes das casas de aposta ajustarem as odds. Timing é tudo no mercado.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Live Ticker - Recent Greens */}
-      <section className="py-4 bg-primary/5 border-y border-primary/20 overflow-hidden">
-        <div className="flex items-center gap-8 animate-marquee whitespace-nowrap">
-          {[
-            "✅ Flamengo vencer @ 1.80",
-            "✅ Real Madrid Over 2.5 @ 1.65", 
-            "✅ Liverpool BTTS @ 1.90",
-            "✅ Bayern Under 3.5 @ 1.75",
-            "✅ PSG -1 AH @ 2.10",
-            "✅ Barcelona Ambas Marcam @ 1.85",
-          ].map((green, i) => (
-            <div key={i} className="flex items-center gap-3 px-6">
-              <span className="text-primary font-bold text-sm">{green}</span>
-              <span className="text-primary/30">•</span>
-            </div>
-          ))}
-          {/* Duplicate for seamless loop */}
-          {[
-            "✅ Flamengo vencer @ 1.80",
-            "✅ Real Madrid Over 2.5 @ 1.65", 
-            "✅ Liverpool BTTS @ 1.90",
-            "✅ Bayern Under 3.5 @ 1.75",
-            "✅ PSG -1 AH @ 2.10",
-            "✅ Barcelona Ambas Marcam @ 1.85",
-          ].map((green, i) => (
-            <div key={`dup-${i}`} className="flex items-center gap-3 px-6">
-              <span className="text-primary font-bold text-sm">{green}</span>
-              <span className="text-primary/30">•</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Social Proof / Results */}
-      <section id="results" className="py-24 bg-card/30 border-y border-primary/10 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-            <div className="md:w-1/2 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-white">
-                Resultados Verificados.
-              </h2>
-              <p className="text-muted-foreground text-lg">
-                Transparência total. Acompanhe nosso histórico de Greens e veja por que somos a escolha #1 dos investidores esportivos.
-              </p>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="p-4 rounded-xl bg-black/40 border border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.05)]">
-                  <div className="text-3xl font-bold text-primary mb-1 shadow-glow">94%</div>
-                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Taxa de Acerto</div>
-                </div>
-                <div className="p-4 rounded-xl bg-black/40 border border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.05)]">
-                  <div className="text-3xl font-bold text-white mb-1">+2.5K</div>
-                  <div className="text-sm text-muted-foreground font-medium uppercase tracking-wider">Membros Ativos</div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Mockup of Results */}
-            <div className="md:w-1/2 relative">
-              <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full" />
-              <div className="relative grid gap-4">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="bg-[#0f0f0f] border border-primary/20 rounded-xl p-4 flex items-center justify-between shadow-lg transform hover:-translate-y-1 transition-transform duration-300" style={{ opacity: 1 - (i * 0.15), transform: `scale(${1 - (i * 0.05)}) translateY(${i * 10}px)` }}>
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
-                        <CheckCircle className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <div className="font-bold text-white">Green Confirmado</div>
-                        <div className="text-sm text-muted-foreground">Man City vs Arsenal • Over 2.5 Goals</div>
-                      </div>
-                    </div>
-                    <div className="text-primary font-bold font-mono text-lg drop-shadow-[0_0_5px_rgba(51,184,100,0.5)]">+R$ 450,00</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="features" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
-              Tecnologia de Ponta
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
+              Live Proof
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              O ecossistema completo para quem leva apostas a sério.
+            <p className="text-xl text-gray-400">
+              Não é mágica. É <span className="text-primary font-bold">Big Data</span>.
             </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-12">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <ProfitChart />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <StatsCircle />
+            </motion.div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="p-8 rounded-2xl bg-card border border-primary/10 hover:border-primary/40 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(51,184,100,0.1)]">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Zap className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Sinais Instantâneos</h3>
-              <p className="text-muted-foreground">
-                Nossa IA monitora milhares de jogos simultaneamente para encontrar valor onde ninguém mais vê.
-              </p>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-black/60 backdrop-blur-md border border-primary/20 rounded-2xl p-8 text-center"
+          >
+            <div className="text-5xl font-black text-primary mb-2 drop-shadow-[0_0_20px_rgba(51,184,100,0.5)]" data-testid="text-active-members">
+              +{activeUsers.toLocaleString()}
             </div>
+            <div className="text-lg text-gray-400 font-semibold">Membros Lucrando Agora</div>
+          </motion.div>
+        </div>
+      </section>
 
-            <div className="p-8 rounded-2xl bg-card border border-primary/10 hover:border-primary/40 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(51,184,100,0.1)]">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Shield className="w-6 h-6 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-3">Validação Humana</h3>
-              <p className="text-muted-foreground">
-                A tecnologia sugere, mas nossos especialistas validam. Dupla camada de segurança para seu investimento.
-              </p>
-            </div>
+      <section id="hybrid" className="py-24 px-6 bg-gradient-to-b from-transparent via-primary/5 to-transparent relative">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
+              Hybrid Intelligence
+            </h2>
+            <p className="text-xl text-gray-400">
+              <span className="text-primary font-bold">20 Mentes Humanas</span> + <span className="text-primary font-bold">1 Cérebro Digital</span>
+            </p>
+          </motion.div>
 
-            <div className="p-8 rounded-2xl bg-card border border-primary/10 hover:border-primary/40 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(51,184,100,0.1)]">
-              <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <BarChart3 className="w-6 h-6 text-primary" />
+          <div className="grid md:grid-cols-3 gap-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Cpu className="w-8 h-8 text-primary animate-pulse" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">Dashboard Pro</h3>
-              <p className="text-muted-foreground">
-                Acompanhe jogos ao vivo, estatísticas e gerencie sua banca em um só lugar.
+              <h3 className="text-2xl font-display font-bold text-white mb-3">A Máquina</h3>
+              <p className="text-gray-400 leading-relaxed mb-4">
+                Processamento de <span className="text-primary font-bold">1000+ ligas/segundo</span>. 
+                Nossa IA nunca dorme, nunca para, nunca falha.
               </p>
-            </div>
+              <div className="text-xs text-gray-600 uppercase tracking-wider">Precisão Inumana</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Users className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-2xl font-display font-bold text-white mb-3">O Humano</h3>
+              <p className="text-gray-400 leading-relaxed mb-4">
+                Curadoria de <span className="text-primary font-bold">20 Traders Profissionais</span>. 
+                A IA encontra o padrão. O Especialista confirma o Green.
+              </p>
+              <div className="text-xs text-gray-600 uppercase tracking-wider">Intuição Validada</div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group relative overflow-hidden"
+            >
+              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
+              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10">
+                <Target className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-2xl font-display font-bold text-white mb-3 relative z-10">O Resultado</h3>
+              <p className="text-gray-400 leading-relaxed mb-4 relative z-10">
+                Sinais com <span className="text-primary font-bold">95% de assertividade</span>. 
+                Você recebe apenas o que passou pelo filtro duplo.
+              </p>
+              <div className="flex items-center gap-2 relative z-10">
+                <CheckCircle2 className="w-4 h-4 text-primary" />
+                <span className="text-sm text-primary font-semibold">Green Confirmado ✓</span>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* CTA Footer */}
-      <section className="py-24 px-6 border-t border-primary/20 bg-gradient-to-b from-background to-black relative">
-         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-[300px] bg-primary/10 blur-[100px] -z-10 rounded-full opacity-20" />
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-white">
-            Pare de apostar, comece a investir.
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            Junte-se à elite dos investidores esportivos hoje mesmo.
+      <section className="py-24 px-6">
+        <div className="max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="bg-gradient-to-br from-primary/10 via-black/80 to-black/80 backdrop-blur-xl border border-primary/30 rounded-3xl p-12 text-center relative overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzNiODY0IiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
+            
+            <div className="relative z-10 space-y-8">
+              <h2 className="text-3xl md:text-5xl font-display font-black text-white leading-tight">
+                Você tem duas escolhas
+              </h2>
+              
+              <div className="grid md:grid-cols-2 gap-6 text-left">
+                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
+                  <div className="text-red-400 font-bold mb-2 flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-red-500" />
+                    Opção 1
+                  </div>
+                  <p className="text-gray-300">Continuar <span className="text-white font-bold">adivinhando</span> e perdendo dinheiro nas casas de aposta</p>
+                </div>
+
+                <div className="bg-primary/10 border border-primary/30 rounded-xl p-6">
+                  <div className="text-primary font-bold mb-2 flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
+                    Opção 2
+                  </div>
+                  <p className="text-gray-300">Seguir a inteligência de <span className="text-white font-bold">20 especialistas apoiados por IA</span></p>
+                </div>
+              </div>
+
+              <Link href="/auth">
+                <Button 
+                  size="lg" 
+                  className="h-16 px-12 text-xl bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-wider border-2 border-primary shadow-[0_0_40px_rgba(51,184,100,0.3)]"
+                  data-testid="button-cta-final"
+                >
+                  Escolher a Inteligência <ArrowRight className="ml-2 w-6 h-6" />
+                </Button>
+              </Link>
+
+              <p className="text-sm text-gray-500">
+                A decisão mais inteligente que você tomará hoje.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      <footer className="py-12 px-6 border-t border-primary/10 bg-black/80">
+        <div className="max-w-7xl mx-auto text-center">
+          <Logo size="sm" showText={true} />
+          <p className="mt-4 text-sm text-gray-600">
+            © 2024 Ocean Signal. Tecnologia de ponta para investidores esportivos.
           </p>
-          <Link href="/auth">
-            <Button size="lg" className="h-14 px-12 text-lg bg-primary hover:bg-primary-dark text-black font-bold btn-glow rounded-xl border border-primary/50">
-              Acessar Ocean Signal
-            </Button>
-          </Link>
         </div>
-      </section>
+      </footer>
     </div>
   );
 }

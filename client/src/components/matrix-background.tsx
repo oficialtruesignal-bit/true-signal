@@ -58,6 +58,8 @@ export function MatrixBackground() {
       });
     }
 
+    let animationFrameId: number;
+
     function animate() {
       if (!ctx || !canvas) return;
 
@@ -111,13 +113,14 @@ export function MatrixBackground() {
         });
       });
 
-      requestAnimationFrame(animate);
+      animationFrameId = requestAnimationFrame(animate);
     }
 
     animate();
 
     return () => {
       window.removeEventListener("resize", setCanvasSize);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 

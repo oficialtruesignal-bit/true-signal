@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CheckCircle, TrendingUp, DollarSign } from "lucide-react";
 
@@ -13,13 +13,18 @@ const notifications = [
 
 export function SalesToast() {
   const [currentNotification, setCurrentNotification] = useState<typeof notifications[0] | null>(null);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const showNotification = () => {
       const randomNotif = notifications[Math.floor(Math.random() * notifications.length)];
       setCurrentNotification(randomNotif);
 
-      setTimeout(() => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+
+      hideTimeoutRef.current = setTimeout(() => {
         setCurrentNotification(null);
       }, 4000);
     };
@@ -34,6 +39,9 @@ export function SalesToast() {
     return () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
     };
   }, []);
 
