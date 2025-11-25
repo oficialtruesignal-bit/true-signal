@@ -53,62 +53,9 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Performance de Investidor Profissional</p>
       </div>
 
-      {/* Dashboard Preview - Professional */}
+      {/* Dashboard Preview - Clean & Professional */}
       {!showFullDashboard ? (
         <div className="space-y-6">
-          {/* Preview KPIs */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Taxa de Acerto Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
-              <div className="flex items-center justify-between mb-3">
-                <Target className="w-5 h-5 text-primary" />
-                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
-                  ELITE
-                </span>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground font-medium">Taxa de Acerto</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
-                  {stats.winRate.toFixed(1)}%
-                </p>
-                <p className="text-[10px] text-muted-foreground">Precisão Institucional</p>
-              </div>
-            </div>
-
-            {/* Sinais Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
-              <div className="flex items-center justify-between mb-3">
-                <Zap className="w-5 h-5 text-primary" />
-                <Activity className="w-4 h-4 text-primary animate-pulse" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground font-medium">Sinais Enviados</p>
-                <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
-                  {stats.totalTips.toLocaleString('pt-BR')}
-                </p>
-                <p className="text-[10px] text-muted-foreground">Volume Acumulado</p>
-              </div>
-            </div>
-
-            {/* Sequência Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
-              <div className="flex items-center justify-between mb-3">
-                <Flame className="w-5 h-5 text-orange-500" />
-                <span className="text-[10px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded border border-orange-500/20 animate-pulse">
-                  HOT
-                </span>
-              </div>
-              <div className="space-y-1">
-                <p className="text-xs text-muted-foreground font-medium">Sequência Verde</p>
-                <p className="text-3xl font-bold text-orange-500 font-mono flex items-center gap-2">
-                  {stats.currentStreak}
-                  <Flame className="w-6 h-6 animate-pulse" />
-                </p>
-                <p className="text-[10px] text-muted-foreground">Greens Consecutivos</p>
-              </div>
-            </div>
-          </div>
-
           {/* Performance Chart Preview - Professional */}
           <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_40px_rgba(51,184,100,0.1)]">
             <div className="flex items-center justify-between mb-4">
