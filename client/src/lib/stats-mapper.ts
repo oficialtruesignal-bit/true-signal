@@ -54,25 +54,46 @@ export function mapFixtureStatistics(
     mapped.xg = { home: homeXg, away: awayXg };
   }
 
-  // Attacks - try real field first, fallback to Total Shots
+  // Attacks - API Football não fornece, então estimamos
+  // Estimativa: (Total Passes / 4) + Total Shots para aproximar ataques reais
   let homeAttacks = getStat(homeStats, "Attacks");
   let awayAttacks = getStat(awayStats, "Attacks");
+  
   if (homeAttacks === null || awayAttacks === null) {
-    homeAttacks = getStat(homeStats, "Total Shots") || 0;
-    awayAttacks = getStat(awayStats, "Total Shots") || 0;
+    const homePasses = getStat(homeStats, "Total passes") || 0;
+    const awayPasses = getStat(awayStats, "Total passes") || 0;
+    const homeShots = getStat(homeStats, "Total Shots") || 0;
+    const awayShots = getStat(awayStats, "Total Shots") || 0;
+    
+    // Estimativa realista: passes/4 + shots*3 (jogos costumam ter ~80-150 ataques)
+    homeAttacks = Math.floor(homePasses / 4) + (homeShots * 3);
+    awayAttacks = Math.floor(awayPasses / 4) + (awayShots * 3);
+    
+    console.log('⚡ Ataques estimados:', { home: homeAttacks, away: awayAttacks });
   }
+  
   if ((homeAttacks !== null && homeAttacks > 0) || (awayAttacks !== null && awayAttacks > 0)) {
     mapped.attacks = { home: homeAttacks || 0, away: awayAttacks || 0 };
   }
 
-  // Dangerous Attacks - try real field first, fallback to Shots inside box
+  // Dangerous Attacks - API Football não fornece, então estimamos  
+  // Estimativa: Shots insidebox + (Total Shots / 2) para aproximar ataques perigosos
   let homeDangerous = getStat(homeStats, "Dangerous Attacks");
   let awayDangerous = getStat(awayStats, "Dangerous Attacks");
+  
   if (homeDangerous === null || awayDangerous === null) {
-    // Try both variations of the field name
-    homeDangerous = getStat(homeStats, "Shots inside box") || getStat(homeStats, "Shots insidebox") || 0;
-    awayDangerous = getStat(awayStats, "Shots inside box") || getStat(awayStats, "Shots insidebox") || 0;
+    const homeInside = getStat(homeStats, "Shots inside box") || getStat(homeStats, "Shots insidebox") || 0;
+    const awayInside = getStat(awayStats, "Shots inside box") || getStat(awayStats, "Shots insidebox") || 0;
+    const homeShots = getStat(homeStats, "Total Shots") || 0;
+    const awayShots = getStat(awayStats, "Total Shots") || 0;
+    
+    // Estimativa: insidebox*2 + shots (jogos costumam ter ~30-70 ataques perigosos)
+    homeDangerous = (homeInside * 2) + homeShots;
+    awayDangerous = (awayInside * 2) + awayShots;
+    
+    console.log('💥 Ataques Perigosos estimados:', { home: homeDangerous, away: awayDangerous });
   }
+  
   if ((homeDangerous !== null && homeDangerous > 0) || (awayDangerous !== null && awayDangerous > 0)) {
     mapped.dangerousAttacks = { home: homeDangerous || 0, away: awayDangerous || 0 };
   }
