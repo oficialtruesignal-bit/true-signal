@@ -8,7 +8,6 @@ import { MatrixBackground } from "@/components/matrix-background";
 import { SalesToast } from "@/components/sales-toast";
 import { ProfitChart } from "@/components/profit-chart";
 import { StatsCircle } from "@/components/stats-circle";
-import { CompactLiveHud } from "@/components/compact-live-hud";
 import { useEffect, useState } from "react";
 
 export default function LandingPage() {
@@ -113,20 +112,10 @@ export default function LandingPage() {
             Pare de apostar com a sorte. <span className="text-white font-semibold">Invista com a Ciência.</span>
           </motion.p>
 
-          {/* Compact Live HUD */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="pt-8"
-          >
-            <CompactLiveHud />
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
             className="pt-6"
           >
             <Link href={user ? "/app" : "/auth"}>
