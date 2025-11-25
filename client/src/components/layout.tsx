@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
 import { Logo } from "./logo";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -115,8 +116,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="mt-auto space-y-2">
-          <div className="bg-black/40 rounded-xl p-4 border border-white/5">
-            <div className="flex items-center gap-2 text-white text-sm font-bold mb-2">
+          <div className="bg-black/40 dark:bg-black/40 bg-white/60 dark:border-white/5 border-gray-200 rounded-xl p-4 border">
+            <div className="flex items-center gap-2 text-foreground text-sm font-bold mb-2">
               <Bell className="w-4 h-4 text-primary" /> Notificações
             </div>
             <p className="text-xs text-muted-foreground mb-3">
@@ -135,22 +136,26 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </Button>
           </div>
 
-          <button 
-            onClick={logout}
-            className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-red-400 transition-colors w-full text-left mt-2"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="font-medium">Sair da Conta</span>
-          </button>
+          <div className="flex items-center gap-2 px-2">
+            <ThemeToggle />
+            <button 
+              onClick={logout}
+              className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-red-400 transition-colors flex-1 text-left rounded-lg hover:bg-destructive/10"
+            >
+              <LogOut className="w-5 h-5" />
+              <span className="font-medium">Sair</span>
+            </button>
+          </div>
         </div>
       </aside>
 
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-primary/20 z-50 flex items-center justify-between px-4">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-primary/20 dark:border-primary/20 border-gray-200 z-50 flex items-center justify-between px-4">
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
-           <span className="text-sm font-bold text-white mr-2">Olá, {user?.firstName}</span>
-           <button onClick={logout} className="p-2 text-muted-foreground hover:text-white">
+           <span className="text-sm font-bold text-foreground mr-2">Olá, {user?.firstName}</span>
+           <ThemeToggle />
+           <button onClick={logout} className="p-2 text-muted-foreground hover:text-red-400">
             <LogOut className="w-5 h-5" />
           </button>
         </div>

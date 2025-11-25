@@ -105,6 +105,59 @@
   --signal-error-bg: 0 54% 12%;
 }
 
+.light {
+  /* Daylight Trader Theme: Clean White + Green Accents */
+  
+  /* Main Background: #f8fafc (Slate-50) -> 210 40% 98% */
+  --background: 210 40% 98%;
+  /* Foreground: #0f172a (Slate-900) -> 222 47% 11% */
+  --foreground: 222 47% 11%;
+
+  /* Card: Pure White #ffffff -> 0 0% 100% */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  /* Card Hover: #f1f5f9 (Slate-100) -> 210 40% 96% */
+  --card-hover: 210 40% 96%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+
+  /* Primary stays #33b864 -> 142 57% 46% */
+  --primary: 142 57% 46%;
+  --primary-foreground: 0 0% 100%;
+  --primary-dark: 143 58% 34%;
+
+  /* Secondary: Light Gray #f1f5f9 -> 210 40% 96% */
+  --secondary: 210 40% 96%;
+  --secondary-foreground: 222 47% 11%;
+
+  /* Muted: #f1f5f9 -> 210 40% 96% */
+  --muted: 210 40% 96%;
+  /* Muted Foreground: #64748b (Slate-500) -> 215 16% 47% */
+  --muted-foreground: 215 16% 47%;
+
+  --accent: 142 57% 46%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 93% 56%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Border: #e2e8f0 (Slate-200) -> 214 32% 91% */
+  --border: 214 32% 91%;
+  /* Input: #f1f5f9 -> 210 40% 96% */
+  --input: 210 40% 96%;
+  --ring: 142 57% 46%;
+
+  /* Status Indicators (same green/red, lighter backgrounds) */
+  --signal-success: 142 57% 46%;
+  /* Success Bg: Very light green #f0fdf4 -> 138 76% 97% */
+  --signal-success-bg: 138 76% 97%;
+  
+  --signal-error: 0 93% 56%;
+  /* Error Bg: Very light red #fef2f2 -> 0 86% 97% */
+  --signal-error-bg: 0 86% 97%;
+}
+
 @layer base {
   * {
     @apply border-primary/20;
