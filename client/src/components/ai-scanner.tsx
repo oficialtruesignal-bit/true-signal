@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Activity, Brain, Database, Zap } from 'lucide-react';
 
-const LEAGUES = ['Premier League', 'La Liga', 'Serie A', 'Bundesliga', 'Ligue 1', 'Champions League', 'Brasileirão'];
-const MARKETS = ['Over 0.5 HT', 'BTTS', 'Over 1.5 FT', 'Home Win', 'DNB', 'Asian Handicap'];
-const TEAMS = ['Man City', 'Arsenal', 'Real Madrid', 'Barcelona', 'Bayern', 'PSG', 'Flamengo', 'Liverpool'];
+const LEAGUES = ['Liga Inglesa', 'Campeonato Espanhol', 'Série A Italiana', 'Bundesliga', 'Liga Francesa', 'Liga dos Campeões', 'Brasileirão'];
+const MARKETS = ['Mais de 0.5 gols 1T', 'Ambas Marcam', 'Mais de 1.5 gols', 'Vitória Casa', 'Empate Anula', 'Handicap Asiático'];
+const TEAMS = ['Manchester City (ING)', 'Arsenal (ING)', 'Real Madrid (ESP)', 'Barcelona (ESP)', 'Bayern Munique (ALE)', 'Paris SG (FRA)', 'Flamengo (BRA)', 'Liverpool (ING)'];
 
 interface ScanLine {
   id: string;
@@ -21,7 +21,7 @@ export function AIScanner() {
         `Analisando ${TEAMS[Math.floor(Math.random() * TEAMS.length)]} vs ${TEAMS[Math.floor(Math.random() * TEAMS.length)]}...`,
         `Varrendo partidas ${LEAGUES[Math.floor(Math.random() * LEAGUES.length)]}...`,
         `Avaliando mercado ${MARKETS[Math.floor(Math.random() * MARKETS.length)]}...`,
-        `Processando dados de odds ao vivo (${Math.floor(Math.random() * 500) + 100} fontes)...`,
+        `Processando dados de cotações ao vivo (${Math.floor(Math.random() * 500) + 100} fontes)...`,
         `Confiança IA: ${(85 + Math.random() * 12).toFixed(1)}% - Sinal detectado`,
         `Validação cruzada com 20 especialistas...`,
         `Convergência do modelo estatístico: ${(92 + Math.random() * 7).toFixed(1)}%`,

@@ -131,6 +131,26 @@ Preferred communication style: Simple, everyday language.
 
 ### Recent Changes (Nov 25, 2024)
 
+**Localização 100% PT-BR (Nov 25, 2024):**
+- ✅ **Interface Completa em Português**: Todos os textos visíveis ao usuário traduzidos
+  - Navegação: Painel, Sinais, Ao Vivo, Pré-Jogo, Configurações, Gestão, Sair
+  - Mobile nav: labels completos ("Configurações" em vez de "Config")
+  - Dashboard CRM: Assertividade, Unidades, Sequência, ROI, status (PENDENTE/AO VIVO/VERDE/VERMELHO)
+  - Página Sinais: layout compacto tabela-style sem decorações
+- ✅ **AIScanner Traduzido**: Templates dinâmicos 100% PT-BR
+  - Ligas: Liga Inglesa, Campeonato Espanhol, Série A Italiana, Liga dos Campeões
+  - Mercados: "Mais de 0.5 gols 1T", "Ambas Marcam", "Vitória Casa"
+  - "cotações" em vez de "odds", "jogos" em vez de "games"
+  - Times com contexto: Liverpool (ING), Real Madrid (ESP), Bayern Munique (ALE)
+- ✅ **Componentes Traduzidos**:
+  - ActivityHeatmap: Matriz de Atividade, "verdes", Menos/Mais
+  - Calendar: locale pt-BR para formatação de datas
+  - Toasts: "Link copiado! Boa sorte 🍀", "Novo Sinal Disponível!"
+  - Erros: "Credenciais inválidas", "E-mail já cadastrado"
+- ✅ **Dados Simulados Realistas**:
+  - Total de sinais fixo: 151 (não 18.9K)
+  - Usuários online oscilando: 340-900 (não 3400-3500)
+
 **API-Football v3 Integration (Current - Nov 25, 2024):**
 - ✅ **Backend Proxy**: Express endpoints (`/api/football/*`) using RapidAPI correctly
   - Base URL: `https://api-football-v1.p.rapidapi.com/v3`
