@@ -55,7 +55,7 @@ export function CompactLiveHud() {
               </span>
               <span className="text-xl md:text-2xl font-sora text-[#33b864] font-bold ml-1">%</span>
             </div>
-            <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-1 font-medium font-inter">
+            <span className="text-xs text-gray-500 uppercase tracking-[0.2em] mt-1 font-medium">
               Assertividade
             </span>
           </div>

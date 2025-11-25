@@ -250,7 +250,7 @@ export function BetCard({ signal }: BetCardProps) {
           <span className="text-[#33b864] font-sora font-extrabold text-lg uppercase leading-none">
             {hasMultipleLegs ? "APOSTA COMBINADA" : signal.market}
           </span>
-          <span className="text-gray-500 text-[10px] font-medium font-inter">
+          <span className="text-gray-500 text-[10px] font-medium">
             Mercado Principal
           </span>
         </div>

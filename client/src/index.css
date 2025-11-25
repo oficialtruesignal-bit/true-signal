@@ -47,8 +47,8 @@
   --color-signal-error: hsl(var(--signal-error));
   --color-signal-error-bg: hsl(var(--signal-error-bg));
 
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Syne', sans-serif;
+  --font-sans: 'Sora', sans-serif;
+  --font-display: 'Sora', sans-serif;
   --font-sora: 'Sora', sans-serif;
   
   --radius: 0.5rem;
