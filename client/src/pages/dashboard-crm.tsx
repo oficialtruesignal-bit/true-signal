@@ -40,13 +40,38 @@ export default function DashboardCRM() {
         <p className="text-sm text-muted-foreground">Gestão de Performance em Unidades</p>
       </div>
 
-      {/* Compact Live HUD - Medidor de Assertividade */}
-      <div className="mb-2 flex justify-center">
-        <CompactLiveHud />
+      {/* Top Section: Círculo de Assertividade + 2 Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-6">
+        {/* Círculo de Assertividade - Esquerda */}
+        <div className="flex justify-center lg:justify-start">
+          <CompactLiveHud />
+        </div>
+
+        {/* Card 1 - Direita Superior */}
+        <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 1</span>
+          </div>
+          <p className="text-2xl font-bold font-mono text-white">
+            --
+          </p>
+        </div>
+
+        {/* Card 2 - Direita Inferior */}
+        <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">Card 2</span>
+          </div>
+          <p className="text-2xl font-bold font-mono text-white">
+            --
+          </p>
+        </div>
       </div>
 
       {/* Main Dashboard - Full Width */}
-      <div className="flex flex-col gap-6 h-[calc(100vh-280px)]">
+      <div className="flex flex-col gap-6 h-[calc(100vh-400px)]">
           {/* Performance HUD - 4 Metrics */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {/* ROI */}
