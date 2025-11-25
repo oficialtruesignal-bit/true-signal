@@ -1,9 +1,9 @@
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { footballService, FootballMatch } from "@/lib/football-service";
+import { sportmonksService, FootballMatch } from "@/lib/sportmonks-service";
 import { useQuery } from "@tanstack/react-query";
 import { X, Loader2, AlertCircle } from "lucide-react";
 import { GameStats } from "@/components/game-stats";
-import { mapFixtureStatistics } from "@/lib/stats-mapper";
+import { mapSportmonksStatistics } from "@/lib/sportmonks-mapper";
 
 interface MatchCenterModalProps {
   match: FootballMatch | null;
@@ -13,8 +13,8 @@ interface MatchCenterModalProps {
 
 export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps) {
   const { data: stats, isLoading } = useQuery({
-    queryKey: ['match-stats', match?.fixture.id],
-    queryFn: () => footballService.getFixtureStatistics(match!.fixture.id),
+    queryKey: ['sportmonks-match-stats', match?.fixture.id],
+    queryFn: () => sportmonksService.getFixtureStatistics(match!.fixture.id),
     enabled: !!match && open,
     refetchInterval: 10000, // Atualiza a cada 10 segundos
     staleTime: 5000, // Considera dados obsoletos após 5 segundos
@@ -22,10 +22,10 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
 
   if (!match) return null;
 
-  // Map API stats to GameStats format
-  const mappedStats = stats ? mapFixtureStatistics(stats) : {};
+  // Map Sportmonks stats to GameStats format
+  const mappedStats = stats ? mapSportmonksStatistics(stats) : {};
   
-  console.log('🎯 Match Center - Estatísticas mapeadas:', {
+  console.log('🎯 Match Center - Estatísticas Sportmonks mapeadas:', {
     fixtureId: match.fixture.id,
     teams: `${match.teams.home.name} vs ${match.teams.away.name}`,
     mappedStats

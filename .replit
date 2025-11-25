@@ -23,6 +23,10 @@ externalPort = 3000
 localPort = 40205
 externalPort = 3001
 
+[[ports]]
+localPort = 46715
+externalPort = 3002
+
 [env]
 PORT = "5000"
 
@@ -56,3 +60,4 @@ mockupState = "FULLSTACK"
 VITE_FOOTBALL_API_KEY = "7543ea3d64bdb259122624f04a58fc79"
 VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN1enpnZXBreHV3eWx6Z2p3Z2NlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQwMTE2NzgsImV4cCI6MjA3OTU4NzY3OH0.fFMqNnf0uLnQOY3cOThlXrQE-pO1QoQ9r2vuO3NCSFM"
 VITE_SUPABASE_URL = "https://cuzzgepkxuwylzgjwgce.supabase.co"
+VITE_SPORTMONKS_API_KEY = "TGICkw9WvcRQtQvfL0LKNYBuRCIqhX6X3AUqsXGM4WakCMrEbUQAm5pkR1ew"
