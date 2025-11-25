@@ -53,16 +53,16 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Performance de Investidor Profissional</p>
       </div>
 
-      {/* Dashboard Preview - Show when not expanded */}
+      {/* Dashboard Preview - Professional */}
       {!showFullDashboard ? (
         <div className="space-y-6">
           {/* Preview KPIs */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {/* Taxa de Acerto Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
               <div className="flex items-center justify-between mb-3">
                 <Target className="w-5 h-5 text-primary" />
-                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded">
+                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
                   ELITE
                 </span>
               </div>
@@ -71,11 +71,12 @@ export default function Dashboard() {
                 <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
                   {stats.winRate.toFixed(1)}%
                 </p>
+                <p className="text-[10px] text-muted-foreground">Precisão Institucional</p>
               </div>
             </div>
 
             {/* Sinais Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
               <div className="flex items-center justify-between mb-3">
                 <Zap className="w-5 h-5 text-primary" />
                 <Activity className="w-4 h-4 text-primary animate-pulse" />
@@ -85,14 +86,15 @@ export default function Dashboard() {
                 <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
                   {stats.totalTips.toLocaleString('pt-BR')}
                 </p>
+                <p className="text-[10px] text-muted-foreground">Volume Acumulado</p>
               </div>
             </div>
 
             {/* Sequência Preview */}
-            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+            <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all">
               <div className="flex items-center justify-between mb-3">
                 <Flame className="w-5 h-5 text-orange-500" />
-                <span className="text-[10px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded animate-pulse">
+                <span className="text-[10px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded border border-orange-500/20 animate-pulse">
                   HOT
                 </span>
               </div>
@@ -102,22 +104,73 @@ export default function Dashboard() {
                   {stats.currentStreak}
                   <Flame className="w-6 h-6 animate-pulse" />
                 </p>
+                <p className="text-[10px] text-muted-foreground">Greens Consecutivos</p>
               </div>
             </div>
           </div>
 
-          {/* CTA to See Full Dashboard */}
-          <div className="text-center">
+          {/* Performance Chart Preview - Professional */}
+          <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_40px_rgba(51,184,100,0.1)]">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Evolução de Performance
+                </h3>
+                <p className="text-xs text-muted-foreground mt-1">Últimas 24 horas • Live</p>
+              </div>
+              <span className="text-[10px] font-bold bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20">
+                TEMPO REAL
+              </span>
+            </div>
+            
+            <div className="h-[200px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={stats.profitHistory}>
+                  <defs>
+                    <linearGradient id="previewGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#33b864" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#33b864" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(51, 184, 100, 0.05)" />
+                  <XAxis 
+                    dataKey="time" 
+                    stroke="rgba(148, 163, 184, 0.3)" 
+                    style={{ fontSize: '9px' }}
+                    tick={{ fill: 'rgba(148, 163, 184, 0.5)' }}
+                  />
+                  <YAxis 
+                    stroke="rgba(148, 163, 184, 0.3)" 
+                    style={{ fontSize: '9px' }}
+                    tick={{ fill: 'rgba(148, 163, 184, 0.5)' }}
+                    tickFormatter={(value) => `${value} pts`}
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="profit" 
+                    stroke="#33b864" 
+                    strokeWidth={3}
+                    fill="url(#previewGradient)" 
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* CTA to See Full Dashboard - Enhanced */}
+          <div className="text-center pt-4">
             <button
               onClick={() => setShowFullDashboard(true)}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-black font-bold rounded-xl transition-all duration-300 shadow-[0_0_30px_rgba(51,184,100,0.3)] hover:shadow-[0_0_40px_rgba(51,184,100,0.5)]"
+              className="inline-flex items-center gap-3 px-10 py-5 bg-primary hover:bg-primary/90 text-black font-bold text-lg rounded-xl transition-all duration-300 shadow-[0_0_40px_rgba(51,184,100,0.4)] hover:shadow-[0_0_60px_rgba(51,184,100,0.6)] hover:scale-105"
               data-testid="button-view-full-dashboard"
             >
+              <Sparkles className="w-5 h-5" />
               Ver Dashboard Completo
               <ArrowRight className="w-5 h-5" />
             </button>
-            <p className="text-xs text-muted-foreground mt-3">
-              Gráficos de performance, AI Scanner, histórico de sinais e muito mais
+            <p className="text-sm text-muted-foreground mt-4">
+              AI Scanner, histórico completo, análises avançadas e muito mais
             </p>
           </div>
         </div>
