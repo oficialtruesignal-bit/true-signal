@@ -5,7 +5,6 @@ import { insertTipSchema, insertProfileSchema } from "@shared/schema";
 import axios from "axios";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
-const FOOTBALL_API_HOST = "api-football-v1.p.rapidapi.com";
 
 if (!FOOTBALL_API_KEY) {
   console.warn('⚠️ FOOTBALL_API_KEY NOT FOUND - check environment variables');
@@ -14,14 +13,13 @@ if (!FOOTBALL_API_KEY) {
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // API-Football Proxy Routes (RapidAPI endpoints - to avoid CORS and secure API key)
+  // API-Football Proxy Routes (Direct api-football.com endpoints - to avoid CORS and secure API key)
   app.get("/api/football/fixtures/live", async (req, res) => {
     try {
-      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures", {
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
         params: { live: "all" },
         headers: {
-          "x-rapidapi-key": FOOTBALL_API_KEY,
-          "x-rapidapi-host": FOOTBALL_API_HOST,
+          "x-apisports-key": FOOTBALL_API_KEY,
         },
       });
       return res.json(response.data);
@@ -38,11 +36,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/football/fixtures/date/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures", {
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
         params: { date },
         headers: {
-          "x-rapidapi-key": FOOTBALL_API_KEY,
-          "x-rapidapi-host": FOOTBALL_API_HOST,
+          "x-apisports-key": FOOTBALL_API_KEY,
         },
       });
       return res.json(response.data);
@@ -59,11 +56,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/football/fixtures/statistics/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const response = await axios.get("https://api-football-v1.p.rapidapi.com/v3/fixtures/statistics", {
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures/statistics", {
         params: { fixture: id },
         headers: {
-          "x-rapidapi-key": FOOTBALL_API_KEY,
-          "x-rapidapi-host": FOOTBALL_API_HOST,
+          "x-apisports-key": FOOTBALL_API_KEY,
         },
       });
       return res.json(response.data);
