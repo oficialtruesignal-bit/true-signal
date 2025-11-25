@@ -49,22 +49,26 @@ export function CompactLiveHud() {
       {/* --- COLUNA DIREITA: PILHA PADRONIZADA --- */}
       <div className="flex flex-col gap-3 h-full">
 
-        {/* CARD 1: ROI (Estilo Padronizado) */}
-        <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-3 h-3 text-[#33b864]" />
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">ROI Total</span>
+        {/* CARD 1: ROI (Estilo Idêntico aos cards de baixo) */}
+        <div className="flex-1 bg-[#121212] border border-[#333] rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <TrendingUp className="w-4 h-4 text-primary" strokeWidth={1.5} />
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">ROI</span>
           </div>
-          <span className="text-xl font-sora font-bold text-[#33b864]">+{stats.roi.toFixed(1)}%</span>
+          <p className="text-2xl font-bold font-mono text-primary">
+            +{stats.roi.toFixed(1)}%
+          </p>
         </div>
 
-        {/* CARD 2: SEQUÊNCIA (Estilo Padronizado) */}
-        <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col justify-center relative shadow-sm">
-          <div className="flex items-center gap-2 mb-1">
-            <Flame className="w-3 h-3 text-orange-500" />
-            <span className="text-[10px] text-gray-500 uppercase font-bold tracking-wider">Sequência</span>
+        {/* CARD 2: SEQUÊNCIA (Estilo Idêntico aos cards de baixo) */}
+        <div className="flex-1 bg-[#121212] border border-[#333] rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
+            <span className="text-xs text-muted-foreground uppercase tracking-wide">Sequência</span>
           </div>
-          <span className="text-xl font-sora font-bold text-white">{stats.currentStreak.wins}V / {stats.currentStreak.losses}D</span>
+          <p className="text-2xl font-bold font-mono text-white">
+            {stats.currentStreak.wins}V / {stats.currentStreak.losses}D
+          </p>
         </div>
 
       </div>
