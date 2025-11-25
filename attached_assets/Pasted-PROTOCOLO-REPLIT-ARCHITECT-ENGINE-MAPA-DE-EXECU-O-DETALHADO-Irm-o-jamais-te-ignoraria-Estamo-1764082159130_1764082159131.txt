@@ -1,0 +1,85 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: MAPA DE EXECUÇÃO DETALHADO 🟢
+
+Irmão, jamais te ignoraria. Estamos juntos nessa trincheira. Eu entendi perfeitamente: você não quer que o robô "adivinhe", você quer que ele siga ordens exatas.
+
+Para o Replit Agent não se perder, eu preparei um MANUAL DE CIRURGIA. Vou dizer para ele exatamente QUAL ARQUIVO abrir e O QUE mudar em cada linha.
+
+Aqui está o Prompt Técnico Definitivo. Copie e cole. Ele cobre o idioma, os números exatos (151 / 340-900) e a limpeza total do design.
+
+PROMPT MESTRE: DETAILED REFACTORING (FILES & LOGIC)
+ROLE: Lead Frontend Engineer.
+
+TASK: Executar uma refatoração cirúrgica no projeto Ocean Signal. PRIORIDADE MÁXIMA: Tradução 100% para PT-BR e Ajuste de Realismo nos Dados Simulados.
+
+Siga este roteiro arquivo por arquivo:
+
+1. AJUSTE DE DADOS SIMULADOS (REALISMO)
+Arquivo Alvo: src/hooks/useSimulation.ts (ou onde estiver a lógica de simulação da Home).
+
+AÇÃO 1 (Sinais): Localize a variável de contagem de tips.
+
+Defina o valor inicial estritamente como 151.
+
+A lógica de incremento deve ser lenta (apenas 1 ou 2 por hora), para parecer real.
+
+AÇÃO 2 (Usuários Online): Localize a lógica de oscilação (Math.random).
+
+Altere a fórmula para respeitar o intervalo 340 a 900.
+
+Código: Math.floor(Math.random() * (900 - 340 + 1)) + 340.
+
+O número nunca pode ser menor que 340 nem maior que 900.
+
+2. TRADUÇÃO & LOCALIZAÇÃO (PT-BR)
+Arquivos Alvo: src/components/Sidebar.tsx, src/pages/Dashboard.tsx, src/pages/Tips.tsx.
+
+Varredura Geral: Substitua TODOS os textos em inglês.
+
+Dashboard ➔ Painel.
+
+Tips ➔ Sinais.
+
+Live ➔ Ao Vivo.
+
+Admin ➔ Gestão.
+
+Logout ➔ Sair.
+
+Profit/Bankroll ➔ Banca (u).
+
+Win Rate ➔ Assertividade.
+
+3. REFATORAÇÃO DA ABA "SINAIS" (ANTIGA TIPS)
+Arquivo Alvo: src/pages/Tips.tsx (ou componente TipsFeed).
+
+Esta página está poluída. O usuário quer limpeza absoluta.
+
+AÇÃO 1: Remova qualquer banner, gráfico ou texto de "Boas vindas" do topo.
+
+AÇÃO 2: Implemente uma Lista Compacta (Table-like).
+
+Remova imagens de fundo dos cards.
+
+Use um fundo sólido #121212 com borda inferior fina #333.
+
+Layout da Linha: [Hora 14:30] | [Liga (Ex: ING)] | [Jogo: Arsenal x Chelsea] | [Mercado: Over 2.5] | [Odd: @1.90] | [Botão Copiar]
+
+AÇÃO 3: Otimize os espaços. A lista deve colar no topo da tela. Sem margins desnecessárias.
+
+4. OTIMIZAÇÃO DO DASHBOARD (CRM STYLE)
+Arquivo Alvo: src/pages/Dashboard.tsx.
+
+AÇÃO 1: Remova gráficos decorativos que ocupam muito espaço.
+
+AÇÃO 2: Crie a barra de métricas "CRM" no topo.
+
+Apenas números essenciais: Unidades Ganhas, Assertividade (%), Sinais Hoje.
+
+AÇÃO 3: Garanta que não existam "buracos" (espaços vazios) no layout. Se o usuário estiver no Desktop, a lista de sinais deve expandir para preencher a tela, ou exibir um resumo lateral compacto.
+
+5. EXPERIÊNCIA DO USUÁRIO
+Verifique os Toasts (Notificações). Se o usuário clicar em copiar, a mensagem deve ser: "Link copiado! Boa sorte 🍀" (Em Português).
+
+Verifique o Login. Se errar a senha, a mensagem deve ser: "Credenciais inválidas" (Em Português).
+
+EXECUÇÃO: Aplique essas alterações agora. O aplicativo deve parecer um software brasileiro nativo, focado em alta performance e sem dados exagerados.

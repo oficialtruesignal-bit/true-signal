@@ -18,14 +18,14 @@ export function AIScanner() {
   useEffect(() => {
     const addLine = () => {
       const templates = [
-        `Analyzing ${TEAMS[Math.floor(Math.random() * TEAMS.length)]} vs ${TEAMS[Math.floor(Math.random() * TEAMS.length)]}...`,
-        `Scanning ${LEAGUES[Math.floor(Math.random() * LEAGUES.length)]} fixtures...`,
-        `Evaluating ${MARKETS[Math.floor(Math.random() * MARKETS.length)]} market...`,
-        `Processing live odds data (${Math.floor(Math.random() * 500) + 100} sources)...`,
-        `AI Confidence: ${(85 + Math.random() * 12).toFixed(1)}% - Signal detected`,
-        `Cross-validating with 20 specialists...`,
-        `Statistical model convergence: ${(92 + Math.random() * 7).toFixed(1)}%`,
-        `Pattern recognition: ${Math.floor(Math.random() * 15) + 5} opportunities found`,
+        `Analisando ${TEAMS[Math.floor(Math.random() * TEAMS.length)]} vs ${TEAMS[Math.floor(Math.random() * TEAMS.length)]}...`,
+        `Varrendo partidas ${LEAGUES[Math.floor(Math.random() * LEAGUES.length)]}...`,
+        `Avaliando mercado ${MARKETS[Math.floor(Math.random() * MARKETS.length)]}...`,
+        `Processando dados de odds ao vivo (${Math.floor(Math.random() * 500) + 100} fontes)...`,
+        `Confiança IA: ${(85 + Math.random() * 12).toFixed(1)}% - Sinal detectado`,
+        `Validação cruzada com 20 especialistas...`,
+        `Convergência do modelo estatístico: ${(92 + Math.random() * 7).toFixed(1)}%`,
+        `Reconhecimento de padrões: ${Math.floor(Math.random() * 15) + 5} oportunidades encontradas`,
       ];
 
       const newLine: ScanLine = {
@@ -61,12 +61,12 @@ export function AIScanner() {
         <div className="flex items-center gap-2">
           <Brain className="w-4 h-4 text-primary animate-pulse" />
           <h3 className="text-xs font-bold text-white uppercase tracking-wide">
-            AI Scanner {'.'.repeat(analyzing)}
+            Scanner IA {'.'.repeat(analyzing)}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-primary rounded-full animate-ping" />
-          <span className="text-[9px] text-primary font-mono">LIVE</span>
+          <span className="text-[9px] text-primary font-mono">AO VIVO</span>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export function AIScanner() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1">
             <Database className="w-3 h-3 text-primary/60" />
-            <span className="text-muted-foreground">{Math.floor(Math.random() * 200) + 1200} games</span>
+            <span className="text-muted-foreground">{Math.floor(Math.random() * 200) + 1200} jogos</span>
           </div>
           <div className="flex items-center gap-1">
             <Zap className="w-3 h-3 text-primary/60" />
@@ -98,7 +98,7 @@ export function AIScanner() {
         </div>
         <div className="flex items-center gap-1">
           <Activity className="w-3 h-3 text-primary" />
-          <span className="text-primary font-semibold">Processing</span>
+          <span className="text-primary font-semibold">Processando</span>
         </div>
       </div>
     </div>

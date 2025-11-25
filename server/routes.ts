@@ -81,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Check if user already exists
       const existing = await storage.getProfileByEmail(validatedData.email);
       if (existing) {
-        return res.status(400).json({ error: "Email already registered" });
+        return res.status(400).json({ error: "E-mail já cadastrado" });
       }
 
       const profile = await storage.createProfile({
@@ -108,7 +108,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       if (!profile) {
         console.log(`[AUTH] Login failed for email: ${email}`);
-        return res.status(401).json({ error: "Invalid credentials" });
+        return res.status(401).json({ error: "Credenciais inválidas" });
       }
 
       console.log(`[AUTH] Login successful for email: ${email}, role: ${profile.role}`);

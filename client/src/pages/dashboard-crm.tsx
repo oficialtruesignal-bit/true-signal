@@ -14,9 +14,9 @@ export default function DashboardCRM() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-3xl font-display font-bold text-slate-900 dark:text-white mb-2">
-          Signal Operations Center
+          Central de Operações
         </h1>
-        <p className="text-sm text-muted-foreground">Unit-Based Performance Management</p>
+        <p className="text-sm text-muted-foreground">Gestão de Performance em Unidades</p>
       </div>
 
       {/* Compact Live HUD */}
@@ -30,10 +30,10 @@ export default function DashboardCRM() {
         <div className="lg:col-span-4 bg-[#121212] border border-[#333] rounded-lg p-4 overflow-hidden flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-white uppercase tracking-wide">
-              Live Signal Feed
+              Feed de Sinais Ao Vivo
             </h2>
             <span className="text-xs text-muted-foreground">
-              {stats.activeSignals.length} Active
+              {stats.activeSignals.length} Ativos
             </span>
           </div>
 
@@ -66,22 +66,22 @@ export default function DashboardCRM() {
                   <div className="flex flex-col items-end gap-1">
                     {signal.status === 'pending' && (
                       <span className="text-[9px] font-bold bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded border border-amber-500/20">
-                        PENDING
+                        PENDENTE
                       </span>
                     )}
                     {signal.status === 'processing' && (
                       <span className="text-[9px] font-bold bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded border border-blue-500/20 animate-pulse">
-                        LIVE
+                        AO VIVO
                       </span>
                     )}
                     {signal.status === 'green' && (
                       <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-0.5 rounded border border-emerald-500/20">
-                        GREEN
+                        VERDE
                       </span>
                     )}
                     {signal.status === 'red' && (
                       <span className="text-[9px] font-bold bg-red-500/10 text-red-500 px-2 py-0.5 rounded border border-red-500/20">
-                        RED
+                        VERMELHO
                       </span>
                     )}
                     <button className="p-1 hover:bg-[#1a1a1a] rounded transition-colors">
@@ -102,7 +102,7 @@ export default function DashboardCRM() {
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Target className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Assertivity</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">Assertividade</span>
               </div>
               <p className="text-2xl font-bold font-mono text-primary">
                 {stats.assertivity.toFixed(1)}%
@@ -113,7 +113,7 @@ export default function DashboardCRM() {
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <TrendingUp className="w-4 h-4 text-primary" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Units</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">Unidades</span>
               </div>
               <p className="text-2xl font-bold font-mono text-white">
                 +{(stats.totalUnits - 100).toFixed(1)}u
@@ -135,10 +135,10 @@ export default function DashboardCRM() {
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
-                <span className="text-xs text-muted-foreground uppercase tracking-wide">Streak</span>
+                <span className="text-xs text-muted-foreground uppercase tracking-wide">Sequência</span>
               </div>
               <p className="text-2xl font-bold font-mono text-white">
-                {stats.currentStreak.wins}W / {stats.currentStreak.losses}L
+                {stats.currentStreak.wins}V / {stats.currentStreak.losses}D
               </p>
             </div>
           </div>
@@ -148,7 +148,7 @@ export default function DashboardCRM() {
             {/* Units Evolution Chart */}
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wide">
-                Consistency Graph
+                Gráfico de Consistência
               </h3>
               <div className="h-[200px]">
                 <ResponsiveContainer width="100%" height="100%">
@@ -173,7 +173,7 @@ export default function DashboardCRM() {
                         borderRadius: '4px',
                         fontSize: '10px',
                       }}
-                      formatter={(value: number) => [`${value.toFixed(1)}u`, 'Units']}
+                      formatter={(value: number) => [`${value.toFixed(1)}u`, 'Unidades']}
                     />
                     <Line 
                       type="monotone" 
@@ -195,7 +195,7 @@ export default function DashboardCRM() {
             {/* Activity Heatmap */}
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wide">
-                Activity Calendar
+                Calendário de Atividade
               </h3>
               <ActivityHeatmap data={stats.activityDays} />
             </div>
@@ -207,14 +207,14 @@ export default function DashboardCRM() {
               <div className="flex items-center gap-2">
                 <Activity className="w-3 h-3 text-primary animate-pulse" />
                 <span className="text-[10px] text-muted-foreground font-mono">
-                  Scanning Market... {stats.systemStatus.gamesAnalyzed.toLocaleString()} games analyzed
+                  Varredura de Mercado... {stats.systemStatus.gamesAnalyzed.toLocaleString()} jogos analisados
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
               <span className="text-[10px] text-muted-foreground">
-                Synced {Math.floor((Date.now() - stats.systemStatus.lastSync.getTime()) / 1000)}s ago
+                Sincronizado há {Math.floor((Date.now() - stats.systemStatus.lastSync.getTime()) / 1000)}s
               </span>
             </div>
           </div>

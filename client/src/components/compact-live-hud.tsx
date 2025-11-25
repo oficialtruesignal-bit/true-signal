@@ -47,12 +47,13 @@ function CircularProgress({ percentage, size, strokeWidth = 12, showGlow = true 
 }
 
 export function CompactLiveHud() {
-  const [usersOnline, setUsersOnline] = useState(3420);
+  const [usersOnline, setUsersOnline] = useState(620);
+  const [totalSignals] = useState(151);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const variation = Math.floor(Math.random() * 101) - 50;
-      setUsersOnline(prev => Math.max(3400, Math.min(3500, prev + variation)));
+      const variation = Math.floor(Math.random() * 21) - 10;
+      setUsersOnline(prev => Math.max(340, Math.min(900, prev + variation)));
     }, 3500);
     return () => clearInterval(interval);
   }, []);
@@ -97,8 +98,7 @@ export function CompactLiveHud() {
           <CircularProgress percentage={100} strokeWidth={10} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
-              <span className="text-xs sm:text-sm font-semibold text-primary">+</span>
-              <span className="text-xl sm:text-2xl font-bold text-white">18.9K</span>
+              <span className="text-xl sm:text-2xl font-bold text-white">{totalSignals}</span>
             </div>
           </div>
         </div>

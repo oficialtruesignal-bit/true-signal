@@ -1,10 +1,8 @@
 import { Layout } from "@/components/layout";
-import { BetCard } from "@/components/bet-card";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, Loader2, AlertCircle } from "lucide-react";
+import { Target, AlertCircle, Copy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { DashboardCommandCenter } from "@/components/dashboard-command-center";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
@@ -27,15 +25,15 @@ export default function TipsPage() {
         schema: 'public', 
         table: 'tips' 
       }, (payload) => {
-        console.log('🔔 Nova tip recebida:', payload.new);
+        console.log('🔔 Novo sinal recebido:', payload.new);
         
-        // Invalidate and refetch to get the new tip
+        // Invalidate and refetch to get the new signal
         queryClient.invalidateQueries({ queryKey: ['tips'] });
         
         // Show toast notification with correct field names
         const newTip = payload.new as any;
         if (newTip.home_team && newTip.away_team && newTip.market) {
-          toast.success('Nova Tip Disponível!', {
+          toast.success('Novo Sinal Disponível!', {
             description: `${newTip.home_team} vs ${newTip.away_team} - ${newTip.market}`,
           });
         }
@@ -45,7 +43,7 @@ export default function TipsPage() {
         schema: 'public',
         table: 'tips'
       }, (payload) => {
-        console.log('🔄 Tip atualizada:', payload.new);
+        console.log('🔄 Sinal atualizado:', payload.new);
         
         // Only invalidate if status or odd changed (avoid unnecessary refetches)
         const oldTip = payload.old as any;
@@ -56,7 +54,7 @@ export default function TipsPage() {
       })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
-          console.log('✅ Realtime subscription ativa para tips');
+          console.log('✅ Realtime subscription ativa para sinais');
         }
       });
 
@@ -65,53 +63,101 @@ export default function TipsPage() {
     };
   }, [queryClient]);
 
+  const copyBetLink = (tip: any) => {
+    if (tip.betLink) {
+      navigator.clipboard.writeText(tip.betLink);
+      toast.success('Link copiado! Boa sorte 🍀');
+    }
+  };
+
   return (
     <Layout>
-      {/* Command Center Hero */}
-      <DashboardCommandCenter />
-
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
-            <Target className="w-5 h-5 text-primary" />
-          </div>
-          <h1 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Tips do Dia</h1>
-        </div>
-        <p className="text-muted-foreground">
-          Análises curadas por 20 especialistas + IA com precisão de 97%
+      {/* Compact Header */}
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-white">Sinais</h1>
+        <p className="text-sm text-muted-foreground">
+          {tips.length} sinais disponíveis
         </p>
       </div>
 
       {isLoading && (
-        <div className="space-y-4">
+        <div className="space-y-1">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-48 w-full rounded-xl bg-white/5" />
+            <Skeleton key={i} className="h-12 w-full bg-[#1a1a1a]" />
           ))}
         </div>
       )}
 
       {error && (
-        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2">
-          <AlertCircle className="w-5 h-5" />
-          <span>Erro ao carregar tips. Tente novamente mais tarde.</span>
+        <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2 text-sm">
+          <AlertCircle className="w-4 h-4" />
+          <span>Erro ao carregar sinais.</span>
         </div>
       )}
 
       {!isLoading && !error && tips.length === 0 && (
-        <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
-          <Target className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-          <p className="text-muted-foreground">Nenhuma tip disponível no momento.</p>
-          <p className="text-sm text-muted-foreground/60 mt-2">
-            Novos sinais serão publicados em breve.
-          </p>
+        <div className="p-8 text-center bg-[#121212] border border-[#333]">
+          <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-30" />
+          <p className="text-muted-foreground text-sm">Nenhum sinal disponível no momento.</p>
         </div>
       )}
 
       {!isLoading && !error && tips.length > 0 && (
-        <div className="space-y-4 pb-24 md:pb-4">
-          {tips.map((tip) => (
-            <BetCard key={tip.id} signal={tip} />
-          ))}
+        <div className="space-y-0">
+          {tips.map((tip) => {
+            const matchTime = new Date(tip.timestamp).toLocaleTimeString('pt-BR', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            });
+            
+            return (
+              <div
+                key={tip.id}
+                className="bg-[#121212] border-b border-[#333] p-3 hover:bg-[#1a1a1a] transition-colors flex items-center gap-3 text-sm"
+                data-testid={`tip-row-${tip.id}`}
+              >
+                {/* Hora */}
+                <div className="w-16 flex-shrink-0">
+                  <span className="text-xs text-muted-foreground font-mono">{matchTime}</span>
+                </div>
+
+                {/* Liga */}
+                <div className="w-20 flex-shrink-0">
+                  <span className="text-xs font-bold text-muted-foreground bg-[#1a1a1a] px-2 py-1 rounded">
+                    {tip.league.length > 8 ? tip.league.substring(0, 8) : tip.league}
+                  </span>
+                </div>
+
+                {/* Jogo */}
+                <div className="flex-1 min-w-0">
+                  <span className="text-sm text-white font-medium truncate block">
+                    {tip.homeTeam} vs {tip.awayTeam}
+                  </span>
+                </div>
+
+                {/* Mercado */}
+                <div className="w-32 flex-shrink-0">
+                  <span className="text-xs text-primary">{tip.market}</span>
+                </div>
+
+                {/* Odd */}
+                <div className="w-16 flex-shrink-0">
+                  <span className="text-sm text-white font-mono">@{tip.odd.toFixed(2)}</span>
+                </div>
+
+                {/* Botão Copiar */}
+                <div className="w-10 flex-shrink-0">
+                  <button
+                    onClick={() => copyBetLink(tip)}
+                    className="p-2 hover:bg-[#222] rounded transition-colors"
+                    data-testid={`copy-btn-${tip.id}`}
+                  >
+                    <Copy className="w-4 h-4 text-muted-foreground" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </Layout>

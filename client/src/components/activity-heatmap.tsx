@@ -26,7 +26,7 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
   return (
     <div className="space-y-2">
       <h4 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-        Activity Matrix
+        Matriz de Atividade
       </h4>
       <div className="flex gap-1 flex-wrap">
         {weeks.map((week, weekIdx) => (
@@ -35,14 +35,14 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
               <div
                 key={day.date}
                 className={`w-3 h-3 rounded-sm ${getColor(day.intensity)} border border-[#222] transition-colors`}
-                title={`${day.date}: ${day.count} greens`}
+                title={`${day.date}: ${day.count} verdes`}
               />
             ))}
           </div>
         ))}
       </div>
       <div className="flex items-center gap-2 text-[9px] text-muted-foreground mt-2">
-        <span>Less</span>
+        <span>Menos</span>
         <div className="flex gap-1">
           <div className="w-2 h-2 bg-[#161616] border border-[#222] rounded-sm" />
           <div className="w-2 h-2 bg-primary/20 border border-[#222] rounded-sm" />
@@ -50,7 +50,7 @@ export function ActivityHeatmap({ data }: ActivityHeatmapProps) {
           <div className="w-2 h-2 bg-primary/60 border border-[#222] rounded-sm" />
           <div className="w-2 h-2 bg-primary border border-[#222] rounded-sm" />
         </div>
-        <span>More</span>
+        <span>Mais</span>
       </div>
     </div>
   );
