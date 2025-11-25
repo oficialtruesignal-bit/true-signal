@@ -1,0 +1,75 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: REFINAMENTO DE UI (CARD DE APOSTA) 🟢
+
+Perfeito. Vamos ajustar a semântica visual. Trocar o @ por ODD deixa mais técnico e profissional. Trocar o ícone por "PEGAR BILHETE" transforma um botão passivo em um Call to Action (Chamada para Ação) agressivo. Isso aumenta o CTR (Taxa de Clique).
+
+Aqui está o prompt para o ajuste fino final.
+
+PROMPT DE AJUSTE: SIGNAL CARD UI (BUTTON & LABELS)
+ROLE: Senior UI Designer.
+
+TASK: Atualizar o componente SignalCard.tsx com ajustes de texto e botões solicitados pelo cliente.
+
+1. AJUSTE DA CAIXA DE ODD
+Localize a caixa onde a ODD é exibida.
+
+Antes: @2.50
+
+Agora: ODD 2.50
+
+Estilo:
+
+A palavra "ODD" deve ser ligeiramente menor (ex: text-xs) e com peso médio.
+
+O valor "2.50" deve ser maior (ex: text-xl) e font-extrabold.
+
+Mantenha a cor Verde Neon (text-[#33b864]) e o fundo translúcido.
+
+2. O NOVO BOTÃO DE AÇÃO ("PEGAR BILHETE")
+Substitua o botão pequeno quadrado (que só tinha o ícone) por um botão retangular completo.
+
+Texto: "PEGAR BILHETE" (Tudo maiúsculo).
+
+Ícone: Mantenha o ícone de cópia (Copy ou Ticket) ao lado do texto.
+
+Estilo:
+
+Largura: px-4 ou auto (deve caber o texto confortavelmente).
+
+Altura: h-10.
+
+Cor: Fundo Verde Neon (bg-[#33b864]) com texto Preto (text-[#0a0a0a]).
+
+Fonte: font-sora, font-bold, text-xs ou text-sm.
+
+Hover: Escurecer levemente (hover:bg-[#289a54]).
+
+3. AJUSTE DE LAYOUT (RODAPÉ DO CARD)
+Como o botão ficou maior, precisamos garantir que ele não esprema o texto do Mercado na esquerda.
+
+O container do rodapé (onde fica o Mercado e a Odd/Botão) deve usar flex justify-between items-end.
+
+Se necessário em telas muito pequenas (mobile antigo), permita que o botão caia para uma nova linha (flex-wrap), mas tente manter na mesma linha o máximo possível.
+
+CÓDIGO VISUAL ESPERADO (EXEMPLO):
+
+TypeScript
+
+{/* Lado Direito do Rodapé */}
+<div className="flex flex-col items-end gap-2">
+  
+  {/* Badge da Odd */}
+  <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg px-3 py-1 flex items-baseline gap-1">
+    <span className="text-[#33b864] text-[10px] font-bold font-sora">ODD</span>
+    <span className="text-[#33b864] text-lg font-extrabold font-sora">{odd}</span>
+  </div>
+
+  {/* Botão de Ação */}
+  <button 
+    onClick={handleCopy}
+    className="bg-[#33b864] hover:bg-[#289a54] text-[#0a0a0a] font-sora font-bold text-xs py-2 px-4 rounded-lg flex items-center gap-2 transition-transform active:scale-95 shadow-[0_0_10px_rgba(51,184,100,0.4)]"
+  >
+    <TicketIcon className="w-4 h-4" />
+    PEGAR BILHETE
+  </button>
+</div>
+COMANDO: Aplique essas alterações. O botão deve chamar muita atenção e ser clicável facilmente com o dedo no celular.

@@ -180,7 +180,7 @@ export function BetCard({ signal }: BetCardProps) {
       )}
 
       {/* ----- RODAPÉ: Mercado, ODD e Botão ----- */}
-      <div className="flex items-center justify-between bg-[#121212] rounded-lg p-2 border border-white/5">
+      <div className="flex items-end justify-between bg-[#121212] rounded-lg p-2 border border-white/5">
         {/* Lado Esquerdo: Mercado */}
         <div className="flex flex-col">
           <span className="text-[#33b864] font-sora font-bold uppercase text-sm">
@@ -189,20 +189,22 @@ export function BetCard({ signal }: BetCardProps) {
           <span className="text-gray-500 text-[10px] font-sora">Mercado Principal</span>
         </div>
 
-        {/* Lado Direito: ODD + Botão (Agrupados) */}
-        <div className="flex items-center gap-2">
-          {/* Caixa da ODD */}
-          <div className="bg-[#33b864]/10 border border-[#33b864]/40 rounded-md px-3 py-1">
-            <span className="text-[#33b864] font-sora font-extrabold text-xl">@{totalOdd.toFixed(2)}</span>
+        {/* Lado Direito: ODD + Botão */}
+        <div className="flex flex-col items-end gap-2">
+          {/* Badge da ODD */}
+          <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg px-3 py-1 flex items-baseline gap-1">
+            <span className="text-[#33b864] text-[10px] font-bold font-sora">ODD</span>
+            <span className="text-[#33b864] text-lg font-extrabold font-sora">{totalOdd.toFixed(2)}</span>
           </div>
 
-          {/* Botão de Copiar Compacto */}
+          {/* Botão de Ação */}
           <button 
             onClick={handleCopy}
             data-testid={`button-copy-${signal.id}`}
-            className="bg-[#33b864] hover:bg-[#289a54] text-[#0a0a0a] rounded-md p-2 flex items-center justify-center transition-colors"
+            className="bg-[#33b864] hover:bg-[#289a54] text-[#0a0a0a] font-sora font-bold text-xs py-2 px-4 rounded-lg flex items-center gap-2 transition-transform active:scale-95 shadow-[0_0_10px_rgba(51,184,100,0.4)]"
           >
-            <Copy className="w-5 h-5" />
+            <Copy className="w-4 h-4" />
+            PEGAR BILHETE
           </button>
         </div>
       </div>
