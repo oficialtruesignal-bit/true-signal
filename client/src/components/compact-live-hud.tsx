@@ -50,13 +50,17 @@ export function CompactLiveHud() {
         {/* --- DIREITA: 2 CARDS "MESTRES" (Altura Fixa h-28 cada) --- */}
         <div className="flex flex-col gap-4 h-full justify-between">
           
-          {/* Card Lucro Líquido (Brilho Intenso) */}
+          {/* Card Resultado de Hoje (Brilho Intenso) */}
           <NeonCard intensity="high" className="h-28 flex-shrink-0">
             <div className="flex items-center gap-2 mb-1 z-10 relative">
               <TrendingUp className="w-4 h-4 text-[#33b864]" />
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Líquido</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Resultado de Hoje</span>
             </div>
-            <span className="text-3xl font-sora font-bold text-white z-10 relative drop-shadow-sm">+106.2u</span>
+            <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
+              stats.todayResult > 0 ? 'text-[#33b864]' : stats.todayResult < 0 ? 'text-red-500' : 'text-white'
+            }`}>
+              {stats.todayResult > 0 ? '+' : ''}{stats.todayResult.toFixed(1)}u
+            </span>
           </NeonCard>
 
           {/* Card ROI (Brilho Suave) */}

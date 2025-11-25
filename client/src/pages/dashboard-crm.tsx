@@ -59,9 +59,13 @@ export default function DashboardCRM() {
             <NeonCard intensity="low" className="h-28 flex-shrink-0">
               <div className="flex items-center gap-2 mb-1 z-10 relative">
                 <Flame className="w-4 h-4 text-orange-500" strokeWidth={1.5} />
-                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Sequência Atual</span>
+                <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Resultado do Mês</span>
               </div>
-              <span className="text-2xl font-sora font-bold text-white z-10 relative drop-shadow-sm">5V - 0D</span>
+              <span className={`text-2xl font-sora font-bold z-10 relative drop-shadow-sm ${
+                stats.monthResult > 0 ? 'text-[#33b864]' : stats.monthResult < 0 ? 'text-red-500' : 'text-white'
+              }`}>
+                {stats.monthResult > 0 ? '+' : ''}{stats.monthResult.toFixed(1)}u
+              </span>
             </NeonCard>
 
             <NeonCard intensity="low" className="h-28 flex-shrink-0">

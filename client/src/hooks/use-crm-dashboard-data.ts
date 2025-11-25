@@ -20,6 +20,8 @@ export interface CRMStats {
   totalUnits: number;
   roi: number;
   currentStreak: { wins: number; losses: number };
+  todayResult: number;
+  monthResult: number;
   unitsHistory: { time: string; units: number }[];
   activityDays: { date: string; count: number; intensity: number }[];
   activeSignals: Signal[];
@@ -231,11 +233,42 @@ export function useCRMDashboardData(): CRMStats {
   // Recent signals (newest 30)
   const recentSignals = signals.slice(0, 30);
 
+  // Calcular resultado de HOJE baseado em sinais reais
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayTips = realTips.filter(tip => {
+    const tipDate = new Date(tip.timestamp);
+    return tipDate >= todayStart && (tip.status === 'green' || tip.status === 'red');
+  });
+  
+  const todayGreen = todayTips.filter(t => t.status === 'green');
+  const todayRed = todayTips.filter(t => t.status === 'red');
+  const todayProfit = todayGreen.reduce((sum, tip) => sum + (tip.odd - 1), 0);
+  const todayLoss = todayRed.length;
+  const todayResult = todayProfit - todayLoss;
+
+  // Calcular resultado do MÊS baseado em sinais reais
+  const monthStart = new Date();
+  monthStart.setDate(1);
+  monthStart.setHours(0, 0, 0, 0);
+  const monthTips = realTips.filter(tip => {
+    const tipDate = new Date(tip.timestamp);
+    return tipDate >= monthStart && (tip.status === 'green' || tip.status === 'red');
+  });
+  
+  const monthGreen = monthTips.filter(t => t.status === 'green');
+  const monthRed = monthTips.filter(t => t.status === 'red');
+  const monthProfit = monthGreen.reduce((sum, tip) => sum + (tip.odd - 1), 0);
+  const monthLoss = monthRed.length;
+  const monthResult = monthProfit - monthLoss;
+
   return {
     assertivity,
     totalUnits,
     roi,
     currentStreak: { wins, losses },
+    todayResult,
+    monthResult,
     unitsHistory,
     activityDays,
     activeSignals,
