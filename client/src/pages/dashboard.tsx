@@ -53,40 +53,72 @@ export default function Dashboard() {
         <p className="text-muted-foreground">Performance de Investidor Profissional</p>
       </div>
 
-      {/* Preview Card - Show when dashboard is locked */}
+      {/* Dashboard Preview - Show when not expanded */}
       {!showFullDashboard ? (
-        <div className="max-w-3xl mx-auto">
-          <div 
-            onClick={() => setShowFullDashboard(true)}
-            className="bg-card border border-primary/20 rounded-2xl p-12 shadow-[0_0_60px_rgba(51,184,100,0.15)] hover:shadow-[0_0_80px_rgba(51,184,100,0.25)] transition-all duration-300 cursor-pointer group"
-            data-testid="dashboard-preview"
-          >
-            <div className="text-center space-y-6">
-              <div className="flex justify-center">
-                <div className="w-24 h-24 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <Activity className="w-12 h-12 text-primary" />
-                </div>
+        <div className="space-y-6">
+          {/* Preview KPIs */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Taxa de Acerto Preview */}
+            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Target className="w-5 h-5 text-primary" />
+                <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded">
+                  ELITE
+                </span>
               </div>
-              
-              <div>
-                <h2 className="text-3xl font-display font-bold text-slate-900 dark:text-white mb-3">
-                  Dashboard Completo
-                </h2>
-                <p className="text-muted-foreground">
-                  Clique para acessar estatísticas em tempo real, gráficos de performance, AI Scanner e muito mais.
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground font-medium">Taxa de Acerto</p>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                  {stats.winRate.toFixed(1)}%
                 </p>
               </div>
+            </div>
 
-              <div className="pt-4">
-                <div className="inline-flex items-center gap-3 px-6 py-3 bg-primary/10 border border-primary/20 rounded-full group-hover:bg-primary/20 transition-colors">
-                  <div className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                  <span className="text-sm text-primary font-medium">
-                    Clique para desbloquear
-                  </span>
-                  <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
-                </div>
+            {/* Sinais Preview */}
+            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Zap className="w-5 h-5 text-primary" />
+                <Activity className="w-4 h-4 text-primary animate-pulse" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground font-medium">Sinais Enviados</p>
+                <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+                  {stats.totalTips.toLocaleString('pt-BR')}
+                </p>
               </div>
             </div>
+
+            {/* Sequência Preview */}
+            <div className="bg-card border border-primary/10 rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-3">
+                <Flame className="w-5 h-5 text-orange-500" />
+                <span className="text-[10px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded animate-pulse">
+                  HOT
+                </span>
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs text-muted-foreground font-medium">Sequência Verde</p>
+                <p className="text-3xl font-bold text-orange-500 font-mono flex items-center gap-2">
+                  {stats.currentStreak}
+                  <Flame className="w-6 h-6 animate-pulse" />
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA to See Full Dashboard */}
+          <div className="text-center">
+            <button
+              onClick={() => setShowFullDashboard(true)}
+              className="inline-flex items-center gap-3 px-8 py-4 bg-primary hover:bg-primary/90 text-black font-bold rounded-xl transition-all duration-300 shadow-[0_0_30px_rgba(51,184,100,0.3)] hover:shadow-[0_0_40px_rgba(51,184,100,0.5)]"
+              data-testid="button-view-full-dashboard"
+            >
+              Ver Dashboard Completo
+              <ArrowRight className="w-5 h-5" />
+            </button>
+            <p className="text-xs text-muted-foreground mt-3">
+              Gráficos de performance, AI Scanner, histórico de sinais e muito mais
+            </p>
           </div>
         </div>
       ) : (
