@@ -61,7 +61,7 @@ export function CompactLiveHud() {
             <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
               bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
             }`}>
-              {(bankroll.currentBankroll / bankroll.unitValue).toFixed(1)}u
+              {((bankroll.currentBankroll / bankroll.initialBankroll) * 100).toFixed(1)}%
             </span>
           </NeonCard>
 
@@ -74,7 +74,7 @@ export function CompactLiveHud() {
             <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
               bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
             }`}>
-              {bankroll.totalProfit > 0 ? '+' : ''}{bankroll.totalProfitUnits.toFixed(1)}u
+              {bankroll.totalProfit > 0 ? '+' : ''}{((bankroll.totalProfit / bankroll.initialBankroll) * 100).toFixed(1)}%
             </span>
           </NeonCard>
 
