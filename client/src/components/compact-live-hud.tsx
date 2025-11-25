@@ -59,11 +59,11 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="container mx-auto flex flex-row justify-center items-center gap-4 sm:gap-6 md:gap-12 py-6 sm:py-8">
+    <div className="w-full flex flex-row justify-center items-center gap-8 md:gap-16 lg:gap-24 py-6 sm:py-8">
       {/* Circle 1: Assertividade Global */}
       <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-assertivity">
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center">
-          <CircularProgress percentage={95} strokeWidth={10} />
+        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
+          <CircularProgress percentage={95} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
               <span className="text-xl sm:text-2xl font-bold text-white">94.8</span>
@@ -76,9 +76,9 @@ export function CompactLiveHud() {
 
       {/* Circle 2: Usuários Online (Oscillating) */}
       <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-users">
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center">
+        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
           <div className="animate-pulse-slow">
-            <CircularProgress percentage={100} strokeWidth={10} />
+            <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
           </div>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-center gap-1 sm:gap-1.5">
@@ -94,8 +94,8 @@ export function CompactLiveHud() {
 
       {/* Circle 3: Total Sinais */}
       <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-signals">
-        <div className="relative w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 flex items-center justify-center">
-          <CircularProgress percentage={100} strokeWidth={10} />
+        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
+          <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
               <span className="text-xl sm:text-2xl font-bold text-white">{totalSignals}</span>
