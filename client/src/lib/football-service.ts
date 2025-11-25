@@ -1,8 +1,6 @@
 import axios from "axios";
 
-const API_KEY = import.meta.env.VITE_FOOTBALL_API_KEY;
-const BASE_URL = "https://v3.football.api-sports.io";
-
+// API-Football v3 Types
 export interface Team {
   id: number;
   name: string;
@@ -26,10 +24,7 @@ export interface Fixture {
   timezone: string;
   date: string;
   timestamp: number;
-  periods: {
-    first: number | null;
-    second: number | null;
-  };
+  periods: { first: number | null; second: number | null };
   venue: {
     id: number | null;
     name: string;
@@ -43,9 +38,9 @@ export interface League {
   name: string;
   country: string;
   logo: string;
-  flag: string | null;
+  flag: string;
   season: number;
-  round: string;
+  round: string | null;
 }
 
 export interface FootballMatch {
@@ -64,7 +59,69 @@ export interface FootballMatch {
   };
 }
 
+// Statistics Types
 export interface FixtureStatistics {
+  team_id: number;
+  attacks: number;
+  dangerous_attacks: number;
+  possession: number;
+  shots_total: number;
+  shots_on_goal: number;
+  corners: number;
+  yellowcards: number;
+  redcards: number;
+  passes_accurate: number;
+  passes_percentage: number;
+  saves: number;
+}
+
+// API-Football Response Types
+interface APIFootballResponse<T> {
+  response: T;
+}
+
+interface APIFootballFixture {
+  fixture: {
+    id: number;
+    referee: string | null;
+    timezone: string;
+    date: string;
+    timestamp: number;
+    periods: { first: number | null; second: number | null };
+    venue: {
+      id: number | null;
+      name: string;
+      city: string;
+    };
+    status: {
+      long: string;
+      short: string;
+      elapsed: number | null;
+    };
+  };
+  league: {
+    id: number;
+    name: string;
+    country: string;
+    logo: string;
+    flag: string;
+    season: number;
+    round: string | null;
+  };
+  teams: {
+    home: Team;
+    away: Team;
+  };
+  goals: Goals;
+  score: {
+    halftime: Goals;
+    fulltime: Goals;
+    extratime: Goals;
+    penalty: Goals;
+  };
+}
+
+interface APIFootballStatistic {
   team: Team;
   statistics: Array<{
     type: string;
@@ -72,142 +129,141 @@ export interface FixtureStatistics {
   }>;
 }
 
-// MOCK DATA FOR FALLBACK
-const MOCK_LIVE_MATCHES: FootballMatch[] = [
-  {
-    fixture: { id: 1, referee: null, timezone: "UTC", date: new Date().toISOString(), timestamp: Date.now(), periods: { first: null, second: null }, venue: { id: null, name: "Stadium", city: "City" }, status: { long: "Second Half", short: "2H", elapsed: 75 } },
-    league: { id: 39, name: "Premier League", country: "England", logo: "https://media.api-sports.io/football/leagues/39.png", flag: null, season: 2024, round: "Regular Season" },
-    teams: { home: { id: 1, name: "Man United", logo: "https://media.api-sports.io/football/teams/33.png" }, away: { id: 2, name: "Liverpool", logo: "https://media.api-sports.io/football/teams/40.png" } },
-    goals: { home: 1, away: 2 },
-    score: { halftime: { home: 0, away: 1 }, fulltime: { home: null, away: null }, extratime: { home: null, away: null }, penalty: { home: null, away: null } }
-  },
-  {
-    fixture: { id: 2, referee: null, timezone: "UTC", date: new Date().toISOString(), timestamp: Date.now(), periods: { first: null, second: null }, venue: { id: null, name: "Stadium", city: "City" }, status: { long: "First Half", short: "1H", elapsed: 32 } },
-    league: { id: 140, name: "La Liga", country: "Spain", logo: "https://media.api-sports.io/football/leagues/140.png", flag: null, season: 2024, round: "Regular Season" },
-    teams: { home: { id: 3, name: "Real Madrid", logo: "https://media.api-sports.io/football/teams/541.png" }, away: { id: 4, name: "Barcelona", logo: "https://media.api-sports.io/football/teams/529.png" } },
-    goals: { home: 0, away: 0 },
-    score: { halftime: { home: null, away: null }, fulltime: { home: null, away: null }, extratime: { home: null, away: null }, penalty: { home: null, away: null } }
+// Helper function to extract stat value
+function getStatValue(stats: Array<{type: string; value: number | string | null}>, type: string): number {
+  const stat = stats.find(s => s.type === type);
+  if (!stat || stat.value === null) return 0;
+  
+  // Handle percentage values (e.g., "52%")
+  if (typeof stat.value === 'string' && stat.value.includes('%')) {
+    return parseInt(stat.value.replace('%', ''));
   }
-];
+  
+  return typeof stat.value === 'number' ? stat.value : parseInt(stat.value) || 0;
+}
 
+// Map API-Football statistics to our format
+function mapAPIFootballStatistics(apiStats: APIFootballStatistic[]): FixtureStatistics[] {
+  if (!apiStats || apiStats.length === 0) return [];
+
+  return apiStats.map(teamStat => ({
+    team_id: teamStat.team.id,
+    attacks: getStatValue(teamStat.statistics, 'Total attacks'),
+    dangerous_attacks: getStatValue(teamStat.statistics, 'Dangerous attacks'),
+    possession: getStatValue(teamStat.statistics, 'Ball Possession'),
+    shots_total: getStatValue(teamStat.statistics, 'Total Shots'),
+    shots_on_goal: getStatValue(teamStat.statistics, 'Shots on Goal'),
+    corners: getStatValue(teamStat.statistics, 'Corner Kicks'),
+    yellowcards: getStatValue(teamStat.statistics, 'Yellow Cards'),
+    redcards: getStatValue(teamStat.statistics, 'Red Cards'),
+    passes_accurate: getStatValue(teamStat.statistics, 'Passes accurate'),
+    passes_percentage: getStatValue(teamStat.statistics, 'Passes %'),
+    saves: getStatValue(teamStat.statistics, 'Goalkeeper Saves'),
+  }));
+}
+
+// Map API-Football fixture to our internal format
+function mapAPIFootballFixture(apiFixture: APIFootballFixture): FootballMatch {
+  return {
+    fixture: {
+      id: apiFixture.fixture.id,
+      referee: apiFixture.fixture.referee,
+      timezone: apiFixture.fixture.timezone,
+      date: apiFixture.fixture.date,
+      timestamp: apiFixture.fixture.timestamp,
+      periods: apiFixture.fixture.periods,
+      venue: apiFixture.fixture.venue,
+      status: apiFixture.fixture.status,
+    },
+    league: apiFixture.league,
+    teams: apiFixture.teams,
+    goals: apiFixture.goals,
+    score: apiFixture.score,
+  };
+}
+
+// Football Service
 export const footballService = {
-  getLiveFixtures: async (): Promise<FootballMatch[]> => {
-    if (!API_KEY) {
-      console.warn("No VITE_FOOTBALL_API_KEY found. Using Mock Data.");
-      return new Promise((resolve) => setTimeout(() => resolve(MOCK_LIVE_MATCHES), 500));
-    }
-
+  async getLiveFixtures(): Promise<FootballMatch[]> {
     try {
-      const response = await axios.get(`${BASE_URL}/fixtures`, {
-        params: { live: "all" },
-        headers: {
-          "x-rapidapi-key": API_KEY,
-          "x-rapidapi-host": "v3.football.api-sports.io",
-        },
-      });
-      return response.data.response;
-    } catch (error) {
-      console.error("Error fetching live fixtures:", error);
-      return MOCK_LIVE_MATCHES;
-    }
-  },
+      console.log('🔄 [API-Football] Fetching live fixtures...');
+      
+      const response = await axios.get<APIFootballResponse<APIFootballFixture[]>>(
+        '/api/football/fixtures/live'
+      );
 
-  getFixturesByDate: async (date: string): Promise<FootballMatch[]> => {
-    if (!API_KEY) {
-       console.warn("No VITE_FOOTBALL_API_KEY found. Using Mock Data.");
-       // Return slightly modified mock data for "Upcoming"
-       return new Promise((resolve) => setTimeout(() => resolve(MOCK_LIVE_MATCHES.map(m => ({
-         ...m, 
-         fixture: { ...m.fixture, status: { long: "Not Started", short: "NS", elapsed: null } },
-         goals: { home: null, away: null }
-       }))), 500));
-    }
+      const fixtures = response.data.response || [];
+      console.log(`✅ [API-Football] ${fixtures.length} live fixtures found`);
 
-    try {
-      const response = await axios.get(`${BASE_URL}/fixtures`, {
-        params: { date },
-        headers: {
-          "x-rapidapi-key": API_KEY,
-          "x-rapidapi-host": "v3.football.api-sports.io",
-        },
-      });
-      return response.data.response;
+      return fixtures.map(mapAPIFootballFixture);
     } catch (error) {
-      console.error("Error fetching fixtures by date:", error);
+      console.error('❌ [API-Football] Error fetching live fixtures:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('❌ API Error:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      }
       return [];
     }
   },
 
-  getFixtureStatistics: async (fixtureId: number): Promise<FixtureStatistics[]> => {
-    console.log(`🔄 Buscando estatísticas para fixture ${fixtureId}...`);
-    
-    if (!API_KEY) {
-      console.warn("No VITE_FOOTBALL_API_KEY found. Using Mock Statistics.");
-      // Return mock statistics for development
-      return new Promise((resolve) => setTimeout(() => resolve([
-        {
-          team: { id: 1, name: "Home Team", logo: "" },
-          statistics: [
-            { type: "Shots on Goal", value: 5 },
-            { type: "Shots off Goal", value: 3 },
-            { type: "Total Shots", value: 8 },
-            { type: "Blocked Shots", value: 2 },
-            { type: "Shots insidebox", value: 6 },
-            { type: "Shots outsidebox", value: 2 },
-            { type: "Fouls", value: 12 },
-            { type: "Corner Kicks", value: 4 },
-            { type: "Offsides", value: 2 },
-            { type: "Ball Possession", value: "52%" },
-            { type: "Yellow Cards", value: 2 },
-            { type: "Red Cards", value: 0 },
-            { type: "Goalkeeper Saves", value: 3 },
-            { type: "Total passes", value: 420 },
-            { type: "Passes accurate", value: 350 },
-            { type: "Passes %", value: "83%" },
-          ],
-        },
-        {
-          team: { id: 2, name: "Away Team", logo: "" },
-          statistics: [
-            { type: "Shots on Goal", value: 3 },
-            { type: "Shots off Goal", value: 5 },
-            { type: "Total Shots", value: 8 },
-            { type: "Blocked Shots", value: 1 },
-            { type: "Shots insidebox", value: 4 },
-            { type: "Shots outsidebox", value: 4 },
-            { type: "Fouls", value: 15 },
-            { type: "Corner Kicks", value: 6 },
-            { type: "Offsides", value: 3 },
-            { type: "Ball Possession", value: "48%" },
-            { type: "Yellow Cards", value: 3 },
-            { type: "Red Cards", value: 0 },
-            { type: "Goalkeeper Saves", value: 5 },
-            { type: "Total passes", value: 380 },
-            { type: "Passes accurate", value: 310 },
-            { type: "Passes %", value: "82%" },
-          ],
-        },
-      ]), 500));
-    }
-
+  async getFixturesByDate(date: string): Promise<FootballMatch[]> {
     try {
-      const response = await axios.get(`${BASE_URL}/fixtures/statistics`, {
-        params: { fixture: fixtureId },
-        headers: {
-          "x-rapidapi-key": API_KEY,
-          "x-rapidapi-host": "v3.football.api-sports.io",
-        },
-      });
+      console.log(`🔄 [API-Football] Fetching fixtures for ${date}...`);
       
-      const stats = response.data.response;
-      console.log(`✅ Estatísticas recebidas para fixture ${fixtureId}:`, stats);
-      
-      return stats;
+      const response = await axios.get<APIFootballResponse<APIFootballFixture[]>>(
+        `/api/football/fixtures/date/${date}`
+      );
+
+      const fixtures = response.data.response || [];
+      console.log(`✅ [API-Football] ${fixtures.length} fixtures found for ${date}`);
+
+      return fixtures.map(mapAPIFootballFixture);
     } catch (error) {
-      console.error("❌ Error fetching fixture statistics:", error);
+      console.error(`❌ [API-Football] Error fetching fixtures for ${date}:`, error);
       if (axios.isAxiosError(error)) {
-        console.error("API Error Response:", error.response?.data);
-        console.error("API Error Status:", error.response?.status);
+        console.error('❌ API Error:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          url: error.config?.url,
+        });
+      }
+      return [];
+    }
+  },
+
+  async getFixtureStatistics(fixtureId: number): Promise<FixtureStatistics[]> {
+    try {
+      console.log(`📊 [API-Football] Fetching statistics for fixture ${fixtureId}...`);
+      
+      const response = await axios.get<APIFootballResponse<APIFootballStatistic[]>>(
+        `/api/football/fixtures/statistics/${fixtureId}`
+      );
+
+      const stats = response.data.response || [];
+      console.log(`✅ [API-Football] ${stats.length} team statistics found`);
+
+      return mapAPIFootballStatistics(stats);
+    } catch (error) {
+      console.error('❌ [API-Football] Error fetching statistics:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('❌ API Error:', {
+          status: error.response?.status,
+          statusText: error.response?.statusText,
+          data: error.response?.data,
+          headers: error.response?.headers,
+          url: error.config?.url,
+        });
+        
+        if (error.response?.status === 401) {
+          console.error('❌ Authentication failed - check API key');
+        } else if (error.response?.status === 403) {
+          console.error('❌ Access denied - check subscription plan');
+        } else if (error.response?.status === 429) {
+          console.error('❌ Rate limit exceeded - wait before retrying');
+        }
       }
       return [];
     }

@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { sportmonksService, FootballMatch } from "@/lib/sportmonks-service";
+import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
 import { Play, AlertCircle, TrendingUp } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,9 +12,9 @@ export default function LivePage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { data: liveGames = [], isLoading, error } = useQuery({
-    queryKey: ['sportmonks-live-games'],
-    queryFn: sportmonksService.getLiveFixtures,
-    refetchInterval: 30000, // Refresh every 30 seconds with Sportmonks
+    queryKey: ['football-live-games'],
+    queryFn: footballService.getLiveFixtures,
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   const handleMatchClick = (match: FootballMatch) => {

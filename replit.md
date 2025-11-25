@@ -74,14 +74,13 @@ Preferred communication style: Simple, everyday language.
 ### External Dependencies
 
 **Third-Party APIs:**
-- **Sportmonks API v3 (api.sportmonks.com)**: Primary data source for live match data, fixtures, and real statistics
-  - Endpoints: `/v3/football/livescores/inplay` (live), `/v3/football/fixtures/date/{date}` (scheduled), `/v3/football/fixtures/{id}` (stats)
-  - Authentication: Backend proxy with `SPORTMONKS_API_TOKEN` environment variable (secure, no client exposure)
-  - Includes: `participants;league;scores;periods;statistics` (semicolon separated)
-  - Free plan: Danish Superliga (ID:271) and Scottish Premiership (ID:501)
-  - Type IDs (Official): attacks (43), dangerous_attacks (44), possession (45), shots_on_target (86), corners (42), saves (57)
-  - Participant mapping: Uses `meta.location` ("home"/"away") for accurate team identification
-  - Live time: Calculated from `periods` data (counts_from + minutes)
+- **API-Football v3 (api-sports.io)**: Primary data source for live match data, fixtures, and real statistics
+  - Endpoints: `/v3/fixtures` (live & scheduled), `/v3/fixtures/statistics` (detailed stats)
+  - Authentication: Backend proxy with `FOOTBALL_API_KEY` environment variable (secure, no client exposure)
+  - Headers: `x-rapidapi-key` and `x-rapidapi-host` for authentication
+  - Free plan: 100 requests/day, 1200+ leagues including Premier League, La Liga, Champions League
+  - Statistics: Total attacks, dangerous attacks, ball possession, shots on goal, corners, cards, saves
+  - Update frequency: Every 15 seconds for live matches
   - Graceful degradation with skeleton loaders and fallback messaging on API failures
 
 **Authentication & Database Services:**
@@ -132,32 +131,17 @@ Preferred communication style: Simple, everyday language.
 
 ### Recent Changes (Nov 25, 2024)
 
-**Sportmonks API v3 Complete Migration (Final):**
-- ✅ **Backend Proxy**: Created Express endpoints (`/api/sportmonks/*`) to handle CORS and secure API key management
-  - Endpoints: `/api/sportmonks/livescores/inplay`, `/api/sportmonks/fixtures/date/:date`, `/api/sportmonks/fixtures/:id`
-  - Uses semicolon separators for includes: `participants;league;scores;periods;statistics`
-  - API token stored securely as `SPORTMONKS_API_TOKEN` environment variable (backend only)
-- ✅ **Participant Mapping**: Fixed home/away team identification using `meta.location` field (not array index)
-  - Prevents team flipping when API returns teams in non-standard order
-  - Extended TypeScript interfaces to include `meta` field with location/winner/position data
-- ✅ **Official Type IDs**: Corrected all statistics Type IDs to match Sportmonks v3 documentation
-  - Attacks: Type ID 43 (was 83)
-  - Dangerous Attacks: Type ID 44 (was 84)
-  - Ball Possession: Type ID 45 (was 42)
-  - Shots On Target: Type ID 86 ✓
-  - Corners: Type ID 42 ✓
-  - Yellow Cards: Type ID 84 ✓
-  - Red Cards: Type ID 83 ✓
-  - Goalkeeper Saves: Type ID 57 (was 91)
-- ✅ **Live Match Time**: Implemented elapsed minute calculation from `periods` data
-  - Parses `ticking` period with `counts_from + minutes` formula
-  - Supports 1st half, 2nd half, extra time, and penalties
-- ✅ **State Mapping**: Fixed fixture state_id mapping for accurate match status
-  - 1: Not Started (NS), 2: Live - 1st Half (1H), 3: Halftime (HT), 4: Live - Break (BRK)
-  - 5: Match Finished (FT), 14: Live - Extra Time (ET), 18: Finished After Extra Time (AET)
-  - 7: Live - Penalties (PEN), 8: Finished After Penalties (FT (PEN))
-  - 9: Postponed (POSTP), 11: Cancelled (CANC), 17: Interrupted (INT)
-- **Testing Notes**: Free plan limited to Danish Superliga (ID:271) and Scottish Premiership (ID:501)
+**API-Football v3 Integration (Current):**
+- ✅ **Backend Proxy**: Express endpoints (`/api/football/*`) handle CORS and secure API key management
+  - Endpoints: `/api/football/fixtures/live`, `/api/football/fixtures/date/:date`, `/api/football/fixtures/statistics/:id`
+  - Authentication via `FOOTBALL_API_KEY` environment variable (backend only, no client exposure)
+  - RapidAPI headers: `x-rapidapi-key` and `x-rapidapi-host`
+- ✅ **Coverage**: 1200+ leagues including all major competitions (Premier League, La Liga, Champions League, etc.)
+- ✅ **Statistics**: Real data for attacks, dangerous attacks, possession, shots, corners, cards, saves
+  - Statistics returned as array of stat types (e.g., "Total attacks", "Dangerous attacks", "Ball Possession")
+  - Mapper function extracts values and handles percentage strings (e.g., "52%")
+- ✅ **Rate Limits**: Free tier provides 100 requests/day (sufficient for MVP testing)
+- ✅ **Update Frequency**: Live matches update every 15 seconds
 - **Known Issue**: Nested `<a>` tags warning in Layout/Sidebar (non-critical, doesn't affect functionality)
 
 ### Recent Changes (Nov 2024)

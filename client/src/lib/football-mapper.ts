@@ -1,4 +1,4 @@
-import { FixtureStatistics } from "./sportmonks-service";
+import { FixtureStatistics } from "./football-service";
 
 export interface MappedGameStats {
   xg?: { home: number; away: number };
@@ -15,18 +15,18 @@ export interface MappedGameStats {
   passAccuracy?: { home: number; away: number };
 }
 
-export function mapSportmonksStatistics(
+export function mapFootballStatistics(
   stats: FixtureStatistics[]
 ): MappedGameStats {
   if (!stats || stats.length < 2) {
-    console.warn('⚠️ Sportmonks Mapper: Dados insuficientes', stats);
+    console.warn('⚠️ API-Football Mapper: Dados insuficientes', stats);
     return {};
   }
 
   const homeStats = stats[0];
   const awayStats = stats[1];
 
-  console.log('📊 [Sportmonks] Mapeando estatísticas:', {
+  console.log('📊 [API-Football] Mapeando estatísticas:', {
     home: {
       team_id: homeStats.team_id,
       attacks: homeStats.attacks,
@@ -129,6 +129,6 @@ export function mapSportmonksStatistics(
     };
   }
 
-  console.log('✅ [Sportmonks] Estatísticas mapeadas:', mapped);
+  console.log('✅ [API-Football] Estatísticas mapeadas:', mapped);
   return mapped;
 }

@@ -4,71 +4,74 @@ import { storage } from "./storage";
 import { insertTipSchema, insertProfileSchema } from "@shared/schema";
 import axios from "axios";
 
-const SPORTMONKS_API_KEY = process.env.VITE_SPORTMONKS_API_KEY || process.env.SPORTMONKS_API_TOKEN;
-const SPORTMONKS_BASE_URL = "https://api.sportmonks.com/v3/football";
+const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
+const FOOTBALL_API_HOST = "api-football-v1.p.rapidapi.com";
 
-if (!SPORTMONKS_API_KEY) {
-  console.warn('⚠️ SPORTMONKS API KEY NOT FOUND - check VITE_SPORTMONKS_API_KEY or SPORTMONKS_API_TOKEN env var');
+if (!FOOTBALL_API_KEY) {
+  console.warn('⚠️ FOOTBALL_API_KEY NOT FOUND - check environment variables');
 } else {
-  console.log('✅ Sportmonks API Key loaded successfully');
+  console.log('✅ API-Football Key loaded successfully');
 }
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Sportmonks API Proxy Routes (to avoid CORS issues)
-  app.get("/api/sportmonks/livescores/inplay", async (req, res) => {
+  // API-Football Proxy Routes (to avoid CORS and secure API key)
+  app.get("/api/football/fixtures/live", async (req, res) => {
     try {
-      const response = await axios.get(`${SPORTMONKS_BASE_URL}/livescores/inplay`, {
-        params: {
-          api_token: SPORTMONKS_API_KEY,
-          include: "participants;league;scores;periods",
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+        params: { live: "all" },
+        headers: {
+          "x-rapidapi-key": FOOTBALL_API_KEY,
+          "x-rapidapi-host": FOOTBALL_API_HOST,
         },
       });
       return res.json(response.data);
     } catch (error: any) {
-      console.error("[Sportmonks Proxy] Error fetching live scores:", error.message);
+      console.error("[API-Football] Error fetching live fixtures:", error.message);
       if (axios.isAxiosError(error) && error.response) {
-        console.error("[Sportmonks Proxy] Response Status:", error.response.status);
-        console.error("[Sportmonks Proxy] Response Data:", error.response.data);
+        console.error("[API-Football] Response Status:", error.response.status);
+        console.error("[API-Football] Response Data:", error.response.data);
       }
-      return res.status(500).json({ error: "Failed to fetch live scores", details: error.message });
+      return res.status(500).json({ error: "Failed to fetch live fixtures", details: error.message });
     }
   });
 
-  app.get("/api/sportmonks/fixtures/date/:date", async (req, res) => {
+  app.get("/api/football/fixtures/date/:date", async (req, res) => {
     try {
       const { date } = req.params;
-      const response = await axios.get(`${SPORTMONKS_BASE_URL}/fixtures/date/${date}`, {
-        params: {
-          api_token: SPORTMONKS_API_KEY,
-          include: "participants;league;scores;periods",
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+        params: { date },
+        headers: {
+          "x-rapidapi-key": FOOTBALL_API_KEY,
+          "x-rapidapi-host": FOOTBALL_API_HOST,
         },
       });
       return res.json(response.data);
     } catch (error: any) {
-      console.error(`[Sportmonks Proxy] Error fetching fixtures for ${req.params.date}:`, error.message);
+      console.error(`[API-Football] Error fetching fixtures for ${req.params.date}:`, error.message);
       if (axios.isAxiosError(error) && error.response) {
-        console.error("[Sportmonks Proxy] Response Status:", error.response.status);
-        console.error("[Sportmonks Proxy] Response Data:", error.response.data);
+        console.error("[API-Football] Response Status:", error.response.status);
+        console.error("[API-Football] Response Data:", error.response.data);
       }
       return res.status(500).json({ error: "Failed to fetch fixtures", details: error.message });
     }
   });
 
-  app.get("/api/sportmonks/fixtures/:id", async (req, res) => {
+  app.get("/api/football/fixtures/statistics/:id", async (req, res) => {
     try {
       const { id } = req.params;
-      const response = await axios.get(`${SPORTMONKS_BASE_URL}/fixtures/${id}`, {
-        params: {
-          api_token: SPORTMONKS_API_KEY,
-          include: "statistics;participants",
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures/statistics", {
+        params: { fixture: id },
+        headers: {
+          "x-rapidapi-key": FOOTBALL_API_KEY,
+          "x-rapidapi-host": FOOTBALL_API_HOST,
         },
       });
       return res.json(response.data);
     } catch (error: any) {
-      console.error(`[Sportmonks Proxy] Error fetching fixture ${req.params.id}:`, error.message);
+      console.error(`[API-Football] Error fetching statistics for fixture ${req.params.id}:`, error.message);
       if (axios.isAxiosError(error) && error.response) {
-        console.error("[Sportmonks Proxy] Response Status:", error.response.status);
-        console.error("[Sportmonks Proxy] Response Data:", error.response.data);
+        console.error("[API-Football] Response Status:", error.response.status);
+        console.error("[API-Football] Response Data:", error.response.data);
       }
       return res.status(500).json({ error: "Failed to fetch fixture statistics", details: error.message });
     }

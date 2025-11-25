@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { sportmonksService, FootballMatch } from "@/lib/sportmonks-service";
+import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
 import { Calendar, AlertCircle, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,8 +18,8 @@ export default function PreGamePage() {
   ];
 
   const { data: fixtures = [], isLoading, error } = useQuery({
-    queryKey: ['sportmonks-fixtures-pregame', selectedDate],
-    queryFn: () => sportmonksService.getFixturesByDate(format(selectedDate, 'yyyy-MM-dd')),
+    queryKey: ['football-fixtures-pregame', selectedDate],
+    queryFn: () => footballService.getFixturesByDate(format(selectedDate, 'yyyy-MM-dd')),
     refetchInterval: 300000, // Refresh every 5 min
   });
 
