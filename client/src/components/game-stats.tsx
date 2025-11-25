@@ -126,24 +126,24 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
         {/* Attacks */}
         {stats.attacks && (
           <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center justify-between w-full px-2">
-              <span className="text-sm font-bold text-primary">{stats.attacks.home}</span>
-              <span className="text-sm font-bold text-primary/60">{stats.attacks.away}</span>
-            </div>
-            <div className="relative">
-              <CircularProgress 
-                value={stats.attacks.home} 
-                max={stats.attacks.home + stats.attacks.away}
-                size={70}
-                strokeWidth={6}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-white">
-                  {stats.attacks.home + stats.attacks.away > 0 
-                    ? Math.round((stats.attacks.home / (stats.attacks.home + stats.attacks.away)) * 100) 
-                    : 50}%
-                </span>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-lg font-bold text-primary w-8 text-right">{stats.attacks.home}</span>
+              <div className="relative">
+                <CircularProgress 
+                  value={stats.attacks.home} 
+                  max={stats.attacks.home + stats.attacks.away}
+                  size={70}
+                  strokeWidth={6}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">
+                    {stats.attacks.home + stats.attacks.away > 0 
+                      ? Math.round((stats.attacks.home / (stats.attacks.home + stats.attacks.away)) * 100) 
+                      : 50}%
+                  </span>
+                </div>
               </div>
+              <span className="text-lg font-bold text-primary/60 w-8 text-left">{stats.attacks.away}</span>
             </div>
             <span className="text-xs text-muted-foreground">Ataques</span>
           </div>
@@ -152,24 +152,24 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
         {/* Dangerous Attacks */}
         {stats.dangerousAttacks && (
           <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center justify-between w-full px-2">
-              <span className="text-sm font-bold text-primary">{stats.dangerousAttacks.home}</span>
-              <span className="text-sm font-bold text-primary/60">{stats.dangerousAttacks.away}</span>
-            </div>
-            <div className="relative">
-              <CircularProgress 
-                value={stats.dangerousAttacks.home} 
-                max={stats.dangerousAttacks.home + stats.dangerousAttacks.away}
-                size={70}
-                strokeWidth={6}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-white">
-                  {stats.dangerousAttacks.home + stats.dangerousAttacks.away > 0 
-                    ? Math.round((stats.dangerousAttacks.home / (stats.dangerousAttacks.home + stats.dangerousAttacks.away)) * 100) 
-                    : 50}%
-                </span>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-lg font-bold text-primary w-8 text-right">{stats.dangerousAttacks.home}</span>
+              <div className="relative">
+                <CircularProgress 
+                  value={stats.dangerousAttacks.home} 
+                  max={stats.dangerousAttacks.home + stats.dangerousAttacks.away}
+                  size={70}
+                  strokeWidth={6}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">
+                    {stats.dangerousAttacks.home + stats.dangerousAttacks.away > 0 
+                      ? Math.round((stats.dangerousAttacks.home / (stats.dangerousAttacks.home + stats.dangerousAttacks.away)) * 100) 
+                      : 50}%
+                  </span>
+                </div>
               </div>
+              <span className="text-lg font-bold text-primary/60 w-8 text-left">{stats.dangerousAttacks.away}</span>
             </div>
             <span className="text-xs text-muted-foreground">Perigosos</span>
           </div>
@@ -178,20 +178,20 @@ export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
         {/* Possession */}
         {stats.possession && (
           <div className="flex flex-col items-center gap-2">
-            <div className="flex items-center justify-between w-full px-2">
-              <span className="text-sm font-bold text-primary">{stats.possession.home}%</span>
-              <span className="text-sm font-bold text-primary/60">{stats.possession.away}%</span>
-            </div>
-            <div className="relative">
-              <CircularProgress 
-                value={stats.possession.home} 
-                max={100}
-                size={70}
-                strokeWidth={6}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-white">{stats.possession.home}%</span>
+            <div className="flex items-center justify-center gap-3">
+              <span className="text-lg font-bold text-primary w-12 text-right">{stats.possession.home}%</span>
+              <div className="relative">
+                <CircularProgress 
+                  value={stats.possession.home} 
+                  max={100}
+                  size={70}
+                  strokeWidth={6}
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xs font-bold text-white">{stats.possession.home}%</span>
+                </div>
               </div>
+              <span className="text-lg font-bold text-primary/60 w-12 text-left">{stats.possession.away}%</span>
             </div>
             <span className="text-xs text-muted-foreground">Posse</span>
           </div>
