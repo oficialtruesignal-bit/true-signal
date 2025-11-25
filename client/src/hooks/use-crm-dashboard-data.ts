@@ -151,7 +151,7 @@ export function useCRMDashboardData(): CRMStats {
   }, []);
 
   // VALORES FIXOS DE BASELINE - só mudam com sinais reais do admin
-  const BASELINE_ASSERTIVITY = 86.2;
+  const BASELINE_ASSERTIVITY = 91.9;
   const BASELINE_ROI = 106.2;
   
   // Calcula métricas APENAS dos sinais reais do banco (criados pelo admin)
