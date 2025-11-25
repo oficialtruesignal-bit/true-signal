@@ -84,8 +84,17 @@ export default function LivePage() {
               {/* Teams & Score */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-10 h-10 object-contain flex-shrink-0" />
-                  <span className="font-display font-bold text-white truncate max-w-[180px] block">{match.teams.home.name}</span>
+                  <img 
+                    src={match.teams.home.logo} 
+                    alt={match.teams.home.name} 
+                    className="w-10 h-10 object-contain flex-shrink-0" 
+                    onError={(e) => {
+                      e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
+                    }}
+                  />
+                  <span className="font-display font-bold text-white block" title={match.teams.home.name}>
+                    {match.teams.home.name.length > 20 ? match.teams.home.name.substring(0, 20) + '...' : match.teams.home.name}
+                  </span>
                 </div>
 
                 <div className="px-6 flex items-center gap-3 flex-shrink-0">
@@ -95,8 +104,17 @@ export default function LivePage() {
                 </div>
 
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-                  <span className="font-display font-bold text-white text-right truncate max-w-[180px] block">{match.teams.away.name}</span>
-                  <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-10 h-10 object-contain flex-shrink-0" />
+                  <span className="font-display font-bold text-white text-right block" title={match.teams.away.name}>
+                    {match.teams.away.name.length > 20 ? match.teams.away.name.substring(0, 20) + '...' : match.teams.away.name}
+                  </span>
+                  <img 
+                    src={match.teams.away.logo} 
+                    alt={match.teams.away.name} 
+                    className="w-10 h-10 object-contain flex-shrink-0" 
+                    onError={(e) => {
+                      e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
+                    }}
+                  />
                 </div>
               </div>
 

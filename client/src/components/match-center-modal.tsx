@@ -53,26 +53,44 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
           </button>
 
           {/* Score */}
-          <div className="flex items-center justify-center gap-8">
+          <div className="flex items-center justify-center gap-6">
             <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
-              <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-12 h-12 flex-shrink-0" />
+              <img 
+                src={match.teams.home.logo} 
+                alt={match.teams.home.name} 
+                className="w-10 h-10 flex-shrink-0 object-contain" 
+                onError={(e) => {
+                  e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
+                }}
+              />
               <div className="text-right min-w-0">
-                <div className="text-sm text-muted-foreground truncate max-w-[120px]">{match.teams.home.name}</div>
-                <div className="text-4xl font-display font-black text-white">{match.goals.home ?? 0}</div>
+                <div className="text-xs text-muted-foreground truncate max-w-[100px]" title={match.teams.home.name}>
+                  {match.teams.home.name.length > 20 ? match.teams.home.name.substring(0, 20) + '...' : match.teams.home.name}
+                </div>
+                <div className="text-3xl font-display font-black text-white">{match.goals.home ?? 0}</div>
               </div>
             </div>
 
-            <div className="flex flex-col items-center flex-shrink-0">
+            <div className="flex flex-col items-center flex-shrink-0 px-4">
               <div className="text-sm text-primary font-bold">{match.fixture.status.elapsed}'</div>
-              <div className="text-xs text-muted-foreground">{match.fixture.status.short}</div>
+              <div className="text-xs text-muted-foreground uppercase">{match.fixture.status.short}</div>
             </div>
 
             <div className="flex items-center gap-3 flex-1 min-w-0">
               <div className="text-left min-w-0">
-                <div className="text-sm text-muted-foreground truncate max-w-[120px]">{match.teams.away.name}</div>
-                <div className="text-4xl font-display font-black text-white">{match.goals.away ?? 0}</div>
+                <div className="text-xs text-muted-foreground truncate max-w-[100px]" title={match.teams.away.name}>
+                  {match.teams.away.name.length > 20 ? match.teams.away.name.substring(0, 20) + '...' : match.teams.away.name}
+                </div>
+                <div className="text-3xl font-display font-black text-white">{match.goals.away ?? 0}</div>
               </div>
-              <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-12 h-12 flex-shrink-0" />
+              <img 
+                src={match.teams.away.logo} 
+                alt={match.teams.away.name} 
+                className="w-10 h-10 flex-shrink-0 object-contain" 
+                onError={(e) => {
+                  e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
+                }}
+              />
             </div>
           </div>
 
@@ -102,9 +120,12 @@ export function MatchCenterModal({ match, open, onClose }: MatchCenterModalProps
           )}
 
           {!isLoading && !stats && (
-            <div className="p-8 text-center text-muted-foreground">
-              <AlertCircle className="w-12 h-12 mx-auto mb-3 opacity-30" />
-              <p>Estatísticas não disponíveis para este jogo.</p>
+            <div className="p-12 text-center">
+              <AlertCircle className="w-16 h-16 mx-auto mb-4 text-primary/30" />
+              <p className="text-muted-foreground text-sm font-medium">Dados indisponíveis no momento</p>
+              <p className="text-xs text-muted-foreground/60 mt-2">
+                As estatísticas serão carregadas quando disponibilizadas pela API
+              </p>
             </div>
           )}
         </div>
