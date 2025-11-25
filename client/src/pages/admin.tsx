@@ -27,14 +27,14 @@ export default function Admin() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (user && user.role !== 'admin') {
+    if (user && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
       toast.error("Acesso negado. Apenas administradores podem acessar esta página.");
       setLocation("/app");
     }
   }, [user, setLocation]);
 
   // Show loading or access denied if not admin
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com')) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
@@ -100,7 +100,7 @@ export default function Admin() {
   });
 
   const handleCreateTip = (formData: any) => {
-    if (user?.role !== 'admin') {
+    if (user?.role !== 'admin' && user?.email !== 'kwillianferreira@gmail.com') {
       toast.error("Apenas administradores podem criar tips.");
       return;
     }

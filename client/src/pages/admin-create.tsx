@@ -26,14 +26,14 @@ export default function AdminCreate() {
 
   // Redirect if not admin
   useEffect(() => {
-    if (user && user.role !== 'admin') {
+    if (user && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
       toast.error("Acesso negado. Apenas administradores podem criar tips.");
       setLocation("/app");
     }
   }, [user, setLocation]);
 
   // Show access denied if not admin
-  if (!user || user.role !== 'admin') {
+  if (!user || (user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com')) {
     return (
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">

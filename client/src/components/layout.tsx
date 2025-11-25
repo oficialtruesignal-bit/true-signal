@@ -59,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { icon: Play, label: "Ao Vivo", path: "/live" },
     { icon: Calendar, label: "Pré-Jogo", path: "/pregame" },
     { icon: Settings, label: "Config", path: "/settings" },
-    { icon: LayoutDashboard, label: "Admin", path: "/admin", hidden: user?.role !== 'admin' },
+    { icon: LayoutDashboard, label: "Admin", path: "/admin", hidden: !(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') },
   ];
 
   // Mobile Nav Items (5 icons only, no Admin)
@@ -188,7 +188,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </nav>
 
       {/* Admin FAB (Floating Action Button) */}
-      {user?.role === 'admin' && (
+      {(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') && (
         <Link href="/admin/create">
           <button
             data-testid="fab-create-tip"
@@ -200,15 +200,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </Link>
       )}
 
-      {/* Temporary: Force Reload Button (debug) */}
-      {user && user.role !== 'admin' && (
-        <button
-          onClick={reloadProfile}
-          className="fixed bottom-32 right-4 bg-yellow-500 text-black px-3 py-2 rounded-lg text-xs font-bold z-50"
-        >
-          🔄 Reload Admin
-        </button>
-      )}
     </div>
   );
 }

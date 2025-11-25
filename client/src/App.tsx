@@ -27,7 +27,7 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
   useEffect(() => {
     if (!isLoading && !user) {
       setLocation("/auth");
-    } else if (!isLoading && user && adminOnly && user.role !== 'admin') {
+    } else if (!isLoading && user && adminOnly && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
       setLocation("/app");
     }
   }, [user, isLoading, adminOnly, setLocation]);
@@ -36,7 +36,7 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
     return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
-  if (adminOnly && user.role !== 'admin') {
+  if (adminOnly && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
     return null; // Will redirect in useEffect
   }
 
