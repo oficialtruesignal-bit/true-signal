@@ -33,6 +33,25 @@ function TeamShield({ teamName }: { teamName: string }) {
   );
 }
 
+// Função para abreviar nomes de times longos
+function abbreviateTeamName(teamName: string): string {
+  if (teamName.length <= 12) return teamName;
+  
+  // Remove palavras comuns
+  const cleaned = teamName
+    .replace(/FC /gi, '')
+    .replace(/CF /gi, '')
+    .replace(/United/gi, 'Utd')
+    .replace(/Athletic/gi, 'Ath')
+    .replace(/Internacional/gi, 'Inter')
+    .replace(/Atlético/gi, 'Atl');
+  
+  if (cleaned.length <= 12) return cleaned;
+  
+  // Se ainda estiver grande, trunca
+  return cleaned.substring(0, 11) + '.';
+}
+
 export function BetCard({ signal }: BetCardProps) {
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
   
@@ -128,8 +147,8 @@ export function BetCard({ signal }: BetCardProps) {
     >
       {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS) --- */}
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide">
-          <span className="text-[#33b864] uppercase">{signal.league}</span>
+        <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide whitespace-nowrap">
+          <span className="text-[#33b864] uppercase truncate">{signal.league}</span>
           <span className="text-gray-500">•</span>
           <span className="text-gray-400">{displayTime}</span>
         </div>
@@ -144,7 +163,7 @@ export function BetCard({ signal }: BetCardProps) {
       {/* --- 2. OS TIMES (HORIZONTAL E CENTRALIZADO) --- */}
       <div className="flex items-center justify-center gap-4 mb-6">
         {/* Time Casa */}
-        <span className="font-sora font-bold text-white text-xl md:text-2xl">{signal.homeTeam}</span>
+        <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.homeTeam)}</span>
         
         {/* Escudo Casa */}
         <TeamShield teamName={signal.homeTeam} />
@@ -156,7 +175,7 @@ export function BetCard({ signal }: BetCardProps) {
         <TeamShield teamName={signal.awayTeam} />
 
         {/* Time Fora */}
-        <span className="font-sora font-bold text-white text-xl md:text-2xl">{signal.awayTeam}</span>
+        <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.awayTeam)}</span>
       </div>
 
       {/* --- 3. CONTAINER DE INFORMAÇÃO (CAIXA ESCURA) --- */}
