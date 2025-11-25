@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
+import { Users, Ticket } from 'lucide-react';
 
 interface CircularProgressProps {
   percentage: number;
-  size?: number;
+  size: number;
   strokeWidth?: number;
-  showGlow?: boolean;
 }
 
-function CircularProgress({ percentage, size, strokeWidth = 12, showGlow = true }: CircularProgressProps) {
-  // Use CSS for responsive sizing instead of fixed size
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 640;
-  const actualSize = size || (isMobile ? 80 : 112);
-  const radius = (actualSize - strokeWidth) / 2;
+function CircularProgress({ percentage, size, strokeWidth = 12 }: CircularProgressProps) {
+  const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (percentage / 100) * circumference;
 
   return (
-    <svg width={actualSize} height={actualSize} className="transform -rotate-90 w-full h-full">
+    <svg width={size} height={size} className="transform -rotate-90">
       {/* Background Track */}
       <circle
-        cx={actualSize / 2}
-        cy={actualSize / 2}
+        cx={size / 2}
+        cy={size / 2}
         r={radius}
         stroke="#222"
         strokeWidth={strokeWidth}
@@ -28,8 +25,8 @@ function CircularProgress({ percentage, size, strokeWidth = 12, showGlow = true 
       />
       {/* Progress Ring with Glow */}
       <circle
-        cx={actualSize / 2}
-        cy={actualSize / 2}
+        cx={size / 2}
+        cy={size / 2}
         r={radius}
         stroke="#33b864"
         strokeWidth={strokeWidth}
@@ -38,7 +35,7 @@ function CircularProgress({ percentage, size, strokeWidth = 12, showGlow = true 
         strokeDasharray={circumference}
         strokeDashoffset={offset}
         style={{
-          filter: showGlow ? 'drop-shadow(0 0 6px #33b864)' : 'none',
+          filter: 'drop-shadow(0 0 8px #33b864)',
           transition: 'stroke-dashoffset 0.5s ease',
         }}
       />
@@ -59,51 +56,51 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="w-full flex flex-row items-start justify-center gap-6 md:gap-16 py-8 mx-auto max-w-5xl">
-      {/* Circle 1: Assertividade Global */}
-      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-assertivity">
-        <div className="relative w-28 h-28 flex items-center justify-center">
-          <CircularProgress percentage={95} size={112} strokeWidth={10} showGlow={false} />
+    <div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl mx-auto py-6">
+      
+      {/* ÁREA 1: O HERO CIRCLE (ASSERTIVIDADE) */}
+      <div className="relative flex flex-col items-center justify-center" data-testid="hud-assertivity">
+        <div className="w-32 h-32 md:w-40 md:h-40 relative">
+          <CircularProgress percentage={95} size={160} strokeWidth={14} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="flex items-baseline gap-0.5 sm:gap-1">
-              <span className="text-xl sm:text-2xl font-bold text-white">94.8</span>
-              <span className="text-xs sm:text-sm font-semibold text-primary">%</span>
-            </div>
+            <span className="text-3xl md:text-4xl font-sora font-bold text-white">94.8%</span>
+            <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1 font-sora">Assertividade</span>
           </div>
         </div>
-        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Assertividade</span>
       </div>
 
-      {/* Circle 2: Usuários Online (Oscillating) */}
-      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-users">
-        <div className="relative w-28 h-28 flex items-center justify-center">
-          <div className="animate-pulse-slow">
-            <CircularProgress percentage={100} size={112} strokeWidth={10} showGlow={false} />
-          </div>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="flex items-center gap-1 sm:gap-1.5">
-              <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-primary rounded-full animate-ping" />
-              <span className="text-lg sm:text-2xl font-bold text-white">
-                {usersOnline.toLocaleString('pt-BR')}
-              </span>
+      {/* ÁREA 2: INFO STACK (OS RETÂNGULOS) */}
+      <div className="flex flex-col gap-4 w-full md:w-64">
+        
+        {/* Retângulo 1: Usuários Online */}
+        <div 
+          className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          data-testid="hud-users"
+        >
+          <div className="flex flex-col">
+            <span className="text-[10px] text-gray-400 uppercase font-bold font-inter">Investidores Online</span>
+            <div className="flex items-center gap-2 mt-1">
+              <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
+              <span className="text-xl font-sora font-bold text-white">{usersOnline}</span>
             </div>
           </div>
+          <Users className="text-[#33b864] w-6 h-6 opacity-50" />
         </div>
-        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Online Agora</span>
+
+        {/* Retângulo 2: Total de Sinais */}
+        <div 
+          className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5"
+          data-testid="hud-signals"
+        >
+          <div className="flex flex-col">
+            <span className="text-[10px] text-gray-400 uppercase font-bold font-inter">Sinais Enviados</span>
+            <span className="text-xl font-sora font-bold text-white mt-1">{totalSignals}</span>
+          </div>
+          <Ticket className="text-[#33b864] w-6 h-6 opacity-50" />
+        </div>
+
       </div>
 
-      {/* Circle 3: Total Sinais */}
-      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-signals">
-        <div className="relative w-28 h-28 flex items-center justify-center">
-          <CircularProgress percentage={100} size={112} strokeWidth={10} showGlow={false} />
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="flex items-baseline gap-0.5 sm:gap-1">
-              <span className="text-xl sm:text-2xl font-bold text-white">{totalSignals}</span>
-            </div>
-          </div>
-        </div>
-        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Total de Sinais</span>
-      </div>
     </div>
   );
 }

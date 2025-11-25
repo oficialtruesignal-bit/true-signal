@@ -1,0 +1,68 @@
+PROMPT MESTRE: HUD REDESIGN (HERO CIRCLE + INFO STACK)
+ROLE: Senior UI Designer & Frontend Specialist.
+
+TASK: Reconstruir o componente CompactLiveHud.tsx alterando drasticamente o layout. OBJETIVO: Destacar a Assertividade como métrica principal (Círculo) e compactar as métricas secundárias em Retângulos.
+
+1. NOVA ESTRUTURA DE LAYOUT (FLEX ROW)
+O componente deve ser um container horizontal dividido em duas áreas:
+
+TypeScript
+
+<div className="flex flex-col md:flex-row items-center justify-center gap-8 max-w-4xl mx-auto py-6">
+  
+  {/* ÁREA 1: O HERO CIRCLE (ASSERTIVIDADE) */}
+  <div className="relative flex flex-col items-center justify-center">
+    {/* Círculo SVG Grande (w-32 h-32) */}
+    <div className="w-32 h-32 md:w-40 md:h-40 relative">
+       {/* ...SVG do Progresso... */}
+       <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl md:text-4xl font-sora font-bold text-white">94.8%</span>
+          <span className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">Assertividade</span>
+       </div>
+    </div>
+  </div>
+
+  {/* ÁREA 2: INFO STACK (OS RETÂNGULOS) */}
+  <div className="flex flex-col gap-4 w-full md:w-64">
+    
+    {/* Retângulo 1: Usuários Online */}
+    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5">
+      <div className="flex flex-col">
+        <span className="text-[10px] text-gray-400 uppercase font-bold">Investidores Online</span>
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
+          <span className="text-xl font-sora font-bold text-white">616</span>
+        </div>
+      </div>
+      <UsersIcon className="text-[#33b864] w-6 h-6 opacity-50" />
+    </div>
+
+    {/* Retângulo 2: Total de Sinais */}
+    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex items-center justify-between shadow-lg shadow-[#33b864]/5">
+      <div className="flex flex-col">
+        <span className="text-[10px] text-gray-400 uppercase font-bold">Sinais Enviados</span>
+        <span className="text-xl font-sora font-bold text-white">151</span>
+      </div>
+      <TicketIcon className="text-[#33b864] w-6 h-6 opacity-50" />
+    </div>
+
+  </div>
+
+</div>
+2. DETALHES DE ESTILO (OCEAN SIGNAL)
+Círculo: Mantenha o anel grosso e o brilho neon no svg.
+
+Retângulos:
+
+Fundo: #121212 (Escuro).
+
+Borda: Muito sutil.
+
+Tipografia: Use a fonte Sora para os números (para combinar com o resto do novo design) e Inter para os labels pequenos.
+
+3. RESPONSIVIDADE
+Desktop: O Círculo fica na esquerda, a pilha de retângulos na direita.
+
+Mobile: O Círculo fica em cima, a pilha de retângulos embaixo (use flex-col md:flex-row).
+
+COMANDO: Execute essa alteração. O painel deve parecer um HUD de navegação, onde o dado mais importante (Assertividade) é o centro das atenções.
