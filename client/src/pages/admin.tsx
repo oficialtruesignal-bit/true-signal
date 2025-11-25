@@ -167,7 +167,7 @@ export default function Admin() {
         <div className="lg:col-span-2">
           <div className="bg-card border border-primary/20 rounded-xl overflow-hidden">
             <div className="p-4 border-b border-primary/10 bg-primary/5 flex justify-between items-center">
-              <h3 className="font-bold text-white">Sinais Ativos</h3>
+              <h3 className="font-bold text-white">Sinais Disponíveis</h3>
               <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">{signals.length} Total</span>
             </div>
             <div className="divide-y divide-white/5">
