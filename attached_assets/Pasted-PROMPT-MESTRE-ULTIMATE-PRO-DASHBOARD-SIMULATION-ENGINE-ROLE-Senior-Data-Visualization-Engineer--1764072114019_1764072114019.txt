@@ -1,0 +1,83 @@
+PROMPT MESTRE: ULTIMATE PRO DASHBOARD & SIMULATION ENGINE
+ROLE: Senior Data Visualization Engineer & React Expert.
+
+TASK: Construir o Dashboard Principal (/dashboard) do Ocean Signal. O objetivo é criar uma interface de "Alta Performance". O usuário deve se sentir um investidor de Wall Street.
+
+REQUISITO CRÍTICO (SIMULATION MODE): Como o app é novo, precisamos popular os gráficos. Implemente um SimulationHook que gera dados históricos e em tempo real seguindo ESTA REGRA MATEMÁTICA RÍGIDA:
+
+Gere um histórico onde a cada 20 resultados "GREEN", ocorre 1 "RED".
+
+Intervalo simulado: Imagine que uma tip entra a cada 20 minutos.
+
+Resultado: Um gráfico de lucro que sobe consistentemente, tem uma pequena queda (o Red), e volta a subir.
+
+1. LAYOUT: BENTO GRID (MODERNO & ORGANIZADO)
+Use um grid responsivo (CSS Grid) para organizar os widgets:
+
+A. Topo: KPI Cards (Os Indicadores)
+4 Cards com ícones Neon e números grandes:
+
+Banca Simulada: "R$ 2.450,00" (Começa em 1k e sobe conforme a simulação).
+
+Assertividade: "94.2%" (Cálculo baseado na regra 20/1).
+
+Tips Enviadas: "1.240" (Total acumulado).
+
+Sequência Atual: "14 Greens seguidos 🔥".
+
+B. Centro: O Gráfico Mestre (Profit Chart)
+Use a biblioteca recharts (instale-a).
+
+Tipo: Area Chart.
+
+Cor: Linha Verde Neon (#33b864) com preenchimento gradiente (fade para transparente).
+
+Eixo X: Horário.
+
+Eixo Y: Lucro acumulado.
+
+Comportamento: O gráfico deve parecer "vivo".
+
+C. Lateral: AI Market Scanner (O Fator "Uau")
+Um widget vertical que simula o processamento da IA.
+
+Visual: Texto estilo terminal/código rolando rápido.
+
+Conteúdo:
+
+> Scanning Premier League... [OK]
+
+> Analyzing patterns in Flamengo vs Vasco...
+
+> Opportunity detect: Over 0.5 HT (Confidence 88%)
+
+Efeito: Use opacidade e cores monospaced para parecer um hack do Matrix.
+
+2. LISTA DE ATIVIDADE RECENTE (HÍBRIDA)
+Abaixo dos gráficos, mostre a lista de Tips.
+
+Lógica: Deve mostrar as Tips Reais (do Supabase) NO TOPO.
+
+Filler: Abaixo das reais, preencha com as Tips Simuladas (Green) para que a lista nunca fique vazia.
+
+Estilo: Cards compactos. Esquerda: Jogo/Liga. Direita: Resultado (Badge Green/Red).
+
+3. LÓGICA TÉCNICA (O ENGINE)
+Crie um arquivo useDashboardData.ts:
+
+TypeScript
+
+// Lógica simplificada para o Agente implementar
+const generateFakeHistory = () => {
+  // Loop para criar 100 apostas passadas
+  // A cada 21 apostas, insira um RED. Nas outras 20, insira GREEN.
+  // Calcule o lucro acumulado base (R$ 50,00 por Green, -R$ 100,00 por Red).
+}
+4. DESIGN SYSTEM "OCEAN SIGNAL"
+Fundo: #0a0a0a (Sempre).
+
+Cards: #121212 com borda fina #33b864 (apenas 10% de opacidade na borda).
+
+Tipografia: Números em fonte Inter ou JetBrains Mono (para dados técnicos).
+
+OBJETIVO FINAL: O usuário entra no Dashboard e vê: Dinheiro subindo, Gráfico verde, IA "trabalhando" no canto e uma assertividade absurda de 95%. Isso passa a confiança necessária para ele assinar ou continuar usando.
