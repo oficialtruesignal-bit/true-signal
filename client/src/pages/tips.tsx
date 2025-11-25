@@ -75,7 +75,7 @@ export default function TipsPage() {
           <div className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center">
             <Target className="w-5 h-5 text-primary" />
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">Tips do Dia</h1>
+          <h1 className="text-2xl font-display font-bold text-slate-900 dark:text-white">Tips do Dia</h1>
         </div>
         <p className="text-muted-foreground">
           Análises curadas por 20 especialistas + IA com precisão de 97%

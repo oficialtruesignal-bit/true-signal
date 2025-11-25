@@ -92,20 +92,20 @@ export default function AuthPage() {
           </h2>
         </div>
 
-        <div className="bg-[#121212] border border-primary/20 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+        <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-primary/20 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
             
           {isLogin ? (
             /* LOGIN FORM */
             <form onSubmit={loginForm.handleSubmit(handleLoginSubmit)} className="space-y-6 relative z-10">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-white/80">Email</Label>
+                <Label htmlFor="email" className="text-slate-900 dark:text-white/80">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input 
                     {...loginForm.register("email")}
                     placeholder="seu@email.com" 
-                    className="pl-10 bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-11 focus-visible:border-primary/50"
+                    className="pl-10 h-11"
                   />
                 </div>
                 {loginForm.formState.errors.email && (
@@ -115,7 +115,7 @@ export default function AuthPage() {
               
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor="password" className="text-white/80">Senha</Label>
+                  <Label htmlFor="password" className="text-slate-900 dark:text-white/80">Senha</Label>
                   
                   <Dialog>
                     <DialogTrigger asChild>
@@ -123,7 +123,7 @@ export default function AuthPage() {
                         Esqueceu a senha?
                       </button>
                     </DialogTrigger>
-                    <DialogContent className="bg-[#121212] border-primary/20 text-white">
+                    <DialogContent>
                       <DialogHeader>
                         <DialogTitle>Recuperar Senha</DialogTitle>
                         <DialogDescription className="text-muted-foreground">
@@ -138,10 +138,9 @@ export default function AuthPage() {
                             placeholder="seu@email.com" 
                             value={resetEmail}
                             onChange={(e) => setResetEmail(e.target.value)}
-                            className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary"
                           />
                         </div>
-                        <Button onClick={handleResetPassword} className="w-full bg-primary hover:bg-primary-dark text-black font-bold">
+                        <Button onClick={handleResetPassword} className="w-full bg-primary hover:bg-primary-dark text-primary-foreground font-bold">
                           Enviar Link
                         </Button>
                       </div>
@@ -154,7 +153,7 @@ export default function AuthPage() {
                     type="password"
                     {...loginForm.register("password")}
                     placeholder="••••••••" 
-                    className="pl-10 bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-11 focus-visible:border-primary/50"
+                    className="pl-10 h-11"
                   />
                 </div>
                 {loginForm.formState.errors.password && (
@@ -164,11 +163,11 @@ export default function AuthPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50"
+                className="w-full h-11 bg-primary hover:bg-primary-dark text-primary-foreground font-bold btn-glow border border-primary/50"
                 disabled={isLoading}
               >
                 {isLoading ? (
-                   <Loader2 className="w-5 h-5 animate-spin text-black" />
+                   <Loader2 className="w-5 h-5 animate-spin text-primary-foreground" />
                 ) : (
                   <>
                     Entrar na Plataforma <ArrowRight className="ml-2 w-4 h-4" />
@@ -180,13 +179,13 @@ export default function AuthPage() {
             /* REGISTER FORM */
             <form onSubmit={registerForm.handleSubmit(handleRegisterSubmit)} className="space-y-6 relative z-10">
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-white/80">Nome Completo</Label>
+                <Label htmlFor="name" className="text-slate-900 dark:text-white/80">Nome Completo</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input 
                     {...registerForm.register("name")}
                     placeholder="Seu nome" 
-                    className="pl-10 bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-11 focus-visible:border-primary/50"
+                    className="pl-10 h-11"
                   />
                 </div>
                 {registerForm.formState.errors.name && (
@@ -195,13 +194,13 @@ export default function AuthPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="register-email" className="text-white/80">Email</Label>
+                <Label htmlFor="register-email" className="text-slate-900 dark:text-white/80">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input 
                     {...registerForm.register("email")}
                     placeholder="seu@email.com" 
-                    className="pl-10 bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-11 focus-visible:border-primary/50"
+                    className="pl-10 h-11"
                   />
                 </div>
                 {registerForm.formState.errors.email && (
@@ -210,14 +209,14 @@ export default function AuthPage() {
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="register-password" className="text-white/80">Senha</Label>
+                <Label htmlFor="register-password" className="text-slate-900 dark:text-white/80">Senha</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
                   <Input 
                     type="password"
                     {...registerForm.register("password")}
                     placeholder="••••••••" 
-                    className="pl-10 bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-11 focus-visible:border-primary/50"
+                    className="pl-10 h-11"
                   />
                 </div>
                 {registerForm.formState.errors.password && (
@@ -227,11 +226,11 @@ export default function AuthPage() {
 
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-primary hover:bg-primary-dark text-black font-bold btn-glow border border-primary/50"
+                className="w-full h-11 bg-primary hover:bg-primary-dark text-primary-foreground font-bold btn-glow border border-primary/50"
                 disabled={isLoading}
               >
                 {isLoading ? (
-                   <Loader2 className="w-5 h-5 animate-spin text-black" />
+                   <Loader2 className="w-5 h-5 animate-spin text-primary-foreground" />
                 ) : (
                   <>
                     Criar Conta Grátis <ArrowRight className="ml-2 w-4 h-4" />

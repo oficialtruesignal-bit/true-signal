@@ -45,7 +45,7 @@ export function Logo({ className = "", showText = true, size = 'md' }: LogoProps
       </svg>
 
       {showText && (
-        <span className={`font-display font-bold tracking-tight text-white ${text}`}>
+        <span className={`font-display font-bold tracking-tight text-slate-900 dark:text-white ${text}`}>
           OCEAN SIGNAL
         </span>
       )}

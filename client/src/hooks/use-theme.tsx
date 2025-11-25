@@ -28,7 +28,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const root = window.document.documentElement;
-    root.classList.remove('light', 'dark');
 
     let effective: 'dark' | 'light';
 
@@ -39,7 +38,13 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       effective = theme;
     }
 
-    root.classList.add(effective);
+    // Only toggle if different to avoid flash
+    const current = root.classList.contains('dark') ? 'dark' : root.classList.contains('light') ? 'light' : null;
+    if (current !== effective) {
+      if (current) root.classList.remove(current);
+      root.classList.add(effective);
+    }
+    
     setActualTheme(effective);
   }, [theme]);
 

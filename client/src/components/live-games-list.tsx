@@ -53,21 +53,21 @@ export function LiveGamesList() {
           {/* Teams & Score */}
           <div className="flex-1 px-4 flex items-center justify-between">
             <div className="flex items-center gap-3 flex-1 justify-end text-right">
-              <span className="font-display font-bold text-white hidden sm:block">{match.teams.home.name}</span>
-              <span className="font-display font-bold text-white sm:hidden">{match.teams.home.name.substring(0, 3).toUpperCase()}</span>
+              <span className="font-display font-bold text-slate-900 dark:text-white hidden sm:block">{match.teams.home.name}</span>
+              <span className="font-display font-bold text-slate-900 dark:text-white sm:hidden">{match.teams.home.name.substring(0, 3).toUpperCase()}</span>
               <img src={match.teams.home.logo} alt={match.teams.home.name} className="w-8 h-8 object-contain" />
             </div>
 
             <div className="px-4 flex flex-col items-center">
-              <div className="bg-black/40 px-3 py-1 rounded border border-primary/20 font-mono text-xl font-bold text-primary tracking-widest shadow-[0_0_10px_rgba(51,184,100,0.1)]">
+              <div className="bg-white/60 dark:bg-black/40 px-3 py-1 rounded border border-gray-200 dark:border-primary/20 font-mono text-xl font-bold text-primary tracking-widest shadow-[0_0_10px_rgba(51,184,100,0.1)]">
                 {match.goals.home ?? 0} - {match.goals.away ?? 0}
               </div>
             </div>
 
             <div className="flex items-center gap-3 flex-1 justify-start text-left">
               <img src={match.teams.away.logo} alt={match.teams.away.name} className="w-8 h-8 object-contain" />
-              <span className="font-display font-bold text-white hidden sm:block">{match.teams.away.name}</span>
-              <span className="font-display font-bold text-white sm:hidden">{match.teams.away.name.substring(0, 3).toUpperCase()}</span>
+              <span className="font-display font-bold text-slate-900 dark:text-white hidden sm:block">{match.teams.away.name}</span>
+              <span className="font-display font-bold text-slate-900 dark:text-white sm:hidden">{match.teams.away.name.substring(0, 3).toUpperCase()}</span>
             </div>
           </div>
 

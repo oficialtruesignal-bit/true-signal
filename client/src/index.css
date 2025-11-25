@@ -160,20 +160,22 @@
 
 @layer base {
   * {
-    @apply border-primary/20;
+    @apply border-border;
   }
   body {
-    @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30 selection:text-white;
+    /* Uses CSS variables that switch based on .light/.dark class on <html> */
+    @apply font-sans antialiased bg-background text-foreground;
+    @apply selection:bg-primary/30 selection:text-white dark:selection:text-white;
   }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-black/40 backdrop-blur-md border-primary/20;
+    @apply bg-white/60 dark:bg-black/40 backdrop-blur-md border-gray-200 dark:border-primary/20;
   }
   
   .text-gradient {
-    @apply bg-gradient-to-br from-white to-white/60 bg-clip-text text-transparent;
+    @apply bg-gradient-to-br from-slate-900 dark:from-white to-slate-600 dark:to-white/60 bg-clip-text text-transparent;
   }
 
   .text-gradient-primary {
