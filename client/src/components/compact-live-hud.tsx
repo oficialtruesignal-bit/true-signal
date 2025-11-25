@@ -52,10 +52,8 @@ export function CompactLiveHud() {
           
           {/* Card Lucro Líquido (Brilho Intenso) */}
           <NeonCard intensity="high" className="flex-1">
-            <div className="flex items-center gap-3 mb-1 z-10 relative">
-              <div className="p-1.5 bg-[#33b864]/20 rounded-md">
-                <TrendingUp className="w-4 h-4 text-[#33b864]" />
-              </div>
+            <div className="flex items-center gap-2 mb-1 z-10 relative">
+              <TrendingUp className="w-4 h-4 text-[#33b864]" />
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Líquido</span>
             </div>
             <span className="text-4xl font-sora font-bold text-white z-10 relative drop-shadow-sm">+106.2u</span>
@@ -63,10 +61,8 @@ export function CompactLiveHud() {
 
           {/* Card ROI (Brilho Suave) */}
           <NeonCard intensity="low" className="flex-1">
-            <div className="flex items-center gap-3 mb-1 z-10 relative">
-              <div className="p-1.5 bg-[#33b864]/20 rounded-md">
-                <Zap className="w-4 h-4 text-[#33b864]" />
-              </div>
+            <div className="flex items-center gap-2 mb-1 z-10 relative">
+              <Zap className="w-4 h-4 text-[#33b864]" />
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
             </div>
             <span className="text-3xl font-sora font-bold text-white z-10 relative drop-shadow-sm">18.5%</span>
