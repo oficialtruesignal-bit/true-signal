@@ -230,19 +230,10 @@ export function BetCard({ signal }: BetCardProps) {
       </button>
 
       {/* --- 5. RODAPÉ (METADADOS) --- */}
-      <div className="mt-3 flex flex-col gap-1.5 px-1">
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] text-gray-600 font-mono">#{signalId}</span>
-          <div className="flex items-center gap-1 text-[10px] text-gray-600">
-            <Users className="w-3 h-3" />
-            <span>{copyCount.toLocaleString()}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-3 text-[9px] text-gray-500 font-mono">
-          <span>Jogo: {matchDateTime}</span>
-          <span>•</span>
-          <span>Criado: {createdDateTime}</span>
-        </div>
+      <div className="mt-3 flex items-center gap-3 px-1 text-[9px] text-gray-500 font-mono">
+        <span>#{signalId}</span>
+        <span>•</span>
+        <span>Criado: {createdDateTime}</span>
       </div>
 
     </div>
