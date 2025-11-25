@@ -306,4 +306,19 @@
   .animate-pulse-slow {
     animation: pulse-slow 3s ease-in-out infinite;
   }
+
+  /* AI Scanner Animation */
+  @keyframes scan-in {
+    0% {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-scan-in {
+    animation: scan-in 0.3s ease-out;
+  }
 }

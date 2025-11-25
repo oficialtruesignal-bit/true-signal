@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout";
 import { useCRMDashboardData } from "@/hooks/use-crm-dashboard-data";
 import { CompactLiveHud } from "@/components/compact-live-hud";
 import { ActivityHeatmap } from "@/components/activity-heatmap";
+import { AIScanner } from "@/components/ai-scanner";
 import { TrendingUp, Target, Percent, Flame, Copy, Clock, Activity } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -142,8 +143,8 @@ export default function DashboardCRM() {
             </div>
           </div>
 
-          {/* Data Intelligence: Chart + Heatmap */}
-          <div className="grid lg:grid-cols-2 gap-4 flex-1">
+          {/* Data Intelligence: Chart + AI Scanner + Heatmap */}
+          <div className="grid lg:grid-cols-3 gap-4 flex-1">
             {/* Units Evolution Chart */}
             <div className="bg-[#121212] border border-[#333] rounded-lg p-4">
               <h3 className="text-sm font-bold text-white mb-3 uppercase tracking-wide">
@@ -184,6 +185,11 @@ export default function DashboardCRM() {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
+            </div>
+
+            {/* AI Scanner Matrix */}
+            <div>
+              <AIScanner />
             </div>
 
             {/* Activity Heatmap */}
