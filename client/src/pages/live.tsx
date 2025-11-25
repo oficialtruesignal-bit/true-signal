@@ -1,15 +1,17 @@
 import { Layout } from "@/components/layout";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
-import { Play, AlertCircle, TrendingUp } from "lucide-react";
+import { Play, AlertCircle, TrendingUp, Search, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { MatchCenterModal } from "@/components/match-center-modal";
 
 export default function LivePage() {
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
 
   const { data: liveGames = [], isLoading, error } = useQuery({
     queryKey: ['football-live-games'],
@@ -27,15 +29,61 @@ export default function LivePage() {
     setSelectedMatch(null);
   };
 
+  // Filtrar jogos baseado na pesquisa
+  const filteredGames = useMemo(() => {
+    if (!searchQuery.trim()) return liveGames;
+    
+    const query = searchQuery.toLowerCase();
+    return liveGames.filter((match) => 
+      match.teams.home.name.toLowerCase().includes(query) ||
+      match.teams.away.name.toLowerCase().includes(query) ||
+      match.league.name.toLowerCase().includes(query)
+    );
+  }, [liveGames, searchQuery]);
+
   return (
     <Layout>
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-            <Play className="w-5 h-5 text-red-500 animate-pulse" />
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+              <Play className="w-5 h-5 text-red-500 animate-pulse" />
+            </div>
+            <h1 className="text-2xl font-display font-bold text-white">Ao Vivo</h1>
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">Ao Vivo</h1>
+          
+          {/* Search Toggle */}
+          <button
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+              if (isSearchOpen) setSearchQuery("");
+            }}
+            className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 hover:border-primary/40 flex items-center justify-center transition-colors"
+            data-testid="button-search-toggle"
+          >
+            {isSearchOpen ? (
+              <X className="w-5 h-5 text-primary" />
+            ) : (
+              <Search className="w-5 h-5 text-primary" />
+            )}
+          </button>
         </div>
+
+        {/* Search Input */}
+        {isSearchOpen && (
+          <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Buscar por time ou liga..."
+              className="w-full px-4 py-3 bg-card border border-primary/20 rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              data-testid="input-search-teams"
+              autoFocus
+            />
+          </div>
+        )}
+        
         <p className="text-muted-foreground">
           Acompanhe os jogos em tempo real • Clique para ver estatísticas
         </p>
@@ -63,9 +111,23 @@ export default function LivePage() {
         </div>
       )}
 
-      {!isLoading && !error && liveGames.length > 0 && (
+      {!isLoading && !error && liveGames.length > 0 && filteredGames.length === 0 && (
+        <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
+          <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
+          <p className="text-muted-foreground">Nenhum jogo encontrado para "{searchQuery}"</p>
+          <button
+            onClick={() => setSearchQuery("")}
+            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors"
+            data-testid="button-clear-search"
+          >
+            Limpar busca
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !error && filteredGames.length > 0 && (
         <div className="space-y-4">
-          {liveGames.map((match) => (
+          {filteredGames.map((match) => (
             <button
               key={match.fixture.id}
               onClick={() => handleMatchClick(match)}
