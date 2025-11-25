@@ -28,8 +28,8 @@ export default function DashboardCRM() {
         <p className="text-sm text-muted-foreground">Gestão de Performance em Unidades</p>
       </div>
 
-      {/* Compact Live HUD - 3 círculos horizontais */}
-      <div className="mb-6 flex justify-center">
+      {/* Compact Live HUD - Medidor de Assertividade */}
+      <div className="mb-2 flex justify-center">
         <CompactLiveHud />
       </div>
 
