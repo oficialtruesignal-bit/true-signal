@@ -1,11 +1,18 @@
 import { useState, useEffect } from 'react';
-import { Target, TrendingUp } from 'lucide-react';
+import { Users, Ticket } from 'lucide-react';
 
 export function CompactLiveHud() {
-  // Performance metrics
-  const assertivityPercentage = 92.5;
-  const units = 104.3;
+  const [usersOnline, setUsersOnline] = useState(620);
+  const [totalSignals] = useState(151);
   const roi = 104.3;
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const variation = Math.floor(Math.random() * 21) - 10;
+      setUsersOnline(prev => Math.max(340, Math.min(900, prev + variation)));
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
 
   // Progress calculation for ROI circle
   const roiPercentage = Math.min(roi, 100); // Cap at 100% for visual
@@ -19,30 +26,27 @@ export function CompactLiveHud() {
       {/* --- BLOCO 1: CARDS SUPERIORES (LADO A LADO) --- */}
       <div className="flex flex-row items-stretch justify-center gap-4 w-full max-w-lg mx-auto">
         
-        {/* CARD ESQUERDA: ASSERTIVIDADE */}
+        {/* CARD ESQUERDA: INVESTIDORES ONLINE */}
         <div 
           className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
-          data-testid="hud-assertivity-card"
+          data-testid="hud-users"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Assertividade</span>
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Investidores Online</span>
           <div className="flex items-center gap-2">
-            <Target className="w-4 h-4 text-[#33b864]" />
-            <span className="text-xl font-sora font-bold text-white">{assertivityPercentage}%</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-[#33b864] animate-ping"></span>
+            <span className="text-xl font-sora font-bold text-white">{usersOnline}</span>
           </div>
         </div>
 
-        {/* CARD DIREITA: UNIDADES */}
+        {/* CARD DIREITA: SINAIS ENVIADOS */}
         <div 
           className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20"
-          data-testid="hud-units-card"
+          data-testid="hud-signals"
         >
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
-          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Lucro Unidades</span>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-[#33b864]" />
-            <span className="text-xl font-sora font-bold text-white">+{units}u</span>
-          </div>
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1 font-inter">Sinais Enviados</span>
+          <span className="text-xl font-sora font-bold text-white">{totalSignals}</span>
         </div>
 
       </div>
