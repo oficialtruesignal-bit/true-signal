@@ -21,10 +21,10 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="w-full max-w-md mx-auto flex flex-col gap-6 py-6">
+    <div className="w-full max-w-md mx-auto flex flex-col gap-2 py-2">
 
       {/* --- MEDIDOR SEGMENTADO DE ASSERTIVIDADE --- */}
-      <div className="relative flex items-center justify-center py-6" data-testid="hud-assertivity">
+      <div className="relative flex items-center justify-center py-2" data-testid="hud-assertivity">
         {/* Container do Gauge */}
         <div className="relative w-48 h-48 md:w-56 md:h-56">
           
