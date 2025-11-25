@@ -1,0 +1,66 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: MIGRAÇÃO DE DADOS (DATA SWAP) 🟢
+
+Entendido. Vamos fazer exatamente o que as setas indicam: promover os dados financeiros e de performance para o topo e eliminar a repetição embaixo.
+
+O Problema da Redundância: Se colocarmos "Assertividade" no cartão de cima e mantermos o Círculo Central também como "Assertividade", fica repetitivo. Minha Sugestão Estratégica: Vamos mover a Assertividade para o Card da Esquerda, as Unidades para o Card da Direita, e transformar o Círculo Central no "ROI" (Retorno sobre Investimento). O ROI é uma porcentagem, então fica perfeito dentro do círculo e completa a trindade de dados (Acerto, Lucro e Retorno).
+
+Aqui está o Prompt para fazer essa troca e limpar a tela.
+
+PROMPT MESTRE: DATA MIGRATION & CLEANUP
+ROLE: Senior UI Developer.
+
+TASK: Atualizar o componente CompactLiveHud.tsx. OBJETIVO: Substituir os dados dos cards superiores pelos dados de performance (Assertividade e Unidades) e remover a seção inferior duplicada.
+
+1. ATUALIZAÇÃO DOS CARDS SUPERIORES (LADO A LADO)
+Substitua o conteúdo dos dois retângulos do topo:
+
+TypeScript
+
+<div className="flex flex-row items-stretch justify-center gap-4 w-full max-w-lg mx-auto mb-8">
+  
+  {/* CARD ESQUERDA: ASSERTIVIDADE (Antigo Usuários) */}
+  <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20">
+    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Assertividade</span>
+    <div className="flex items-center gap-2">
+       <TargetIcon className="w-4 h-4 text-[#33b864]" /> {/* Ícone de Alvo */}
+       <span className="text-xl font-sora font-bold text-white">92.5%</span>
+    </div>
+  </div>
+
+  {/* CARD DIREITA: UNIDADES (Antigo Sinais) */}
+  <div className="flex-1 bg-[#121212] border border-[#33b864]/20 rounded-xl p-3 flex flex-col items-center justify-center shadow-lg shadow-[#33b864]/5 relative overflow-hidden h-20">
+     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#33b864] to-transparent opacity-20"></div>
+    <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider mb-1">Lucro Unidades</span>
+    <div className="flex items-center gap-2">
+       <TrendingUpIcon className="w-4 h-4 text-[#33b864]" /> {/* Ícone de Gráfico */}
+       <span className="text-xl font-sora font-bold text-white">+104.3u</span>
+    </div>
+  </div>
+
+</div>
+2. ATUALIZAÇÃO DO CÍRCULO CENTRAL (ROI HERO)
+Já que a assertividade subiu para o card, transforme o círculo central no ROI Total, que é a métrica mais impressionante visualmente.
+
+Valor Central: +104.3%
+
+Label: ROI TOTAL
+
+Estilo: Mantenha o anel neon futurista que já criamos.
+
+3. LIMPEZA FINAL (DELETE)
+AÇÃO CRÍTICA: Apague todo o código HTML/JSX que renderizava os cards quadrados antigos na parte inferior (Grid de Assertividade, Unidades, ROI, Sequência).
+
+O componente deve terminar logo após o fechamento da div do Círculo Central.
+
+RESULTADO ESPERADO:
+
+Topo Esquerda: Assertividade (92.5%)
+
+Topo Direita: Unidades (+104.3u)
+
+Centro Gigante: ROI (+104.3%)
+
+Fundo: Limpo, sem cards duplicados embaixo.
+
+COMANDO: Execute a substituição. O painel ficará extremamente focado em resultados financeiros.
