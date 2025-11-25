@@ -81,7 +81,7 @@ export function AIScanner() {
         <div className="flex items-center gap-2">
           <Brain className="w-4 h-4 text-primary animate-pulse" />
           <h3 className="text-xs font-bold text-white uppercase tracking-wide">
-            Scanner IA {'.'.repeat(analyzing)}
+            SCANNER PROCURANDO ALTAS PROBABILIDADES
           </h3>
         </div>
         <div className="flex items-center gap-2">
