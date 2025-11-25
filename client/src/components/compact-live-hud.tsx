@@ -37,7 +37,7 @@ export function CompactLiveHud() {
               return (
                 <line
                   key={i}
-                  x1="50" y1="5" x2="50" y2="15"
+                  x1="50" y1="2" x2="50" y2="12"
                   stroke={color}
                   strokeWidth="2.5"
                   transform={`rotate(${i * (360 / 60)} 50 50)`}
