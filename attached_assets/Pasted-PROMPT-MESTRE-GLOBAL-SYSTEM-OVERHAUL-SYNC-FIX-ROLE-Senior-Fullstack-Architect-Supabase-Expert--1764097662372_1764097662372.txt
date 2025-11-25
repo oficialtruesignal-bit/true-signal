@@ -1,0 +1,97 @@
+PROMPT MESTRE: GLOBAL SYSTEM OVERHAUL & SYNC FIX
+ROLE: Senior Fullstack Architect & Supabase Expert.
+
+TASK: Executar uma correção e implementação massiva em 5 frentes críticas do App (Dashboard, Sinais, Ao Vivo, Pré-Live e Admin). PRIORIDADE CRÍTICA: Sincronização de dados em tempo real e persistência imediata. O App deve funcionar como um organismo vivo.
+
+1. DASHBOARD: MOTOR DE CÁLCULO DE BANCA REAL
+Arquivo: src/hooks/useBankroll.ts (Criar ou Refatorar) e CompactLiveHud.tsx.
+
+O Dashboard não pode mais usar números aleatórios para o financeiro. Deve calcular com base no histórico real de Tips.
+
+Lógica de Cálculo (Hardcoded Logic):
+
+Banca Inicial: R$ 1.000,00 (Fixo).
+
+Valor da Aposta (Unit): R$ 100,00 (Fixo por sinal).
+
+Fórmula:
+
+Varra todas as tips com status green: Lucro += 100 * (odd - 1).
+
+Varra todas as tips com status red: Lucro -= 100.
+
+Tips pendente não afetam o cálculo.
+
+Visualização: Exiba o resultado final (Ex: "+12.5u" ou "+R$ 1.250,00") nos Cards do Dashboard.
+
+Fake Data: Mantenha apenas o contador de "Investidores Online" como dado simulado (340-900). Todo o resto deve vir do banco tips.
+
+2. ABA SINAIS (TIPS): CORREÇÕES VISUAIS E ADMIN
+Arquivo: SignalCard.tsx e SignalFeed.tsx.
+
+Escudos (Brasões):
+
+Verifique a URL da imagem vinda da API.
+
+Obrigatório: Use um componente <Avatar> ou <TeamShield> que tenha um Fallback. Se a imagem falhar (404) ou for nula, mostre um círculo com a inicial do time.
+
+Admin Actions (Delete & Edit):
+
+Se user.role === 'admin', exiba um ícone de Lixeira (Trash) no canto do card. Ao clicar -> supabase.from('tips').delete().
+
+Status Bug Fix: Ao alterar o status (Select de Pendente/Green/Red), o sistema deve disparar o update no Supabase IMEDIATAMENTE (onChange). Não espere botão de salvar. Use Optimistic UI para trocar a cor na hora.
+
+3. ABA AO VIVO: SANITIZAÇÃO DE UI & DADOS
+Arquivo: LiveGameDetails.tsx ou LiveFeed.tsx.
+
+Layout Quebrado: Force o uso de grid-cols fixos para alinhar estatísticas.
+
+Tratamento de Nulos: Se a API retornar null para estatísticas (chutes, escanteios), exiba um placeholder elegante: "Dados indisponíveis no momento" ou oculte a seção. Não mostre undefined ou gráficos vazios.
+
+Nomes de Times (Truncate):
+
+Aplique classes CSS: truncate max-w-[120px] block.
+
+Se o nome for "Associação Chapecoense de Futebol", deve virar "Associação..." ou "Chapecoense" (Lógica de Short Name).
+
+4. PRÉ-LIVE: FILTRO TEMPORAL RIGOROSO
+Arquivo: PreLiveFeed.tsx (Query do Supabase/API).
+
+Lógica de Exibição:
+
+WHERE date > NOW() + 1 minute.
+
+Jogos que começam em menos de 1 minuto ou já começaram DEVEM sumir desta lista imediatamente.
+
+Janela de Tempo: Carregue jogos dos próximos 7 dias (Semana completa).
+
+5. ADMIN STUDIO: MERCADOS & MÚLTIPLAS
+Arquivo: CreateTipForm.tsx.
+
+Dropdown de Mercados: Expanda a lista MARKET_OPTIONS para incluir TODAS as variações possíveis (HT, FT, Asian, Corners, Cards, Player Props).
+
+Novas Opções Obrigatórias:
+
+Adicione ao topo da lista: "Múltipla Simples" e "Múltipla Combinada".
+
+Ao selecionar "Múltipla", o Admin deve poder digitar/colar uma descrição livre dos jogos combinados.
+
+6. INTEGRIDADE DO SISTEMA (SYNC & LANG)
+Contexto de Idioma: Certifique-se de que o LanguageContext envolve toda a aplicação (main.tsx). Se eu mudo para Inglês, o menu, os status e os botões devem mudar.
+
+Realtime: Todas as listas (Sinais, Ao Vivo) devem usar supabase.channel().on(...) para atualizar sem F5.
+
+PROTOCOLO DE AUTO-REVISÃO (5X CHECK)
+Antes de me entregar o código final, o Agente deve verificar internamente:
+
+O cálculo da banca está batendo com a matemática (Green soma, Red subtrai)?
+
+O botão de deletar realmente apaga do banco?
+
+O layout Ao Vivo quebra se o nome do time tiver 50 caracteres?
+
+Jogos passados sumiram da aba Pré-Live?
+
+As opções "Múltipla" aparecem no Admin?
+
+EXECUÇÃO: Implemente as correções agora. O sistema deve ser sólido, sem erros de console e visualmente perfeito.

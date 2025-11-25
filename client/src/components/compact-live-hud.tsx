@@ -1,9 +1,11 @@
 import { TrendingUp, Zap } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
+import { useBankroll } from '@/hooks/use-bankroll';
 import { NeonCard } from './dashboard/neon-card';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
+  const bankroll = useBankroll();
   const assertivityValue = stats.assertivity;
 
   return (
@@ -50,26 +52,30 @@ export function CompactLiveHud() {
         {/* --- DIREITA: 2 CARDS "MESTRES" (Altura Fixa h-28 cada) --- */}
         <div className="flex flex-col gap-4 h-full justify-between">
           
-          {/* Card Resultado de Hoje (Brilho Intenso) */}
+          {/* Card Banca Atual (Brilho Intenso) */}
           <NeonCard intensity="high" className="h-28 flex-shrink-0">
             <div className="flex items-center gap-2 mb-1 z-10 relative">
               <TrendingUp className="w-4 h-4 text-[#33b864]" />
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Resultado de Hoje</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Banca Atual</span>
             </div>
             <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
-              stats.todayResult > 0 ? 'text-[#33b864]' : stats.todayResult < 0 ? 'text-red-500' : 'text-white'
+              bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
             }`}>
-              {stats.todayResult > 0 ? '+' : ''}{stats.todayResult.toFixed(1)}u
+              {bankroll.totalProfit > 0 ? '+' : ''}{bankroll.totalProfitUnits.toFixed(1)}u
             </span>
           </NeonCard>
 
-          {/* Card ROI (Brilho Suave) */}
+          {/* Card Lucro Total (Brilho Suave) */}
           <NeonCard intensity="low" className="h-28 flex-shrink-0">
             <div className="flex items-center gap-2 mb-1 z-10 relative">
               <Zap className="w-4 h-4 text-[#33b864]" />
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ROI Total</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Total</span>
             </div>
-            <span className="text-3xl font-sora font-bold text-white z-10 relative drop-shadow-sm">18.5%</span>
+            <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
+              bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
+            }`}>
+              R$ {bankroll.totalProfit.toFixed(2)}
+            </span>
           </NeonCard>
 
         </div>
