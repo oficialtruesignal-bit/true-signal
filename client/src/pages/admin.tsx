@@ -24,6 +24,9 @@ export default function Admin() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  
+  // Force console log to verify page is loading fresh code
+  console.log('🔧 Admin Page Loaded - Version 2.0 - ODD Format Changed');
 
   // Redirect if not admin
   useEffect(() => {
@@ -179,8 +182,8 @@ export default function Admin() {
                       {signal.isLive && <span className="text-[10px] text-red-500 bg-red-500/10 px-1 rounded animate-pulse">LIVE</span>}
                     </span>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-primary border border-primary/20 px-1.5 rounded">{signal.league}</span>
-                      <span className="text-xs text-muted-foreground">{signal.market} • ODD {signal.odd}</span>
+                      <span className="text-xs text-primary border border-primary/20 px-1.5 rounded font-sora">{signal.league}</span>
+                      <span className="text-xs text-white font-sora font-semibold">{signal.market} | ODD {signal.odd.toFixed(2)}</span>
                     </div>
                   </div>
                   
