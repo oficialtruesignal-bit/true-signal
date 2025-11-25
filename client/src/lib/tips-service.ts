@@ -25,27 +25,28 @@ export const tipsService = {
     return (data || []).map((tip: any) => ({
       id: tip.id,
       league: tip.league || '',
-      homeTeam: tip.match_name?.split(' vs ')[0] || '',
-      awayTeam: tip.match_name?.split(' vs ')[1] || '',
+      homeTeam: tip.home_team || '',
+      awayTeam: tip.away_team || '',
       market: tip.market,
       odd: parseFloat(tip.odd),
       status: tip.status,
       timestamp: tip.created_at,
-      betLink: tip.bet_url,
+      betLink: tip.bet_link,
       isLive: tip.is_live,
     }));
   },
 
   create: async (tip: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal> => {
-    const { data, error } = await supabase
+    const { data, error} = await supabase
       .from('tips')
       .insert([{
-        match_name: `${tip.homeTeam} vs ${tip.awayTeam}`,
+        home_team: tip.homeTeam,
+        away_team: tip.awayTeam,
         league: tip.league,
         market: tip.market,
         odd: tip.odd,
         status: tip.status || 'pending',
-        bet_url: tip.betLink,
+        bet_link: tip.betLink,
         is_live: tip.isLive || false,
       }])
       .select()
@@ -56,13 +57,13 @@ export const tipsService = {
     return {
       id: data.id,
       league: data.league || '',
-      homeTeam: data.match_name?.split(' vs ')[0] || '',
-      awayTeam: data.match_name?.split(' vs ')[1] || '',
+      homeTeam: data.home_team || '',
+      awayTeam: data.away_team || '',
       market: data.market,
       odd: parseFloat(data.odd),
       status: data.status,
       timestamp: data.created_at,
-      betLink: data.bet_url,
+      betLink: data.bet_link,
       isLive: data.is_live,
     };
   },
