@@ -59,10 +59,10 @@ export function CompactLiveHud() {
   }, []);
 
   return (
-    <div className="w-full flex flex-row justify-center items-center gap-8 md:gap-16 lg:gap-24 py-6 sm:py-8">
+    <div className="w-full flex flex-row items-start justify-center gap-6 md:gap-16 py-8 mx-auto max-w-5xl">
       {/* Circle 1: Assertividade Global */}
-      <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-assertivity">
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-assertivity">
+        <div className="relative w-28 h-28 flex items-center justify-center">
           <CircularProgress percentage={95} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
@@ -71,12 +71,12 @@ export function CompactLiveHud() {
             </div>
           </div>
         </div>
-        <span className="text-[10px] sm:text-xs text-gray-400 font-medium">Assertividade</span>
+        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Assertividade</span>
       </div>
 
       {/* Circle 2: Usuários Online (Oscillating) */}
-      <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-users">
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-users">
+        <div className="relative w-28 h-28 flex items-center justify-center">
           <div className="animate-pulse-slow">
             <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
           </div>
@@ -89,12 +89,12 @@ export function CompactLiveHud() {
             </div>
           </div>
         </div>
-        <span className="text-[10px] sm:text-xs text-gray-400 font-medium">Online Agora</span>
+        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Online Agora</span>
       </div>
 
       {/* Circle 3: Total Sinais */}
-      <div className="flex flex-col items-center gap-2 sm:gap-3" data-testid="hud-signals">
-        <div className="relative w-28 h-28 sm:w-32 sm:h-32 md:w-36 md:h-36 lg:w-40 lg:h-40 flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-3 min-w-[100px]" data-testid="hud-signals">
+        <div className="relative w-28 h-28 flex items-center justify-center">
           <CircularProgress percentage={100} strokeWidth={10} showGlow={false} />
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <div className="flex items-baseline gap-0.5 sm:gap-1">
@@ -102,7 +102,7 @@ export function CompactLiveHud() {
             </div>
           </div>
         </div>
-        <span className="text-[10px] sm:text-xs text-gray-400 font-medium">Total de Sinais</span>
+        <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">Total de Sinais</span>
       </div>
     </div>
   );

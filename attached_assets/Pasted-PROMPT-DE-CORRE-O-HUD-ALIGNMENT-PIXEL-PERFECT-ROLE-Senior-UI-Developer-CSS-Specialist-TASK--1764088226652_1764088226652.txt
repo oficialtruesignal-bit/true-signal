@@ -1,0 +1,49 @@
+PROMPT DE CORREÇÃO: HUD ALIGNMENT (PIXEL PERFECT)
+ROLE: Senior UI Developer & CSS Specialist.
+
+TASK: Corrigir o alinhamento e distribuição do componente de Círculos (HUD) no Dashboard (CompactLiveHud.tsx ou equivalente). PROBLEMA ATUAL: Os elementos não estão perfeitamente centralizados e o espaçamento visual está desequilibrado.
+
+1. ESTRUTURA DO CONTAINER PAI (O ALINHADOR)
+Localize a div que envolve os 3 círculos. Substitua as classes atuais por esta combinação exata de Tailwind:
+
+TypeScript
+
+<div className="w-full flex flex-row items-start justify-center gap-6 md:gap-16 py-8 mx-auto max-w-5xl">
+  {/* Os 3 itens virão aqui dentro */}
+</div>
+Explicação:
+
+flex-row: Garante que fiquem lado a lado.
+
+items-start: Alinha todos pelo topo (garante que os círculos fiquem na mesma linha horizontal, independente do tamanho do texto embaixo).
+
+justify-center: Centraliza o grupo todo na tela.
+
+gap-16: Dá um respiro generoso entre eles (ar de sofisticação).
+
+2. ESTRUTURA DOS ITENS INDIVIDUAIS (CADA MÉTRICA)
+Cada um dos 3 itens (Assertividade, Online, Total) deve seguir estritamente esta estrutura vertical:
+
+TypeScript
+
+<div className="flex flex-col items-center justify-center gap-3 min-w-[100px]">
+  
+  {/* O Círculo SVG */}
+  <div className="relative flex items-center justify-center">
+     {/* SVG Code Here... */}
+  </div>
+
+  {/* O Texto (Label) */}
+  <span className="text-xs md:text-sm font-medium text-gray-400 text-center uppercase tracking-wide">
+    Assertividade
+  </span>
+
+</div>
+Explicação: flex-col items-center obriga o texto a ficar EXATAMENTE no meio do círculo, sem desvios para a esquerda ou direita.
+
+3. AJUSTE FINO (FINE TUNING)
+Tamanho Unificado: Garanta que todos os 3 círculos (SVG) tenham exatamente a mesma largura e altura (ex: w-24 h-24 ou w-28 h-28). Não deixe um maior que o outro.
+
+Margem: Se estiver muito colado no título "Central de Operações", adicione mt-6 no container dos círculos.
+
+COMANDO: Aplique essas classes CSS. O resultado deve ser três colunas visuais perfeitamente simétricas e centralizadas na tela.
