@@ -1,0 +1,84 @@
+PROMPT MESTRE: LANDING PAGE "OCEAN SIGNAL" (HIGH-TECH CONVERSION)
+ROLE: Senior Creative Developer & CRO Specialist (Conversion Rate Optimization).
+
+TASK: Construir a Landing Page Oficial (/) do Ocean Signal. OBJETIVO: Uma página de Ultra-Alta Conversão com estética "Cyberpunk/Fintech". Deve ser pesada em animações (framer-motion), responsiva e passar autoridade tecnológica.
+
+1. STACK VISUAL (MANDATÓRIO)
+Lib de Animação: framer-motion (Para scroll reveal, parallax e hover effects).
+
+Background: Crie um componente ParticleNetwork.tsx ou MatrixRain.tsx (moderno, com opacidade baixa) para o fundo.
+
+Fontes:
+
+Títulos: Syne (Futurista/Wide).
+
+Números: Sora (Técnico).
+
+Corpo: Inter (Legibilidade).
+
+Cores: Preto Absoluto (#000), Cinza Chumbo (#0a0a0a), Verde Neon (#33b864).
+
+2. ESTRUTURA DA PÁGINA (O FUNIL DE VENDAS)
+SEÇÃO 1: HERO (IMPACTO IMEDIATO)
+Fundo: Efeito de dados/matrix fluindo.
+
+Headline (H1): "Não jogue com a Sorte. Invista com a Ciência." (Animado letra por letra).
+
+Subheadline: "A única plataforma que une Big Data, IA e 20 Especialistas para encontrar erros matemáticos nas Odds em tempo real."
+
+CTA Principal: Botão Gigante "LIBERAR ACESSO AO SISTEMA".
+
+Efeito: Glow verde neon pulsante (animate-pulse) e rastro de luz ao passar o mouse.
+
+Prova Social Dinâmica: Abaixo do botão, uma barra fina com fotos de usuários e texto: "1.420 traders operando agora".
+
+SEÇÃO 2: O PROBLEMA VS SOLUÇÃO (INTERACTIVE TILT)
+Dois cards lado a lado (Tilt Effect 3D).
+
+Card Esquerda (O Amador): Cinza escuro, ícones vermelhos. "Aposta por emoção", "Sem gestão", "Quebra a banca".
+
+Card Direita (O Ocean Signal): Borda Verde Neon brilhante. "Análise de 1000 pontos de dados", "Gestão Automática", "Lucro Consistente".
+
+SEÇÃO 3: DEGUSTAÇÃO DO PRODUTO (MOCKUP ANIMADO)
+Mostre o Dashboard que criamos (o HUD, o Gráfico, os Sinais) dentro de uma moldura de "Macbook/iPhone" flutuando.
+
+Animação: Ao rolar a página, o mockup deve girar levemente (Scroll Parallax) e os números do gráfico devem subir (CountUp).
+
+SEÇÃO 4: GATILHOS MENTAIS (ESCASSEZ LÓGICA)
+Nada de "Corra que acaba". Use lógica técnica:
+
+Texto: "Para manter a liquidez das entradas e evitar queda das Odds, limitamos o acesso a 500 membros por ciclo."
+
+Barra de Progresso: "Vagas preenchidas: 87%". (Barra verde que enche quando a pessoa olha).
+
+SEÇÃO 5: PREÇO & OFERTA (GLASSMORPHISM)
+Card de Preço único no centro. Estilo "Black Card" (Cartão de Crédito de Luxo).
+
+Efeito: Brilho holográfico ao passar o mouse.
+
+Lista de Benefícios: Use ícones de "Check" verdes brilhantes.
+
+Garantia: Selo "Risco Zero - 7 Dias".
+
+3. COMPONENTES ESPECIAIS (TECH FEEL)
+A. Notificações de "Venda/Green" (Social Proof)
+Crie um componente LiveToast que aparece no canto inferior esquerdo a cada 20 segundos:
+
+"Novo membro (Ricardo M.) entrou no plano Pro."
+
+"Green confirmado: Over 2.5 @1.90 ✅"
+
+Estilo: Vidro escuro, ícone verde, som suave opcional.
+
+B. Marquee Infinito (Faixa de Lucro)
+Uma faixa horizontal que corre infinitamente mostrando resultados recentes: LUCRO HOJE: +12% • GREEN ARSENAL • GREEN FLAMENGO • ROI MENSAL: 102%
+
+4. DETALHAMENTO DAS ANIMAÇÕES (FRAMER MOTION)
+Fade In Up: Todo texto deve vir de baixo para cima com opacidade (initial={{y: 50, opacity: 0}} whileInView={{y: 0, opacity: 1}}).
+
+Stagger Children: Os itens de lista não devem aparecer todos juntos, mas um após o outro (efeito cascata).
+
+5. RODAPÉ
+Simples, preto, links legais, CNPJ (fictício ou real), "Tecnologia protegida por criptografia de ponta".
+
+COMANDO: Execute a construção da Landing Page. O código deve ser limpo, componentizado e visualmente impressionante. Use gradientes cônicos e sombras coloridas para criar o clima "Matrix Moderno".

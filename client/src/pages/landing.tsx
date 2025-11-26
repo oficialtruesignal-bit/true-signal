@@ -1,351 +1,463 @@
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
-import { ArrowRight, Cpu, Users, Target, Zap, CheckCircle2 } from "lucide-react";
-import { Logo } from "@/components/logo";
-import { useAuth } from "@/hooks/use-auth";
-import { MatrixBackground } from "@/components/matrix-background";
-import { SalesToast } from "@/components/sales-toast";
-import { ProfitChart } from "@/components/profit-chart";
-import { StatsCircle } from "@/components/stats-circle";
-import { useEffect, useState } from "react";
+import { motion, useInView } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
+import { Link } from 'wouter';
+import { Check, TrendingUp, Shield, Zap, Users, Target, Brain, Lock } from 'lucide-react';
+import { MatrixRain } from '@/components/landing/matrix-rain';
+import { LiveToast } from '@/components/landing/live-toast';
+import { InfiniteMarquee } from '@/components/landing/infinite-marquee';
 
-export default function LandingPage() {
-  const { user } = useAuth();
-  const [activeUsers, setActiveUsers] = useState(0);
+export default function Landing() {
+  return (
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      <MatrixRain />
+      <LiveToast />
+      
+      <div className="relative z-10">
+        <HeroSection />
+        <InfiniteMarquee />
+        <ProblemSolutionSection />
+        <ProductPreviewSection />
+        <ScarcitySection />
+        <PricingSection />
+        <Footer />
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    let current = 0;
-    const target = 12450;
-    const duration = 2000;
-    const increment = target / (duration / 16);
+function HeroSection() {
+  const [userCount] = useState(1420);
+  const headline = "Não jogue com a Sorte. Invista com a Ciência.";
+  
+  return (
+    <section className="min-h-screen flex items-center justify-center px-4 py-20 relative">
+      <div className="max-w-5xl mx-auto text-center">
+        <motion.h1
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
+          style={{ fontFamily: 'Syne, sans-serif' }}
+        >
+          {headline.split(' ').map((word, i) => (
+            <motion.span
+              key={i}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="inline-block mr-3"
+            >
+              {word}
+            </motion.span>
+          ))}
+        </motion.h1>
 
-    const interval = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        setActiveUsers(target);
-        clearInterval(interval);
-      } else {
-        setActiveUsers(Math.floor(current));
-      }
-    }, 16);
+        <motion.p
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.8 }}
+          className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
+        >
+          A única plataforma que une <span className="text-[#33b864] font-bold">Big Data</span>,{' '}
+          <span className="text-[#33b864] font-bold">IA</span> e{' '}
+          <span className="text-[#33b864] font-bold">20 Especialistas</span> para encontrar erros
+          matemáticos nas Odds em tempo real.
+        </motion.p>
 
-    return () => clearInterval(interval);
-  }, []);
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1.5, duration: 0.5 }}
+        >
+          <Link href="/auth">
+            <button
+              className="group relative px-12 py-6 bg-[#33b864] text-black font-bold text-xl rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/50 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105"
+              data-testid="button-access-system"
+            >
+              <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-[#33b864] via-[#2ea558] to-[#33b864]"
+                animate={{
+                  x: ['-100%', '100%'],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: 'linear',
+                }}
+              />
+              <span className="relative z-10 flex items-center gap-3">
+                <Zap className="w-6 h-6" />
+                LIBERAR ACESSO AO SISTEMA
+              </span>
+            </button>
+          </Link>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2, duration: 0.8 }}
+          className="mt-8 flex items-center justify-center gap-3 text-gray-400"
+        >
+          <div className="flex -space-x-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="w-10 h-10 rounded-full bg-gradient-to-br from-[#33b864] to-[#2ea558] border-2 border-black flex items-center justify-center text-xs font-bold"
+              >
+                {String.fromCharCode(65 + i)}
+              </div>
+            ))}
+          </div>
+          <span className="text-sm">
+            <span className="text-[#33b864] font-bold font-sora">{userCount.toLocaleString()}</span> traders operando agora
+          </span>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function ProblemSolutionSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white overflow-hidden font-sans relative">
-      <MatrixBackground />
-      <SalesToast />
+    <section ref={ref} className="py-20 px-4">
+      <div className="max-w-6xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-4xl md:text-5xl font-bold text-center mb-16"
+          style={{ fontFamily: 'Syne, sans-serif' }}
+        >
+          A Diferença entre <span className="text-red-500">Perder</span> e{' '}
+          <span className="text-[#33b864]">Lucrar</span>
+        </motion.h2>
 
-      <nav className="fixed top-0 w-full z-50 border-b border-primary/10 bg-black/50 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <Logo size="md" showText={true} />
-          
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#proof" className="text-sm font-medium text-gray-400 hover:text-primary transition-colors" data-testid="link-resultados">Resultados</a>
-            <a href="#hybrid" className="text-sm font-medium text-gray-400 hover:text-primary transition-colors" data-testid="link-tecnologia">Tecnologia</a>
-            <Link href="/auth">
-              <Button 
-                variant="ghost" 
-                className="text-white hover:bg-white/5"
-                data-testid="button-login"
-              >
-                Login
-              </Button>
-            </Link>
-            <Link href="/auth">
-              <Button 
-                className="bg-primary hover:bg-primary/90 text-black font-bold border border-primary shadow-[0_0_20px_rgba(51,184,100,0.3)] hover:shadow-[0_0_30px_rgba(51,184,100,0.5)] transition-all"
-                data-testid="button-access"
-              >
-                Liberar Acesso
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
-        
-        <div className="max-w-6xl mx-auto text-center space-y-10 relative z-10">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Card Amador */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full border border-primary/30 backdrop-blur-md bg-black/40"
+            initial={{ opacity: 0, x: -50, rotateY: -15 }}
+            animate={isInView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="bg-gradient-to-br from-gray-900 to-gray-800 border border-red-500/30 rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform duration-300"
+            style={{ perspective: '1000px' }}
           >
-            <div className="relative">
-              <span className="w-3 h-3 rounded-full bg-primary block animate-ping absolute" />
-              <span className="w-3 h-3 rounded-full bg-primary block relative" />
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
+                <Target className="w-6 h-6 text-red-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-red-500">O Amador</h3>
             </div>
-            <span className="text-sm font-bold text-primary tracking-widest uppercase">Sistema IA + 20 Especialistas Ativo</span>
+            <ul className="space-y-4">
+              {['Aposta por emoção e palpite', 'Sem gestão de banca', 'Persegue prejuízos', 'Quebra em 3 meses'].map((item, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: i * 0.1 + 0.3 }}
+                  className="flex items-center gap-3 text-gray-300"
+                >
+                  <div className="w-6 h-6 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+                    <span className="text-red-500 text-xl">✕</span>
+                  </div>
+                  {item}
+                </motion.li>
+              ))}
+            </ul>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-display font-black text-white leading-[1.05] tracking-tight"
-            style={{ textShadow: "0 0 40px rgba(51,184,100,0.2)" }}
+          {/* Card Ocean Signal */}
+          <motion.div
+            initial={{ opacity: 0, x: 50, rotateY: 15 }}
+            animate={isInView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="bg-gradient-to-br from-[#0a0a0a] to-black border-2 border-[#33b864] rounded-3xl p-8 shadow-2xl shadow-[#33b864]/30 hover:scale-105 transition-transform duration-300 relative overflow-hidden"
           >
-            A Única IA do Mundo<br />
-            com <span className="text-primary relative inline-block">
-              Validação
+            <div className="absolute top-0 right-0 w-32 h-32 bg-[#33b864]/10 rounded-full blur-3xl" />
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 rounded-full bg-[#33b864]/20 flex items-center justify-center">
+                  <Brain className="w-6 h-6 text-[#33b864]" />
+                </div>
+                <h3 className="text-2xl font-bold text-[#33b864]">Ocean Signal</h3>
+              </div>
+              <ul className="space-y-4">
+                {[
+                  'Análise de 1000+ pontos de dados',
+                  'Gestão automática de banca',
+                  'Lucro consistente e previsível',
+                  'ROI médio de 102% ao mês',
+                ].map((item, i) => (
+                  <motion.li
+                    key={i}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={isInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ delay: i * 0.1 + 0.3 }}
+                    className="flex items-center gap-3 text-white"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-[#33b864]/20 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-[#33b864]" />
+                    </div>
+                    {item}
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProductPreviewSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (isInView && count < 91.9) {
+      const timer = setTimeout(() => {
+        setCount(prev => Math.min(prev + 2.3, 91.9));
+      }, 30);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, count]);
+
+  return (
+    <section ref={ref} className="py-20 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-black">
+      <div className="max-w-6xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-4xl md:text-5xl font-bold text-center mb-4"
+          style={{ fontFamily: 'Syne, sans-serif' }}
+        >
+          Veja o Sistema em Ação
+        </motion.h2>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.2 }}
+          className="text-xl text-gray-400 text-center mb-16"
+        >
+          Dashboard de controle total das suas operações
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9, rotateX: 20 }}
+          animate={isInView ? { opacity: 1, scale: 1, rotateX: 0 } : {}}
+          transition={{ duration: 1, type: 'spring' }}
+          className="relative mx-auto max-w-4xl"
+          style={{ perspective: '2000px' }}
+        >
+          <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-3xl p-8 border border-[#33b864]/30 shadow-2xl shadow-[#33b864]/20">
+            <div className="bg-[#0a0a0a] rounded-2xl p-6 border border-[#33b864]/20">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-2xl font-bold text-[#33b864]">Central de Operações</h3>
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse" />
+                  <span className="text-sm text-gray-400">Live</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                <div className="bg-black/50 rounded-xl p-4 border border-[#33b864]/20">
+                  <div className="text-xs text-gray-400 mb-1">Assertividade</div>
+                  <div className="text-3xl font-bold text-[#33b864] font-sora">
+                    {count.toFixed(1)}%
+                  </div>
+                </div>
+                <div className="bg-black/50 rounded-xl p-4 border border-[#33b864]/20">
+                  <div className="text-xs text-gray-400 mb-1">Online Agora</div>
+                  <div className="text-3xl font-bold text-white font-sora">487</div>
+                </div>
+                <div className="bg-black/50 rounded-xl p-4 border border-[#33b864]/20">
+                  <div className="text-xs text-gray-400 mb-1">Sinais Hoje</div>
+                  <div className="text-3xl font-bold text-white font-sora">12</div>
+                </div>
+              </div>
+
+              <div className="h-40 bg-black/30 rounded-xl flex items-end gap-2 p-4">
+                {[30, 45, 60, 75, 85, 70, 90].map((height, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ scaleY: 0 }}
+                    animate={isInView ? { scaleY: 1 } : {}}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    className="flex-1 bg-gradient-to-t from-[#33b864] to-[#33b864]/50 rounded-t-lg origin-bottom"
+                    style={{ height: `${height}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function ScarcitySection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    if (isInView && progress < 87) {
+      const timer = setTimeout(() => {
+        setProgress(prev => Math.min(prev + 2, 87));
+      }, 30);
+      return () => clearTimeout(timer);
+    }
+  }, [isInView, progress]);
+
+  return (
+    <section ref={ref} className="py-20 px-4">
+      <div className="max-w-4xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="bg-gradient-to-br from-[#0a0a0a] to-black border border-[#33b864]/30 rounded-3xl p-8 md:p-12 text-center"
+        >
+          <Lock className="w-16 h-16 text-[#33b864] mx-auto mb-6" />
+          <h2 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+            Acesso Limitado por Design
+          </h2>
+          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            Para manter a liquidez das entradas e evitar queda das Odds, limitamos o acesso a{' '}
+            <span className="text-[#33b864] font-bold">500 membros</span> por ciclo.
+          </p>
+
+          <div className="mb-4">
+            <div className="flex justify-between text-sm text-gray-400 mb-2">
+              <span>Vagas preenchidas</span>
+              <span className="text-[#33b864] font-bold font-sora">{progress}%</span>
+            </div>
+            <div className="h-4 bg-black/50 rounded-full overflow-hidden border border-[#33b864]/20">
               <motion.div
                 initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 0.8, delay: 1 }}
-                className="absolute bottom-0 left-0 h-1 bg-primary/50 blur-sm"
+                animate={{ width: `${progress}%` }}
+                transition={{ duration: 2, ease: 'easeOut' }}
+                className="h-full bg-gradient-to-r from-[#33b864] to-[#2ea558] shadow-lg shadow-[#33b864]/50"
               />
-            </span> de <br/>20 Especialistas
-          </motion.h1>
-
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
-          >
-            Chegamos a <span className="text-primary font-bold">95% de assertividade</span>. 
-            Pare de apostar com a sorte. <span className="text-white font-semibold">Invista com a Ciência.</span>
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="pt-6"
-          >
-            <Link href={user ? "/app" : "/auth"}>
-              <Button 
-                size="lg" 
-                className="h-16 px-12 text-xl bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-wider relative overflow-hidden group border-2 border-primary"
-                data-testid="button-cta-hero"
-              >
-                <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  animate={{
-                    x: ["-200%", "200%"],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "linear",
-                  }}
-                />
-                <span className="relative z-10 flex items-center gap-3">
-                  Liberar Meu Acesso Agora
-                  <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            className="text-sm text-gray-500"
-          >
-            O mercado de apostas foi projetado para você perder.<br />
-            <span className="text-primary font-semibold">O Ocean Signal foi projetado para quebrar o banco.</span>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="proof" className="py-24 px-6 relative">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
-              Live Proof
-            </h2>
-            <p className="text-xl text-gray-400">
-              Não é mágica. É <span className="text-primary font-bold">Big Data</span>.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 gap-8 mb-12">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <ProfitChart />
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <StatsCircle />
-            </motion.div>
+            </div>
           </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-black/60 backdrop-blur-md border border-primary/20 rounded-2xl p-8 text-center"
-          >
-            <div className="text-5xl font-black text-primary mb-2 drop-shadow-[0_0_20px_rgba(51,184,100,0.5)]" data-testid="text-active-members">
-              +{activeUsers.toLocaleString()}
-            </div>
-            <div className="text-lg text-gray-400 font-semibold">Membros Lucrando Agora</div>
-          </motion.div>
-        </div>
-      </section>
-
-      <section id="hybrid" className="py-24 px-6 bg-gradient-to-b from-transparent via-primary/5 to-transparent relative">
-        <div className="max-w-7xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
-              Hybrid Intelligence
-            </h2>
-            <p className="text-xl text-gray-400">
-              <span className="text-primary font-bold">20 Mentes Humanas</span> + <span className="text-primary font-bold">1 Cérebro Digital</span>
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Cpu className="w-8 h-8 text-primary animate-pulse" />
-              </div>
-              <h3 className="text-2xl font-display font-bold text-white mb-3">A Máquina</h3>
-              <p className="text-gray-400 leading-relaxed mb-4">
-                Processamento de <span className="text-primary font-bold">1000+ ligas/segundo</span>. 
-                Nossa IA nunca dorme, nunca para, nunca falha.
-              </p>
-              <div className="text-xs text-gray-600 uppercase tracking-wider">Precisão Inumana</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group"
-            >
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <Users className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-display font-bold text-white mb-3">O Humano</h3>
-              <p className="text-gray-400 leading-relaxed mb-4">
-                Curadoria de <span className="text-primary font-bold">20 Traders Profissionais</span>. 
-                A IA encontra o padrão. O Especialista confirma o Green.
-              </p>
-              <div className="text-xs text-gray-600 uppercase tracking-wider">Intuição Validada</div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-black/60 backdrop-blur-lg border border-primary/20 rounded-2xl p-8 hover:border-primary/40 transition-all hover:shadow-[0_0_40px_rgba(51,184,100,0.1)] group relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform relative z-10">
-                <Target className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-2xl font-display font-bold text-white mb-3 relative z-10">O Resultado</h3>
-              <p className="text-gray-400 leading-relaxed mb-4 relative z-10">
-                Sinais com <span className="text-primary font-bold">95% de assertividade</span>. 
-                Você recebe apenas o que passou pelo filtro duplo.
-              </p>
-              <div className="flex items-center gap-2 relative z-10">
-                <CheckCircle2 className="w-4 h-4 text-primary" />
-                <span className="text-sm text-primary font-semibold">Green Confirmado ✓</span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 px-6">
-        <div className="max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-gradient-to-br from-primary/10 via-black/80 to-black/80 backdrop-blur-xl border border-primary/30 rounded-3xl p-12 text-center relative overflow-hidden"
-          >
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMzNiODY0IiBzdHJva2Utd2lkdGg9IjAuNSIgb3BhY2l0eT0iMC4xIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20" />
-            
-            <div className="relative z-10 space-y-8">
-              <h2 className="text-3xl md:text-5xl font-display font-black text-white leading-tight">
-                Você tem duas escolhas
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-6 text-left">
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
-                  <div className="text-red-400 font-bold mb-2 flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-red-500" />
-                    Opção 1
-                  </div>
-                  <p className="text-gray-300">Continuar <span className="text-white font-bold">adivinhando</span> e perdendo dinheiro nas casas de aposta</p>
-                </div>
-
-                <div className="bg-primary/10 border border-primary/30 rounded-xl p-6">
-                  <div className="text-primary font-bold mb-2 flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary animate-pulse" />
-                    Opção 2
-                  </div>
-                  <p className="text-gray-300">Seguir a inteligência de <span className="text-white font-bold">20 especialistas apoiados por IA</span></p>
-                </div>
-              </div>
-
-              <Link href="/auth">
-                <Button 
-                  size="lg" 
-                  className="h-16 px-12 text-xl bg-primary hover:bg-primary/90 text-black font-black uppercase tracking-wider border-2 border-primary shadow-[0_0_40px_rgba(51,184,100,0.3)]"
-                  data-testid="button-cta-final"
-                >
-                  Escolher a Inteligência <ArrowRight className="ml-2 w-6 h-6" />
-                </Button>
-              </Link>
-
-              <p className="text-sm text-gray-500">
-                A decisão mais inteligente que você tomará hoje.
-              </p>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      <footer className="py-12 px-6 border-t border-primary/10 bg-black/80">
-        <div className="max-w-7xl mx-auto text-center">
-          <Logo size="sm" showText={true} />
-          <p className="mt-4 text-sm text-gray-600">
-            © 2024 Ocean Signal. Tecnologia de ponta para investidores esportivos.
+          <p className="text-sm text-gray-500">
+            Restam apenas <span className="text-[#33b864] font-bold">{500 - Math.floor((progress / 100) * 500)}</span> vagas neste ciclo
           </p>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function PricingSection() {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true });
+
+  const benefits = [
+    'Acesso ilimitado aos sinais premium',
+    'Dashboard analytics em tempo real',
+    'Notificações push instantâneas',
+    'Suporte prioritário 24/7',
+    'Gestão automatizada de banca',
+    'Histórico completo de operações',
+    'Análise preditiva com IA',
+    'Comunidade exclusiva de traders',
+  ];
+
+  return (
+    <section ref={ref} className="py-20 px-4">
+      <div className="max-w-lg mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 50, rotateX: 20 }}
+          animate={isInView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
+          transition={{ duration: 0.8 }}
+          className="relative group"
+          style={{ perspective: '1500px' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-[#33b864] via-[#2ea558] to-[#33b864] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity" />
+          
+          <div className="relative bg-gradient-to-br from-black via-[#0a0a0a] to-black border-2 border-[#33b864] rounded-3xl p-8 backdrop-blur-xl">
+            <div className="text-center mb-8">
+              <h3 className="text-sm text-[#33b864] font-bold uppercase tracking-wider mb-2">Plano Profissional</h3>
+              <div className="flex items-baseline justify-center gap-2 mb-4">
+                <span className="text-5xl font-bold font-sora">R$ 497</span>
+                <span className="text-gray-400">/mês</span>
+              </div>
+              <p className="text-gray-400 text-sm">ROI médio de 5x o investimento</p>
+            </div>
+
+            <ul className="space-y-3 mb-8">
+              {benefits.map((benefit, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : {}}
+                  transition={{ delay: i * 0.05 + 0.2 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="w-5 h-5 rounded-full bg-[#33b864]/20 flex items-center justify-center flex-shrink-0">
+                    <Check className="w-3 h-3 text-[#33b864]" />
+                  </div>
+                  <span className="text-sm text-gray-300">{benefit}</span>
+                </motion.li>
+              ))}
+            </ul>
+
+            <Link href="/auth">
+              <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-bold py-4 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/30">
+                COMEÇAR AGORA
+              </button>
+            </Link>
+
+            <div className="mt-6 flex items-center justify-center gap-2 text-sm text-gray-400">
+              <Shield className="w-4 h-4 text-[#33b864]" />
+              <span>Garantia de 7 dias • Risco Zero</span>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-black border-t border-[#33b864]/20 py-12 px-4 mt-20">
+      <div className="max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div>
+            <h4 className="text-[#33b864] font-bold text-xl mb-4">Ocean Signal</h4>
+            <p className="text-gray-400 text-sm">
+              Inteligência artificial aplicada a trading esportivo de alta frequência.
+            </p>
+          </div>
+          <div>
+            <h5 className="text-white font-bold mb-4">Links Rápidos</h5>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li><Link href="/auth"><a className="hover:text-[#33b864] transition-colors">Login</a></Link></li>
+              <li><a href="#" className="hover:text-[#33b864] transition-colors">Termos de Uso</a></li>
+              <li><a href="#" className="hover:text-[#33b864] transition-colors">Política de Privacidade</a></li>
+            </ul>
+          </div>
+          <div>
+            <h5 className="text-white font-bold mb-4">Segurança</h5>
+            <p className="text-gray-400 text-sm">
+              Tecnologia protegida por criptografia de ponta-a-ponta. Dados armazenados em servidores certificados.
+            </p>
+          </div>
         </div>
-      </footer>
-    </div>
+        
+        <div className="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+          <p>© 2024 Ocean Signal. Todos os direitos reservados.</p>
+          <p className="mt-2">CNPJ: 00.000.000/0001-00</p>
+        </div>
+      </div>
+    </footer>
   );
 }
