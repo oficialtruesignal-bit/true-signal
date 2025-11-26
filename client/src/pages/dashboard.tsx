@@ -113,6 +113,10 @@ export default function Dashboard() {
           </div>
 
           {/* Install App Banner - Preview */}
+          <div className="bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-2xl p-5">
+            <h3 className="text-lg font-bold text-white">🚀 TESTE: Banner de instalação aqui!</h3>
+            <p className="text-sm text-gray-300">Se você vê isso, o banner está funcionando!</p>
+          </div>
           <InstallAppBanner />
 
           {/* CTA to See Full Dashboard - Enhanced */}
