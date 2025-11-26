@@ -1,14 +1,17 @@
 import { Layout } from "@/components/layout";
-import { Settings as SettingsIcon, Globe, Lock, MessageCircle } from "lucide-react";
+import { Settings as SettingsIcon, Globe, Lock, MessageCircle, Crown, Clock, Sparkles, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/use-language";
 import { Language } from "@/i18n/translations";
+import { useAccessControl } from "@/hooks/use-access-control";
+import { Link } from "wouter";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
+  const { isTrial, isPremium, daysRemaining, subscriptionStatus } = useAccessControl();
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -46,6 +49,75 @@ export default function SettingsPage() {
       </div>
 
       <div className="space-y-6">
+        {/* Subscription Plan */}
+        <div className="bg-card border border-primary/10 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Crown className="w-5 h-5 text-primary" />
+            <h3 className="font-bold text-white">Plano e assinatura</h3>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Current Plan Status */}
+            <div className="p-4 bg-black/30 border border-white/10 rounded-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  {isPremium ? (
+                    <>
+                      <Crown className="w-5 h-5 text-[#33b864]" />
+                      <span className="font-bold text-white">Ocean Prime</span>
+                    </>
+                  ) : (
+                    <>
+                      <Clock className="w-5 h-5 text-yellow-500" />
+                      <span className="font-bold text-white">Período gratuito</span>
+                    </>
+                  )}
+                </div>
+                <div className={`px-3 py-1 rounded-full text-xs font-bold ${
+                  isPremium 
+                    ? 'bg-[#33b864]/10 text-[#33b864] border border-[#33b864]/20'
+                    : isTrial
+                    ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20'
+                    : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                }`}>
+                  {isPremium ? 'Ativo' : isTrial ? `${daysRemaining} dias restantes` : 'Expirado'}
+                </div>
+              </div>
+              
+              <div className="space-y-2 text-sm text-gray-400">
+                {isPremium && (
+                  <>
+                    <p>✓ Sinais ilimitados</p>
+                    <p>✓ Análises avançadas com IA</p>
+                    <p>✓ Suporte prioritário 24/7</p>
+                  </>
+                )}
+                {isTrial && (
+                  <>
+                    <p>⚠️ Apenas 1 sinal por dia</p>
+                    <p>⚠️ Recursos limitados</p>
+                    <p className="text-yellow-500 font-semibold mt-2">
+                      Assine o Ocean Prime para acesso completo!
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Action Button */}
+            <Link href="/pricing">
+              <Button
+                className="w-full bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
+                data-testid="button-view-plans"
+              >
+                <Sparkles className="w-4 h-4 mr-2" />
+                {isPremium ? 'Gerenciar assinatura' : 'Ver planos disponíveis'}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+
         {/* Language Selector */}
         <div className="bg-card border border-primary/10 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
