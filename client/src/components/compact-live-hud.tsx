@@ -1,14 +1,12 @@
-import { TrendingUp, Zap, Scale, Users, TrendingDown } from 'lucide-react';
+import { Scale, Users, TrendingDown, TrendingUp } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
-import { useBankroll } from '@/hooks/use-bankroll';
-import { NeonCard } from './dashboard/neon-card';
+import { ProfitTrendChart } from './dashboard/profit-trend-chart';
 import { useQuery } from '@tanstack/react-query';
 import { tipsService } from '@/lib/tips-service';
 import { useState, useEffect } from 'react';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
-  const bankroll = useBankroll();
   const assertivityValue = stats.assertivity;
   
   // Fetch tips para cálculos financeiros
@@ -52,11 +50,11 @@ export function CompactLiveHud() {
   return (
     <div className="w-full mb-8">
       
-      {/* BLOCO SUPERIOR: CÍRCULO + 2 CARDS */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-60 items-stretch mb-4">
+      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO */}
+      <div className="grid grid-cols-[40%_60%] gap-4 h-64 items-stretch mb-4">
 
         {/* --- ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) --- */}
-        <div className="relative flex items-center justify-center h-full">
+        <div className="relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#33b864]/10 to-transparent rounded-3xl border border-[#33b864]/20 shadow-[0_0_30px_rgba(51,184,100,0.1)] h-full">
           <div className="relative w-40 h-40 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -90,36 +88,8 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: 2 CARDS "MESTRES" (Altura Fixa h-28 cada) --- */}
-        <div className="flex flex-col gap-4 h-full justify-between">
-          
-          {/* Card Banca Atual (Brilho Intenso) */}
-          <NeonCard intensity="high" className="h-28 flex-shrink-0">
-            <div className="flex items-center gap-2 mb-1 z-10 relative">
-              <TrendingUp className="w-4 h-4 text-[#33b864]" />
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Banca Atual</span>
-            </div>
-            <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
-              bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
-            }`}>
-              {((bankroll.currentBankroll / bankroll.initialBankroll) * 100).toFixed(1)}%
-            </span>
-          </NeonCard>
-
-          {/* Card Lucro Total (Brilho Suave) */}
-          <NeonCard intensity="low" className="h-28 flex-shrink-0">
-            <div className="flex items-center gap-2 mb-1 z-10 relative">
-              <Zap className="w-4 h-4 text-[#33b864]" />
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Lucro Total</span>
-            </div>
-            <span className={`text-3xl font-sora font-bold z-10 relative drop-shadow-sm ${
-              bankroll.totalProfit > 0 ? 'text-[#33b864]' : bankroll.totalProfit < 0 ? 'text-red-500' : 'text-white'
-            }`}>
-              {bankroll.totalProfit > 0 ? '+' : ''}{((bankroll.totalProfit / bankroll.initialBankroll) * 100).toFixed(1)}%
-            </span>
-          </NeonCard>
-
-        </div>
+        {/* --- DIREITA: GRÁFICO DE LUCRO (Substitui os 2 cards antigos) --- */}
+        <ProfitTrendChart />
 
       </div>
 
