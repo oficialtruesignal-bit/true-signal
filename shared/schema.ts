@@ -10,7 +10,8 @@ export const profiles = pgTable("profiles", {
   passwordHash: text("password_hash").notNull(),
   firstName: text("first_name").notNull(),
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
-  subscriptionStatus: text("subscription_status", { enum: ["free", "premium"] }).notNull().default("free"),
+  subscriptionStatus: text("subscription_status", { enum: ["trial", "active", "expired"] }).notNull().default("trial"),
+  trialStartDate: timestamp("trial_start_date").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

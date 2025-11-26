@@ -21,8 +21,13 @@ const AdminCreate = React.lazy(() => import("@/pages/admin-create"));
 const AuthPage = React.lazy(() => import("@/pages/auth"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
+// Import access control and paywall
+import { useAccessControl } from "@/hooks/use-access-control";
+import { LockedScreen } from "@/components/paywall/locked-screen";
+
 function ProtectedRoute({ component: Component, adminOnly = false }: { component: React.ComponentType<any>, adminOnly?: boolean }) {
   const { user, isLoading } = useAuth();
+  const { isLocked } = useAccessControl();
   const [, setLocation] = useLocation();
 
   useEffect(() => {
@@ -35,6 +40,11 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
 
   if (isLoading || !user) {
     return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+  }
+
+  // Show paywall if user's trial has expired (admins bypass)
+  if (isLocked && user.role !== 'admin') {
+    return <LockedScreen />;
   }
 
   if (adminOnly && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {

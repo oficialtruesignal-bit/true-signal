@@ -9,7 +9,9 @@ interface User {
   email: string;
   firstName: string;
   role: 'user' | 'admin';
-  subscriptionStatus: 'free' | 'premium';
+  subscriptionStatus: 'trial' | 'active' | 'expired';
+  createdAt: string;
+  trialStartDate: string | null;
 }
 
 interface AuthContextType {
@@ -80,7 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email: data.email,
           firstName: data.first_name,
           role: data.role as 'user' | 'admin',
-          subscriptionStatus: 'free' as 'free' | 'premium',
+          subscriptionStatus: data.subscription_status as 'trial' | 'active' | 'expired',
+          createdAt: data.created_at,
+          trialStartDate: data.trial_start_date || null,
         };
         
         console.log('✅ [AUTH DEBUG] Setting user state with role:', userData.role);

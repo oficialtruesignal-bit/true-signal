@@ -1,0 +1,76 @@
+PROMPT MESTRE: FREEMIUM LOGIC & PAYWALL SYSTEM
+ROLE: Senior SaaS Architect & Business Logic Developer.
+
+TASK: Implementar o modelo de negócio "Trial Limitado" no Ocean Signal. REGRAS DE NEGÓCIO:
+
+Usuário Free: Tem 15 dias de acesso a partir do cadastro. Vê apenas 1 Bilhete por dia.
+
+Usuário Premium: Acesso ilimitado a tudo.
+
+Expiração: Após 15 dias, se não for Premium, o acesso ao Dashboard é totalmente bloqueado (Paywall).
+
+Preço: R$ 99,87/mês.
+
+1. ATUALIZAÇÃO DO BANCO DE DADOS (SUPABASE)
+Execute ou instrua a execução deste SQL para preparar a tabela profiles:
+
+SQL
+
+-- Adiciona status da assinatura
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS subscription_status TEXT DEFAULT 'trial', -- 'trial', 'active', 'expired'
+ADD COLUMN IF NOT EXISTS trial_start_date TIMESTAMP WITH TIME ZONE DEFAULT NOW();
+2. CRIAÇÃO DO HOOK DE ACESSO (useAccessControl.ts)
+Crie um hook que centraliza a lógica. Ele deve retornar:
+
+daysRemaining: Quantos dias faltam para acabar o teste.
+
+isLocked: Se o usuário já passou dos 15 dias e não é premium.
+
+canSeeAllTips: Se é premium (true) ou trial (false).
+
+Lógica:
+
+TypeScript
+
+const TRIAL_DAYS = 15;
+const daysSinceSignup = differenceInDays(now, profile.created_at);
+const isExpired = daysSinceSignup > TRIAL_DAYS && profile.subscription_status !== 'active';
+3. IMPLEMENTAÇÃO NA UI
+A. O Paywall (Tela de Bloqueio Total)
+Crie uma página/componente LockedScreen.tsx.
+
+Se isLocked === true, o App.tsx deve renderizar apenas esta tela, escondendo todo o resto.
+
+Design: Fundo preto, ícone de cadeado vermelho gigante.
+
+Texto: "Seu período de degustação acabou."
+
+CTA: Botão "ASSINAR OCEAN PRIME - R$ 99,87" (Link externo para seu checkout).
+
+B. A Lista de Bilhetes (Limitador Visual)
+No SignalFeed.tsx:
+
+Se !canSeeAllTips:
+
+Renderize o 1º Bilhete normalmente.
+
+Renderize o 2º e 3º Bilhetes com efeito Blur (Borrado) e um Overlay.
+
+Overlay: Ícone de Cadeado 🔒 + Texto: "Exclusivo Ocean Prime. Assine para desbloquear."
+
+C. Barra de Contagem Regressiva (Nudge)
+No topo do Dashboard (apenas para usuários Trial):
+
+Uma barra fina (fixa ou dismissible) amarela ou laranja.
+
+Texto: "Restam 12 dias de acesso gratuito. Garanta sua vaga no Prime."
+
+Botão: "Assinar Agora".
+
+4. FLUXO DE PAGAMENTO (CHECKOUT)
+O botão de assinar deve ser um link <a> simples que abre o seu Checkout (Kiwi/PerfectPay/Stripe) em nova aba.
+
+Nota: O sistema não fará o upgrade automático via webhook neste prompt (para não complicar), o Admin poderá alterar o status para active manualmente no banco após confirmar o pagamento, ou prepararemos o webhook em um passo futuro.
+
+COMANDO: Implemente a lógica de trial de 15 dias. O sistema deve ser implacável: passou do dia 15, bloqueia tudo. Enquanto estiver no prazo, mostre apenas a ponta do iceberg (1 tip) para deixar o usuário com vontade de quero mais.

@@ -1,0 +1,77 @@
+PROMPT MESTRE: LANDING PAGE REWRITE (HYBRID INTELLIGENCE & FREEMIUM MODEL)
+ROLE: Senior Copywriter & Frontend Designer.
+
+TASK: Reescrever completamente a LandingPage.tsx. OBJETIVO: Explicar o modelo "Ocean Signal": Uma ferramenta de inteligência (IA + Humanos) que entrega bilhetes prontos. CORREÇÕES OBRIGATÓRIAS:
+
+Fonte: Use APENAS a família tipográfica 'Sora' em todo o texto (Títulos e Parágrafos).
+
+Modelo: Destaque os 15 Dias Grátis de teste.
+
+Clareza: Remova qualquer termo sobre "Saque" ou "Depósito" no nosso app. Nós entregamos a informação, o lucro acontece na casa de aposta do usuário.
+
+1. DESIGN SYSTEM (SORA & NEON)
+Tipografia: Adicione @import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;800&display=swap'); no CSS global e force font-family: 'Sora', sans-serif no body.
+
+Cores: Fundo #0a0a0a, Acentos #33b864.
+
+Responsividade: O layout deve ser pensado primeiro para a tela do celular (vertical), expandindo para desktop.
+
+2. ESTRUTURA DE CONTEÚDO (O NOVO FUNIL)
+SEÇÃO 1: HERO (A PROMESSA HÍBRIDA)
+Headline: "A Fusão Perfeita: Inteligência Artificial + Curadoria Humana."
+
+Subheadline: "Nossa IA varre o mercado. Nossos 20 Especialistas filtram. Você apenas copia e cola."
+
+CTA Principal: "COMEÇAR MEUS 15 DIAS GRÁTIS" (Botão Verde Neon pulsante).
+
+Tagline: "Sem cartão de crédito. Sem compromisso inicial."
+
+SEÇÃO 2: COMO FUNCIONA (CLAREZA TOTAL)
+Use um fluxo visual vertical (Step-by-Step) para explicar que não somos casa de aposta.
+
+O Scanner (IA): "O algoritmo analisa 1.000+ jogos em segundos."
+
+O Refino (Humanos): "Nossa equipe de 20 traders valida as melhores oportunidades."
+
+A Entrega (App): "O bilhete chega pronto no seu celular."
+
+A Ação (Você): "Você clica em 'Pegar Bilhete' e faz a aposta na sua casa favorita (Bet365, etc)."
+
+SEÇÃO 3: O MODELO FREEMIUM (A ISCA)
+Crie um card de destaque explicando o acesso.
+
+Título: "Prove a Assertividade Antes de Assinar."
+
+Texto: "Não queremos seu dinheiro agora. Queremos sua confiança."
+
+Grid de Comparação (Free vs Prime):
+
+Plano Gratuito (15 Dias): ✅ 1 Bilhete Selecionado/Dia. ✅ Acesso ao Painel. ❌ Suporte VIP.
+
+Ocean Prime (Assinatura): ✅ Bilhetes Ilimitados. ✅ Melhores Odds. ✅ Análises Ao Vivo.
+
+Botão: "Liberar Acesso Gratuito Agora".
+
+SEÇÃO 4: POR QUE FUNCIONA? (AUTORIDADE)
+Foco na facilidade. "Facilitamos a vida de quem quer viver de renda variável."
+
+Mostre o Card do Bilhete (aquele design novo que criamos) flutuando na tela, mostrando como é fácil ler e copiar.
+
+SEÇÃO 5: PROVA SOCIAL (RESULTADOS REAIS)
+Carrossel de prints de Bilhetes Vencedores (Greens) nas casas de aposta.
+
+Legenda: "Resultados reais de membros que seguem nossa inteligência."
+
+SEÇÃO 6: RODAPÉ & AVISOS
+Links obrigatórios.
+
+Disclaimer: "O Ocean Signal é uma ferramenta de análise estatística. Não somos uma casa de apostas e não retemos valores de usuários."
+
+3. REQUISITOS TÉCNICOS
+Use framer-motion para que os elementos surjam suavemente (Fade In) conforme o usuário rola a tela.
+
+Garanta que no Mobile os textos não fiquem pequenos demais. A fonte Sora deve ser legível.
+
+O botão de "Começar 15 Dias" deve levar direto para a tela de Cadastro (/signup).
+
+COMANDO: Reescreva a Landing Page. O tom de voz deve ser sério, tecnológico e transparente. O usuário deve entender em 5 segundos que ele vai ganhar uma ferramenta poderosa para ajudar nas apostas dele.

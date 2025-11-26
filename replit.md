@@ -48,6 +48,51 @@ Preferred communication style: Simple, everyday language.
 - **React Query**: Server state management for caching and data synchronization.
 - **Zod**: Schema declaration and validation library.
 
+## Business Model: Freemium with Trial Limitation
+
+**Subscription Tiers:**
+- **Trial** (Default for new users): 15 days free access with limited features
+- **Ocean Prime** (Active): R$ 99,87/month - unlimited access
+- **Expired**: Trial period ended, access blocked
+
+**Trial Limitations:**
+- Duration: 15 days from registration (`trial_start_date`)
+- Signal Access: Only 1 betting tip visible per day (2nd and 3rd tips are blurred with paywall overlay)
+- Dashboard Access: Full dashboard visible with trial countdown banner
+
+**Paywall System:**
+- `useAccessControl` hook: Centralized access control logic calculating `daysRemaining`, `isLocked`, `canSeeAllTips`
+- `LockedScreen` component: Full-screen paywall blocking access after trial expiration
+- `TrialBanner` component: Countdown banner displayed on dashboard for trial users
+- Blur overlay on premium tips with "Exclusivo Ocean Prime" message
+- All subscription management integrated with `subscription_status` field in `profiles` table
+
+**Database Schema:**
+- `profiles.subscription_status`: ENUM('trial', 'active', 'expired') - Default: 'trial'
+- `profiles.trial_start_date`: TIMESTAMP - Automatically set on user creation
+- Migration executed to convert legacy 'free'→'trial', 'premium'→'active'
+
+## Recent Changes (Nov 26, 2024)
+
+**Freemium System Implementation:**
+- ✅ **Database Schema**: Updated `profiles` table with new subscription model
+  - Changed `subscription_status` from ('free', 'premium') to ('trial', 'active', 'expired')
+  - Added `trial_start_date` timestamp column for accurate trial tracking
+  - Migrated existing users: 'free' → 'trial', 'premium' → 'active'
+- ✅ **Access Control Logic**: Created `useAccessControl` hook
+  - Calculates days remaining in trial (15-day limit)
+  - Determines if user is locked out (`isLocked`)
+  - Controls tip visibility (`canSeeAllTips` - premium only)
+  - Tracks user status (isPremium, isTrial, isExpired)
+- ✅ **Paywall Components**: 
+  - `LockedScreen`: Full-screen blocker after trial expiration with Ocean Prime CTA
+  - `TrialBanner`: Countdown banner with urgency messaging (yellow normal, red ≤3 days)
+  - Both components include "Assinar Agora" CTAs linking to checkout
+- ✅ **Type Safety**: Updated `useAuth` hook User interface
+  - Added `createdAt` field for trial calculations
+  - Changed `subscriptionStatus` type to match new schema
+  - Fixed user data mapping from Supabase profiles
+
 ## Recent Changes (Nov 26, 2024)
 
 **Team Logo Persistence Implementation:**

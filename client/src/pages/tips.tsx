@@ -1,17 +1,21 @@
 import { Layout } from "@/components/layout";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, AlertCircle, Ticket, ShieldCheck } from "lucide-react";
+import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { BetCard } from "@/components/bet-card";
 import { useLanguage } from "@/hooks/use-language";
+import { useAccessControl } from "@/hooks/use-access-control";
+
+const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
 
 export default function TipsPage() {
   const queryClient = useQueryClient();
   const { t } = useLanguage();
+  const { canSeeAllTips } = useAccessControl();
   
   const { data: tips = [], isLoading, error } = useQuery({
     queryKey: ['tips'],
@@ -147,13 +151,49 @@ export default function TipsPage() {
 
       {!isLoading && !error && tips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {tips.map((tip) => (
-            <BetCard 
-              key={tip.id} 
-              signal={tip}
-              onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
-            />
-          ))}
+          {tips.map((tip, index) => {
+            // Trial users see only the 1st tip clearly, 2nd and 3rd are blurred
+            // If there are 4+ tips, only blur indices 1 and 2 (2nd and 3rd tips)
+            const shouldBlur = !canSeeAllTips && index >= 1 && index <= 2;
+            
+            return (
+              <div key={tip.id} className="relative" data-testid={`tip-container-${index}`}>
+                <div className={shouldBlur ? 'blur-sm pointer-events-none select-none' : ''}>
+                  <BetCard 
+                    signal={tip}
+                    onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
+                  />
+                </div>
+                
+                {shouldBlur && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl border-2 border-[#33b864]/30" data-testid={`paywall-overlay-${index}`}>
+                    <div className="text-center p-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
+                        <LockKeyhole className="w-8 h-8 text-[#33b864]" />
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+                        Exclusivo Ocean Prime
+                      </h3>
+                      <p className="text-gray-300 text-sm mb-4">
+                        Desbloqueie todos os sinais e maximize seus lucros
+                      </p>
+                      <a
+                        href={CHECKOUT_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-testid="button-unlock-signal"
+                      >
+                        <button className="px-6 py-3 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto">
+                          <Sparkles className="w-4 h-4" />
+                          Assinar Agora
+                        </button>
+                      </a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </Layout>
