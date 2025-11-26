@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <div className="w-16 h-16 rounded-full bg-blue-500/10 border-2 border-blue-500/30 flex items-center justify-center">
             <Shield className="w-8 h-8 text-blue-400" />
           </div>
-          <h1 className="text-3xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
+          <h1 className="text-xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
             Política de Privacidade
           </h1>
         </div>
