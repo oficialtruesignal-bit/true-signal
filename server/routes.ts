@@ -225,21 +225,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "userId and userEmail are required" });
       }
 
-      // Create Ocean Prime plan first
+      // Create Ocean Prime plan (returns init_point for checkout)
       const plan = await mercadoPagoService.createSubscriptionPlan();
 
-      // Now create subscription with user data (this returns init_point)
-      const subscription = await mercadoPagoService.createSubscription({
-        planId: plan.id,
-        userEmail,
-        userId,
-      });
-
-      // Return subscription's init_point to redirect user to Mercado Pago checkout
+      // Return plan's init_point to redirect user to Mercado Pago checkout
+      // When user completes payment, MP automatically creates the subscription
       return res.json({
         planId: plan.id,
-        subscriptionId: subscription.id,
-        initPoint: subscription.init_point,
+        initPoint: plan.init_point,
       });
     } catch (error: any) {
       console.error("Error creating subscription:", error);
