@@ -19,9 +19,9 @@ const formSchema = z.object({
   league: z.string().min(2),
   homeTeam: z.string().min(2),
   awayTeam: z.string().min(2),
-  homeTeamLogo: z.string().optional(),
-  awayTeamLogo: z.string().optional(),
-  fixtureId: z.string().optional(),
+  homeTeamLogo: z.string().optional().nullable(),
+  awayTeamLogo: z.string().optional().nullable(),
+  fixtureId: z.string().optional().nullable(),
   market: z.string().min(2),
   odd: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Must be a number",
@@ -43,7 +43,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       awayTeam: initialData?.awayTeam || "",
       homeTeamLogo: initialData?.homeTeamLogo || "",
       awayTeamLogo: initialData?.awayTeamLogo || "",
-      fixtureId: initialData?.fixtureId || "",
+      fixtureId: initialData?.fixtureId?.toString() || "",
       market: "",
       odd: "",
       betLink: "",
@@ -52,17 +52,34 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const newSignal = {
-      ...values,
-      odd: Number(values.odd),
-      status: "pending",
-      isLive: false, // Default to pre-match, could be toggleable
+      league: values.league,
+      homeTeam: values.homeTeam,
+      awayTeam: values.awayTeam,
       homeTeamLogo: values.homeTeamLogo || undefined,
       awayTeamLogo: values.awayTeamLogo || undefined,
       fixtureId: values.fixtureId || undefined,
+      market: values.market,
+      odd: parseFloat(values.odd), // Convert to number for Signal interface
+      betLink: values.betLink || undefined,
+      status: "pending" as const,
+      isLive: false,
     };
     
     onAdd(newSignal);
-    form.reset();
+    
+    // Reset preserving match context (logos and fixtureId)
+    form.reset({
+      league: initialData?.league || "",
+      homeTeam: initialData?.homeTeam || "",
+      awayTeam: initialData?.awayTeam || "",
+      homeTeamLogo: initialData?.homeTeamLogo || "",
+      awayTeamLogo: initialData?.awayTeamLogo || "",
+      fixtureId: initialData?.fixtureId?.toString() || "",
+      market: "",
+      odd: "",
+      betLink: "",
+    });
+    
     toast({
       title: "Sinal Criado com Sucesso",
       className: "bg-primary/10 border-primary/20 text-primary",

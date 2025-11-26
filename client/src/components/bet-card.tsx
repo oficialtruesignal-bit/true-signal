@@ -82,15 +82,18 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
   const [officialMatchTime, setOfficialMatchTime] = useState<string | null>(null);
-  const [homeTeamLogo, setHomeTeamLogo] = useState<string | null>(null);
-  const [awayTeamLogo, setAwayTeamLogo] = useState<string | null>(null);
+  const [homeTeamLogo, setHomeTeamLogo] = useState<string | null>(signal.homeTeamLogo || null);
+  const [awayTeamLogo, setAwayTeamLogo] = useState<string | null>(signal.awayTeamLogo || null);
   const [isCopied, setIsCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [hasFetchedFromAPI, setHasFetchedFromAPI] = useState(false);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
 
-  // Busca dados oficiais da API-Football se houver fixtureId
+  // Busca dados oficiais da API-Football se houver fixtureId e não houver logos salvos
   useEffect(() => {
-    if (!signal.fixtureId) return;
+    // Se já temos logos salvos no banco, não precisa buscar da API
+    const hasLogosInDB = signal.homeTeamLogo && signal.awayTeamLogo;
+    if (hasLogosInDB || hasFetchedFromAPI || !signal.fixtureId) return;
 
     const fetchFixtureData = async () => {
       try {
@@ -108,18 +111,21 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           console.log('✅ Logo fora:', fixture.teams.away.logo);
           setOfficialLeague(fixture.league.name);
           setOfficialMatchTime(fixture.fixture.date);
-          setHomeTeamLogo(fixture.teams.home.logo);
-          setAwayTeamLogo(fixture.teams.away.logo);
+          // Só atualiza logos se não estiverem no banco
+          if (!signal.homeTeamLogo) setHomeTeamLogo(fixture.teams.home.logo);
+          if (!signal.awayTeamLogo) setAwayTeamLogo(fixture.teams.away.logo);
         } else {
           console.log('❌ Nenhum fixture encontrado');
         }
+        setHasFetchedFromAPI(true);
       } catch (error) {
         console.error('❌ Erro ao buscar dados da partida:', error);
+        setHasFetchedFromAPI(true);
       }
     };
 
     fetchFixtureData();
-  }, [signal.fixtureId]);
+  }, [signal.fixtureId, signal.homeTeamLogo, signal.awayTeamLogo, hasFetchedFromAPI]);
   
   const totalOdd = signal.legs && signal.legs.length > 0
     ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)

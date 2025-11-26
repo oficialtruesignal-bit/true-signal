@@ -50,6 +50,23 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Nov 26, 2024)
 
+**Team Logo Persistence Fix:**
+- ✅ **Database Schema**: Added `homeTeamLogo` and `awayTeamLogo` columns to `tips` table
+  - Migrated database with ALTER TABLE to add logo URL fields
+  - Updated Drizzle schema in `shared/schema.ts`
+- ✅ **Backend Integration**: Fixed tipsService to use server routes instead of direct Supabase
+  - Changed from Supabase client to `/api/tips` REST endpoints
+  - Ensures proper data flow through Drizzle storage layer
+  - Logos now persist correctly: Admin → SignalForm → tipsService → Database → BetCard
+- ✅ **Admin Panel**: Enhanced tip creation flow
+  - Passes `homeTeamLogo`, `awayTeamLogo`, and `fixtureId` from selected Football API match
+  - SignalForm schema updated to handle nullable logo values
+- ✅ **BetCard Optimization**: Improved logo rendering logic
+  - Prioritizes database-saved logos over API fetch
+  - Falls back to API only when logos missing from database
+  - Eliminates redundant API calls for tips with persisted logos
+- ✅ **Type Safety**: Updated `Signal` interface to include optional logo fields
+
 **Search Functionality Added to Pre-Game Page:**
 - ✅ **Search Feature**: Implemented search toggle button and input field in Pre-Game page
   - Toggle button in header (Search/X icon animation)
@@ -63,4 +80,3 @@ Preferred communication style: Simple, everyday language.
   - `clearSearch`: Clear search button label
   - All 6 languages updated: PT, EN, ES, FR, IT, CN
 - ✅ **Consistent Pattern**: Mirrors Live page search implementation for UX consistency
-- ✅ **Architect Review**: All changes validated and approved

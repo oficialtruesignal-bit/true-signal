@@ -19,6 +19,8 @@ export interface Signal {
   league: string;
   homeTeam: string;
   awayTeam: string;
+  homeTeamLogo?: string; // URL of home team logo
+  awayTeamLogo?: string; // URL of away team logo
   market: string;
   odd: number;
   status: "pending" | "green" | "red";

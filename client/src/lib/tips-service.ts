@@ -1,88 +1,84 @@
 import { Signal } from "./mock-data";
-import { supabase } from "./supabase";
-
-// Helper to convert Supabase errors to friendly messages
-const handleSupabaseError = (error: any, operation: string): never => {
-  // RLS policy violation (403)
-  if (error.code === '42501' || error.message?.includes('row-level security') || error.message?.includes('policy')) {
-    throw new Error(`Apenas administradores podem ${operation} tips.`);
-  }
-  
-  // Generic error
-  throw new Error(error.message || `Erro ao ${operation} tip.`);
-};
+import axios from "axios";
 
 export const tipsService = {
   getAll: async (): Promise<Signal[]> => {
-    const { data, error } = await supabase
-      .from('tips')
-      .select('*')
-      .order('created_at', { ascending: false });
+    try {
+      const response = await axios.get('/api/tips');
+      const tips = response.data.tips || [];
       
-    if (error) handleSupabaseError(error, 'carregar');
-    
-    // Map Supabase tips to frontend Signal format
-    return (data || []).map((tip: any) => ({
-      id: tip.id,
-      league: tip.league || '',
-      homeTeam: tip.home_team || '',
-      awayTeam: tip.away_team || '',
-      market: tip.market,
-      odd: parseFloat(tip.odd),
-      status: tip.status,
-      timestamp: tip.created_at,
-      betLink: tip.bet_link,
-      isLive: tip.is_live,
-    }));
+      // Map backend tip format to frontend Signal format
+      // Drizzle ORM returns camelCase by default
+      return tips.map((tip: any) => ({
+        id: tip.id,
+        league: tip.league || '',
+        homeTeam: tip.homeTeam || '',
+        awayTeam: tip.awayTeam || '',
+        homeTeamLogo: tip.homeTeamLogo || undefined,
+        awayTeamLogo: tip.awayTeamLogo || undefined,
+        market: tip.market,
+        odd: Number(tip.odd) || 0,
+        status: tip.status,
+        timestamp: tip.createdAt,
+        betLink: tip.betLink || undefined,
+        isLive: tip.isLive || false,
+        fixtureId: tip.fixtureId || undefined,
+      }));
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
+    }
   },
 
   create: async (tip: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal> => {
-    const { data, error} = await supabase
-      .from('tips')
-      .insert([{
-        home_team: tip.homeTeam,
-        away_team: tip.awayTeam,
+    try {
+      const response = await axios.post('/api/tips', {
+        homeTeam: tip.homeTeam,
+        awayTeam: tip.awayTeam,
+        homeTeamLogo: tip.homeTeamLogo || null,
+        awayTeamLogo: tip.awayTeamLogo || null,
         league: tip.league,
         market: tip.market,
-        odd: tip.odd,
+        odd: tip.odd.toString(), // Convert to string for Drizzle decimal schema
         status: tip.status || 'pending',
-        bet_link: tip.betLink,
-        is_live: tip.isLive || false,
-      }])
-      .select()
-      .single();
+        betLink: tip.betLink || null,
+        isLive: tip.isLive || false,
+        fixtureId: tip.fixtureId || null,
+      });
       
-    if (error) handleSupabaseError(error, 'criar');
-
-    return {
-      id: data.id,
-      league: data.league || '',
-      homeTeam: data.home_team || '',
-      awayTeam: data.away_team || '',
-      market: data.market,
-      odd: parseFloat(data.odd),
-      status: data.status,
-      timestamp: data.created_at,
-      betLink: data.bet_link,
-      isLive: data.is_live,
-    };
+      const data = response.data.tip;
+      return {
+        id: data.id,
+        league: data.league || '',
+        homeTeam: data.homeTeam || '',
+        awayTeam: data.awayTeam || '',
+        homeTeamLogo: data.homeTeamLogo || undefined,
+        awayTeamLogo: data.awayTeamLogo || undefined,
+        market: data.market,
+        odd: parseFloat(data.odd),
+        status: data.status,
+        timestamp: data.createdAt,
+        betLink: data.betLink,
+        isLive: data.isLive,
+        fixtureId: data.fixtureId,
+      };
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Erro ao criar tip');
+    }
   },
 
   updateStatus: async (id: string, status: Signal['status']): Promise<void> => {
-    const { error } = await supabase
-      .from('tips')
-      .update({ status })
-      .eq('id', id);
-      
-    if (error) handleSupabaseError(error, 'atualizar');
+    try {
+      await axios.patch(`/api/tips/${id}/status`, { status });
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Erro ao atualizar status');
+    }
   },
 
   delete: async (id: string): Promise<void> => {
-    const { error } = await supabase
-      .from('tips')
-      .delete()
-      .eq('id', id);
-      
-    if (error) handleSupabaseError(error, 'deletar');
+    try {
+      await axios.delete(`/api/tips/${id}`);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.error || 'Erro ao deletar tip');
+    }
   },
 };
