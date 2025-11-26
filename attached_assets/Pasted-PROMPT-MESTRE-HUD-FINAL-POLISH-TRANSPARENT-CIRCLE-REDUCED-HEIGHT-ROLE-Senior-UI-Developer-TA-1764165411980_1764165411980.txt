@@ -1,0 +1,63 @@
+PROMPT MESTRE: HUD FINAL POLISH (TRANSPARENT CIRCLE + REDUCED HEIGHT)
+ROLE: Senior UI Developer.
+
+TASK: Ajustar o estilo do bloco superior do CompactLiveHud.tsx. PROBLEMAS:
+
+O Círculo de Assertividade tem fundo e borda (deve ser transparente).
+
+A seção do gráfico está muito alta (ocupa muito espaço vertical).
+
+SOLUÇÃO: Reduzir a altura do grid superior para h-48 e remover as classes de estilo do container do círculo.
+
+CÓDIGO DE SUBSTITUIÇÃO (BLOCO SUPERIOR)
+Substitua apenas a div que contém o Grid Superior (Círculo + Gráfico) por este código:
+
+TypeScript
+
+  {/* --- BLOCO SUPERIOR: CÍRCULO + GRÁFICO (Altura Reduzida para h-48) --- */}
+  <div className="grid grid-cols-[40%_60%] gap-4 h-48 items-center mb-4">
+    
+    {/* ESQUERDA: CÍRCULO FLUTUANTE (Sem Background, Sem Borda) */}
+    {/* Removi: bg-..., border-..., shadow-... */}
+    <div className="relative flex items-center justify-center h-full w-full">
+       
+       {/* O SVG do Círculo (Centralizado) */}
+       <div className="relative w-36 h-36 flex items-center justify-center">
+          {/* ... SEU CÓDIGO SVG DO GAUGE ... */}
+          <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            {/* ... Lógica dos tracinhos ... */}
+            {Array.from({ length: 60 }).map((_, i) => {
+                const isActive = i < Math.round((roiValue / 100) * 60);
+                const color = isActive ? "#33b864" : "#222222"; 
+                return (
+                  <line
+                    key={i} x1="50" y1="10" x2="50" y2="20" stroke={color} strokeWidth="2"
+                    transform={`rotate(${i * (360 / 60)} 50 50)`}
+                  />
+                );
+            })}
+          </svg>
+
+          {/* Texto Central */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+             <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
+               {roiValue.toFixed(1)}<span className="text-lg text-[#33b864]">%</span>
+             </span>
+             <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">
+               Assertividade
+             </span>
+          </div>
+       </div>
+
+    </div>
+
+    {/* DIREITA: GRÁFICO DE LUCRO (Se ajusta automaticamente ao h-48) */}
+    <ProfitTrendChart />
+
+  </div>
+CHECKLIST
+h-48: Garante que o gráfico fique mais compacto verticalmente.
+
+bg- removido da esquerda: O círculo agora flutua direto no fundo preto da página.
+
+COMANDO: Execute a substituição. O visual ficará mais leve e o gráfico terá uma proporção cinematográfica (widescreen).

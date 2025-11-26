@@ -50,12 +50,12 @@ export function CompactLiveHud() {
   return (
     <div className="w-full mb-8">
       
-      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-64 items-stretch mb-4">
+      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO (Altura Reduzida para h-48) */}
+      <div className="grid grid-cols-[40%_60%] gap-4 h-48 items-center mb-4">
 
-        {/* --- ESQUERDA: REATOR DE ASSERTIVIDADE (GAUGE) --- */}
-        <div className="relative flex items-center justify-center bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-[#33b864]/10 to-transparent rounded-3xl border border-[#33b864]/20 shadow-[0_0_30px_rgba(51,184,100,0.1)] h-full">
-          <div className="relative w-40 h-40 flex items-center justify-center">
+        {/* --- ESQUERDA: CÍRCULO FLUTUANTE (Sem Background, Sem Borda) --- */}
+        <div className="relative flex items-center justify-center h-full w-full">
+          <div className="relative w-36 h-36 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               {Array.from({ length: 60 }).map((_, i) => {
@@ -65,9 +65,9 @@ export function CompactLiveHud() {
                 return (
                   <line
                     key={i}
-                    x1="50" y1="2" x2="50" y2="12"
+                    x1="50" y1="10" x2="50" y2="20"
                     stroke={color}
-                    strokeWidth="2.5"
+                    strokeWidth="2"
                     transform={`rotate(${i * (360 / 60)} 50 50)`}
                     style={{ transition: 'stroke 0.5s ease' }}
                   />
@@ -77,10 +77,10 @@ export function CompactLiveHud() {
 
             {/* Conteúdo Central (Texto) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <span className="text-3xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
-                {assertivityValue.toFixed(1)}%
+              <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
+                {assertivityValue.toFixed(1)}<span className="text-lg text-[#33b864]">%</span>
               </span>
-              <span className="text-[9px] font-mono text-[#33b864] tracking-[0.2em] mt-1 uppercase">
+              <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">
                 Assertividade
               </span>
             </div>
@@ -88,7 +88,7 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: GRÁFICO DE LUCRO (Substitui os 2 cards antigos) --- */}
+        {/* --- DIREITA: GRÁFICO DE LUCRO (Se ajusta automaticamente ao h-48) --- */}
         <ProfitTrendChart />
 
       </div>
