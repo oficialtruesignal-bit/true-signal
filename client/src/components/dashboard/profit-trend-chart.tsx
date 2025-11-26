@@ -1,65 +1,48 @@
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { AreaChart, Area, ResponsiveContainer, Tooltip } from 'recharts';
 import { TrendingUp } from 'lucide-react';
 
-// Dados simulados de crescimento de banca (Ex: últimos 7 dias/sinais)
 const data = [
-  { name: 'D1', profit: 10 },
-  { name: 'D2', profit: 25 },
-  { name: 'D3', profit: 18 },
-  { name: 'D4', profit: 35 },
-  { name: 'D5', profit: 42 },
-  { name: 'D6', profit: 58 },
-  { name: 'D7', profit: 85 },
+  { name: '1', val: 10 }, { name: '2', val: 25 }, { name: '3', val: 20 },
+  { name: '4', val: 40 }, { name: '5', val: 35 }, { name: '6', val: 60 },
+  { name: '7', val: 85 },
 ];
 
 export function ProfitTrendChart() {
   return (
-    <div className="h-full bg-[#121212] border border-[#33b864]/20 rounded-3xl p-4 flex flex-col relative overflow-hidden shadow-[0_0_30px_rgba(51,184,100,0.05)] group">
+    <div className="w-full h-full bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 flex flex-col relative overflow-hidden shadow-lg hover:border-[#33b864]/40 transition-colors">
       
-      {/* Título e Valor Atual */}
-      <div className="flex justify-between items-start mb-2 z-10 px-2">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <TrendingUp className="w-4 h-4 text-[#33b864]" />
-            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Crescimento da Banca</span>
-          </div>
-          <span className="text-3xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(51,184,100,0.3)]">
-            +85.0%
-          </span>
+      {/* CABEÇALHO DO CARD */}
+      <div className="flex flex-col z-10 relative">
+        <div className="flex items-center gap-2 mb-1">
+          <TrendingUp className="w-4 h-4 text-[#33b864]" />
+          <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Crescimento Banca</span>
         </div>
+        <span className="text-3xl font-sora font-black text-white drop-shadow-md">
+          +85.0%
+        </span>
       </div>
 
-      {/* O Gráfico */}
-      <div className="flex-1 w-full h-full min-h-[120px] -ml-4 -mb-4">
-        <ResponsiveContainer width="115%" height="115%">
+      {/* ÁREA DO GRÁFICO (Ajustado para o fundo) */}
+      <div className="absolute bottom-0 left-0 right-0 h-24 w-full opacity-80">
+        <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data}>
             <defs>
-              <linearGradient id="colorProfit" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#33b864" stopOpacity={0.6}/>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#33b864" stopOpacity={0.4}/>
                 <stop offset="95%" stopColor="#33b864" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <XAxis dataKey="name" hide={true} />
-            <YAxis hide={true} />
-            <Tooltip 
-              contentStyle={{ backgroundColor: '#0a0a0a', border: '1px solid #33b864', borderRadius: '8px' }}
-              itemStyle={{ color: '#33b864' }}
-              labelStyle={{ color: 'white' }}
-            />
+            <Tooltip cursor={false} content={() => null} />
             <Area 
               type="monotone" 
-              dataKey="profit" 
+              dataKey="val" 
               stroke="#33b864" 
               strokeWidth={3} 
-              fillOpacity={1} 
-              fill="url(#colorProfit)" 
-              style={{ filter: 'drop-shadow(0px 0px 6px rgb(51 184 100 / 0.5))' }}
+              fill="url(#chartGradient)" 
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
-       
-      <div className="absolute inset-0 border-2 border-[#33b864]/0 rounded-3xl group-hover:border-[#33b864]/30 transition-all pointer-events-none"></div>
 
     </div>
   );

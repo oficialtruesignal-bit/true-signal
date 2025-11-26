@@ -50,8 +50,8 @@ export function CompactLiveHud() {
   return (
     <div className="w-full mb-8">
       
-      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO (Altura Reduzida para h-48) */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-48 items-center mb-4">
+      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO (Altura Fixa Controlada: h-40) */}
+      <div className="grid grid-cols-[40%_60%] gap-4 h-40 items-center mb-4">
 
         {/* --- ESQUERDA: CÍRCULO FLUTUANTE (Sem Background, Sem Borda) --- */}
         <div className="relative flex items-center justify-center h-full w-full">
