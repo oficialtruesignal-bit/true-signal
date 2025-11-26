@@ -12,7 +12,7 @@ const tickerData = [
 
 export function FinancialTicker() {
   return (
-    <div className="relative w-full overflow-hidden bg-black/60 backdrop-blur-xl border-y border-[#33b864]/20 py-3">
+    <div className="relative w-full overflow-hidden bg-black/60 backdrop-blur-xl border-y border-[#33b864]/20 py-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
       <motion.div
         className="flex gap-12 whitespace-nowrap"
         animate={{
