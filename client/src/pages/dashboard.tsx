@@ -112,6 +112,9 @@ export default function Dashboard() {
             </div>
           </div>
 
+          {/* Install App Banner - Preview */}
+          <InstallAppBanner />
+
           {/* CTA to See Full Dashboard - Enhanced */}
           <div className="text-center pt-4">
             <button
