@@ -138,8 +138,8 @@ export default function LivePage() {
             >
               {/* League & Time */}
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-bold text-primary/70">{match.league.name}</span>
-                <span className="text-xs font-bold text-red-500 animate-pulse flex items-center gap-1">
+                <span className="text-xs font-bold text-primary/70 truncate max-w-[200px] block">{match.league.name}</span>
+                <span className="text-xs font-bold text-red-500 animate-pulse flex items-center gap-1 flex-shrink-0">
                   <span className="w-2 h-2 rounded-full bg-red-500" />
                   {match.fixture.status.elapsed}'
                 </span>
@@ -156,8 +156,8 @@ export default function LivePage() {
                       e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
                     }}
                   />
-                  <span className="font-display font-bold text-white block" title={match.teams.home.name}>
-                    {match.teams.home.name.length > 20 ? match.teams.home.name.substring(0, 20) + '...' : match.teams.home.name}
+                  <span className="font-display font-bold text-white truncate max-w-[180px] block">
+                    {match.teams.home.name}
                   </span>
                 </div>
 
@@ -168,8 +168,8 @@ export default function LivePage() {
                 </div>
 
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-                  <span className="font-display font-bold text-white text-right block" title={match.teams.away.name}>
-                    {match.teams.away.name.length > 20 ? match.teams.away.name.substring(0, 20) + '...' : match.teams.away.name}
+                  <span className="font-display font-bold text-white text-right truncate max-w-[180px] block">
+                    {match.teams.away.name}
                   </span>
                   <img 
                     src={match.teams.away.logo} 
