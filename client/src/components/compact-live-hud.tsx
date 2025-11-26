@@ -15,15 +15,15 @@ export function CompactLiveHud() {
     queryFn: tipsService.getAll,
   });
   
-  // Simular investidores online (oscila entre 3400-3500)
-  const [onlineUsers, setOnlineUsers] = useState(3420);
+  // Simular investidores online (oscila entre 312-612)
+  const [onlineUsers, setOnlineUsers] = useState(450);
   
   useEffect(() => {
     const oscillate = () => {
       setOnlineUsers(prev => {
         const variation = Math.floor(Math.random() * 40) - 15;
         const newValue = prev + variation;
-        return Math.max(3400, Math.min(3500, newValue));
+        return Math.max(312, Math.min(612, newValue));
       });
     };
     
@@ -107,14 +107,14 @@ export function CompactLiveHud() {
           <span className="text-3xl font-sora font-bold text-white z-10">@{averageOdd}</span>
         </div>
 
-        {/* CARD B: ONLINE AGORA */}
+        {/* CARD B: USUÁRIOS ONLINE */}
         <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
           <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
             <Users className="w-8 h-8 text-[#33b864]" />
           </div>
           <div className="flex items-center gap-2 mb-2 z-10">
             <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse shadow-[0_0_8px_#33b864]"></span>
-            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Online</span>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Usuários Online</span>
           </div>
           <span className="text-3xl font-sora font-bold text-white z-10">{onlineUsers.toLocaleString('pt-BR')}</span>
         </div>
