@@ -51,7 +51,7 @@ export function CompactLiveHud() {
     <div className="w-full mb-8 flex flex-col gap-6">
 
       {/* SEÇÃO 1: BLOCO SUPERIOR (Círculo + Gráfico) */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-40 items-center">
+      <div className="grid grid-cols-[40%_60%] gap-4 h-32 items-center">
 
         {/* ESQUERDA: GAUGE DE ASSERTIVIDADE */}
         <div className="relative flex items-center justify-center h-full w-full">
