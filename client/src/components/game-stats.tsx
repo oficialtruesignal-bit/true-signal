@@ -1,5 +1,6 @@
-import { Flag } from "lucide-react";
+import { Flag, BarChart } from "lucide-react";
 import { Card } from "./ui/card";
+import { useLanguage } from "@/hooks/use-language";
 
 interface TeamStats {
   team: string;
@@ -25,278 +26,214 @@ interface GameStatsProps {
   };
 }
 
-function CircularProgress({ 
-  value, 
-  max, 
-  size = 80, 
-  strokeWidth = 8 
-}: { 
-  value: number; 
-  max: number; 
-  size?: number; 
-  strokeWidth?: number;
-}) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  
-  // Guard against division by zero
-  const safeMax = max > 0 ? max : 1;
-  const progress = (value / safeMax) * circumference;
-
-  return (
-    <svg width={size} height={size} className="transform -rotate-90">
-      {/* Background circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="#333"
-        strokeWidth={strokeWidth}
-      />
-      {/* Progress circle */}
-      <circle
-        cx={size / 2}
-        cy={size / 2}
-        r={radius}
-        fill="none"
-        stroke="#33b864"
-        strokeWidth={strokeWidth}
-        strokeDasharray={circumference}
-        strokeDashoffset={circumference - progress}
-        strokeLinecap="round"
-        className="transition-all duration-500"
-      />
-    </svg>
-  );
-}
-
-function LinearBar({ 
+const StatRow = ({ 
+  label, 
   homeValue, 
-  awayValue, 
-  label 
+  awayValue 
 }: { 
+  label: string; 
   homeValue: number; 
   awayValue: number; 
-  label: string;
-}) {
+}) => {
   const total = homeValue + awayValue;
-  const homePercent = total > 0 ? (homeValue / total) * 100 : 50;
+  if (total === 0) return null;
+  
+  const homePct = total === 0 ? 0 : (homeValue / total) * 100;
+  const awayPct = total === 0 ? 0 : (awayValue / total) * 100;
 
   return (
-    <div className="space-y-2">
-      <div className="flex justify-between text-xs text-muted-foreground">
-        <span>{homeValue}</span>
-        <span className="text-white font-medium">{label}</span>
-        <span>{awayValue}</span>
+    <div className="mb-5 w-full">
+      {/* Linha de Títulos e Valores */}
+      <div className="flex justify-between items-end mb-2 px-1">
+        <span className="text-lg font-display font-bold text-[#33b864]">{homeValue}</span>
+        <span className="text-xs text-gray-400 uppercase font-bold tracking-wider">{label}</span>
+        <span className="text-lg font-display font-bold text-white">{awayValue}</span>
       </div>
-      <div className="h-2 bg-[#333] rounded-full overflow-hidden flex">
+
+      {/* As Barras (Visualização Split) */}
+      <div className="flex h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+        {/* Barra Home (Verde, cresce da esquerda) */}
         <div 
-          className="bg-primary transition-all duration-500" 
-          style={{ width: `${homePercent}%` }}
+          style={{ width: `${homePct}%` }} 
+          className="bg-[#33b864] h-full shadow-[0_0_10px_#33b864] transition-all duration-500"
         />
+        {/* Espaço Vazio (Gap) */}
+        <div className="w-1 h-full bg-black" />
+        {/* Barra Away (Cinza, cresce da direita) */}
         <div 
-          className="bg-primary/40 transition-all duration-500" 
-          style={{ width: `${100 - homePercent}%` }}
+          style={{ width: `${awayPct}%` }} 
+          className="bg-gray-500 h-full transition-all duration-500"
         />
       </div>
     </div>
   );
-}
+};
 
 export function GameStats({ homeTeam, awayTeam, statistics }: GameStatsProps) {
+  const { t } = useLanguage();
   const stats = statistics;
   
-  // Verifica se há alguma estatística disponível
   const hasAnyStats = Object.keys(stats).length > 0 && Object.values(stats).some(stat => stat !== null && stat !== undefined);
   
   if (!hasAnyStats) {
     return (
       <Card className="bg-[#0a0a0a] border-primary/20 p-12 text-center">
-        <p className="text-muted-foreground text-sm">
-          Dados estatísticos indisponíveis no momento
-        </p>
-        <p className="text-xs text-muted-foreground/60 mt-2">
-          As estatísticas serão atualizadas conforme o jogo avança
+        <BarChart className="w-12 h-12 text-gray-800 mx-auto mb-4" />
+        <p className="text-gray-400 text-sm font-medium">
+          {t.matchCenter.noStats}
         </p>
       </Card>
     );
   }
 
+  const homePossession = stats.possession?.home || 0;
+  const awayPossession = stats.possession?.away || 0;
+
   return (
     <Card className="bg-[#0a0a0a] border-primary/20 p-6 space-y-6">
-      {/* xG Header */}
-      {stats.xg && (
-        <div className="text-center pb-4 border-b border-primary/10">
-          <div className="flex items-center justify-center gap-4 text-lg font-bold">
-            <span className="text-primary">{stats.xg.home.toFixed(2)} xG</span>
-            <span className="text-muted-foreground">-</span>
-            <span className="text-primary/70">{stats.xg.away.toFixed(2)} xG</span>
+      {/* 1. CÍRCULO DE POSSE (CENTERED GAUGE) */}
+      {stats.possession && (
+        <div className="flex items-center justify-center gap-6 mb-6">
+          {/* Lado Esquerdo (Home) */}
+          <div className="text-right">
+            <span className="text-2xl font-display font-bold text-[#33b864]">{homePossession}%</span>
+            <p className="text-[10px] text-gray-500 uppercase">{t.matchCenter.home}</p>
           </div>
-          <p className="text-xs text-muted-foreground mt-1">Expected Goals</p>
+
+          {/* O Círculo (Centro) */}
+          <div className="relative w-24 h-24">
+            <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+              {/* Fundo */}
+              <path 
+                className="text-gray-800" 
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="3" 
+              />
+              {/* Progresso (Home - Verde) */}
+              <path 
+                className="text-[#33b864] drop-shadow-[0_0_5px_rgba(51,184,100,0.5)]" 
+                strokeDasharray={`${homePossession}, 100`} 
+                d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="3" 
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-[10px] font-bold text-gray-400">{t.matchCenter.possession}</span>
+            </div>
+          </div>
+
+          {/* Lado Direito (Away) */}
+          <div className="text-left">
+            <span className="text-2xl font-display font-bold text-white">{awayPossession}%</span>
+            <p className="text-[10px] text-gray-500 uppercase">{t.matchCenter.away}</p>
+          </div>
         </div>
       )}
 
-      {/* Circular Progress Section */}
-      <div className="grid grid-cols-3 gap-4 py-4">
-        {/* Attacks */}
-        {stats.attacks && (
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl font-bold text-primary w-10 text-right">{stats.attacks.home}</span>
-              <div className="relative">
-                <CircularProgress 
-                  value={stats.attacks.home} 
-                  max={stats.attacks.home + stats.attacks.away}
-                  size={80}
-                  strokeWidth={7}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary">
-                    {stats.attacks.home > stats.attacks.away ? '←' : stats.attacks.home < stats.attacks.away ? '→' : '-'}
-                  </span>
-                </div>
+      {/* 2. GRID DE EVENTOS (ESCANTEIOS/CARTÕES) */}
+      {(stats.corners || stats.yellowCards || stats.redCards) && (
+        <div className="grid grid-cols-3 divide-x divide-white/10 bg-[#121212] rounded-xl p-4 mb-6">
+          {/* Escanteios */}
+          {stats.corners && (
+            <div className="flex flex-col items-center gap-2 px-4">
+              <Flag className="w-5 h-5 text-[#33b864]" />
+              <div className="text-sm font-display font-bold text-white">
+                {stats.corners.home} - {stats.corners.away}
               </div>
-              <span className="text-2xl font-bold text-primary/60 w-10 text-left">{stats.attacks.away}</span>
+              <span className="text-[10px] text-gray-500 uppercase font-bold">{t.matchCenter.corners}</span>
             </div>
-            <span className="text-sm font-medium text-muted-foreground">Ataques</span>
-          </div>
-        )}
+          )}
 
-        {/* Dangerous Attacks */}
-        {stats.dangerousAttacks && (
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl font-bold text-primary w-10 text-right">{stats.dangerousAttacks.home}</span>
-              <div className="relative">
-                <CircularProgress 
-                  value={stats.dangerousAttacks.home} 
-                  max={stats.dangerousAttacks.home + stats.dangerousAttacks.away}
-                  size={80}
-                  strokeWidth={7}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary">
-                    {stats.dangerousAttacks.home > stats.dangerousAttacks.away ? '←' : stats.dangerousAttacks.home < stats.dangerousAttacks.away ? '→' : '-'}
-                  </span>
-                </div>
+          {/* Cartões Amarelos */}
+          {stats.yellowCards && (
+            <div className="flex flex-col items-center gap-2 px-4">
+              <div className="w-3 h-4 bg-yellow-500 rounded-sm" />
+              <div className="text-sm font-display font-bold text-white">
+                {stats.yellowCards.home} - {stats.yellowCards.away}
               </div>
-              <span className="text-2xl font-bold text-primary/60 w-10 text-left">{stats.dangerousAttacks.away}</span>
+              <span className="text-[10px] text-gray-500 uppercase font-bold">{t.matchCenter.yellowCards}</span>
             </div>
-            <span className="text-sm font-medium text-muted-foreground">Ataque Perigoso</span>
-          </div>
-        )}
+          )}
 
-        {/* Possession */}
-        {stats.possession && (
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center justify-center gap-3">
-              <span className="text-2xl font-bold text-primary w-14 text-right">{stats.possession.home}%</span>
-              <div className="relative">
-                <CircularProgress 
-                  value={stats.possession.home} 
-                  max={100}
-                  size={80}
-                  strokeWidth={7}
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-primary">
-                    {stats.possession.home > stats.possession.away ? '←' : stats.possession.home < stats.possession.away ? '→' : '-'}
-                  </span>
-                </div>
+          {/* Cartões Vermelhos */}
+          {stats.redCards && (
+            <div className="flex flex-col items-center gap-2 px-4">
+              <div className="w-3 h-4 bg-red-500 rounded-sm" />
+              <div className="text-sm font-display font-bold text-white">
+                {stats.redCards.home} - {stats.redCards.away}
               </div>
-              <span className="text-2xl font-bold text-primary/60 w-14 text-left">{stats.possession.away}%</span>
+              <span className="text-[10px] text-gray-500 uppercase font-bold">{t.matchCenter.redCards}</span>
             </div>
-            <span className="text-sm font-medium text-muted-foreground">Posse de Bola</span>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
-      {/* Events Row (Corners, Cards) */}
-      <div className="flex items-center justify-around py-4 border-y border-primary/10">
-        {/* Corners */}
-        {stats.corners && (
-          <div className="flex flex-col items-center gap-2">
-            <Flag className="w-5 h-5 text-primary" />
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-white">{stats.corners.home}</span>
-              <span className="text-xs text-muted-foreground">-</span>
-              <span className="text-sm font-bold text-white">{stats.corners.away}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">Escanteios</span>
-          </div>
-        )}
-
-        {/* Yellow Cards */}
-        {stats.yellowCards && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-3 h-4 bg-yellow-500 rounded-sm"></div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-white">{stats.yellowCards.home}</span>
-              <span className="text-xs text-muted-foreground">-</span>
-              <span className="text-sm font-bold text-white">{stats.yellowCards.away}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">Amarelos</span>
-          </div>
-        )}
-
-        {/* Red Cards */}
-        {stats.redCards && (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-3 h-4 bg-red-500 rounded-sm"></div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold text-white">{stats.redCards.home}</span>
-              <span className="text-xs text-muted-foreground">-</span>
-              <span className="text-sm font-bold text-white">{stats.redCards.away}</span>
-            </div>
-            <span className="text-xs text-muted-foreground">Vermelhos</span>
-          </div>
-        )}
-      </div>
-
-      {/* Shots Section */}
-      {stats.shotsTotal && stats.shotsOnGoal && (
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-bold text-white">
-              {stats.shotsTotal.home}/{stats.shotsOnGoal.home}
-            </span>
-            <span className="text-xs text-muted-foreground">Finalizações (Total / No Gol)</span>
-            <span className="text-sm font-bold text-white">
-              {stats.shotsTotal.away}/{stats.shotsOnGoal.away}
-            </span>
-          </div>
-          <LinearBar 
+      {/* 3. BARRAS DE ESTATÍSTICAS (ALINHAMENTO PERFEITO) */}
+      <div className="space-y-4 pt-4">
+        {/* Chutes no Gol */}
+        {stats.shotsOnGoal && (
+          <StatRow 
+            label={t.matchCenter.shotsOnGoal} 
             homeValue={stats.shotsOnGoal.home} 
             awayValue={stats.shotsOnGoal.away} 
-            label="Chutes no Gol"
           />
-        </div>
-      )}
+        )}
 
-      {/* Skill Bars */}
-      <div className="space-y-4 pt-4">
+        {/* Chutes Totais */}
+        {stats.shotsTotal && (
+          <StatRow 
+            label={t.matchCenter.shotsTotal} 
+            homeValue={stats.shotsTotal.home} 
+            awayValue={stats.shotsTotal.away} 
+          />
+        )}
+
+        {/* Ataques */}
+        {stats.attacks && (
+          <StatRow 
+            label={t.matchCenter.attacks} 
+            homeValue={stats.attacks.home} 
+            awayValue={stats.attacks.away} 
+          />
+        )}
+
+        {/* Ataques Perigosos */}
+        {stats.dangerousAttacks && (
+          <StatRow 
+            label={t.matchCenter.dangerousAttacks} 
+            homeValue={stats.dangerousAttacks.home} 
+            awayValue={stats.dangerousAttacks.away} 
+          />
+        )}
+
+        {/* Passes Chave */}
         {stats.keyPasses && (
-          <LinearBar 
+          <StatRow 
+            label={t.matchCenter.keyPasses} 
             homeValue={stats.keyPasses.home} 
             awayValue={stats.keyPasses.away} 
-            label="Passes Chave"
           />
         )}
-        
+
+        {/* Defesas do Goleiro */}
         {stats.saves && (
-          <LinearBar 
+          <StatRow 
+            label={t.matchCenter.saves} 
             homeValue={stats.saves.home} 
             awayValue={stats.saves.away} 
-            label="Defesas do Goleiro"
           />
         )}
-        
+
+        {/* Precisão de Passes */}
         {stats.passAccuracy && (
-          <LinearBar 
+          <StatRow 
+            label={t.matchCenter.passAccuracy} 
             homeValue={stats.passAccuracy.home} 
             awayValue={stats.passAccuracy.away} 
-            label="Precisão de Passes (%)"
           />
         )}
       </div>
