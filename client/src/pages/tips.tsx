@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { BetCard } from "@/components/bet-card";
 import { useLanguage } from "@/hooks/use-language";
 import { useAccessControl } from "@/hooks/use-access-control";
+import { useUnreadTips } from "@/hooks/use-unread-tips";
 
 const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
 
@@ -22,6 +23,16 @@ export default function TipsPage() {
     queryFn: tipsService.getAll,
     refetchInterval: 30000, // Refresh every 30s
   });
+
+  const tipIds = tips.map(tip => tip.id);
+  const { markAllAsViewed } = useUnreadTips(tipIds);
+
+  // Mark all tips as viewed when user opens the page
+  useEffect(() => {
+    if (tips.length > 0) {
+      markAllAsViewed();
+    }
+  }, [tips.length]);
 
   // Realtime subscription for new tips
   useEffect(() => {

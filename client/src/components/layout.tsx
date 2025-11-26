@@ -8,11 +8,24 @@ import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
 import { Logo } from "./logo";
 import { ThemeToggle } from "./theme-toggle";
+import { useQuery } from "@tanstack/react-query";
+import { tipsService } from "@/lib/tips-service";
+import { useUnreadTips } from "@/hooks/use-unread-tips";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+
+  // Get tips for unread count
+  const { data: tips = [] } = useQuery({
+    queryKey: ['tips'],
+    queryFn: tipsService.getAll,
+    refetchInterval: 30000,
+  });
+
+  const tipIds = tips.map(tip => tip.id);
+  const { unreadCount } = useUnreadTips(tipIds);
 
   // Initial OneSignal Init
   useEffect(() => {
@@ -100,18 +113,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
               key={item.path} 
               href={item.path}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border border-transparent",
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border border-transparent relative",
                 location === item.path
                   ? "bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.1)]"
                   : "text-muted-foreground hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
               )}
             >
-              <item.icon
-                className={cn(
-                  "w-5 h-5 transition-colors",
-                  location === item.path ? "text-primary" : "text-muted-foreground group-hover:text-primary dark:group-hover:text-white"
+              <div className="relative">
+                <item.icon
+                  className={cn(
+                    "w-5 h-5 transition-colors",
+                    location === item.path ? "text-primary" : "text-muted-foreground group-hover:text-primary dark:group-hover:text-white"
+                  )}
+                />
+                {item.path === "/tips" && unreadCount > 0 && (
+                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </div>
                 )}
-              />
+              </div>
               <span className="font-medium">{item.label}</span>
             </Link>
           ))}
@@ -176,16 +196,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
             href={item.path}
             data-testid={`nav-${item.label.toLowerCase()}`}
             className={cn(
-              "flex flex-col items-center justify-center w-16 h-full gap-1 transition-all",
+              "flex flex-col items-center justify-center w-16 h-full gap-1 transition-all relative",
               location === item.path ? "text-primary" : "text-muted-foreground"
             )}
           >
-            <item.icon
-              className={cn(
-                "w-5 h-5 transition-all",
-                location === item.path ? "scale-110 drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" : ""
+            <div className="relative">
+              <item.icon
+                className={cn(
+                  "w-5 h-5 transition-all",
+                  location === item.path ? "scale-110 drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" : ""
+                )}
+              />
+              {item.path === "/tips" && unreadCount > 0 && (
+                <div className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </div>
               )}
-            />
+            </div>
             <span className={cn(
               "text-[10px] font-medium transition-all",
               location === item.path ? "font-bold" : ""
