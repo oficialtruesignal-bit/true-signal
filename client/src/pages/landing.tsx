@@ -1,5 +1,4 @@
 import { MatrixRain } from '@/components/landing/matrix-rain';
-import { LiveToast } from '@/components/landing/live-toast';
 import { HeroShot } from '@/components/landing/hero-shot';
 import { FinancialTicker } from '@/components/landing/financial-ticker';
 import { ProblemAgitation } from '@/components/landing/problem-agitation';
@@ -20,7 +19,6 @@ export default function Landing() {
     <div className="min-h-screen bg-black text-white relative overflow-hidden">
       {/* Background effects */}
       <MatrixRain />
-      <LiveToast />
       
       {/* Content */}
       <div className="relative z-10">
