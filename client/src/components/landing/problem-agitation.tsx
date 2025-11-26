@@ -51,7 +51,7 @@ export function ProblemAgitation() {
                 <div className="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center">
                   <TrendingDown className="w-6 h-6 text-red-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-red-400" style={{ fontFamily: 'Sora, sans-serif' }}>
+                <h3 className="text-lg md:text-2xl font-bold text-red-400" style={{ fontFamily: 'Sora, sans-serif' }}>
                   Você Ainda Opera Assim?
                 </h3>
               </div>
