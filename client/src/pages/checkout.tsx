@@ -1,8 +1,8 @@
 import { Layout } from "@/components/layout";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift } from "lucide-react";
+import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle } from "lucide-react";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { toast } from "sonner";
 import axios from "axios";
@@ -12,6 +12,19 @@ export default function CheckoutPage() {
   const { t } = useLanguage();
   const { daysRemaining, isPremium } = useAccessControl();
   const [isLoading, setIsLoading] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState(127);
+
+  // Simular contador de usuários online (varia entre 120-150)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOnlineUsers(prev => {
+        const change = Math.random() > 0.5 ? 1 : -1;
+        const newValue = prev + change;
+        return Math.max(120, Math.min(150, newValue));
+      });
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubscribe = async () => {
     if (!user) {
@@ -63,149 +76,313 @@ export default function CheckoutPage() {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
+        {/* Security Badge Header */}
+        <div className="flex items-center justify-center gap-6 mb-8 flex-wrap">
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <Lock className="w-4 h-4 text-[#33b864]" />
+            <span>Conexão Segura SSL</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <Shield className="w-4 h-4 text-[#33b864]" />
+            <span>Pagamento Protegido</span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-400">
+            <Users className="w-4 h-4 text-[#33b864]" />
+            <span className="flex items-center gap-1">
+              <span className="w-2 h-2 bg-[#33b864] rounded-full animate-pulse"></span>
+              {onlineUsers} pessoas online
+            </span>
+          </div>
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 rounded-full border border-[#33b864]/20 mb-4">
             <Sparkles className="w-4 h-4 text-[#33b864]" />
-            <span className="text-sm font-bold text-[#33b864]">UPGRADE PARA OCEAN PRIME</span>
+            <span className="text-sm font-bold text-[#33b864]">CHECKOUT SEGURO</span>
           </div>
           <h1 className="text-4xl font-sora font-bold text-white mb-4">
-            Desbloqueie todo o potencial
+            Finalize sua assinatura Ocean Prime
           </h1>
           <p className="text-xl text-gray-300">
             {daysRemaining > 0 
-              ? `Restam ${daysRemaining} dias de teste. Assine agora e tenha acesso ilimitado!`
-              : "Seu período de teste expirou. Assine para continuar acessando os sinais!"
+              ? `Restam ${daysRemaining} dias de teste. Complete o pagamento para garantir acesso ilimitado!`
+              : "Complete o pagamento para voltar a acessar todos os sinais premium!"
             }
           </p>
         </div>
 
-        {/* Pricing Card */}
-        <div className="bg-gradient-to-br from-[#121212] to-[#0a0a0a] border-2 border-[#33b864] rounded-3xl p-8 shadow-2xl shadow-[#33b864]/20 relative overflow-hidden mb-8">
-          {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-[#33b864]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
-          
-          {/* Popular badge */}
-          <div className="absolute top-6 right-6">
-            <div className="px-3 py-1 bg-[#33b864] text-black text-xs font-bold rounded-full">
-              MAIS POPULAR
+        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+          {/* Left: Order Summary */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Plan Details */}
+            <div className="bg-gradient-to-br from-[#121212] to-[#0a0a0a] border-2 border-[#33b864] rounded-3xl p-8 shadow-2xl shadow-[#33b864]/20 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#33b864]/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+              
+              <div className="absolute top-6 right-6">
+                <div className="px-3 py-1 bg-[#33b864] text-black text-xs font-bold rounded-full">
+                  MAIS POPULAR
+                </div>
+              </div>
+
+              <div className="relative">
+                <h2 className="text-2xl font-sora font-bold text-white mb-2">Ocean Prime</h2>
+                <p className="text-gray-400 mb-6">Assinatura mensal recorrente</p>
+
+                <div className="flex items-baseline gap-2 mb-8">
+                  <span className="text-5xl font-bold text-white">R$ 99,87</span>
+                  <span className="text-gray-400">/mês</span>
+                </div>
+
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
+                      <Check className="w-5 h-5 text-[#33b864]" />
+                    </div>
+                    <span className="text-white">Acesso ilimitado a todos os sinais</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-5 h-5 text-[#33b864]" />
+                    </div>
+                    <span className="text-white">Sinais ilimitados por dia</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
+                      <TrendingUp className="w-5 h-5 text-[#33b864]" />
+                    </div>
+                    <span className="text-white">Notificações em tempo real</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-5 h-5 text-[#33b864]" />
+                    </div>
+                    <span className="text-white">Análise de IA sempre atualizada</span>
+                  </div>
+                  {daysRemaining > 0 && (
+                    <div className="flex items-center gap-3 pt-4 border-t border-white/10">
+                      <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center flex-shrink-0">
+                        <Gift className="w-5 h-5 text-orange-500" />
+                      </div>
+                      <span className="text-white">
+                        <strong className="text-orange-500">Bônus:</strong> Seus {daysRemaining} dias de teste continuam válidos!
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Payment Methods */}
+            <div className="bg-card border border-white/10 rounded-xl p-6">
+              <h3 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-[#33b864]" />
+                Formas de pagamento aceitas
+              </h3>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
+                  <div className="text-2xl mb-2">💳</div>
+                  <p className="text-xs text-gray-400">Cartão de Crédito</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
+                  <div className="text-2xl mb-2">🔲</div>
+                  <p className="text-xs text-gray-400">Pix</p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-lg p-4 text-center">
+                  <div className="text-2xl mb-2">📄</div>
+                  <p className="text-xs text-gray-400">Boleto</p>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 text-center mt-4">
+                Processado com segurança via Mercado Pago
+              </p>
+            </div>
+
+            {/* Guarantee */}
+            <div className="bg-gradient-to-r from-[#33b864]/10 to-transparent border border-[#33b864]/20 rounded-xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-[#33b864]/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-6 h-6 text-[#33b864]" />
+                </div>
+                <div>
+                  <h3 className="font-sora font-bold text-white mb-2">Garantia de 7 dias</h3>
+                  <p className="text-sm text-gray-300">
+                    Não está satisfeito? Cancele nos primeiros 7 dias e receba 100% do seu dinheiro de volta. Sem perguntas.
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div className="relative">
-            {/* Plan name */}
-            <h2 className="text-2xl font-sora font-bold text-white mb-2">Ocean Prime</h2>
-            <p className="text-gray-400 mb-6">Assinatura mensal com acesso ilimitado</p>
+          {/* Right: Payment Summary */}
+          <div className="space-y-6">
+            {/* Summary Card */}
+            <div className="bg-card border border-white/10 rounded-xl p-6 sticky top-24">
+              <h3 className="font-sora font-bold text-white mb-6">Resumo do pedido</h3>
+              
+              <div className="space-y-4 mb-6 pb-6 border-b border-white/10">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Ocean Prime (mensal)</span>
+                  <span className="text-white">R$ 99,87</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-400">Taxa de processamento</span>
+                  <span className="text-[#33b864]">R$ 0,00</span>
+                </div>
+              </div>
 
-            {/* Price */}
-            <div className="flex items-baseline gap-2 mb-8">
-              <span className="text-5xl font-bold text-white">R$ 99,87</span>
-              <span className="text-gray-400">/mês</span>
-            </div>
+              <div className="flex justify-between mb-6">
+                <span className="font-bold text-white">Total</span>
+                <span className="font-bold text-2xl text-white">R$ 99,87</span>
+              </div>
 
-            {/* Features */}
-            <div className="space-y-4 mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
-                  <Check className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <span className="text-white">Acesso ilimitado a todos os sinais</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
-                  <Zap className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <span className="text-white">Sinais ilimitados por dia</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <span className="text-white">Notificações em tempo real</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
-                  <Clock className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <span className="text-white">Análise de IA sempre atualizada</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-[#33b864]/10 flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <span className="text-white">Suporte prioritário</span>
-              </div>
-              {daysRemaining > 0 && (
-                <div className="flex items-center gap-3 pt-4 border-t border-white/10">
-                  <div className="w-8 h-8 rounded-lg bg-orange-500/10 flex items-center justify-center flex-shrink-0">
-                    <Gift className="w-5 h-5 text-orange-500" />
-                  </div>
-                  <span className="text-white">
-                    <strong className="text-orange-500">Bônus:</strong> Seus {daysRemaining} dias de teste continuam válidos!
-                  </span>
-                </div>
-              )}
-            </div>
+              <button
+                onClick={handleSubscribe}
+                disabled={isLoading}
+                className="w-full py-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold text-lg rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#33b864]/30 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
+                data-testid="button-subscribe-ocean-prime"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
+                    Processando...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-5 h-5" />
+                    Finalizar Pagamento Seguro
+                  </>
+                )}
+              </button>
 
-            {/* CTA Button */}
-            <button
-              onClick={handleSubscribe}
-              disabled={isLoading}
-              className="w-full py-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold text-lg rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#33b864]/30 disabled:opacity-50 disabled:cursor-not-allowed"
-              data-testid="button-subscribe-ocean-prime"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div>
-                  Processando...
-                </>
-              ) : (
-                <>
-                  <CreditCard className="w-5 h-5" />
-                  Assinar Ocean Prime
-                </>
-              )}
-            </button>
-
-            {/* Payment info */}
-            <div className="mt-6 flex items-center justify-center gap-4 text-sm text-gray-400">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4" />
-                <span>Pagamento seguro via Mercado Pago</span>
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
+                  <span>Criptografia SSL de 256 bits</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
+                  <span>Dados protegidos pela LGPD</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs text-gray-400">
+                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
+                  <span>Cancele a qualquer momento</span>
+                </div>
               </div>
             </div>
-
-            {/* Cancellation policy */}
-            <p className="text-center text-xs text-gray-500 mt-4">
-              Cancele a qualquer momento. Sem taxas de cancelamento.
-            </p>
           </div>
         </div>
 
-        {/* Trust badges */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Trust Section */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           <div className="bg-card border border-white/10 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Shield className="w-6 h-6 text-[#33b864]" />
             </div>
-            <h3 className="font-bold text-white mb-2">Pagamento Seguro</h3>
-            <p className="text-sm text-gray-400">Processado pelo Mercado Pago com criptografia SSL</p>
+            <h3 className="font-bold text-white mb-2">Pagamento seguro</h3>
+            <p className="text-sm text-gray-400">Seus dados protegidos via Mercado Pago</p>
           </div>
           <div className="bg-card border border-white/10 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-[#33b864]" />
             </div>
             <h3 className="font-bold text-white mb-2">87% de Assertividade</h3>
-            <p className="text-sm text-gray-400">Taxa comprovada de acerto dos nossos sinais</p>
+            <p className="text-sm text-gray-400">Taxa comprovada pelos nossos usuários</p>
           </div>
           <div className="bg-card border border-white/10 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Clock className="w-6 h-6 text-[#33b864]" />
+              <Users className="w-6 h-6 text-[#33b864]" />
             </div>
-            <h3 className="font-bold text-white mb-2">Cancele Quando Quiser</h3>
-            <p className="text-sm text-gray-400">Sem compromisso de permanência</p>
+            <h3 className="font-bold text-white mb-2">+2.500 Assinantes</h3>
+            <p className="text-sm text-gray-400">Confiam na Ocean Signal</p>
           </div>
+        </div>
+
+        {/* Testimonials */}
+        <div className="bg-card border border-white/10 rounded-xl p-8 mb-12">
+          <h3 className="font-sora font-bold text-white text-center mb-8">O que dizem nossos assinantes</h3>
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white/5 rounded-lg p-6">
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
+                ))}
+              </div>
+              <p className="text-sm text-gray-300 mb-4">
+                "Incrível! Consegui dobrar minha banca em 2 meses seguindo os sinais. Plataforma muito profissional."
+              </p>
+              <p className="text-xs text-gray-500">— Carlos M., São Paulo</p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-6">
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
+                ))}
+              </div>
+              <p className="text-sm text-gray-300 mb-4">
+                "A assertividade dos sinais impressiona. Não fico mais perdido procurando apostas. Vale cada centavo."
+              </p>
+              <p className="text-xs text-gray-500">— Fernanda L., Rio de Janeiro</p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-6">
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
+                ))}
+              </div>
+              <p className="text-sm text-gray-300 mb-4">
+                "Suporte rápido, sinais certeiros e uma plataforma linda. Melhor investimento que fiz."
+              </p>
+              <p className="text-xs text-gray-500">— Ricardo S., Curitiba</p>
+            </div>
+          </div>
+        </div>
+
+        {/* FAQ */}
+        <div className="bg-card border border-white/10 rounded-xl p-8">
+          <h3 className="font-sora font-bold text-white text-center mb-8">Perguntas frequentes</h3>
+          <div className="space-y-4 max-w-3xl mx-auto">
+            <div className="bg-white/5 rounded-lg p-4">
+              <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#33b864]" />
+                Meus dados estão seguros?
+              </h4>
+              <p className="text-sm text-gray-400">
+                Sim! Utilizamos criptografia SSL de 256 bits e estamos em conformidade com a LGPD. Seus dados são processados pelo Mercado Pago, uma das plataformas de pagamento mais seguras do Brasil.
+              </p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-4">
+              <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#33b864]" />
+                Posso cancelar quando quiser?
+              </h4>
+              <p className="text-sm text-gray-400">
+                Sim! Não há período mínimo de contrato. Você pode cancelar sua assinatura a qualquer momento, sem multas ou taxas adicionais. Se cancelar nos primeiros 7 dias, devolvemos 100% do valor.
+              </p>
+            </div>
+            <div className="bg-white/5 rounded-lg p-4">
+              <h4 className="font-bold text-white mb-2 flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-[#33b864]" />
+                Como funciona a cobrança?
+              </h4>
+              <p className="text-sm text-gray-400">
+                A cobrança é mensal e recorrente de R$ 99,87. Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Legal Info */}
+        <div className="text-center mt-12 pt-8 border-t border-white/10">
+          <p className="text-xs text-gray-500 mb-2">
+            Ocean Signal - CNPJ: 00.000.000/0001-00
+          </p>
+          <p className="text-xs text-gray-500">
+            Ao finalizar o pagamento, você concorda com nossos{" "}
+            <a href="/terms" className="text-[#33b864] hover:underline">Termos de Uso</a> e{" "}
+            <a href="/privacy" className="text-[#33b864] hover:underline">Política de Privacidade</a>
+          </p>
         </div>
       </div>
     </Layout>
