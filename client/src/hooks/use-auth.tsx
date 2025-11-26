@@ -59,6 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const loadUserProfile = async (userId: string, forceReload = false) => {
+    const startTime = Date.now();
+    
     try {
       console.log('🔄 [AUTH DEBUG] Loading profile for userId:', userId);
       console.log('🔄 [AUTH DEBUG] Force reload:', forceReload);
@@ -101,12 +103,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('💥 [AUTH DEBUG] Error loading profile:', error);
     } finally {
+      // Ensure minimum 1 second loading screen
+      const elapsed = Date.now() - startTime;
+      const minDelay = 1000;
+      if (elapsed < minDelay) {
+        await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+      }
       setIsLoading(false);
     }
   };
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+    const startTime = Date.now();
+    
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -124,12 +134,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast.error(error.message || "Credenciais inválidas");
       throw error;
     } finally {
+      // Ensure minimum 1 second loading screen
+      const elapsed = Date.now() - startTime;
+      const minDelay = 1000;
+      if (elapsed < minDelay) {
+        await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+      }
       setIsLoading(false);
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
+    const startTime = Date.now();
+    
     try {
       // Step 1: Sign up the user
       const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
@@ -177,6 +195,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast.error(error.message || "Erro ao criar conta");
       throw error;
     } finally {
+      // Ensure minimum 1 second loading screen
+      const elapsed = Date.now() - startTime;
+      const minDelay = 1000;
+      if (elapsed < minDelay) {
+        await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+      }
       setIsLoading(false);
     }
   };
