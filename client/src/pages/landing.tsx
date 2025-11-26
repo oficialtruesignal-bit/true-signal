@@ -98,7 +98,7 @@ function ProofOfConceptSection() {
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            <div className="mb-6">
+            <div className="mb-6 text-center lg:text-left">
               <h3 className="text-2xl font-bold text-white mb-2">Sistema Operacional</h3>
               <p className="text-gray-400">Status em tempo real do scanner de oportunidades</p>
             </div>
