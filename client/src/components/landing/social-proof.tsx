@@ -62,12 +62,6 @@ export function SocialProof() {
     },
   ];
   
-  const withdrawals = [
-    { bank: 'Nubank', amount: 2840, status: 'Aprovado' },
-    { bank: 'Inter', amount: 1650, status: 'Processando' },
-    { bank: 'C6 Bank', amount: 3200, status: 'Aprovado' },
-  ];
-  
   return (
     <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212]">
       <div className="max-w-7xl mx-auto">
@@ -159,45 +153,6 @@ export function SocialProof() {
             <ChevronRight className="w-6 h-6" />
           </button>
         </div>
-        
-        {/* Withdrawals Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ delay: 0.6 }}
-          className="max-w-2xl mx-auto"
-        >
-          <h3 className="text-2xl font-bold text-white mb-6 text-center">Saques Recentes</h3>
-          
-          <div className="space-y-3">
-            {withdrawals.map((withdrawal, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -30 }}
-                animate={isInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ delay: 0.8 + i * 0.1 }}
-                className="flex items-center justify-between p-4 bg-gradient-to-r from-white/5 to-black/50 backdrop-blur-xl border border-white/10 rounded-xl hover:border-[#33b864]/30 transition-all"
-                data-testid={`card-withdrawal-${i}`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-[#33b864]/20 border border-[#33b864]/40 flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-[#33b864]" />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-white" data-testid={`text-bank-${i}`}>{withdrawal.bank}</div>
-                    <div className="text-xs text-gray-500">{withdrawal.status}</div>
-                  </div>
-                </div>
-                
-                <div className="text-right">
-                  <div className="text-xl font-bold text-[#33b864] font-mono" data-testid={`text-amount-${i}`}>
-                    R$ {withdrawal.amount.toLocaleString()}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
         
         {/* Testimonial quote */}
         <motion.div

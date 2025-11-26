@@ -3,11 +3,11 @@ import { motion } from 'framer-motion';
 const tickerData = [
   { label: '[LIVE] PREMIER LEAGUE', value: 'OVER 2.5 DETECTADO', confidence: '94%' },
   { label: 'LUCRO ÚLTIMA HORA', value: '+4.2u', type: 'profit' },
-  { label: 'SAQUE APROVADO', value: 'R$ 4.200 (M. SILVA)', type: 'withdrawal' },
   { label: 'LA LIGA', value: 'BTTS CONFIRMADO', confidence: '91%' },
   { label: 'ROI SEMANAL', value: '+18.7%', type: 'roi' },
   { label: 'BUNDESLIGA', value: 'UNDER 3.5 @1.85', confidence: '88%' },
-  { label: 'OPERAÇÃO EXECUTADA', value: 'R$ 2.850 (L. COSTA)', type: 'withdrawal' },
+  { label: 'SERIE A', value: 'OVER 1.5 FT @1.65', confidence: '92%' },
+  { label: 'ASSERTIVIDADE', value: '94.8%', type: 'roi' },
 ];
 
 export function FinancialTicker() {
@@ -34,8 +34,6 @@ export function FinancialTicker() {
               className={`font-bold ${
                 item.type === 'profit' || item.type === 'roi' 
                   ? 'text-[#33b864]' 
-                  : item.type === 'withdrawal'
-                  ? 'text-blue-400'
                   : 'text-white'
               }`}
             >
