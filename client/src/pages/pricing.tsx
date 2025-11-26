@@ -14,12 +14,7 @@ export default function PricingPage() {
   const trialFeatures = [
     { text: 'Acesso por 15 dias', included: true },
     { text: 'Apenas 1 sinal por dia', included: true, highlight: true },
-    { text: 'Dashboard básico', included: true },
     { text: 'Recursos limitados', included: true },
-    { text: 'Acesso ilimitado', included: false },
-    { text: 'Sinais ilimitados no dia', included: false },
-    { text: 'Alertas push em tempo real', included: false },
-    { text: 'IA sempre atualizada', included: false },
   ];
 
   const primeFeatures = [
@@ -27,10 +22,6 @@ export default function PricingPage() {
     { text: 'Sinais ilimitados no dia', included: true, highlight: true },
     { text: 'Alertas push em tempo real', included: true },
     { text: 'IA sempre atualizada', included: true },
-    { text: 'Dashboard completo', included: false },
-    { text: 'Suporte prioritário', included: false },
-    { text: 'Análises avançadas', included: false },
-    { text: 'Histórico de sinais', included: false },
   ];
 
   return (
