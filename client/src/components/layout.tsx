@@ -155,7 +155,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-gray-200 dark:border-primary/20 z-50 flex items-center justify-between px-4">
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
-           <span className="text-sm font-bold text-foreground mr-2">{t.nav.hello} {user?.firstName}</span>
+           <span className="text-sm font-bold text-foreground mr-2">{t.nav.hello} {user?.firstName?.split(' ')[0] || user?.firstName}</span>
            <ThemeToggle />
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-red-400">
             <LogOut className="w-5 h-5" />
