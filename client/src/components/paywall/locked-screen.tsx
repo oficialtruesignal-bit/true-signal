@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { LockKeyhole, Sparkles, Check } from 'lucide-react';
 
-const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
+const CHECKOUT_URL = '/checkout';
 
 export function LockedScreen() {
   const benefits = [

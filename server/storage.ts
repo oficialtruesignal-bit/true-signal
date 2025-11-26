@@ -9,6 +9,10 @@ export interface IStorage {
   getProfileByEmail(email: string): Promise<Profile | undefined>;
   createProfile(profile: Omit<InsertProfile, 'passwordHash'> & { password: string }): Promise<Profile>;
   verifyPassword(email: string, password: string): Promise<Profile | null>;
+  updateUserSubscription(userId: string, subscriptionData: {
+    subscriptionStatus: 'trial' | 'active' | 'expired';
+    mercadopagoSubscriptionId?: string | null;
+  }): Promise<Profile | undefined>;
 
   // Tips methods
   getAllTips(): Promise<Tip[]>;
@@ -63,6 +67,30 @@ export class DatabaseStorage implements IStorage {
     if (!match) return null;
     
     return profile;
+  }
+
+  async updateUserSubscription(
+    userId: string, 
+    subscriptionData: {
+      subscriptionStatus: 'trial' | 'active' | 'expired';
+      mercadopagoSubscriptionId?: string | null;
+    }
+  ): Promise<Profile | undefined> {
+    const updateData: Partial<Profile> = {
+      subscriptionStatus: subscriptionData.subscriptionStatus,
+    };
+
+    if (subscriptionData.mercadopagoSubscriptionId !== undefined) {
+      updateData.mercadopagoSubscriptionId = subscriptionData.mercadopagoSubscriptionId;
+    }
+
+    const [updatedProfile] = await db
+      .update(profiles)
+      .set(updateData)
+      .where(eq(profiles.id, userId))
+      .returning();
+
+    return updatedProfile;
   }
 
   // Tips methods

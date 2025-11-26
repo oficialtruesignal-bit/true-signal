@@ -301,16 +301,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         if (status === "authorized") {
           // Subscription is active - upgrade user to Ocean Prime
           console.log("✅ [Webhook] Activating Ocean Prime for user:", userId);
-          // TODO: Update user subscription_status to 'active'
-          // await storage.updateUserSubscription(userId, {
-          //   subscriptionStatus: 'active',
-          //   mercadopagoSubscriptionId: subscriptionId,
-          //   subscriptionEndsAt: new Date(subscription.next_payment_date)
-          // });
+          await storage.updateUserSubscription(userId, {
+            subscriptionStatus: 'active',
+            mercadopagoSubscriptionId: subscriptionId,
+          });
+          console.log("✅ [Webhook] User upgraded to Ocean Prime successfully");
         } else if (status === "cancelled" || status === "paused") {
           // Subscription cancelled/paused - downgrade user
           console.log("⚠️ [Webhook] Deactivating subscription for user:", userId);
-          // TODO: Update user subscription_status to 'expired'
+          await storage.updateUserSubscription(userId, {
+            subscriptionStatus: 'expired',
+            mercadopagoSubscriptionId: null,
+          });
+          console.log("⚠️ [Webhook] User subscription deactivated");
         }
       } else if (type === "payment") {
         // Individual payment received (recurring payment)

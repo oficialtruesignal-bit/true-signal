@@ -4,7 +4,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth } from '@/hooks/use-auth';
 import { useAccessControl } from '@/hooks/use-access-control';
 
-const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
+const CHECKOUT_URL = '/checkout';
 
 export default function PricingPage() {
   const { user } = useAuth();

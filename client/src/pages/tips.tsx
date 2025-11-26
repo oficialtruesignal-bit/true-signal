@@ -11,7 +11,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
 
-const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
+const CHECKOUT_URL = '/checkout';
 
 export default function TipsPage() {
   const queryClient = useQueryClient();

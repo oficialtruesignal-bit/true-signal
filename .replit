@@ -16,8 +16,8 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 33887
-externalPort = 6000
+localPort = 35505
+externalPort = 6800
 
 [[ports]]
 localPort = 36201
@@ -81,3 +81,5 @@ VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhY
 VITE_SUPABASE_URL = "https://cuzzgepkxuwylzgjwgce.supabase.co"
 VITE_SPORTMONKS_API_KEY = "TGICkw9WvcRQtQvfL0LKNYBuRCIqhX6X3AUqsXGM4WakCMrEbUQAm5pkR1ew"
 FOOTBALL_API_KEY = "7543ea3d64bdb259122624f04a58fc79"
+MERCADOPAGO_PUBLIC_KEY = "TEST-ce844f6b-601a-47f1-8c3f-7b17c30f39db"
+MERCADOPAGO_ACCESS_TOKEN = "TEST-7847906105895132-061314-75731ca282ba3864ff95d07bce88825e-129467089"
