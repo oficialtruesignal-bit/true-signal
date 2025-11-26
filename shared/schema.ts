@@ -12,6 +12,9 @@ export const profiles = pgTable("profiles", {
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   subscriptionStatus: text("subscription_status", { enum: ["trial", "active", "expired"] }).notNull().default("trial"),
   trialStartDate: timestamp("trial_start_date").notNull().defaultNow(),
+  termsAcceptedAt: timestamp("terms_accepted_at"),
+  privacyAcceptedAt: timestamp("privacy_accepted_at"),
+  riskDisclaimerAcceptedAt: timestamp("risk_disclaimer_accepted_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 

@@ -32,6 +32,7 @@ export class DatabaseStorage implements IStorage {
 
   async createProfile(data: Omit<InsertProfile, 'passwordHash'> & { password: string }): Promise<Profile> {
     const passwordHash = await bcrypt.hash(data.password, 10);
+    const now = new Date();
     const [profile] = await db
       .insert(profiles)
       .values({
@@ -39,7 +40,10 @@ export class DatabaseStorage implements IStorage {
         passwordHash,
         firstName: data.firstName,
         role: data.role || 'user',
-        subscriptionStatus: data.subscriptionStatus || 'free',
+        subscriptionStatus: data.subscriptionStatus || 'trial',
+        termsAcceptedAt: now,
+        privacyAcceptedAt: now,
+        riskDisclaimerAcceptedAt: now,
       })
       .returning();
     return profile;

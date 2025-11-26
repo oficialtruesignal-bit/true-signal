@@ -12,6 +12,9 @@ interface User {
   subscriptionStatus: 'trial' | 'active' | 'expired';
   createdAt: string;
   trialStartDate: string | null;
+  termsAcceptedAt: string | null;
+  privacyAcceptedAt: string | null;
+  riskDisclaimerAcceptedAt: string | null;
 }
 
 interface AuthContextType {
@@ -85,6 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           subscriptionStatus: data.subscription_status as 'trial' | 'active' | 'expired',
           createdAt: data.created_at,
           trialStartDate: data.trial_start_date || null,
+          termsAcceptedAt: data.terms_accepted_at || null,
+          privacyAcceptedAt: data.privacy_accepted_at || null,
+          riskDisclaimerAcceptedAt: data.risk_disclaimer_accepted_at || null,
         };
         
         console.log('✅ [AUTH DEBUG] Setting user state with role:', userData.role);
