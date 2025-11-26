@@ -71,13 +71,13 @@ function ProofOfConceptSection() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Veja o{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Algoritmo em Ação
             </span>
           </h2>
-          <p className="text-xl text-gray-400">
+          <p className="text-base md:text-xl text-gray-400">
             Simule seus lucros e veja o sistema operando em tempo real
           </p>
         </motion.div>
