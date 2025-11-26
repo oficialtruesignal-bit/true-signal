@@ -22,17 +22,17 @@ export function TrialBanner() {
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -100, opacity: 0 }}
-        className={`relative ${isUrgent ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-yellow-600 to-yellow-500'} text-white px-4 py-3 shadow-lg z-50`}
+        className={`relative ${isUrgent ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-yellow-600 to-yellow-500'} text-white px-3 py-2 shadow-lg z-50`}
         data-testid="banner-trial-countdown"
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-full ${isUrgent ? 'bg-red-700' : 'bg-yellow-700'} flex items-center justify-center flex-shrink-0`}>
-              <Clock className="w-5 h-5" />
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <div className={`w-8 h-8 rounded-full ${isUrgent ? 'bg-red-700' : 'bg-yellow-700'} flex items-center justify-center flex-shrink-0`}>
+              <Clock className="w-4 h-4" />
             </div>
             
             <div className="flex-1">
-              <p className="font-bold text-sm md:text-base">
+              <p className="font-bold text-xs md:text-sm">
                 {isUrgent ? (
                   <>⚠️ URGENTE: Apenas {daysRemaining} {daysRemaining === 1 ? 'dia' : 'dias'} restante{daysRemaining !== 1 && 's'} de acesso gratuito!</>
                 ) : (
@@ -45,26 +45,26 @@ export function TrialBanner() {
             </div>
           </div>
           
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <a
               href={CHECKOUT_URL}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="button-trial-banner-subscribe"
             >
-              <button className="px-4 md:px-6 py-2 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors text-sm md:text-base whitespace-nowrap flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
+              <button className="px-3 md:px-4 py-1.5 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors text-xs md:text-sm whitespace-nowrap flex items-center gap-1.5">
+                <Sparkles className="w-3 h-3" />
                 Assinar Agora
               </button>
             </a>
             
             <button
               onClick={() => setIsDismissed(true)}
-              className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
               aria-label="Fechar banner"
               data-testid="button-trial-banner-dismiss"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
