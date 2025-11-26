@@ -18,7 +18,7 @@ export default function TermsPage() {
           <div className="w-16 h-16 rounded-full bg-[#33b864]/10 border-2 border-[#33b864]/30 flex items-center justify-center">
             <FileText className="w-8 h-8 text-[#33b864]" />
           </div>
-          <h1 className="text-4xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
+          <h1 className="text-3xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
             Termos e Condições de Uso
           </h1>
         </div>

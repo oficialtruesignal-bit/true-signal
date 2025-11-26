@@ -18,7 +18,7 @@ export default function RiskDisclaimerPage() {
           <div className="w-16 h-16 rounded-full bg-red-500/10 border-2 border-red-500/30 flex items-center justify-center">
             <AlertTriangle className="w-8 h-8 text-red-500" />
           </div>
-          <h1 className="text-4xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
+          <h1 className="text-3xl font-black" style={{ fontFamily: 'Sora, sans-serif' }}>
             Isenção de Responsabilidade e Riscos
           </h1>
         </div>
