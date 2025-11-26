@@ -302,7 +302,7 @@ export default function CheckoutPage() {
         </div>
 
         {/* Trust Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 mt-12">
           <div className="bg-card border border-white/10 rounded-xl p-6 text-center">
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Shield className="w-6 h-6 text-[#33b864]" />
