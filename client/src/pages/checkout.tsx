@@ -42,9 +42,10 @@ export default function CheckoutPage() {
 
       const { initPoint } = response.data;
 
-      // Redirect user to Mercado Pago checkout
+      // Open Mercado Pago checkout in new tab (avoids iframe X-Frame-Options block)
       if (initPoint) {
-        window.location.href = initPoint;
+        window.open(initPoint, '_blank');
+        toast.success("Checkout aberto em nova aba! Complete o pagamento lá.");
       } else {
         toast.error("Erro ao criar checkout. Tente novamente.");
       }
