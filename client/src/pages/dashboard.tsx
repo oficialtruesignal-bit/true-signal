@@ -314,7 +314,7 @@ export default function Dashboard() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{tip.matchName}</p>
                   <p className="text-xs text-primary truncate">{tip.league}</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">{tip.market} @ {tip.odd.toFixed(2)}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1">{tip.market} {tip.odd.toFixed(2)}</p>
                 </div>
                 <div className="ml-4 flex-shrink-0">
                   {tip.status === 'green' && (

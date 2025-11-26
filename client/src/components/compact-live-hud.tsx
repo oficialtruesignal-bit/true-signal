@@ -98,7 +98,7 @@ export function CompactLiveHud() {
             <div className="w-1 h-3 bg-orange-500 rounded-full"></div>
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
           </div>
-          <span className="text-3xl font-sora font-bold text-white z-10">@{bankroll.averageOdd.toFixed(2)}</span>
+          <span className="text-3xl font-sora font-bold text-white z-10">{bankroll.averageOdd.toFixed(2)}</span>
         </div>
 
         {/* CARD B: USUÁRIOS ONLINE */}

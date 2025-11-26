@@ -10,7 +10,7 @@ export function LiveTicker({ signals }: { signals: Signal[] }) {
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             <span className="font-bold text-foreground">{signal.homeTeam} vs {signal.awayTeam}</span>
             <span className="text-muted-foreground text-xs">({signal.market})</span>
-            <span className="font-mono text-primary font-bold">@{signal.odd}</span>
+            <span className="font-mono text-primary font-bold">{signal.odd}</span>
             <ArrowUpRight className="w-3 h-3 text-green-500" />
           </div>
         ))}
