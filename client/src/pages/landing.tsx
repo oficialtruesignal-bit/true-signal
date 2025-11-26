@@ -252,12 +252,16 @@ function ProductPreviewSection() {
   };
 
   useEffect(() => {
-    if (isInView && count < 91.9) {
-      const timer = setTimeout(() => {
-        setCount(prev => Math.min(prev + 2.3, 91.9));
-      }, 30);
-      return () => clearTimeout(timer);
-    }
+    if (!isInView || count >= 91.9) return;
+    
+    const timer = setTimeout(() => {
+      setCount(prev => {
+        const next = prev + 2.3;
+        return next >= 91.9 ? 91.9 : next;
+      });
+    }, 30);
+    
+    return () => clearTimeout(timer);
   }, [isInView, count]);
 
   return (
@@ -347,12 +351,16 @@ function ScarcitySection() {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    if (isInView && progress < 87) {
-      const timer = setTimeout(() => {
-        setProgress(prev => Math.min(prev + 2, 87));
-      }, 30);
-      return () => clearTimeout(timer);
-    }
+    if (!isInView || progress >= 87) return;
+    
+    const timer = setTimeout(() => {
+      setProgress(prev => {
+        const next = prev + 2;
+        return next >= 87 ? 87 : next;
+      });
+    }, 30);
+    
+    return () => clearTimeout(timer);
   }, [isInView, progress]);
 
   return (
@@ -481,7 +489,7 @@ function Footer() {
           <div>
             <h5 className="text-white font-bold mb-4">Links Rápidos</h5>
             <ul className="space-y-2 text-sm text-gray-400">
-              <li><Link href="/auth"><a className="hover:text-[#33b864] transition-colors">Login</a></Link></li>
+              <li><Link href="/auth" className="hover:text-[#33b864] transition-colors">Login</Link></li>
               <li><a href="#" className="hover:text-[#33b864] transition-colors">Termos de Uso</a></li>
               <li><a href="#" className="hover:text-[#33b864] transition-colors">Política de Privacidade</a></li>
             </ul>

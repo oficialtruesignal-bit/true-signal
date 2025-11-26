@@ -20,16 +20,17 @@ const notifications: Omit<Notification, 'id'>[] = [
 
 export function LiveToast() {
   const [activeNotification, setActiveNotification] = useState<Notification | null>(null);
-  const [index, setIndex] = useState(0);
 
   useEffect(() => {
+    let currentIndex = 0;
+    
     const showNotification = () => {
       const notification = {
-        ...notifications[index % notifications.length],
+        ...notifications[currentIndex % notifications.length],
         id: Date.now(),
       };
       setActiveNotification(notification);
-      setIndex(prev => prev + 1);
+      currentIndex++;
 
       setTimeout(() => {
         setActiveNotification(null);
@@ -40,7 +41,7 @@ export function LiveToast() {
     showNotification();
 
     return () => clearInterval(interval);
-  }, [index]);
+  }, []);
 
   return (
     <div className="fixed bottom-6 left-6 z-50">
