@@ -1,0 +1,88 @@
+PROMPT MESTRE: FIX TEAM LOGOS (PERSISTENCE & RENDER)
+ROLE: Senior Fullstack Developer.
+
+TASK: Corrigir o desaparecimento dos Brasões (Escudos) na aba Sinais. CAUSA RAIZ: As URLs das imagens dos times não estão sendo salvas na tabela tips ou o componente de renderização está falhando.
+
+1. ATUALIZAÇÃO DO BANCO DE DADOS (SUPABASE)
+Precisamos garantir que a tabela tips tenha onde guardar as imagens. Execute este SQL no Supabase (instrua o usuário ou tente executar se tiver acesso):
+
+SQL
+
+-- Adicionar colunas de logo se não existirem
+ALTER TABLE public.tips 
+ADD COLUMN IF NOT EXISTS home_team_logo TEXT,
+ADD COLUMN IF NOT EXISTS away_team_logo TEXT;
+2. ATUALIZAÇÃO DA CRIAÇÃO DE TIPS (ADMIN)
+Arquivo: src/components/admin/CreateTipForm.tsx (ou a lógica de envio).
+
+Ao selecionar um jogo da API, o objeto do jogo (game) geralmente vem com teams.home.logo e teams.away.logo.
+
+AÇÃO: No momento do supabase.insert, certifique-se de que você está mapeando e enviando esses campos:
+
+TypeScript
+
+// Exemplo de payload no insert
+{
+  match_name: `${selectedGame.teams.home.name} vs ${selectedGame.teams.away.name}`,
+  // ... outros campos ...
+  home_team_logo: selectedGame.teams.home.logo, // <--- CRÍTICO
+  away_team_logo: selectedGame.teams.away.logo  // <--- CRÍTICO
+}
+3. CORREÇÃO DO COMPONENTE TeamShield
+Arquivo: src/components/TeamShield.tsx (ou onde ele foi criado).
+
+O fallback atual está invisível (círculo vazio). Vamos corrigir para mostrar a Inicial do Time se a imagem falhar.
+
+TypeScript
+
+import { useState } from 'react';
+
+interface TeamShieldProps {
+  name: string;
+  src?: string | null; // URL da imagem
+  size?: 'sm' | 'md' | 'lg';
+}
+
+export function TeamShield({ name, src, size = 'md' }: TeamShieldProps) {
+  const [imageError, setImageError] = useState(false);
+
+  // Definição de tamanhos
+  const sizeClasses = {
+    sm: 'w-6 h-6 text-[10px]',
+    md: 'w-10 h-10 text-sm', // Tamanho padrão do card
+    lg: 'w-16 h-16 text-xl'
+  }[size];
+
+  // Lógica: Se tiver SRC e não deu erro, mostra Imagem.
+  // Senão, mostra Círculo com Inicial.
+  if (src && !imageError) {
+    return (
+      <img 
+        src={src} 
+        alt={name} 
+        className={`${sizeClasses} rounded-full object-contain bg-white/5`}
+        onError={() => setImageError(true)} // Se falhar, ativa o fallback
+      />
+    );
+  }
+
+  // FALLBACK (O que aparece quando não tem imagem)
+  return (
+    <div className={`${sizeClasses} rounded-full bg-[#33b864]/10 border border-[#33b864]/30 flex items-center justify-center shrink-0`}>
+      {/* Pega a primeira letra do nome ou '?' se estiver vazio */}
+      <span className="font-sora font-bold text-[#33b864]">
+        {name ? name.charAt(0).toUpperCase() : '?'}
+      </span>
+    </div>
+  );
+}
+4. ATUALIZAÇÃO DO CARD (SignalCard.tsx)
+Certifique-se de que o Card está passando as props corretas.
+
+Antes: <TeamShield name="Chelsea" />
+
+Agora: <TeamShield name={tip.home_team} src={tip.home_team_logo} />
+
+NOTA: Para as tips antigas que já foram criadas sem logo, elas mostrarão a Letra Inicial (ex: "C" para Chelsea) dentro do círculo verde. As novas tips criadas após essa correção mostrarão o brasão oficial.
+
+COMANDO: Execute essas 3 etapas. O foco é garantir que a imagem seja salva no banco e lida corretamente no frontend.

@@ -32,6 +32,8 @@ export const tips = pgTable("tips", {
   league: text("league").notNull(),
   homeTeam: text("home_team").notNull(),
   awayTeam: text("away_team").notNull(),
+  homeTeamLogo: text("home_team_logo"), // URL of home team logo
+  awayTeamLogo: text("away_team_logo"), // URL of away team logo
   market: text("market").notNull(),
   odd: decimal("odd", { precision: 5, scale: 2 }).notNull(),
   status: text("status", { enum: ["pending", "green", "red"] }).notNull().default("pending"),
