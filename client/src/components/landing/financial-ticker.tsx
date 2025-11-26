@@ -7,7 +7,7 @@ const tickerData = [
   { label: 'ROI SEMANAL', value: '+18.7%', type: 'roi' },
   { label: 'BUNDESLIGA', value: 'UNDER 3.5 1.85', confidence: '88%' },
   { label: 'SERIE A', value: 'OVER 1.5 FT 1.65', confidence: '92%' },
-  { label: 'ASSERTIVIDADE', value: '94.8%', type: 'roi' },
+  { label: 'ASSERTIVIDADE', value: '87%', type: 'roi' },
 ];
 
 export function FinancialTicker() {

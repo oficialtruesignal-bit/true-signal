@@ -157,3 +157,33 @@ Preferred communication style: Simple, everyday language.
   - "Voltar para Home" back button on each page
   - Last updated timestamp footer on each legal document
 - ✅ **Routing**: Added public routes in App.tsx for all legal pages (no authentication required)
+
+**Mercado Pago Integration (Nov 26, 2024):**
+- ✅ **Payment Service**: Created `mercadopago-service.ts` with subscription management
+  - Subscription plan creation (R$ 99,87/month, 15-day free trial)
+  - Checkout session creation with automatic redirect to Mercado Pago
+  - Webhook handler for subscription lifecycle events (authorized → active, cancelled/paused → expired)
+  - Snake_case payload fields required by MP API (`back_url`, `external_reference`, `payer_email`, etc.)
+- ✅ **Database Schema**: Added Mercado Pago fields to `profiles` table
+  - `mercadopago_subscription_id`: Stores MP subscription ID for tracking
+  - `mercadopago_customer_id`: Stores MP customer ID for future transactions
+- ✅ **Backend Routes**: Created `/api/mercadopago/*` endpoints
+  - `/create-subscription`: Creates MP checkout session and returns `init_point`
+  - `/webhook`: Processes MP IPN notifications and updates user subscription status
+  - `updateUserSubscription` storage method handles status transitions
+- ✅ **Checkout Page**: Full checkout UI at `/checkout` route
+  - Ocean Prime subscription card (R$ 99,87/mês)
+  - Benefit highlights (unlimited access, push notifications, real-time updates)
+  - "Assinar Agora" button redirects to Mercado Pago payment flow
+  - Success/error handling with user feedback
+- ✅ **Type Standardization**: Fixed type inconsistencies across payment flow
+  - `fixtureId` standardized as `string` type throughout codebase (Signal interface, database schema)
+  - Payment amount properly formatted as number for MP API
+  - All date fields use ISO string format
+
+**Performance Metrics Standardization:**
+- ✅ **Assertiveness Rate**: Standardized to 87% across all UI components
+  - Tips page performance banner: 87%
+  - Checkout page benefit highlight: 87%
+  - Landing page financial ticker: 87%
+  - Individual signal confidence scores remain dynamic (88%-94% per analysis)
