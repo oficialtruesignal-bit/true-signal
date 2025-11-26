@@ -96,7 +96,7 @@ export function ProblemAgitation() {
                 <div className="w-12 h-12 rounded-full bg-[#33b864]/30 flex items-center justify-center">
                   <Zap className="w-6 h-6 text-[#33b864]" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
+                <h3 className="text-lg md:text-2xl font-bold text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
                   A Nova Era das Operações
                 </h3>
               </div>
