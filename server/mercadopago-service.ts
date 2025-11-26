@@ -83,7 +83,9 @@ export class MercadoPagoService {
           frequencyType: 'days',
         },
       },
-      backUrl: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/app`,
+      backUrl: process.env.REPLIT_DEV_DOMAIN 
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
+        : 'http://localhost:5000/app',
     };
 
     try {
@@ -118,7 +120,9 @@ export class MercadoPagoService {
       reason: 'Ocean Prime - Assinatura Mensal',
       externalReference: params.userId,
       payerEmail: params.userEmail,
-      backUrl: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/app`,
+      backUrl: process.env.REPLIT_DEV_DOMAIN 
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
+        : 'http://localhost:5000/app',
       status: 'pending', // Will be authorized after payment
     };
 
