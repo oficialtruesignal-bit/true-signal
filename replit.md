@@ -50,22 +50,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Nov 26, 2024)
 
-**Team Logo Persistence Fix:**
-- ✅ **Database Schema**: Added `homeTeamLogo` and `awayTeamLogo` columns to `tips` table
-  - Migrated database with ALTER TABLE to add logo URL fields
-  - Updated Drizzle schema in `shared/schema.ts`
-- ✅ **Backend Integration**: Fixed tipsService to use server routes instead of direct Supabase
-  - Changed from Supabase client to `/api/tips` REST endpoints
-  - Ensures proper data flow through Drizzle storage layer
-  - Logos now persist correctly: Admin → SignalForm → tipsService → Database → BetCard
-- ✅ **Admin Panel**: Enhanced tip creation flow
-  - Passes `homeTeamLogo`, `awayTeamLogo`, and `fixtureId` from selected Football API match
-  - SignalForm schema updated to handle nullable logo values
-- ✅ **BetCard Optimization**: Improved logo rendering logic
+**Team Logo Persistence Implementation:**
+- ✅ **Database Schema**: Added `home_team_logo` and `away_team_logo` text columns to `tips` table
+  - Executed SQL migration with ALTER TABLE commands
+  - Updated Drizzle schema in `shared/schema.ts` with camelCase field names
+- ✅ **Architecture Refactor**: Migrated tipsService from direct Supabase to server API routes
+  - Changed from Supabase client calls to `/api/tips` REST endpoints
+  - All CRUD operations now flow through Drizzle storage layer (`server/storage.ts`)
+  - Complete pipeline: Admin → SignalForm → tipsService → Server Routes → Drizzle → Database
+- ✅ **Admin Panel Enhancement**: Enhanced tip creation workflow
+  - Admin selects match from Football API fixtures (via date picker)
+  - Passes `homeTeamLogo`, `awayTeamLogo`, and `fixtureId` to SignalForm via initialData
+  - SignalForm preserves match context on form reset for consecutive tip creation
+- ✅ **BetCard Optimization**: Implemented intelligent logo rendering
+  - Uses `hasFetchedFromAPI` flag to prevent redundant API calls
   - Prioritizes database-saved logos over API fetch
-  - Falls back to API only when logos missing from database
-  - Eliminates redundant API calls for tips with persisted logos
-- ✅ **Type Safety**: Updated `Signal` interface to include optional logo fields
+  - Only fetches from Football API when logos missing from database
+  - Eliminates unnecessary API requests for tips with persisted logos
+- ✅ **Data Type Handling**: Robust type conversions across pipeline
+  - `odd` field: number (frontend Signal) → string (Drizzle decimal schema)
+  - `fixtureId` field: number (Football API) → string (database) → string (frontend)
+  - tipsService.getAll supports both camelCase (Drizzle) and snake_case (legacy) for backward compatibility
+- ✅ **Type Safety**: Updated `Signal` interface to include optional `homeTeamLogo`, `awayTeamLogo`, and `fixtureId` fields
 
 **Search Functionality Added to Pre-Game Page:**
 - ✅ **Search Feature**: Implemented search toggle button and input field in Pre-Game page

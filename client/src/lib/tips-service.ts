@@ -8,21 +8,21 @@ export const tipsService = {
       const tips = response.data.tips || [];
       
       // Map backend tip format to frontend Signal format
-      // Drizzle ORM returns camelCase by default
+      // Supports both Drizzle camelCase and legacy snake_case
       return tips.map((tip: any) => ({
         id: tip.id,
         league: tip.league || '',
-        homeTeam: tip.homeTeam || '',
-        awayTeam: tip.awayTeam || '',
-        homeTeamLogo: tip.homeTeamLogo || undefined,
-        awayTeamLogo: tip.awayTeamLogo || undefined,
+        homeTeam: tip.homeTeam || tip.home_team || '',
+        awayTeam: tip.awayTeam || tip.away_team || '',
+        homeTeamLogo: tip.homeTeamLogo || tip.home_team_logo || undefined,
+        awayTeamLogo: tip.awayTeamLogo || tip.away_team_logo || undefined,
         market: tip.market,
         odd: Number(tip.odd) || 0,
         status: tip.status,
-        timestamp: tip.createdAt,
-        betLink: tip.betLink || undefined,
-        isLive: tip.isLive || false,
-        fixtureId: tip.fixtureId || undefined,
+        timestamp: tip.createdAt || tip.created_at,
+        betLink: tip.betLink || tip.bet_link || undefined,
+        isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
+        fixtureId: tip.fixtureId || tip.fixture_id || undefined,
       }));
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
