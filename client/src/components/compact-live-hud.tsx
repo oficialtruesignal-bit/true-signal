@@ -45,11 +45,11 @@ export function CompactLiveHud() {
     <div className="w-full mb-8 flex flex-col gap-6">
 
       {/* SEÇÃO 1: BLOCO SUPERIOR (Círculo + Gráfico) */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-32 items-center">
+      <div className="grid grid-cols-[40%_60%] gap-4 h-40 items-center">
 
         {/* ESQUERDA: GAUGE DE ASSERTIVIDADE */}
         <div className="relative flex items-center justify-center h-full w-full">
-          <div className="relative w-52 h-52 flex items-center justify-center">
+          <div className="relative w-36 h-36 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               {Array.from({ length: 60 }).map((_, i) => {
@@ -70,10 +70,10 @@ export function CompactLiveHud() {
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
-                {assertivityValue.toFixed(1)}<span className="text-lg text-[#33b864]">%</span>
+              <span className="text-3xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
+                {assertivityValue.toFixed(1)}<span className="text-base text-[#33b864]">%</span>
               </span>
-              <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">
+              <span className="text-[8px] text-gray-500 uppercase tracking-[0.2em] mt-0.5 bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">
                 Assertividade
               </span>
             </div>
