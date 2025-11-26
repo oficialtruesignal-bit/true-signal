@@ -109,25 +109,6 @@ export default function CheckoutPage() {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
-        {/* Security Badge Header */}
-        <div className="flex items-center justify-center gap-6 mb-8 flex-wrap">
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Lock className="w-4 h-4 text-[#33b864]" />
-            <span>Conexão Segura SSL</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Shield className="w-4 h-4 text-[#33b864]" />
-            <span>Pagamento Protegido</span>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-gray-400">
-            <Users className="w-4 h-4 text-[#33b864]" />
-            <span className="flex items-center gap-1">
-              <span className="w-2 h-2 bg-[#33b864] rounded-full animate-pulse"></span>
-              {onlineUsers} pessoas online
-            </span>
-          </div>
-        </div>
-
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 rounded-full border border-[#33b864]/20 mb-4">
