@@ -6,10 +6,12 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowRight, Lock, Mail, User, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
+import { Link } from "wouter";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +31,9 @@ const registerSchema = z.object({
   name: z.string().min(2, "Nome muito curto"),
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+  acceptTerms: z.boolean().refine((val) => val === true, {
+    message: "Você precisa aceitar os termos para continuar",
+  }),
 });
 
 export default function AuthPage() {
@@ -224,6 +229,36 @@ export default function AuthPage() {
                 )}
               </div>
 
+              <div className="flex items-start space-x-2">
+                <Checkbox 
+                  id="terms"
+                  {...registerForm.register("acceptTerms")}
+                  className="mt-0.5"
+                  data-testid="checkbox-terms"
+                />
+                <label
+                  htmlFor="terms"
+                  className="text-sm text-muted-foreground leading-relaxed cursor-pointer"
+                >
+                  Li e aceito os{" "}
+                  <Link href="/terms" className="text-primary hover:underline font-medium">
+                    Termos de Uso
+                  </Link>
+                  ,{" "}
+                  <Link href="/privacy" className="text-primary hover:underline font-medium">
+                    Política de Privacidade
+                  </Link>
+                  {" "}e{" "}
+                  <Link href="/risk-disclaimer" className="text-primary hover:underline font-medium">
+                    Aviso de Risco
+                  </Link>
+                  .
+                </label>
+              </div>
+              {registerForm.formState.errors.acceptTerms && (
+                <span className="text-xs text-red-500">{registerForm.formState.errors.acceptTerms.message}</span>
+              )}
+
               <Button 
                 type="submit" 
                 className="w-full h-11 bg-primary hover:bg-primary-dark text-primary-foreground font-bold btn-glow border border-primary/50"
@@ -247,7 +282,7 @@ export default function AuthPage() {
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-primary font-bold hover:underline decoration-primary underline-offset-4"
               >
-                {isLogin ? "Solicitar Acesso" : "Fazer Login"}
+                {isLogin ? "Criar Conta" : "Fazer Login"}
               </button>
             </p>
           </div>
