@@ -94,6 +94,7 @@ export class MercadoPagoService {
       );
 
       console.log('✅ Subscription plan created:', response.data.id);
+      console.log('📊 Plan response:', JSON.stringify(response.data, null, 2));
       return response.data;
     } catch (error: any) {
       console.error('❌ Error creating subscription plan:', error.response?.data || error.message);
