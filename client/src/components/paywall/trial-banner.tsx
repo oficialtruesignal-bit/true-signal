@@ -2,8 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Clock, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useAccessControl } from '@/hooks/use-access-control';
+import { Link } from 'wouter';
 
-const CHECKOUT_URL = 'https://checkout.exemplo.com/ocean-prime'; // Substituir pela URL real
+const PRICING_URL = '/pricing';
 
 export function TrialBanner() {
   const [isDismissed, setIsDismissed] = useState(false);
@@ -46,17 +47,12 @@ export function TrialBanner() {
           </div>
           
           <div className="flex items-center gap-1 flex-shrink-0">
-            <a
-              href={CHECKOUT_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-testid="button-trial-banner-subscribe"
-            >
-              <button className="px-3 md:px-4 py-1.5 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors text-xs md:text-sm whitespace-nowrap flex items-center gap-1.5">
+            <Link href={PRICING_URL}>
+              <button className="px-3 md:px-4 py-1.5 bg-white text-black font-bold rounded-lg hover:bg-gray-100 transition-colors text-xs md:text-sm whitespace-nowrap flex items-center gap-1.5" data-testid="button-trial-banner-subscribe">
                 <Sparkles className="w-3 h-3" />
                 Assinar Agora
               </button>
-            </a>
+            </Link>
             
             <button
               onClick={() => setIsDismissed(true)}
