@@ -47,3 +47,20 @@ Preferred communication style: Simple, everyday language.
 - **Axios**: HTTP client for external API requests.
 - **React Query**: Server state management for caching and data synchronization.
 - **Zod**: Schema declaration and validation library.
+
+## Recent Changes (Nov 26, 2024)
+
+**Search Functionality Added to Pre-Game Page:**
+- ✅ **Search Feature**: Implemented search toggle button and input field in Pre-Game page
+  - Toggle button in header (Search/X icon animation)
+  - Collapsible search input with smooth fade-in animation
+  - Filters matches by home team, away team, or league name (case-insensitive)
+  - Empty state differentiation: "No games scheduled" vs "No search results"
+  - Clear search button to reset query
+- ✅ **i18n Support**: Added 3 new translation keys to `pregame` section
+  - `searchPlaceholder`: Search input placeholder text
+  - `noResults`: Message when search returns no matches
+  - `clearSearch`: Clear search button label
+  - All 6 languages updated: PT, EN, ES, FR, IT, CN
+- ✅ **Consistent Pattern**: Mirrors Live page search implementation for UX consistency
+- ✅ **Architect Review**: All changes validated and approved
