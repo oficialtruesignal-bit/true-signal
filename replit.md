@@ -74,24 +74,28 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (Nov 26, 2024)
 
-**Freemium System Implementation:**
+**Freemium System Implementation (COMPLETED):**
 - ✅ **Database Schema**: Updated `profiles` table with new subscription model
-  - Changed `subscription_status` from ('free', 'premium') to ('trial', 'active', 'expired')
-  - Added `trial_start_date` timestamp column for accurate trial tracking
+  - Changed `subscription_status` ENUM from ('free', 'premium') to ('trial', 'active', 'expired')
+  - Added `trial_start_date` TIMESTAMP column with DEFAULT now() for accurate trial tracking
   - Migrated existing users: 'free' → 'trial', 'premium' → 'active'
-- ✅ **Access Control Logic**: Created `useAccessControl` hook
-  - Calculates days remaining in trial (15-day limit)
-  - Determines if user is locked out (`isLocked`)
-  - Controls tip visibility (`canSeeAllTips` - premium only)
-  - Tracks user status (isPremium, isTrial, isExpired)
+  - All fields properly indexed and accessible
+- ✅ **Access Control Logic**: Created `useAccessControl` hook with precise 360-hour trial enforcement
+  - Uses `differenceInHours >= 360` for exact 15×24h trial window (not calendar days)
+  - Reads `trialStartDate` from profile (fallback to `createdAt` for legacy users)
+  - Prioritizes `subscriptionStatus === 'active'` over trial calculations
+  - Returns flags: `daysRemaining`, `isLocked`, `canSeeAllTips`, `isPremium`, `isTrial`, `isExpired`
 - ✅ **Paywall Components**: 
   - `LockedScreen`: Full-screen blocker after trial expiration with Ocean Prime CTA
   - `TrialBanner`: Countdown banner with urgency messaging (yellow normal, red ≤3 days)
   - Both components include "Assinar Agora" CTAs linking to checkout
+  - Tips page blur overlay limited to indices 1-2 only (2nd and 3rd tips)
 - ✅ **Type Safety**: Updated `useAuth` hook User interface
-  - Added `createdAt` field for trial calculations
-  - Changed `subscriptionStatus` type to match new schema
-  - Fixed user data mapping from Supabase profiles
+  - Added `trialStartDate: string | null` field for trial calculations
+  - Changed `subscriptionStatus` type to match new schema ('trial' | 'active' | 'expired')
+  - Fixed user data mapping from Supabase profiles (trial_start_date → trialStartDate)
+- ✅ **Integration**: Modified App.tsx to render LockedScreen when user is locked (admins bypass)
+- ✅ **Architect Approval**: All critical issues resolved, 360-hour trial system validated
 
 ## Recent Changes (Nov 26, 2024)
 
