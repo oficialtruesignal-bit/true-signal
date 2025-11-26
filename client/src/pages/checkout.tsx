@@ -2,10 +2,23 @@ import { Layout } from "@/components/layout";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle } from "lucide-react";
+import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText } from "lucide-react";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { toast } from "sonner";
 import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
+const checkoutSchema = z.object({
+  fullName: z.string().min(3, "Nome completo é obrigatório"),
+  email: z.string().email("Email inválido"),
+  phone: z.string().min(10, "Telefone inválido (mínimo 10 dígitos)"),
+  document: z.string().min(11, "CPF/CNPJ inválido (mínimo 11 dígitos)"),
+  acceptTerms: z.boolean().refine(val => val === true, "Você deve aceitar os termos"),
+});
+
+type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
 export default function CheckoutPage() {
   const { user } = useAuth();
@@ -13,6 +26,21 @@ export default function CheckoutPage() {
   const { daysRemaining, isPremium } = useAccessControl();
   const [isLoading, setIsLoading] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(127);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CheckoutFormData>({
+    resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      fullName: user?.firstName || "",
+      email: user?.email || "",
+      phone: "",
+      document: "",
+      acceptTerms: false,
+    },
+  });
 
   // Simular contador de usuários online (varia entre 120-150)
   useEffect(() => {
@@ -26,7 +54,7 @@ export default function CheckoutPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleSubscribe = async () => {
+  const onSubmit = async (data: CheckoutFormData) => {
     if (!user) {
       toast.error("Você precisa estar logado para assinar");
       return;
@@ -37,7 +65,10 @@ export default function CheckoutPage() {
       // Create subscription via backend
       const response = await axios.post("/api/mercadopago/create-subscription", {
         userId: user.id,
-        userEmail: user.email,
+        userEmail: data.email,
+        fullName: data.fullName,
+        phone: data.phone,
+        document: data.document,
       });
 
       const { initPoint } = response.data;
@@ -216,33 +247,147 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          {/* Right: Payment Summary */}
+          {/* Right: Checkout Form */}
           <div className="space-y-6">
-            {/* Summary Card */}
-            <div className="bg-card border border-white/10 rounded-xl p-6 sticky top-24">
-              <h3 className="font-sora font-bold text-white mb-6">Resumo do pedido</h3>
-              
-              <div className="space-y-4 mb-6 pb-6 border-b border-white/10">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Ocean Prime (mensal)</span>
-                  <span className="text-white">R$ 99,87</span>
+            <form onSubmit={handleSubmit(onSubmit)} className="bg-card border border-white/10 rounded-xl p-6 sticky top-24 space-y-6">
+              <h3 className="font-sora font-bold text-white mb-6">Complete seus dados</h3>
+
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Nome completo *
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="text"
+                    {...register("fullName")}
+                    placeholder="Seu nome completo"
+                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] transition-all"
+                    data-testid="input-fullname"
+                  />
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Taxa de processamento</span>
-                  <span className="text-[#33b864]">R$ 0,00</span>
+                {errors.fullName && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.fullName.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Email */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Email *
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="email"
+                    {...register("email")}
+                    placeholder="seu@email.com"
+                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] transition-all"
+                    data-testid="input-email"
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.email.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Telefone/WhatsApp *
+                </label>
+                <div className="relative">
+                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="tel"
+                    {...register("phone")}
+                    placeholder="(00) 00000-0000"
+                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] transition-all"
+                    data-testid="input-phone"
+                  />
+                </div>
+                {errors.phone && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.phone.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Document (CPF/CNPJ) */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  CPF/CNPJ *
+                </label>
+                <div className="relative">
+                  <FileText className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <input
+                    type="text"
+                    {...register("document")}
+                    placeholder="000.000.000-00"
+                    className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-lg text-white placeholder:text-gray-500 focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] transition-all"
+                    data-testid="input-document"
+                  />
+                </div>
+                {errors.document && (
+                  <p className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" />
+                    {errors.document.message}
+                  </p>
+                )}
+              </div>
+
+              {/* Order Summary */}
+              <div className="pt-6 border-t border-white/10">
+                <div className="space-y-3 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Ocean Prime (mensal)</span>
+                    <span className="text-white">R$ 99,87</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Taxa de processamento</span>
+                    <span className="text-[#33b864]">R$ 0,00</span>
+                  </div>
+                  <div className="flex justify-between pt-3 border-t border-white/10">
+                    <span className="font-bold text-white">Total</span>
+                    <span className="font-bold text-xl text-white">R$ 99,87</span>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-between mb-6">
-                <span className="font-bold text-white">Total</span>
-                <span className="font-bold text-2xl text-white">R$ 99,87</span>
+              {/* Accept Terms */}
+              <div className="flex items-start gap-3">
+                <input
+                  type="checkbox"
+                  {...register("acceptTerms")}
+                  id="acceptTerms"
+                  className="mt-1 w-4 h-4 rounded border-white/10 bg-white/5 text-[#33b864] focus:ring-[#33b864]"
+                  data-testid="checkbox-accept-terms"
+                />
+                <label htmlFor="acceptTerms" className="text-xs text-gray-400 leading-relaxed cursor-pointer">
+                  Eu aceito os <a href="/terms" target="_blank" className="text-[#33b864] hover:underline">termos de uso</a>, <a href="/privacy" target="_blank" className="text-[#33b864] hover:underline">política de privacidade</a> e <a href="/risk-disclaimer" target="_blank" className="text-[#33b864] hover:underline">aviso de risco</a>
+                </label>
               </div>
+              {errors.acceptTerms && (
+                <p className="text-red-500 text-xs flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {errors.acceptTerms.message}
+                </p>
+              )}
 
+              {/* Submit Button */}
               <button
-                onClick={handleSubscribe}
+                type="submit"
                 disabled={isLoading}
-                className="w-full py-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold text-lg rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#33b864]/30 disabled:opacity-50 disabled:cursor-not-allowed mb-4"
-                data-testid="button-subscribe-ocean-prime"
+                className="w-full py-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold text-lg rounded-xl transition-all duration-200 flex items-center justify-center gap-3 shadow-lg shadow-[#33b864]/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                data-testid="button-checkout-submit"
               >
                 {isLoading ? (
                   <>
@@ -257,7 +402,8 @@ export default function CheckoutPage() {
                 )}
               </button>
 
-              <div className="space-y-2">
+              {/* Security Badges */}
+              <div className="space-y-2 pt-4 border-t border-white/10">
                 <div className="flex items-center gap-2 text-xs text-gray-400">
                   <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
                   <span>Criptografia SSL de 256 bits</span>
@@ -271,7 +417,7 @@ export default function CheckoutPage() {
                   <span>Cancele a qualquer momento</span>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
         </div>
 
