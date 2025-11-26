@@ -78,7 +78,7 @@ export function HeroShot() {
                 />
                 <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-6 h-6" />
-                  QUERO ACESSO À INTELIGÊNCIA ARTIFICIAL
+                  ACESSAR GRÁTIS
                 </span>
               </button>
             </Link>
