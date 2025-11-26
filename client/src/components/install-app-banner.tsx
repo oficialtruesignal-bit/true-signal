@@ -24,14 +24,17 @@ export function InstallAppBanner() {
     const isAndroidDevice = /android/.test(userAgent);
     const isInStandaloneMode = window.matchMedia('(display-mode: standalone)').matches;
 
+    console.log('📱 [Install Banner] User Agent:', userAgent);
+    console.log('📱 [Install Banner] iOS:', isIOSDevice, '| Android:', isAndroidDevice, '| Standalone:', isInStandaloneMode);
+
     setIsIOS(isIOSDevice);
     setIsAndroid(isAndroidDevice);
     setIsInstalled(isInStandaloneMode);
 
-    // Only show banner if not already installed
-    if (!isInStandaloneMode && (isIOSDevice || isAndroidDevice)) {
-      setShowBanner(true);
-    }
+    // ALWAYS show banner for testing (remove this condition in production)
+    // Production: if (!isInStandaloneMode && (isIOSDevice || isAndroidDevice))
+    setShowBanner(true);
+    console.log('📱 [Install Banner] Banner visible:', true);
 
     // Listen for beforeinstallprompt event (Android/Chrome)
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -75,7 +78,9 @@ export function InstallAppBanner() {
     localStorage.setItem('pwa_banner_dismissed', Date.now().toString());
   };
 
-  if (!showBanner || isInstalled) {
+  // Temporarily disabled check for testing - always show banner
+  // Production: if (!showBanner || isInstalled) return null;
+  if (!showBanner) {
     return null;
   }
 
@@ -103,9 +108,10 @@ export function InstallAppBanner() {
             Adicione à tela inicial!
           </h3>
           <p className="text-sm text-gray-300">
-            Acesse o Ocean Signal mais rápido, como se fosse um aplicativo nativo. 
+            Acesse o Ocean Signal mais rápido, como se fosse um aplicativo nativo.
             {isIOS && " Disponível no Safari."}
             {isAndroid && " Instalação em um toque."}
+            {!isIOS && !isAndroid && " Acesse do celular para instalar."}
           </p>
         </div>
       </div>
