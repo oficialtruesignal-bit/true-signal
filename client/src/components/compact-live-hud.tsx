@@ -1,12 +1,53 @@
-import { TrendingUp, Zap } from 'lucide-react';
+import { TrendingUp, Zap, Scale, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
 import { useBankroll } from '@/hooks/use-bankroll';
 import { NeonCard } from './dashboard/neon-card';
+import { useQuery } from '@tanstack/react-query';
+import { tipsService } from '@/lib/tips-service';
+import { useState, useEffect } from 'react';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
   const bankroll = useBankroll();
   const assertivityValue = stats.assertivity;
+  
+  // Fetch tips para cálculos financeiros
+  const { data: tips = [] } = useQuery({
+    queryKey: ['tips'],
+    queryFn: tipsService.getAll,
+  });
+  
+  // Simular investidores online (oscila entre 3400-3500)
+  const [onlineUsers, setOnlineUsers] = useState(3420);
+  
+  useEffect(() => {
+    const oscillate = () => {
+      setOnlineUsers(prev => {
+        const variation = Math.floor(Math.random() * 40) - 15;
+        const newValue = prev + variation;
+        return Math.max(3400, Math.min(3500, newValue));
+      });
+    };
+    
+    const getRandomInterval = () => Math.random() * 2000 + 3000;
+    
+    let timeoutId: number;
+    const scheduleNext = () => {
+      timeoutId = window.setTimeout(() => {
+        oscillate();
+        scheduleNext();
+      }, getRandomInterval());
+    };
+    
+    scheduleNext();
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+  
+  // Cálculos de métricas financeiras baseadas nos tips
+  const unitsWon = tips.filter(t => t.status === 'green').reduce((acc, t) => acc + (t.odd - 1), 0);
+  const unitsLost = tips.filter(t => t.status === 'red').length;
+  const averageOdd = tips.length > 0 ? (tips.reduce((acc, t) => acc + t.odd, 0) / tips.length).toFixed(2) : "0.00";
 
   return (
     <div className="w-full mb-8">
@@ -78,6 +119,54 @@ export function CompactLiveHud() {
             </span>
           </NeonCard>
 
+        </div>
+
+      </div>
+
+      {/* --- BLOCO INFERIOR: 4 CARDS DE DETALHE (Grid 2x2) --- */}
+      <div className="grid grid-cols-2 gap-4">
+        
+        {/* CARD 1: ODD MÉDIA (Informativo) */}
+        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
+          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <Scale className="w-3 h-3 text-orange-500" />
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ODD MÉDIA</span>
+          </div>
+          <span className="text-2xl font-sora font-bold text-orange-500">@{averageOdd}</span>
+        </div>
+
+        {/* CARD 2: INVESTIDORES ONLINE (Prova Social) */}
+        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
+          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <Users className="w-3 h-3 text-[#33b864]" />
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ONLINE AGORA</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
+            <span className="text-2xl font-sora font-bold text-white">{onlineUsers.toLocaleString('pt-BR')}</span>
+          </div>
+        </div>
+
+        {/* CARD 3: UNIDADES GANHAS (Positivo) */}
+        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
+          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <ArrowUpRight className="w-3 h-3 text-[#33b864]" />
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">UNIDADES GANHAS</span>
+          </div>
+          <span className="text-2xl font-sora font-bold text-[#33b864]">+{unitsWon.toFixed(1)}u</span>
+        </div>
+
+        {/* CARD 4: UNIDADES PERDIDAS (Negativo) */}
+        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
+          <div className="absolute inset-0 border border-red-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+          <div className="flex items-center gap-2 mb-2">
+            <ArrowDownRight className="w-3 h-3 text-red-500" />
+            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">UNIDADES PERDIDAS</span>
+          </div>
+          <span className="text-2xl font-sora font-bold text-red-500">-{unitsLost.toFixed(1)}u</span>
         </div>
 
       </div>
