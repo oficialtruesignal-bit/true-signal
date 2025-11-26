@@ -1,0 +1,81 @@
+PROMPT MESTRE: DASHBOARD FINAL CLEANUP (HARD DELETE & STANDARDIZE)
+ROLE: Senior Frontend Developer.
+
+TASK: Limpar e padronizar a parte inferior do CompactLiveHud.tsx. ERRO ATUAL: Existem cards duplicados ("Odd Média"), cards indesejados ("Sequência", "Sinais Mês", "Investidores") e inconsistência de design. AÇÃO: Manter o Bloco Superior (Círculo + Banca/Lucro) intacto. APAGAR TODO O RESTO e inserir apenas o Grid 2x2 solicitado.
+
+1. INSTRUÇÃO DE CÓDIGO (SUBSTITUIÇÃO CIRÚRGICA)
+Localize o fechamento da div do Grid Superior (aquele que tem h-60). IMEDIATAMENTE ABAIXO DELE, substitua TODO o código existente até o final do componente por este bloco exato:
+
+TypeScript
+
+  {/* --- BLOCO INFERIOR: GRID 2x2 (PADRONIZADO E FUTURISTA) --- */}
+  {/* Altura fixa e design idêntico para todos os cards */}
+  <div className="grid grid-cols-2 gap-4 mt-4">
+    
+    {/* 1. ODD MÉDIA */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+      <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+         <ScaleIcon className="w-8 h-8 text-orange-500" /> {/* Marca d'água */}
+      </div>
+      <div className="flex items-center gap-2 mb-2 z-10">
+         <div className="w-1 h-3 bg-orange-500 rounded-full"></div>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-white z-10">@1.92</span>
+    </div>
+
+    {/* 2. ONLINE AGORA */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+      <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+         <UsersIcon className="w-8 h-8 text-[#33b864]" /> {/* Marca d'água */}
+      </div>
+      <div className="flex items-center gap-2 mb-2 z-10">
+         <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse shadow-[0_0_8px_#33b864]"></span>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Online</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-white z-10">3.444</span>
+    </div>
+
+    {/* 3. UNIDADES GANHAS */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+      <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+         <TrendingUpIcon className="w-8 h-8 text-[#33b864]" /> {/* Marca d'água */}
+      </div>
+      <div className="flex items-center gap-2 mb-2 z-10">
+         <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhos</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-[#33b864] z-10">+104.3u</span>
+    </div>
+
+    {/* 4. UNIDADES PERDIDAS */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-red-500/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+      <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+         <TrendingDownIcon className="w-8 h-8 text-red-500" /> {/* Marca d'água */}
+      </div>
+      <div className="flex items-center gap-2 mb-2 z-10">
+         <div className="w-1 h-3 bg-red-500 rounded-full"></div>
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdas</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-red-500 z-10">-12.0u</span>
+    </div>
+
+  </div>
+2. CHECKLIST DE VERIFICAÇÃO (O QUE NÃO PODE APARECER)
+Garanta que os seguintes elementos foram EXTERMINADOS do código:
+
+❌ Card de "Sequência" (2V - 0D).
+
+❌ Card de "Sinais (Mês)".
+
+❌ Card de "Investidores" (o card verde inferior).
+
+❌ Qualquer segunda aparição de "Odd Média".
+
+RESULTADO: O Dashboard terá apenas 2 Blocos:
+
+Topo: Círculo + Banca + Lucro.
+
+Baixo: Grid 2x2 perfeito e alinhado.
+
+COMANDO: Execute agora. Quero limpeza total.

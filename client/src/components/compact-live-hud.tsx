@@ -1,4 +1,4 @@
-import { TrendingUp, Zap, Scale, Users, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { TrendingUp, Zap, Scale, Users, TrendingDown } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
 import { useBankroll } from '@/hooks/use-bankroll';
 import { NeonCard } from './dashboard/neon-card';
@@ -123,50 +123,55 @@ export function CompactLiveHud() {
 
       </div>
 
-      {/* --- BLOCO INFERIOR: 4 CARDS DE DETALHE (Grid 2x2) --- */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* --- BLOCO INFERIOR: GRID 2x2 (PADRONIZADO E FUTURISTA) --- */}
+      <div className="grid grid-cols-2 gap-4 mt-4">
         
-        {/* CARD 1: ODD MÉDIA (Informativo) */}
-        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
-          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-          <div className="flex items-center gap-2 mb-2">
-            <Scale className="w-3 h-3 text-orange-500" />
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ODD MÉDIA</span>
+        {/* 1. ODD MÉDIA */}
+        <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+          <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+            <Scale className="w-8 h-8 text-orange-500" />
           </div>
-          <span className="text-2xl font-sora font-bold text-orange-500">@{averageOdd}</span>
+          <div className="flex items-center gap-2 mb-2 z-10">
+            <div className="w-1 h-3 bg-orange-500 rounded-full"></div>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
+          </div>
+          <span className="text-3xl font-sora font-bold text-white z-10">@{averageOdd}</span>
         </div>
 
-        {/* CARD 2: INVESTIDORES ONLINE (Prova Social) */}
-        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
-          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="w-3 h-3 text-[#33b864]" />
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">ONLINE AGORA</span>
+        {/* 2. ONLINE AGORA */}
+        <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+          <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+            <Users className="w-8 h-8 text-[#33b864]" />
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
-            <span className="text-2xl font-sora font-bold text-white">{onlineUsers.toLocaleString('pt-BR')}</span>
+          <div className="flex items-center gap-2 mb-2 z-10">
+            <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse shadow-[0_0_8px_#33b864]"></span>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Online</span>
           </div>
+          <span className="text-3xl font-sora font-bold text-white z-10">{onlineUsers.toLocaleString('pt-BR')}</span>
         </div>
 
-        {/* CARD 3: UNIDADES GANHAS (Positivo) */}
-        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
-          <div className="absolute inset-0 border border-[#33b864]/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-          <div className="flex items-center gap-2 mb-2">
-            <ArrowUpRight className="w-3 h-3 text-[#33b864]" />
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">UNIDADES GANHAS</span>
+        {/* 3. UNIDADES GANHAS */}
+        <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+          <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+            <TrendingUp className="w-8 h-8 text-[#33b864]" />
           </div>
-          <span className="text-2xl font-sora font-bold text-[#33b864]">+{unitsWon.toFixed(1)}u</span>
+          <div className="flex items-center gap-2 mb-2 z-10">
+            <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhos</span>
+          </div>
+          <span className="text-3xl font-sora font-bold text-[#33b864] z-10">+{unitsWon.toFixed(1)}u</span>
         </div>
 
-        {/* CARD 4: UNIDADES PERDIDAS (Negativo) */}
-        <div className="h-28 bg-[#121212] border border-white/5 rounded-2xl p-4 hover:bg-[#1a1a1a] transition-colors flex flex-col justify-center relative group">
-          <div className="absolute inset-0 border border-red-500/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-          <div className="flex items-center gap-2 mb-2">
-            <ArrowDownRight className="w-3 h-3 text-red-500" />
-            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">UNIDADES PERDIDAS</span>
+        {/* 4. UNIDADES PERDIDAS */}
+        <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-red-500/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
+          <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
+            <TrendingDown className="w-8 h-8 text-red-500" />
           </div>
-          <span className="text-2xl font-sora font-bold text-red-500">-{unitsLost.toFixed(1)}u</span>
+          <div className="flex items-center gap-2 mb-2 z-10">
+            <div className="w-1 h-3 bg-red-500 rounded-full"></div>
+            <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdas</span>
+          </div>
+          <span className="text-3xl font-sora font-bold text-red-500 z-10">-{unitsLost.toFixed(1)}u</span>
         </div>
 
       </div>
