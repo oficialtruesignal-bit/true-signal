@@ -9,26 +9,26 @@ interface MercadoPagoConfig {
 
 interface CreateSubscriptionPlanParams {
   reason: string;
-  autoRecurring: {
+  auto_recurring: {
     frequency: number;
-    frequencyType: 'months' | 'days' | 'weeks';
-    transactionAmount: number;
-    currencyId: string;
-    freeTrial?: {
+    frequency_type: 'months' | 'days' | 'weeks';
+    transaction_amount: number;
+    currency_id: string;
+    free_trial?: {
       frequency: number;
-      frequencyType: 'months' | 'days';
+      frequency_type: 'months' | 'days';
     };
   };
-  backUrl: string;
+  back_url: string;
 }
 
 interface CreateSubscriptionParams {
-  preapprovalPlanId: string;
+  preapproval_plan_id: string;
   reason: string;
-  externalReference: string;
-  payerEmail: string;
-  cardTokenId?: string;
-  backUrl: string;
+  external_reference: string;
+  payer_email: string;
+  card_token_id?: string;
+  back_url: string;
   status: 'authorized' | 'pending';
 }
 
@@ -73,17 +73,17 @@ export class MercadoPagoService {
 
     const planData: CreateSubscriptionPlanParams = {
       reason: 'Ocean Prime - Assinatura Mensal',
-      autoRecurring: {
+      auto_recurring: {
         frequency: 1,
-        frequencyType: 'months',
-        transactionAmount: 99.87,
-        currencyId: 'BRL',
-        freeTrial: {
+        frequency_type: 'months',
+        transaction_amount: 99.87,
+        currency_id: 'BRL',
+        free_trial: {
           frequency: 15,
-          frequencyType: 'days',
+          frequency_type: 'days',
         },
       },
-      backUrl: process.env.REPLIT_DEV_DOMAIN 
+      back_url: process.env.REPLIT_DEV_DOMAIN 
         ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
         : 'http://localhost:5000/app',
     };
@@ -116,11 +116,11 @@ export class MercadoPagoService {
     }
 
     const subscriptionData: CreateSubscriptionParams = {
-      preapprovalPlanId: params.planId,
+      preapproval_plan_id: params.planId,
       reason: 'Ocean Prime - Assinatura Mensal',
-      externalReference: params.userId,
-      payerEmail: params.userEmail,
-      backUrl: process.env.REPLIT_DEV_DOMAIN 
+      external_reference: params.userId,
+      payer_email: params.userEmail,
+      back_url: process.env.REPLIT_DEV_DOMAIN 
         ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
         : 'http://localhost:5000/app',
       status: 'pending', // Will be authorized after payment

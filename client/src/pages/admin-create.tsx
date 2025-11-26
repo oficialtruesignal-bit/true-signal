@@ -205,7 +205,7 @@ export default function AdminCreate() {
       awayTeam,
       homeTeamLogo: !manualMode && selectedMatch ? selectedMatch.teams.home.logo : undefined,
       awayTeamLogo: !manualMode && selectedMatch ? selectedMatch.teams.away.logo : undefined,
-      fixtureId: !manualMode && selectedMatch ? selectedMatch.fixture.id : undefined,
+      fixtureId: !manualMode && selectedMatch ? selectedMatch.fixture.id.toString() : undefined,
       market: formData.market,
       odd: parseFloat(formData.odd),
       betLink: formData.betLink,

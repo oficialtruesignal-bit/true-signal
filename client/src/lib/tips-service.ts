@@ -22,7 +22,7 @@ export const tipsService = {
         timestamp: tip.createdAt || tip.created_at,
         betLink: tip.betLink || tip.bet_link || undefined,
         isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
-        fixtureId: tip.fixtureId || tip.fixture_id || undefined,
+        fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
       }));
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
