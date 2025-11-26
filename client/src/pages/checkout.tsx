@@ -115,7 +115,7 @@ export default function CheckoutPage() {
             <Sparkles className="w-4 h-4 text-[#33b864]" />
             <span className="text-sm font-bold text-[#33b864]">CHECKOUT SEGURO</span>
           </div>
-          <h1 className="text-4xl font-sora font-bold text-white mb-4">
+          <h1 className="text-3xl font-sora font-bold text-white mb-4">
             Finalize sua assinatura Ocean Prime
           </h1>
           <p className="text-xl text-gray-300">
