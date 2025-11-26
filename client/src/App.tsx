@@ -19,6 +19,9 @@ const SettingsPage = React.lazy(() => import("@/pages/settings"));
 const Admin = React.lazy(() => import("@/pages/admin"));
 const AdminCreate = React.lazy(() => import("@/pages/admin-create"));
 const AuthPage = React.lazy(() => import("@/pages/auth"));
+const TermsPage = React.lazy(() => import("@/pages/terms"));
+const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
+const RiskDisclaimerPage = React.lazy(() => import("@/pages/risk-disclaimer"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
 // Import access control and paywall
@@ -60,6 +63,9 @@ function Router() {
       {/* Public Routes */}
       <Route path="/" component={LandingPage} />
       <Route path="/auth" component={AuthPage} />
+      <Route path="/terms" component={TermsPage} />
+      <Route path="/privacy" component={PrivacyPage} />
+      <Route path="/risk-disclaimer" component={RiskDisclaimerPage} />
       
       {/* Protected Routes */}
       <Route path="/app">

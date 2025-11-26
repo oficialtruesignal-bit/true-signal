@@ -121,7 +121,7 @@ function Footer() {
               Ocean Signal
             </h4>
             <p className="text-gray-400 text-sm leading-relaxed">
-              A primeira IA de apostas esportivas que realmente funciona. Tecnologia proprietária para operadores profissionais.
+              Inteligência artificial aplicada ao mercado esportivo.
             </p>
           </div>
           
@@ -154,22 +154,22 @@ function Footer() {
           
           {/* Legal */}
           <div>
-            <h5 className="text-white font-bold mb-4">Legal</h5>
+            <h5 className="text-white font-bold mb-4">Jurídico</h5>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
-                  Termos de Serviço
-                </a>
+                <Link href="/terms" className="hover:text-[#33b864] transition-colors">
+                  Termos de Uso
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
+                <Link href="/privacy" className="hover:text-[#33b864] transition-colors">
                   Política de Privacidade
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
-                  Política de Reembolso
-                </a>
+                <Link href="/risk-disclaimer" className="hover:text-[#33b864] transition-colors">
+                  Aviso de Risco
+                </Link>
               </li>
             </ul>
           </div>
@@ -193,17 +193,30 @@ function Footer() {
         
         {/* Bottom Bar */}
         <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-center md:text-left text-sm text-gray-500">
-              <p>© 2024 Ocean Signal. Todos os direitos reservados.</p>
-              <p className="mt-1">CNPJ: 00.000.000/0001-00</p>
+          <div className="flex flex-col gap-6">
+            {/* Responsibility Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+                <div className="text-3xl">🔞</div>
+                <div className="text-sm">
+                  <p className="text-yellow-400 font-bold">+18</p>
+                  <p className="text-yellow-600 text-xs">Proibido para menores</p>
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl">
+                <div className="text-3xl">🎲</div>
+                <div className="text-sm">
+                  <p className="text-[#33b864] font-bold">Jogo Responsável</p>
+                  <p className="text-gray-500 text-xs">Aposte com moderação</p>
+                </div>
+              </div>
             </div>
             
-            <div className="text-sm text-gray-500 text-center md:text-right">
-              <p className="mb-1">Tecnologia de ponta para operadores profissionais</p>
-              <p className="text-xs">
-                <span className="text-[#33b864] font-semibold">94.8%</span> de assertividade comprovada
-              </p>
+            {/* Copyright */}
+            <div className="text-center text-sm text-gray-500">
+              <p>© 2024 Ocean Signal. Todos os direitos reservados.</p>
+              <p className="mt-1">CNPJ: Pendente</p>
             </div>
           </div>
         </div>

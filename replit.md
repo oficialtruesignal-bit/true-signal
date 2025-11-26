@@ -15,7 +15,7 @@ Preferred communication style: Simple, everyday language.
 - **Technology Stack**: React 18 with TypeScript, Vite, Tailwind CSS, shadcn/ui, Wouter, React Query, React Hook Form with Zod.
 - **Design System**: Custom dark theme (`#33b864` green neon accents), Inter and Saira fonts, New York style shadcn/ui components, mobile-first responsive design with bottom navigation.
 - **Key UI Components**: BetCard (betting tips), Hero (landing page), LiveTicker (recent signals), LiveGamesList, MatchCenterModal (detailed match stats with SVG graphics), SignalForm (admin tip creation).
-- **Routing**: `/` (landing), `/auth`, `/app` (dashboard), `/tips`, `/live`, `/pregame`, `/settings`, `/admin` (role-based).
+- **Routing**: `/` (landing), `/auth`, `/app` (dashboard), `/tips`, `/live`, `/pregame`, `/settings`, `/admin` (role-based), `/terms`, `/privacy`, `/risk-disclaimer` (legal pages).
 - **Internationalization**: Full site-wide support for 6 languages (PT, EN, ES, FR, IT, CN) with dynamic date localization via `date-fns` and `localStorage` persistence.
 
 ### Backend
@@ -135,3 +135,25 @@ Preferred communication style: Simple, everyday language.
   - `clearSearch`: Clear search button label
   - All 6 languages updated: PT, EN, ES, FR, IT, CN
 - ✅ **Consistent Pattern**: Mirrors Live page search implementation for UX consistency
+
+**Typography Standardization:**
+- ✅ Replaced all Syne font references with Sora across the entire application
+- ✅ Consistent font family now using only Sora for all headings and display text
+
+**Legal Compliance Pages Implementation:**
+- ✅ **Legal Pages**: Created 3 comprehensive legal compliance pages
+  - `/terms`: Terms and Conditions of Use (10 sections covering service description, trial, subscription, cancellation, prohibitions, liability)
+  - `/privacy`: Privacy Policy with full LGPD compliance (12 sections covering data collection, usage, security, user rights)
+  - `/risk-disclaimer`: Risk Disclaimer and Liability Waiver (6 sections covering financial risks, gambling warnings, responsible gaming)
+- ✅ **Footer Enhancement**: Updated landing page footer with legal compliance elements
+  - Added "Jurídico" section with links to all legal pages
+  - Added responsibility badges: 🔞 +18 age restriction and 🎲 Responsible Gaming
+  - Updated brand description to match tone: "Inteligência artificial aplicada ao mercado esportivo"
+  - Copyright notice with CNPJ placeholder
+- ✅ **Design System**: All legal pages follow dark Cyberpunk aesthetic
+  - Sora typography, #0a0a0a background, white/gray text hierarchy
+  - Color-coded icons (red for risks, green for terms, blue for privacy)
+  - Structured content blocks with clear hierarchy and readability
+  - "Voltar para Home" back button on each page
+  - Last updated timestamp footer on each legal document
+- ✅ **Routing**: Added public routes in App.tsx for all legal pages (no authentication required)
