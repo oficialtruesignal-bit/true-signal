@@ -72,7 +72,7 @@ export default function TermsPage() {
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Cobrança mensal recorrente de <strong className="text-white">R$ 99,87</strong>;</li>
               <li>Renovação automática até cancelamento;</li>
-              <li>Garantia de reembolso de 7 dias (primeira assinatura);</li>
+              <li>Garantia de reembolso de 15 dias (primeira assinatura);</li>
               <li>Pagamento processado via gateway seguro (PCI DSS).</li>
             </ul>
           </section>
@@ -85,8 +85,8 @@ export default function TermsPage() {
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>O acesso permanece ativo até o fim do ciclo pago;</li>
               <li>Não haverá cobrança no próximo ciclo;</li>
-              <li>Reembolso disponível apenas nos <strong className="text-white">primeiros 7 dias</strong> da primeira assinatura;</li>
-              <li>Cancelamentos após 7 dias não geram reembolso proporcional.</li>
+              <li>Reembolso disponível apenas nos <strong className="text-white">primeiros 15 dias</strong> da primeira assinatura;</li>
+              <li>Cancelamentos após 15 dias não geram reembolso proporcional.</li>
             </ul>
           </section>
 

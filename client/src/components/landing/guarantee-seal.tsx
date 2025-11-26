@@ -7,7 +7,7 @@ export function GuaranteeSeal() {
   const isInView = useInView(ref, { once: true });
   
   const guarantees = [
-    '7 dias para testar sem compromisso',
+    '15 dias para testar sem compromisso',
     'Reembolso 100% automático',
     'Sem perguntas, sem burocracia',
     'O risco é todo nosso',
@@ -55,7 +55,7 @@ export function GuaranteeSeal() {
                 </span>
               </h2>
               <p className="text-xl text-gray-300">
-                Teste a IA por 7 Dias. Não Lucrou? Devolvemos Tudo.
+                Teste a IA por 15 Dias. Não Lucrou? Devolvemos Tudo.
               </p>
             </motion.div>
             
@@ -87,7 +87,7 @@ export function GuaranteeSeal() {
               <p className="text-lg text-gray-300 leading-relaxed">
                 Se você <span className="text-white font-bold">não lucrar</span> ou{' '}
                 <span className="text-white font-bold">não ficar satisfeito</span> por qualquer motivo,
-                basta solicitar o reembolso dentro de 7 dias.{' '}
+                basta solicitar o reembolso dentro de 15 dias.{' '}
                 <span className="text-[#33b864] font-bold">100% do seu dinheiro de volta</span>. Sem perguntas.
               </p>
             </motion.div>
@@ -100,7 +100,7 @@ export function GuaranteeSeal() {
               className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-gradient-to-br from-yellow-500 to-[#33b864] flex items-center justify-center shadow-2xl border-4 border-black transform rotate-12"
             >
               <div className="text-center">
-                <div className="text-2xl font-black text-black">7 DIAS</div>
+                <div className="text-2xl font-black text-black">15 DIAS</div>
                 <div className="text-xs text-black font-bold">GARANTIA</div>
               </div>
             </motion.div>

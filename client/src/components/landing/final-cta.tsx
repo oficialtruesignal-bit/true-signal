@@ -115,7 +115,7 @@ export function FinalCTA() {
           </div>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-[#33b864]" />
-            <span>Garantia 7 Dias</span>
+            <span>Garantia 15 Dias</span>
           </div>
           <div className="flex items-center gap-2">
             <Zap className="w-4 h-4 text-[#33b864]" />

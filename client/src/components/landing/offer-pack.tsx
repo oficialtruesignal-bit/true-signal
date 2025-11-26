@@ -45,7 +45,7 @@ export function OfferPack() {
     {
       icon: CheckCircle2,
       title: 'Garantia de Reembolso Automático',
-      description: '7 dias para testar sem risco. Não lucrou? Devolvemos tudo.',
+      description: '15 dias para testar sem risco. Não lucrou? Devolvemos tudo.',
     },
   ];
   
