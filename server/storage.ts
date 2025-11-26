@@ -7,11 +7,17 @@ export interface IStorage {
   // Profile/Auth methods
   getProfileById(id: string): Promise<Profile | undefined>;
   getProfileByEmail(email: string): Promise<Profile | undefined>;
+  getUserByEmail(email: string): Promise<Profile | undefined>; // Alias for getProfileByEmail
   createProfile(profile: Omit<InsertProfile, 'passwordHash'> & { password: string }): Promise<Profile>;
   verifyPassword(email: string, password: string): Promise<Profile | null>;
   updateUserSubscription(userId: string, subscriptionData: {
     subscriptionStatus: 'trial' | 'active' | 'expired';
     mercadopagoSubscriptionId?: string | null;
+  }): Promise<Profile | undefined>;
+  updateLegalAcceptance(userId: string, acceptanceData: {
+    termsAcceptedAt?: Date;
+    privacyAcceptedAt?: Date;
+    riskDisclaimerAcceptedAt?: Date;
   }): Promise<Profile | undefined>;
 
   // Tips methods
@@ -32,6 +38,10 @@ export class DatabaseStorage implements IStorage {
   async getProfileByEmail(email: string): Promise<Profile | undefined> {
     const [profile] = await db.select().from(profiles).where(eq(profiles.email, email));
     return profile;
+  }
+
+  async getUserByEmail(email: string): Promise<Profile | undefined> {
+    return this.getProfileByEmail(email);
   }
 
   async createProfile(data: Omit<InsertProfile, 'passwordHash'> & { password: string }): Promise<Profile> {
@@ -87,6 +97,23 @@ export class DatabaseStorage implements IStorage {
     const [updatedProfile] = await db
       .update(profiles)
       .set(updateData)
+      .where(eq(profiles.id, userId))
+      .returning();
+
+    return updatedProfile;
+  }
+
+  async updateLegalAcceptance(
+    userId: string,
+    acceptanceData: {
+      termsAcceptedAt?: Date;
+      privacyAcceptedAt?: Date;
+      riskDisclaimerAcceptedAt?: Date;
+    }
+  ): Promise<Profile | undefined> {
+    const [updatedProfile] = await db
+      .update(profiles)
+      .set(acceptanceData)
       .where(eq(profiles.id, userId))
       .returning();
 

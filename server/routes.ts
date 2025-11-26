@@ -284,7 +284,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
         console.log("📊 [Webhook] External reference (userId):", subscription.external_reference);
 
         // Update user subscription in database based on status
-        const userId = subscription.external_reference;
+        let userId = subscription.external_reference;
+        
+        // If no external_reference (plan.init_point flow), lookup by email
+        if (!userId) {
+          console.log("⚠️ [Webhook] No external_reference, trying payer_email lookup...");
+          const payerEmail = subscription.payer_email;
+          if (!payerEmail) {
+            console.error("❌ [Webhook] No external_reference or payer_email in subscription");
+            return;
+          }
+
+          // Find user by email
+          const user = await storage.getUserByEmail(payerEmail);
+          if (!user) {
+            console.error(`❌ [Webhook] No user found with email: ${payerEmail}`);
+            return;
+          }
+          userId = user.id;
+          console.log(`✅ [Webhook] User found by email: ${userId}`);
+        }
+
         const status = subscription.status;
 
         if (status === "authorized") {
