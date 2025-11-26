@@ -38,13 +38,13 @@ export function BenefitsGrid() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
+          <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Transformação{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Completa
             </span>
           </h2>
-          <p className="text-xl text-gray-400">
+          <p className="text-base md:text-xl text-gray-400">
             O que muda quando você entra para o Ocean Signal
           </p>
         </motion.div>
