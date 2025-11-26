@@ -27,7 +27,7 @@ export function HeroShot() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1]"
-            style={{ fontFamily: 'Syne, sans-serif' }}
+            style={{ fontFamily: 'Sora, sans-serif' }}
           >
             A Primeira IA de Apostas que{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
@@ -76,7 +76,7 @@ export function HeroShot() {
                     ease: 'linear',
                   }}
                 />
-                <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-6 h-6" />
                   QUERO ACESSO À INTELIGÊNCIA ARTIFICIAL
                 </span>

@@ -1,0 +1,63 @@
+PROMPT MESTRE: LEGAL PAGES & COMPLIANCE FOOTER
+ROLE: Legal Compliance Specialist & Frontend Developer.
+
+TASK: Implementar a infraestrutura jurídica do site Ocean Signal. OBJETIVO: Criar um Rodapé profissional e as páginas de Termos de Uso, Política de Privacidade e Aviso Legal (Disclaimer) focados em proteção de dados e isenção de responsabilidade financeira.
+
+DESIGN SYSTEM: Fonte 'Sora', Fundo #0a0a0a, Texto Cinza/Branco.
+
+1. O NOVO RODAPÉ (Footer.tsx)
+Crie/Atualize o componente de rodapé para ser exibido em TODAS as páginas (Landing Page e Dashboard).
+
+Conteúdo Obrigatório:
+
+Esquerda: Logo Ocean Signal + Texto curto: "Inteligência artificial aplicada ao mercado esportivo."
+
+Centro (Links Rápidos): Home, Bilhetes, Planos, Login.
+
+Direita (Jurídico): Links para /termos, /privacidade, /risco.
+
+Faixa Inferior:
+
+Selo +18 (Proibido para menores).
+
+Selo Jogo Responsável.
+
+Copyright © 2024 Ocean Signal. Todos os direitos reservados. CNPJ: [Seu CNPJ ou pendente].
+
+2. CONFIGURAÇÃO DE ROTAS (App.tsx)
+Adicione as novas rotas no react-router-dom:
+
+<Route path="/termos" element={<TermsPage />} />
+
+<Route path="/privacidade" element={<PrivacyPage />} />
+
+<Route path="/risco" element={<RiskDisclaimerPage />} />
+
+3. CONTEÚDO DAS PÁGINAS LEGAIS (TEXTO JURÍDICO)
+Crie os arquivos abaixo com textos sérios, formatados em blocos de leitura fácil (Tipografia Sora).
+
+A. Página de Aviso Legal (RiskDisclaimerPage.tsx)
+Título: Isenção de Responsabilidade e Riscos Texto Base (Resumido para o Prompt):
+
+"O Ocean Signal é uma plataforma estritamente informativa e estatística. NÃO somos uma casa de apostas. Não recebemos depósitos, não custodiamos valores e não pagamos prêmios.
+
+Risco Financeiro: Apostas esportivas envolvem alto risco de perda capital. O desempenho passado dos nossos bilhetes (Green) não garante resultados futuros. Nossas análises são baseadas em probabilidades, não em certezas.
+
+Responsabilidade: O usuário é totalmente responsável por suas decisões financeiras. O Ocean Signal não se responsabiliza por perdas financeiras decorrentes do uso de nossas informações."
+
+B. Página de Termos de Uso (TermsPage.tsx)
+Título: Termos e Condições de Uso Texto Base:
+
+1. O Serviço: Fornecimento de análises esportivas via Dashboard. 2. Período de Teste: O usuário tem direito a 15 dias de acesso limitado (1 bilhete/dia) gratuito. Após este período, o acesso total requer assinatura (Ocean Prime). 3. Cancelamento: O usuário pode cancelar a assinatura a qualquer momento, perdendo o acesso ao fim do ciclo pago. 4. Proibições: É estritamente proibido revender, compartilhar ou distribuir os bilhetes do Ocean Signal em grupos de terceiros (Rateio). O sistema possui rastreamento de IP e a conta será banida sem reembolso."
+
+C. Política de Privacidade (PrivacyPage.tsx)
+Título: Política de Privacidade (Compliance LGPD) Texto Base:
+
+"Compromisso com a Lei Geral de Proteção de Dados (Lei 13.709/2018). Coleta: Coletamos Nome, E-mail e Telefone apenas para gestão de acesso e comunicação sobre o serviço. Segurança: Seus dados são armazenados em servidores criptografados (Supabase). Não vendemos seus dados para terceiros. Cookies: Utilizamos cookies apenas para manter sua sessão de login ativa."
+
+4. ESTILO DAS PÁGINAS
+Use um layout simples de "Documento": Container centralizado (max-w-3xl), fundo preto, texto branco alinhado à esquerda.
+
+Cabeçalho com botão "Voltar" para a Home.
+
+COMANDO: Gere os arquivos e o texto jurídico completo. O site deve passar credibilidade de uma empresa de tecnologia séria, e não de um "grupo de sinais" amador.

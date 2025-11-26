@@ -28,7 +28,7 @@ export function ProfitSimulator() {
   
   return (
     <div className="bg-gradient-to-br from-[#0a0a0a] to-black border border-[#33b864]/30 rounded-3xl p-8 backdrop-blur-xl">
-      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 text-center" style={{ fontFamily: 'Syne, sans-serif' }}>
+      <h3 className="text-2xl md:text-3xl font-bold text-white mb-2 text-center" style={{ fontFamily: 'Sora, sans-serif' }}>
         O Poder dos Juros Compostos na Sua Mão
       </h3>
       <p className="text-gray-400 text-center mb-8">

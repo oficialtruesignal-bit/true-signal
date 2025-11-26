@@ -38,7 +38,7 @@ export function BenefitsGrid() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Transformação{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Completa
@@ -69,7 +69,7 @@ export function BenefitsGrid() {
                 
                 {/* Content */}
                 <div className="mb-6">
-                  <h3 className="text-2xl md:text-3xl font-black text-white mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+                  <h3 className="text-2xl md:text-3xl font-black text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
                     {benefit.title}
                   </h3>
                   <p className="text-sm text-[#33b864] font-semibold uppercase tracking-wider">

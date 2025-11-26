@@ -47,7 +47,7 @@ export function LockedScreen() {
           transition={{ delay: 0.3 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Seu Período de Degustação Acabou
           </h1>
           <p className="text-xl text-gray-300 mb-2">

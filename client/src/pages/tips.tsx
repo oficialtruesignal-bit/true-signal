@@ -171,7 +171,7 @@ export default function TipsPage() {
                       <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
                         <LockKeyhole className="w-8 h-8 text-[#33b864]" />
                       </div>
-                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
                         Exclusivo Ocean Prime
                       </h3>
                       <p className="text-gray-300 text-sm mb-4">

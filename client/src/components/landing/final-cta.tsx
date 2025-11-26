@@ -31,7 +31,7 @@ export function FinalCTA() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
           className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight"
-          style={{ fontFamily: 'Syne, sans-serif' }}
+          style={{ fontFamily: 'Sora, sans-serif' }}
         >
           A Janela de Oportunidade{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
@@ -94,7 +94,7 @@ export function FinalCTA() {
                   ease: 'linear',
                 }}
               />
-              <span className="relative z-10 flex items-center gap-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+              <span className="relative z-10 flex items-center gap-4" style={{ fontFamily: 'Sora, sans-serif' }}>
                 <Zap className="w-8 h-8" />
                 GARANTIR MEU ACESSO AGORA
               </span>

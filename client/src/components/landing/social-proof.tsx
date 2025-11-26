@@ -76,7 +76,7 @@ export function SocialProof() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Quem Usa a IA Não Volta para o{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">
               "Achômetro"

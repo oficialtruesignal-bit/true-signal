@@ -71,7 +71,7 @@ function ProofOfConceptSection() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Veja o{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Algoritmo em Ação
@@ -117,7 +117,7 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <h4 className="text-[#33b864] font-black text-2xl mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+            <h4 className="text-[#33b864] font-black text-2xl mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
               Ocean Signal
             </h4>
             <p className="text-gray-400 text-sm leading-relaxed">

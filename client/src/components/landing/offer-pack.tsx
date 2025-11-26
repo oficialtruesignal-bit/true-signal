@@ -70,7 +70,7 @@ export function OfferPack() {
             <span className="text-sm text-[#33b864] font-semibold">Tudo Incluído</span>
           </div>
           
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             O Arsenal Completo do{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Operador Moderno

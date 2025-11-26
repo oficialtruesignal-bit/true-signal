@@ -28,7 +28,7 @@ export function ProblemAgitation() {
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Syne, sans-serif' }}>
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             De Qual Lado Você Está?
           </h2>
           <p className="text-xl text-gray-400">
@@ -51,7 +51,7 @@ export function ProblemAgitation() {
                 <div className="w-12 h-12 rounded-full bg-red-900/30 flex items-center justify-center">
                   <TrendingDown className="w-6 h-6 text-red-400" />
                 </div>
-                <h3 className="text-2xl font-bold text-red-400" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <h3 className="text-2xl font-bold text-red-400" style={{ fontFamily: 'Sora, sans-serif' }}>
                   Você Ainda Opera Assim?
                 </h3>
               </div>
@@ -96,7 +96,7 @@ export function ProblemAgitation() {
                 <div className="w-12 h-12 rounded-full bg-[#33b864]/30 flex items-center justify-center">
                   <Zap className="w-6 h-6 text-[#33b864]" />
                 </div>
-                <h3 className="text-2xl font-bold text-[#33b864]" style={{ fontFamily: 'Syne, sans-serif' }}>
+                <h3 className="text-2xl font-bold text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
                   A Nova Era das Operações
                 </h3>
               </div>
