@@ -55,7 +55,7 @@ export function CompactLiveHud() {
 
         {/* --- ESQUERDA: CÍRCULO FLUTUANTE (Sem Background, Sem Borda) --- */}
         <div className="relative flex items-center justify-center h-full w-full">
-          <div className="relative w-44 h-44 flex items-center justify-center">
+          <div className="relative w-52 h-52 flex items-center justify-center">
             
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               {Array.from({ length: 60 }).map((_, i) => {
