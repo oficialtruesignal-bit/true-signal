@@ -1,0 +1,106 @@
+PROMPT MESTRE: ULTIMATE LANDING PAGE REBUILD (NO-VSL STRATEGY)
+ROLE: Senior Conversion Rate Optimizer (CRO) & UI/UX Lead specializing in high-ticket Fintech products.
+
+TASK: Reescrever completamente o arquivo src/pages/LandingPage.tsx (ou o componente raiz da home pública). OBJETIVO: Criar uma Landing Page de alta conversão baseada na estrutura de funil de vendas fornecida, substituindo o VSL por elementos visuais de forte impacto. ESTÉTICA: Cyberpunk Premium, High-Tech, Neon Green (#33b864), Fundo Dark, Holográfico. NENHUM ESPAÇO EM BRANCO; use grids, gradientes e texturas para preencher a tela.
+
+ESTRUTURA DO NOVO LAYOUT (O FLUXO DE VENDAS)
+O Agente deve construir a página seguindo rigorosamente esta ordem de seções, uma abaixo da outra, em um único scroll contínuo:
+
+1. HERO SECTION (A PROMESSA IMPACTANTE)
+Substitui o VSL por uma "Hero Shot" do produto.
+
+Headline (H1): Algo como "A Primeira IA de Apostas que Realmente Funciona. Pare de Jogar, Comece a Operar." (Use fontes gigantes, font-sora font-black).
+
+Subheadline (H2): "Esqueça grupos viciados e análises manuais. O Ocean Signal escaneia milhares de jogos em tempo real e te entrega apenas as oportunidades com +90% de chance matemática de Green."
+
+Visual Hero (O "Uau"): Um mockup 3D de alta qualidade de um iPhone rodando o Dashboard do App (mostrando o círculo de 94.8% e um gráfico de lucro subindo). O celular deve estar flutuando com um brilho verde neon intenso ao redor.
+
+CTA Primário (Botão): "QUERO ACESSO À INTELIGÊNCIA ARTIFICIAL" (Botão grande, verde neon, pulsante).
+
+2. PROBLEMA & AGITAÇÃO (O "INFERNO")
+Confrontar o usuário com sua realidade atual de perdas.
+
+Design: Um grid de 2 colunas com contraste visual.
+
+Esquerda (O Jeito Antigo - Vermelho/Cinza): "Você ainda opera assim?" Ícones de dinheiro queimando, gráficos descendo, frustração. Texto sobre "bancas quebradas", "reds seguidos", "emoção atrapalhando".
+
+Direita (O Jeito Ocean - Verde/Neon): "A Nova Era das Operações." Ícones de robôs, dados frios, crescimento constante. Texto sobre "decisões baseadas em dados", "consistência", "frieza da máquina".
+
+3. A SOLUÇÃO TÉCNICA (O "COMO FUNCIONA")
+Explicar a mágica sem ser chato. Usar o conceito de "Caixa Preta".
+
+Título: "O Motor por Trás dos Greens: Nossa Tecnologia Proprietária."
+
+Visual: Um diagrama esquemático futurista (estilo HUD do Homem de Ferro) mostrando:
+
+Input: Ícones de várias ligas de futebol entrando num funil.
+
+Processamento (O Núcleo): Um chip de IA brilhando, com textos como "Machine Learning", "Análise de Padrões", "Validação Estatística".
+
+Output: Um card holográfico saindo com um "Bilhete Pronto" e uma assertividade alta.
+
+4. BENEFÍCIOS TRANSFORMAIS (O "CÉU")
+Focar no resultado final na vida do usuário. Usar Cards Holográficos para preencher espaço.
+
+Grid: 3 cards grandes, lado a lado em desktop, empilhados em mobile. Use o componente NeonCard ou HolographicCard que já criamos.
+
+Card 1: Liberdade de Tempo. "Não passe horas analisando. Receba tudo pronto em segundos."
+
+Card 2: Consistência Financeira. "Transforme apostas em uma fonte de renda variável previsível."
+
+Card 3: Acesso à Elite. "Opere com as mesmas ferramentas que os 1% usam para bater as casas."
+
+5. DETALHAMENTO DA OFERTA (O "PACK")
+O que ele leva exatamente. Usar lista com ícones ricos.
+
+Título: "O Arsenal Completo do Operador Moderno."
+
+Lista Visual:
+
+✅ Scanner de Oportunidades Ao Vivo 24/7.
+
+✅ Bilhetes Prontos Pré-Jogo Validado por IA.
+
+✅ Dashboard de Gestão de Banca Automático.
+
+✅ Acesso à Comunidade VIP (Networking).
+
+✅ Suporte Prioritário.
+
+6. PROVA SOCIAL (OS "RESULTADOS")
+Substituir depoimentos de texto chatos por prints visuais.
+
+Título: "Quem Usa a IA Não Volta para o 'Achômetro'."
+
+Visual: Um carrossel ou grid estilo "Mural da Fama" mostrando prints de telas de celular com sequências de "GREEN", fotos de saques realizados e mensagens de agradecimento no WhatsApp/Telegram (borre os nomes para privacidade, mas mantenha os valores visíveis).
+
+7. GARANTIA (RISCO ZERO)
+Design: Um selo de garantia dourado/verde futurista.
+
+Texto: "Teste a IA por 7 Dias. Se não lucrar, devolvemos 100% do seu investimento. Sem perguntas. O risco é todo nosso."
+
+8. CTA FINAL (O FECHAMENTO)
+Headline: "A Janela de Oportunidade Está Fechando."
+
+Subheadline: "Não garantimos este preço por muito tempo. Aja agora."
+
+Botão Gigante: "GARANTIR MEU ACESSO AGORA (DESCONTO DE LGM)"
+
+Rodapé: Links de termos de uso, política de privacidade, contato.
+
+REQUISITOS TÉCNICOS PARA O AGENTE
+Componentização: Não faça um arquivo gigante. Crie pequenos componentes para cada seção (ex: HeroSection.tsx, ProblemSolution.tsx, BenefitsGrid.tsx) e importe-os na LandingPage.tsx.
+
+Tailwind Avançado: Use classes utilitárias para tudo.
+
+Use bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212] para o fundo geral.
+
+Use backdrop-blur-xl, bg-white/5, border border-[#33b864]/20 para os cards.
+
+Use animate-pulse, animate-bounce (sutilmente) para chamar atenção nos CTAs.
+
+Responsividade: O design DEVE ser "Mobile-First". Tudo empilha perfeitamente em telas pequenas e se expande em grids elegantes em telas grandes (md:grid-cols-2, lg:grid-cols-3).
+
+Imagens: Use placeholders de alta qualidade (ex: https://placehold.co/600x400/121212/33b864?text=Mockup+App) para os mockups, mas deixe a estrutura pronta para receber as imagens finais.
+
+COMANDO FINAL: Destrua a Landing Page atual e construa esta nova estrutura. A página deve parecer um site de lançamento de produto da Apple, mas versão Cyberpunk/Fintech.
