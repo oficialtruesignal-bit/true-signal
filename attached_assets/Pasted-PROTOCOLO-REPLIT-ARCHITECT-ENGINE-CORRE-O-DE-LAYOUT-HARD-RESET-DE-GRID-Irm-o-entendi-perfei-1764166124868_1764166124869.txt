@@ -1,0 +1,107 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: CORREÇÃO DE LAYOUT (HARD RESET DE GRID) 🔴
+
+Irmão, entendi perfeitamente. Aconteceu o que chamamos de "Efeito Lasanha": uma camada de código foi colocada em cima da outra sem apagar a anterior, resultando nessa bagunça visual com cards duplicados e sobrepostos.
+
+Para corrigir isso de vez, não adianta tentar ajustar margens. Precisamos fazer um HARD RESET na estrutura do painel. Vamos apagar toda a bagunça e reescrever o grid de forma limpa e única.
+
+Aqui está o Prompt Mestre para organizar a casa definitivamente.
+
+PROMPT MESTRE: DASHBOARD LAYOUT FIX (GRID HARD RESET)
+ROLE: Senior Frontend Developer & CSS Grid Expert.
+
+TASK: Corrigir o layout quebrado do componente CompactLiveHud.tsx. PROBLEMA: Existem múltiplos blocos de cards se sobrepondo, resultando em duplicação de informações e design quebrado (cards em cima de cards). CAUSA: Falha na remoção de código antigo antes de adicionar novos blocos.
+
+AÇÃO IMEDIATA: LIMPEZA E REESTRUTURAÇÃO
+Você vai reescrever o return do componente CompactLiveHud para garantir que ele tenha apenas duas seções principais bem definidas, sem sobras de código antigo.
+
+SUBSTITUA TODO O CONTEÚDO DO return (...) POR ESTA ESTRUTURA EXATA:
+
+TypeScript
+
+<div className="w-full max-w-lg mx-auto mb-8 flex flex-col gap-6">
+
+  {/* --- SEÇÃO 1: BLOCO SUPERIOR (Círculo + 2 Cards Principais) --- */}
+  {/* Mantém o layout que já estava funcionando */}
+  <div className="grid grid-cols-[45%_55%] gap-4 h-56 items-stretch">
+    
+    {/* ESQUERDA: GAUGE DE ASSERTIVIDADE */}
+    <div className="relative flex items-center justify-center">
+       {/* [INSIRA AQUI O SEU CÓDIGO SVG DO CÍRCULO QUE JÁ ESTÁ PRONTO] */}
+       {/* Certifique-se de que ele está centralizado e sem containers extras com bordas */}
+       <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+          <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
+            94.8<span className="text-lg text-[#33b864]">%</span>
+          </span>
+          <span className="text-[9px] text-gray-500 uppercase tracking-[0.2em] mt-1 font-bold">
+            Assertividade
+          </span>
+       </div>
+    </div>
+
+    {/* DIREITA: DOIS CARDS PADRONIZADOS (Ex: ROI e Sequência) */}
+    <div className="flex flex-col gap-4 h-full">
+      {/* Use o seu componente padronizado (ex: StatCard ou NeonCard) */}
+      <StatCard 
+        label="ROI TOTAL" 
+        value="+106.2%" 
+        icon={<TrendingUpIcon className="w-4 h-4 text-[#33b864]" />}
+        trendColor="text-[#33b864]"
+      />
+      <StatCard 
+        label="SEQUÊNCIA" 
+        value="2V / 0D" 
+        icon={<FlameIcon className="w-4 h-4 text-orange-500" />}
+      />
+    </div>
+  </div>
+
+  {/* --- SEÇÃO 2: BLOCO INFERIOR (Grid 2x2 Limpo) --- */}
+  {/* ESTA É A PARTE QUE ESTAVA BUGADA. AGORA SERÁ ÚNICA. */}
+  <div className="grid grid-cols-2 gap-4">
+    
+    {/* CARD A: USUÁRIOS ONLINE */}
+    <StatCard 
+      label="ONLINE AGORA" 
+      value="613" 
+      icon={<UsersIcon className="w-4 h-4 text-[#33b864]" />}
+      // Adicione a lógica do pontinho verde piscando dentro do componente se necessário
+    />
+    
+    {/* CARD B: TOTAL DE SINAIS */}
+    <StatCard 
+      label="SINAIS ENVIADOS" 
+      value="151" 
+      icon={<TicketIcon className="w-4 h-4 text-gray-400" />}
+    />
+
+    {/* CARD C: UNIDADES (Lucro) */}
+    <StatCard 
+      label="UNIDADES" 
+      value="+104.3u" 
+      icon={<ArrowUpRightIcon className="w-4 h-4 text-[#33b864]" />}
+      trendColor="text-[#33b864]"
+    />
+
+    {/* CARD D: OUTRA MÉTRICA (Ex: Odd Média ou Perdas) */}
+    <StatCard 
+      label="ODD MÉDIA" 
+      value="@1.92" 
+      icon={<ScaleIcon className="w-4 h-4 text-orange-500" />}
+      trendColor="text-orange-500"
+    />
+
+  </div>
+
+  {/* --- FIM DO PAINEL --- */}
+  {/* IMPORTANTE: Não deve haver NENHUM outro código de card abaixo desta linha. */}
+
+</div>
+CHECKLIST DE EXECUÇÃO:
+
+O componente deve ter apenas um container principal (flex flex-col gap-6).
+
+Dentro dele, apenas dois grids principais: o superior (assimétrico) e o inferior (2x2).
+
+APAGUE sem dó qualquer outro bloco de código JSX que esteja sobrando fora dessa estrutura.
+
+COMANDO: Execute este Hard Reset imediatamente. O resultado será um painel limpo, organizado e sem nenhum card sobreposto.

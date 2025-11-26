@@ -48,12 +48,12 @@ export function CompactLiveHud() {
   const averageOdd = tips.length > 0 ? (tips.reduce((acc, t) => acc + t.odd, 0) / tips.length).toFixed(2) : "0.00";
 
   return (
-    <div className="w-full mb-8">
-      
-      {/* BLOCO SUPERIOR: CÍRCULO + GRÁFICO (Altura Fixa Controlada: h-40) */}
-      <div className="grid grid-cols-[40%_60%] gap-4 h-40 items-center mb-4">
+    <div className="w-full mb-8 flex flex-col gap-6">
 
-        {/* --- ESQUERDA: CÍRCULO FLUTUANTE (Sem Background, Sem Borda) --- */}
+      {/* SEÇÃO 1: BLOCO SUPERIOR (Círculo + Gráfico) */}
+      <div className="grid grid-cols-[40%_60%] gap-4 h-40 items-center">
+
+        {/* ESQUERDA: GAUGE DE ASSERTIVIDADE */}
         <div className="relative flex items-center justify-center h-full w-full">
           <div className="relative w-52 h-52 flex items-center justify-center">
             
@@ -75,7 +75,6 @@ export function CompactLiveHud() {
               })}
             </svg>
 
-            {/* Conteúdo Central (Texto) */}
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
               <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
                 {assertivityValue.toFixed(1)}<span className="text-lg text-[#33b864]">%</span>
@@ -88,15 +87,15 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* --- DIREITA: GRÁFICO DE LUCRO (Se ajusta automaticamente ao h-48) --- */}
+        {/* DIREITA: GRÁFICO DE LUCRO */}
         <ProfitTrendChart />
 
       </div>
 
-      {/* --- BLOCO INFERIOR: GRID 2x2 (PADRONIZADO E FUTURISTA) --- */}
-      <div className="grid grid-cols-2 gap-4 mt-4">
+      {/* SEÇÃO 2: BLOCO INFERIOR (Grid 2x2 Limpo) */}
+      <div className="grid grid-cols-2 gap-4">
         
-        {/* 1. ODD MÉDIA */}
+        {/* CARD A: ODD MÉDIA */}
         <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
           <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
             <Scale className="w-8 h-8 text-orange-500" />
@@ -108,7 +107,7 @@ export function CompactLiveHud() {
           <span className="text-3xl font-sora font-bold text-white z-10">@{averageOdd}</span>
         </div>
 
-        {/* 2. ONLINE AGORA */}
+        {/* CARD B: ONLINE AGORA */}
         <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
           <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
             <Users className="w-8 h-8 text-[#33b864]" />
@@ -120,7 +119,7 @@ export function CompactLiveHud() {
           <span className="text-3xl font-sora font-bold text-white z-10">{onlineUsers.toLocaleString('pt-BR')}</span>
         </div>
 
-        {/* 3. UNIDADES GANHAS */}
+        {/* CARD C: UNIDADES GANHAS */}
         <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
           <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
             <TrendingUp className="w-8 h-8 text-[#33b864]" />
@@ -132,7 +131,7 @@ export function CompactLiveHud() {
           <span className="text-3xl font-sora font-bold text-[#33b864] z-10">+{unitsWon.toFixed(1)}u</span>
         </div>
 
-        {/* 4. UNIDADES PERDIDAS */}
+        {/* CARD D: UNIDADES PERDIDAS */}
         <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-red-500/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50">
           <div className="absolute top-0 right-0 p-2 opacity-20 group-hover:opacity-50 transition-opacity">
             <TrendingDown className="w-8 h-8 text-red-500" />
