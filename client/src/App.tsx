@@ -21,6 +21,11 @@ const AdminCreate = React.lazy(() => import("@/pages/admin-create"));
 const AuthPage = React.lazy(() => import("@/pages/auth"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
+// Legal Pages
+const TermsPage = React.lazy(() => import("@/pages/terms"));
+const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
+const RiskDisclaimerPage = React.lazy(() => import("@/pages/risk-disclaimer"));
+
 // Import access control and paywall
 import { useAccessControl } from "@/hooks/use-access-control";
 import { LockedScreen } from "@/components/paywall/locked-screen";
@@ -60,6 +65,11 @@ function Router() {
       {/* Public Routes */}
       <Route path="/" component={LandingPage} />
       <Route path="/auth" component={AuthPage} />
+      
+      {/* Legal Pages */}
+      <Route path="/termos" component={TermsPage} />
+      <Route path="/privacidade" component={PrivacyPage} />
+      <Route path="/risco" component={RiskDisclaimerPage} />
       
       {/* Protected Routes */}
       <Route path="/app">

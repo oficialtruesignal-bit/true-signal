@@ -464,12 +464,12 @@ function FooterSection() {
   return (
     <footer className="relative bg-black border-t border-[#33b864]/20 py-16 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
             <h4 className="text-[#33b864] font-black text-2xl mb-4">Ocean Signal</h4>
             <p className="text-gray-400 text-sm leading-relaxed mb-4">
-              Inteligência Híbrida para operadores profissionais.
+              Inteligência artificial aplicada ao mercado esportivo.
             </p>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-[#33b864]" />
@@ -477,24 +477,51 @@ function FooterSection() {
             </div>
           </div>
           
-          {/* Links */}
+          {/* Quick Links */}
           <div>
-            <h5 className="text-white font-bold mb-4">Acesso</h5>
+            <h5 className="text-white font-bold mb-4">Links Rápidos</h5>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <Link href="/auth" className="hover:text-[#33b864] transition-colors">
-                  Entrar na Plataforma
+                <Link href="/" className="hover:text-[#33b864] transition-colors">
+                  Home
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
-                  Termos de Serviço
-                </a>
+                <Link href="/auth" className="hover:text-[#33b864] transition-colors">
+                  Bilhetes
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
+                <Link href="/auth" className="hover:text-[#33b864] transition-colors">
+                  Planos
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth" className="hover:text-[#33b864] transition-colors">
+                  Login
+                </Link>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Legal */}
+          <div>
+            <h5 className="text-white font-bold mb-4">Jurídico</h5>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <Link href="/termos" className="hover:text-[#33b864] transition-colors">
+                  Termos de Uso
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacidade" className="hover:text-[#33b864] transition-colors">
                   Política de Privacidade
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link href="/risco" className="hover:text-[#33b864] transition-colors">
+                  Aviso Legal
+                </Link>
               </li>
             </ul>
           </div>
@@ -502,17 +529,55 @@ function FooterSection() {
           {/* Disclaimer */}
           <div>
             <h5 className="text-white font-bold mb-4">Importante</h5>
-            <p className="text-sm text-gray-400 leading-relaxed">
+            <p className="text-sm text-gray-400 leading-relaxed mb-4">
               <span className="text-[#33b864] font-semibold">O Ocean Signal é uma ferramenta de análise estatística.</span> Não somos uma casa de apostas e não retemos valores de usuários.
             </p>
           </div>
         </div>
         
-        {/* Bottom */}
-        <div className="border-t border-gray-800 pt-8 text-center">
-          <p className="text-sm text-gray-500">
-            © 2024 Ocean Signal. Todos os direitos reservados.
-          </p>
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-800 pt-8">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-6">
+            {/* Age Restriction & Responsible Gaming */}
+            <div className="flex items-center gap-4">
+              {/* +18 Badge */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border-2 border-red-500 rounded-lg" data-testid="badge-age-restriction">
+                <div className="w-10 h-10 bg-red-500/20 border border-red-500 rounded-full flex items-center justify-center">
+                  <span className="text-lg font-black text-red-400">+18</span>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-red-400 uppercase">Proibido</p>
+                  <p className="text-xs text-gray-400">Menores de Idade</p>
+                </div>
+              </div>
+              
+              {/* Responsible Gaming Badge */}
+              <div className="flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg" data-testid="badge-responsible-gaming">
+                <Shield className="w-6 h-6 text-[#33b864]" />
+                <div>
+                  <p className="text-xs font-bold text-[#33b864]">Jogo</p>
+                  <p className="text-xs text-gray-400">Responsável</p>
+                </div>
+              </div>
+            </div>
+            
+            {/* Copyright */}
+            <div className="text-center md:text-right">
+              <p className="text-sm text-gray-500">
+                © 2024 Ocean Signal. Todos os direitos reservados.
+              </p>
+              <p className="text-xs text-gray-600 mt-1">
+                CNPJ: 00.000.000/0001-00
+              </p>
+            </div>
+          </div>
+          
+          {/* Final Disclaimer */}
+          <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4 text-center">
+            <p className="text-xs text-gray-400 leading-relaxed">
+              <strong className="text-yellow-400">AVISO:</strong> Apostas esportivas envolvem risco financeiro. O Ocean Signal fornece análises estatísticas, mas não garante lucros. Jogue com responsabilidade e dentro de suas possibilidades.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
