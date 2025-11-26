@@ -1,19 +1,13 @@
 import { Scale, Users, TrendingDown, TrendingUp } from 'lucide-react';
 import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
+import { useBankroll } from '@/hooks/use-bankroll';
 import { ProfitTrendChart } from './dashboard/profit-trend-chart';
-import { useQuery } from '@tanstack/react-query';
-import { tipsService } from '@/lib/tips-service';
 import { useState, useEffect } from 'react';
 
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
+  const bankroll = useBankroll();
   const assertivityValue = stats.assertivity;
-  
-  // Fetch tips para cálculos financeiros
-  const { data: tips = [] } = useQuery({
-    queryKey: ['tips'],
-    queryFn: tipsService.getAll,
-  });
   
   // Simular investidores online (oscila entre 312-612)
   const [onlineUsers, setOnlineUsers] = useState(450);
@@ -42,10 +36,10 @@ export function CompactLiveHud() {
     return () => clearTimeout(timeoutId);
   }, []);
   
-  // Cálculos de métricas financeiras baseadas nos tips
-  const unitsWon = tips.filter(t => t.status === 'green').reduce((acc, t) => acc + (t.odd - 1), 0);
-  const unitsLost = tips.filter(t => t.status === 'red').length;
-  const averageOdd = tips.length > 0 ? (tips.reduce((acc, t) => acc + t.odd, 0) / tips.length).toFixed(2) : "0.00";
+  // Calcular crescimento da banca em %
+  const bankrollGrowth = bankroll.initialBankroll > 0 
+    ? ((bankroll.currentBankroll - bankroll.initialBankroll) / bankroll.initialBankroll * 100)
+    : 0;
 
   return (
     <div className="w-full mb-8 flex flex-col gap-6">
@@ -88,7 +82,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* DIREITA: GRÁFICO DE LUCRO */}
-        <ProfitTrendChart />
+        <ProfitTrendChart growthPercentage={bankrollGrowth} />
 
       </div>
 
@@ -104,7 +98,7 @@ export function CompactLiveHud() {
             <div className="w-1 h-3 bg-orange-500 rounded-full"></div>
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
           </div>
-          <span className="text-3xl font-sora font-bold text-white z-10">@{averageOdd}</span>
+          <span className="text-3xl font-sora font-bold text-white z-10">@{bankroll.averageOdd.toFixed(2)}</span>
         </div>
 
         {/* CARD B: USUÁRIOS ONLINE */}
@@ -128,7 +122,7 @@ export function CompactLiveHud() {
             <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhos</span>
           </div>
-          <span className="text-3xl font-sora font-bold text-[#33b864] z-10">+{unitsWon.toFixed(1)}u</span>
+          <span className="text-3xl font-sora font-bold text-[#33b864] z-10">{bankroll.greenCount > 0 ? '+' : ''}{bankroll.totalProfitUnits > 0 ? bankroll.totalProfitUnits.toFixed(1) : '0.0'}u</span>
         </div>
 
         {/* CARD D: UNIDADES PERDIDAS */}
@@ -140,7 +134,7 @@ export function CompactLiveHud() {
             <div className="w-1 h-3 bg-red-500 rounded-full"></div>
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdas</span>
           </div>
-          <span className="text-3xl font-sora font-bold text-red-500 z-10">-{unitsLost.toFixed(1)}u</span>
+          <span className="text-3xl font-sora font-bold text-red-500 z-10">{bankroll.redCount > 0 ? bankroll.redCount : 0}</span>
         </div>
 
       </div>
