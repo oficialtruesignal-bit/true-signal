@@ -12,6 +12,9 @@ export const profiles = pgTable("profiles", {
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   subscriptionStatus: text("subscription_status", { enum: ["trial", "active", "expired"] }).notNull().default("trial"),
   trialStartDate: timestamp("trial_start_date").notNull().defaultNow(),
+  mercadopagoSubscriptionId: text("mercadopago_subscription_id"), // Mercado Pago subscription ID
+  mercadopagoCustomerId: text("mercadopago_customer_id"), // Mercado Pago customer ID
+  subscriptionEndsAt: timestamp("subscription_ends_at"), // When subscription will end
   termsAcceptedAt: timestamp("terms_accepted_at"),
   privacyAcceptedAt: timestamp("privacy_accepted_at"),
   riskDisclaimerAcceptedAt: timestamp("risk_disclaimer_accepted_at"),

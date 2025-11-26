@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertTipSchema, insertProfileSchema } from "@shared/schema";
 import axios from "axios";
+import { mercadoPagoService } from "./mercadopago-service";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 
@@ -196,6 +197,130 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json({ success: true });
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // Mercado Pago Routes
+  // ============================================
+
+  // Get Mercado Pago configuration status and public key
+  app.get("/api/mercadopago/config", (req, res) => {
+    try {
+      return res.json({
+        configured: mercadoPagoService.isConfigured(),
+        publicKey: mercadoPagoService.isConfigured() ? mercadoPagoService.getPublicKey() : null,
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Create a subscription checkout for a user
+  app.post("/api/mercadopago/create-subscription", async (req, res) => {
+    try {
+      const { userId, userEmail, planId } = req.body;
+
+      if (!userId || !userEmail) {
+        return res.status(400).json({ error: "userId and userEmail are required" });
+      }
+
+      // If no planId provided, create a default Ocean Prime plan
+      let subscriptionPlanId = planId;
+      if (!subscriptionPlanId) {
+        const plan = await mercadoPagoService.createSubscriptionPlan();
+        subscriptionPlanId = plan.id;
+      }
+
+      // Create subscription
+      const subscription = await mercadoPagoService.createSubscription({
+        planId: subscriptionPlanId,
+        userEmail,
+        userId,
+      });
+
+      // Return init_point (checkout URL) for user to complete payment
+      return res.json({
+        subscriptionId: subscription.id,
+        initPoint: subscription.init_point,
+        status: subscription.status,
+      });
+    } catch (error: any) {
+      console.error("Error creating subscription:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get subscription status
+  app.get("/api/mercadopago/subscription/:id", async (req, res) => {
+    try {
+      const subscription = await mercadoPagoService.getSubscription(req.params.id);
+      return res.json({ subscription });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Cancel subscription
+  app.delete("/api/mercadopago/subscription/:id", async (req, res) => {
+    try {
+      const result = await mercadoPagoService.cancelSubscription(req.params.id);
+      
+      // Update user subscription status in database
+      // TODO: Implement storage.updateUserSubscription()
+      
+      return res.json({ success: true, result });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Mercado Pago Webhook - Process payment notifications
+  app.post("/api/mercadopago/webhook", async (req, res) => {
+    try {
+      const { type, data } = req.body;
+      
+      console.log("📩 [Mercado Pago Webhook] Received:", type, data);
+
+      // Respond immediately to MP (required)
+      res.status(200).send("OK");
+
+      // Process webhook asynchronously
+      if (type === "subscription_preapproval") {
+        // Subscription status changed
+        const subscriptionId = data.id;
+        const subscription = await mercadoPagoService.getSubscription(subscriptionId);
+        
+        console.log("📊 [Webhook] Subscription status:", subscription.status);
+        console.log("📊 [Webhook] External reference (userId):", subscription.external_reference);
+
+        // Update user subscription in database based on status
+        const userId = subscription.external_reference;
+        const status = subscription.status;
+
+        if (status === "authorized") {
+          // Subscription is active - upgrade user to Ocean Prime
+          console.log("✅ [Webhook] Activating Ocean Prime for user:", userId);
+          // TODO: Update user subscription_status to 'active'
+          // await storage.updateUserSubscription(userId, {
+          //   subscriptionStatus: 'active',
+          //   mercadopagoSubscriptionId: subscriptionId,
+          //   subscriptionEndsAt: new Date(subscription.next_payment_date)
+          // });
+        } else if (status === "cancelled" || status === "paused") {
+          // Subscription cancelled/paused - downgrade user
+          console.log("⚠️ [Webhook] Deactivating subscription for user:", userId);
+          // TODO: Update user subscription_status to 'expired'
+        }
+      } else if (type === "payment") {
+        // Individual payment received (recurring payment)
+        const paymentId = data.id;
+        console.log("💰 [Webhook] Payment received:", paymentId);
+        // TODO: Log payment, extend subscription end date
+      }
+    } catch (error: any) {
+      console.error("❌ [Webhook] Error processing:", error.message);
+      // Don't return error - we already responded 200 to MP
     }
   });
 
