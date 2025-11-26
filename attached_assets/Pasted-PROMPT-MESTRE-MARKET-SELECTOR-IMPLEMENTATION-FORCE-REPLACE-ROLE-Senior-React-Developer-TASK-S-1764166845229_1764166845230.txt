@@ -1,0 +1,90 @@
+PROMPT MESTRE: MARKET SELECTOR IMPLEMENTATION (FORCE REPLACE)
+ROLE: Senior React Developer.
+
+TASK: Substituir o campo de texto "Mercado (Entrada)" no formulário de criação de Tips por um Dropdown (<select>) Completo. PROBLEMA: O código atual usa um <input type="text">. Isso causa erros de digitação. SOLUÇÃO: Implementar um <select> com grupos de opções (optgroup) cobrindo todos os mercados principais das casas de apostas.
+
+1. O NOVO CÓDIGO DO SELECT (COPIAR E COLAR)
+Localize o input que tem label="Mercado (Entrada)" e substitua o bloco do input inteiro por este código:
+
+TypeScript
+
+{/* CAMPO DE SELEÇÃO DE MERCADO (PADRONIZADO) */}
+<div className="space-y-2">
+  <label className="text-sm font-medium text-gray-400">
+    Mercado (Entrada) <span className="text-[#33b864]">*</span>
+  </label>
+  
+  <div className="relative">
+    <select
+      required
+      value={market} // Sua variável de estado
+      onChange={(e) => setMarket(e.target.value)} // Sua função de update
+      className="w-full bg-[#121212] border border-[#33b864]/30 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] appearance-none"
+    >
+      <option value="" disabled>Selecione o mercado da aposta...</option>
+
+      {/* CATEGORIA: ESPECIAIS (MÚLTIPLAS) */}
+      <optgroup label="🚀 Especiais / Múltiplas">
+        <option value="Múltipla Simples">Múltipla Simples</option>
+        <option value="Múltipla Combinada">Múltipla Combinada</option>
+        <option value="Bilhete Pronto">Bilhete Pronto</option>
+      </optgroup>
+
+      {/* CATEGORIA: RESULTADO FINAL */}
+      <optgroup label="⚽ Resultado Final (1x2)">
+        <option value="Vitória Casa (1)">Vitória Casa (1)</option>
+        <option value="Vitória Visitante (2)">Vitória Visitante (2)</option>
+        <option value="Empate (X)">Empate (X)</option>
+        <option value="Dupla Chance: Casa ou Empate">Dupla Chance: Casa ou Empate</option>
+        <option value="Dupla Chance: Visitante ou Empate">Dupla Chance: Visitante ou Empate</option>
+        <option value="Empate Anula: Casa">Empate Anula: Casa</option>
+        <option value="Empate Anula: Visitante">Empate Anula: Visitante</option>
+      </optgroup>
+
+      {/* CATEGORIA: GOLS */}
+      <optgroup label="🥅 Gols (Over/Under)">
+        <option value="Over 0.5 Gols (Mais de 0.5)">Over 0.5 Gols</option>
+        <option value="Over 1.5 Gols (Mais de 1.5)">Over 1.5 Gols</option>
+        <option value="Over 2.5 Gols (Mais de 2.5)">Over 2.5 Gols</option>
+        <option value="Over 3.5 Gols (Mais de 3.5)">Over 3.5 Gols</option>
+        <option value="Under 2.5 Gols (Menos de 2.5)">Under 2.5 Gols</option>
+        <option value="Under 3.5 Gols (Menos de 3.5)">Under 3.5 Gols</option>
+        <option value="Ambas Marcam: SIM">Ambas Marcam: SIM</option>
+        <option value="Ambas Marcam: NÃO">Ambas Marcam: NÃO</option>
+      </optgroup>
+
+      {/* CATEGORIA: ESCANTEIOS */}
+      <optgroup label="⛳ Escanteios">
+        <option value="Over 7.5 Escanteios">Over 7.5 Escanteios</option>
+        <option value="Over 8.5 Escanteios">Over 8.5 Escanteios</option>
+        <option value="Over 9.5 Escanteios">Over 9.5 Escanteios</option>
+        <option value="Escanteios Asiáticos (Limite)">Escanteios Asiáticos (Limite)</option>
+        <option value="Corrida (Race) 5 Escanteios">Corrida (Race) 5 Escanteios</option>
+      </optgroup>
+
+      {/* CATEGORIA: 1º TEMPO */}
+      <optgroup label="⏱️ 1º Tempo (HT)">
+        <option value="HT - Vitória Casa">HT - Vitória Casa</option>
+        <option value="HT - Empate">HT - Empate</option>
+        <option value="HT - Over 0.5 Gols">HT - Over 0.5 Gols</option>
+      </optgroup>
+
+      {/* CATEGORIA: CARTÕES */}
+      <optgroup label="🟨 Cartões">
+        <option value="Over 3.5 Cartões">Over 3.5 Cartões</option>
+        <option value="Over 4.5 Cartões">Over 4.5 Cartões</option>
+        <option value="Cartão Vermelho: Sim">Cartão Vermelho: Sim</option>
+      </optgroup>
+
+    </select>
+    
+    {/* Ícone de seta para indicar dropdown */}
+    <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+      <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+    </div>
+  </div>
+</div>
+2. VERIFICAÇÃO VISUAL
+Certifique-se de que o estilo do <select> tenha appearance-none e um ícone de seta customizado na direita para parecer moderno e integrado ao tema Dark/Neon, e não aquele select branco padrão do navegador antigo.
+
+COMANDO: Execute a troca imediata. O Admin agora terá um menu poderoso e organizado.

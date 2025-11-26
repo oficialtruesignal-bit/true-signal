@@ -578,33 +578,43 @@ interface MarketSelectorProps {
 
 export function MarketSelector({ value, onChange, className = "" }: MarketSelectorProps) {
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={`flex h-10 w-full rounded-md border border-[#33b864]/20 bg-[#121212] px-3 py-2 text-sm text-white ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-0 focus-visible:border-[#33b864]/50 disabled:cursor-not-allowed disabled:opacity-50 transition-colors ${className}`}
-      data-testid="market-selector"
-    >
-      <option value="" className="bg-[#0a0a0a] text-gray-400">
-        Selecione um mercado...
-      </option>
-      {MARKET_OPTIONS.map((group) => (
-        <optgroup 
-          key={group.label} 
-          label={group.label}
-          className="bg-[#0a0a0a] text-[#33b864] font-bold"
-        >
-          {group.options.map((option) => (
-            <option 
-              key={option} 
-              value={option}
-              className="bg-[#121212] text-white py-1 hover:bg-[#33b864]/10"
-            >
-              {option}
-            </option>
-          ))}
-        </optgroup>
-      ))}
-    </select>
+    <div className="relative">
+      <select
+        required
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={`flex h-10 w-full rounded-xl border border-[#33b864]/30 bg-[#121212] px-4 py-3 text-sm text-white appearance-none focus:outline-none focus:border-[#33b864] focus:ring-1 focus:ring-[#33b864] disabled:cursor-not-allowed disabled:opacity-50 transition-all ${className}`}
+        data-testid="market-selector"
+      >
+        <option value="" disabled className="bg-[#0a0a0a] text-gray-400">
+          Selecione o mercado da aposta...
+        </option>
+        {MARKET_OPTIONS.map((group) => (
+          <optgroup 
+            key={group.label} 
+            label={group.label}
+            className="bg-[#0a0a0a] text-[#33b864] font-bold"
+          >
+            {group.options.map((option) => (
+              <option 
+                key={option} 
+                value={option}
+                className="bg-[#121212] text-white py-1 hover:bg-[#33b864]/10"
+              >
+                {option}
+              </option>
+            ))}
+          </optgroup>
+        ))}
+      </select>
+      
+      {/* Ícone de seta customizado */}
+      <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
+        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </div>
+    </div>
   );
 }
 
