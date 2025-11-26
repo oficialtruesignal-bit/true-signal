@@ -23,13 +23,13 @@ export function TechSolution() {
           className="text-center mb-20"
         >
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-            O Motor por Trás dos{' '}
+            O motor por trás dos{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
               Greens
             </span>
           </h2>
           <p className="text-base md:text-xl text-gray-400">
-            Nossa Tecnologia Proprietária em Ação
+            Nossa tecnologia proprietária em ação
           </p>
         </motion.div>
         

@@ -74,7 +74,7 @@ function ProofOfConceptSection() {
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
             Veja o{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              Algoritmo em Ação
+              Algoritmo em ação
             </span>
           </h2>
           <p className="text-base md:text-xl text-gray-400">
@@ -99,7 +99,7 @@ function ProofOfConceptSection() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="mb-6 text-center lg:text-left">
-              <h3 className="text-2xl font-bold text-white mb-2">Sistema Operacional</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Sistema operacional</h3>
               <p className="text-gray-400">Status em tempo real do scanner de oportunidades</p>
             </div>
             <SystemTerminal />

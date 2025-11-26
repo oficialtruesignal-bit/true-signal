@@ -29,9 +29,9 @@ export function HeroShot() {
             className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 leading-[1.1]"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            A Primeira IA de Apostas que{' '}
+            A primeira IA de apostas que{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              Realmente Funciona
+              realmente funciona
             </span>
           </motion.h1>
           
@@ -41,7 +41,7 @@ export function HeroShot() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed"
           >
-            Pare de Jogar, Comece a <span className="text-white font-bold">Operar</span>.
+            Pare de jogar, comece a <span className="text-white font-bold">operar</span>.
           </motion.p>
           
           <motion.p

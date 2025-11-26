@@ -29,7 +29,7 @@ export function ProblemAgitation() {
           className="text-center mb-16"
         >
           <h2 className="text-3xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-            De Qual Lado Você Está?
+            De qual lado você está?
           </h2>
           <p className="text-xl text-gray-400">
             A diferença entre quebrar a banca e multiplicá-la
@@ -52,7 +52,7 @@ export function ProblemAgitation() {
                   <TrendingDown className="w-6 h-6 text-red-400" />
                 </div>
                 <h3 className="text-lg md:text-2xl font-bold text-red-400" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  Você Ainda Opera Assim?
+                  Você ainda opera assim?
                 </h3>
               </div>
               
@@ -97,7 +97,7 @@ export function ProblemAgitation() {
                   <Zap className="w-6 h-6 text-[#33b864]" />
                 </div>
                 <h3 className="text-lg md:text-2xl font-bold text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  A Nova Era das Operações
+                  A nova era das operações
                 </h3>
               </div>
               

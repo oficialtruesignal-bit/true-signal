@@ -9,21 +9,21 @@ export function BenefitsGrid() {
   const benefits = [
     {
       icon: Clock,
-      title: 'Liberdade de Tempo',
+      title: 'Liberdade de tempo',
       subtitle: 'Sua vida de volta',
       description: 'Não passe horas analisando estatísticas e assistindo pré-jogos. Receba tudo pronto em segundos e foque no que realmente importa.',
       stats: '3 minutos/dia',
     },
     {
       icon: TrendingUp,
-      title: 'Consistência Financeira',
+      title: 'Consistência financeira',
       subtitle: 'Renda previsível',
       description: 'Transforme apostas em uma fonte de renda variável previsível. Resultados matemáticos, não sorte. Crescimento exponencial da banca.',
       stats: '+287% ao ano',
     },
     {
       icon: Crown,
-      title: 'Acesso à Elite',
+      title: 'Acesso à elite',
       subtitle: 'Vantagem injusta',
       description: 'Opere com as mesmas ferramentas que os 1% usam para bater as casas. Tecnologia de hedge funds aplicada ao esporte.',
       stats: 'Top 1%',

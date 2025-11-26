@@ -33,9 +33,9 @@ export function FinalCTA() {
           className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight"
           style={{ fontFamily: 'Sora, sans-serif' }}
         >
-          A Janela de Oportunidade{' '}
+          A janela de oportunidade{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-            Está Fechando
+            está fechando
           </span>
         </motion.h2>
         
