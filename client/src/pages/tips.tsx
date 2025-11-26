@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, AlertCircle } from "lucide-react";
+import { Target, AlertCircle, Ticket, ShieldCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -81,12 +81,46 @@ export default function TipsPage() {
 
   return (
     <Layout>
-      {/* Compact Header */}
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-white">{t.tips.title}</h1>
-        <p className="text-sm text-muted-foreground">
-          {tips.length} {t.tips.available}
-        </p>
+      {/* Header de Autoridade */}
+      <div className="w-full mb-6">
+        
+        {/* Título Principal com Ícone */}
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
+            <Ticket className="w-6 h-6 text-[#33b864]" />
+          </div>
+          <h1 className="text-3xl font-sora font-bold text-white">
+            {t.tips.title}
+          </h1>
+        </div>
+
+        {/* Banner de Credibilidade */}
+        <div className="relative overflow-hidden bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-[#33b864]/5">
+          
+          {/* Efeito de Luz Decorativo */}
+          <div className="absolute top-0 left-0 w-1 h-full bg-[#33b864]"></div>
+          
+          {/* Texto de Assertividade */}
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#33b864]"></span>
+              </span>
+              <span className="text-[#33b864] font-bold text-xs uppercase tracking-wider">{t.tips.performanceLabel}</span>
+            </div>
+            <p className="text-gray-300 text-sm font-inter">
+              {t.tips.performanceText} <span className="text-white font-bold font-sora">87%</span> {t.tips.performanceTickets}
+            </p>
+          </div>
+
+          {/* Selo de Especialista */}
+          <div className="flex items-center gap-2 bg-[#33b864]/10 px-3 py-1.5 rounded-full border border-[#33b864]/20">
+            <ShieldCheck className="w-4 h-4 text-[#33b864]" />
+            <span className="text-[10px] font-bold text-[#33b864] uppercase">{t.tips.expertBadge}</span>
+          </div>
+
+        </div>
       </div>
 
       {isLoading && (
@@ -105,7 +139,7 @@ export default function TipsPage() {
       )}
 
       {!isLoading && !error && tips.length === 0 && (
-        <div className="p-8 text-center bg-[#121212] border border-[#333]">
+        <div className="p-8 text-center bg-[#121212] border border-[#333] rounded-xl">
           <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-30" />
           <p className="text-muted-foreground text-sm">{t.tips.noTips}</p>
         </div>

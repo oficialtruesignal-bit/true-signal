@@ -1,0 +1,67 @@
+PROMPT MESTRE: RENAME TO "BILHETES" & ADD TRUST HEADER
+ROLE: Senior UX Copywriter & Frontend Developer.
+
+TASK: Renomear a seção "Sinais" para "Bilhetes" e adicionar um banner de autoridade no topo.
+
+1. RENOMEAÇÃO GLOBAL (TEXT REPLACEMENT)
+Varra os arquivos SignalFeed.tsx, Sidebar.tsx, BottomNav.tsx e App.tsx.
+
+Onde estiver: "Sinais" ou "Signals" (no texto visível).
+
+Troque por: "Bilhetes".
+
+Empty State: Mude "Nenhum sinal disponível" para "Nenhum bilhete disponível no momento."
+
+2. NOVO CABEÇALHO DE AUTORIDADE (TRUST BANNER)
+Acima da lista de bilhetes (e acima do empty state), adicione um Banner Premium. Não use apenas texto solto.
+
+Código do Componente de Cabeçalho (Insira no topo do SignalFeed.tsx):
+
+TypeScript
+
+<div className="w-full mb-6">
+  
+  {/* Título Principal com Ícone */}
+  <div className="flex items-center gap-3 mb-3">
+    <div className="p-2 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
+      <TicketIcon className="w-6 h-6 text-[#33b864]" />
+    </div>
+    <h1 className="text-3xl font-sora font-bold text-white">
+      Bilhetes Prontos
+    </h1>
+  </div>
+
+  {/* Banner de Credibilidade (O que você pediu) */}
+  <div className="relative overflow-hidden bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-[#33b864]/5">
+    
+    {/* Efeito de Luz Decorativo */}
+    <div className="absolute top-0 left-0 w-1 h-full bg-[#33b864]"></div>
+    
+    {/* Texto de Assertividade */}
+    <div className="flex flex-col">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#33b864]"></span>
+        </span>
+        <span className="text-[#33b864] font-bold text-xs uppercase tracking-wider">Performance Atual</span>
+      </div>
+      <p className="text-gray-300 text-sm font-inter">
+        Assertividade média de <span className="text-white font-bold font-sora">87%</span> em nossos bilhetes.
+      </p>
+    </div>
+
+    {/* Selo de Especialista */}
+    <div className="flex items-center gap-2 bg-[#33b864]/10 px-3 py-1.5 rounded-full border border-[#33b864]/20">
+      <ShieldCheckIcon className="w-4 h-4 text-[#33b864]" />
+      <span className="text-[10px] font-bold text-[#33b864] uppercase">Validado por Especialistas</span>
+    </div>
+
+  </div>
+</div>
+3. LOCALIZAÇÃO
+Insira este bloco ANTES da verificação de signals.length === 0.
+
+Ou seja: O cabeçalho "Bilhetes Prontos" e o Banner "87%" devem aparecer SEMPRE, mesmo que não tenha nenhum bilhete na lista (Empty State).
+
+COMANDO: Execute. A aba agora se chamará "Bilhetes" e o usuário verá logo de cara que está num ambiente de alta assertividade.
