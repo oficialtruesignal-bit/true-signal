@@ -30,7 +30,7 @@ export function FinalCTA() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ delay: 0.1 }}
-          className="text-5xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-tight"
+          className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 leading-tight"
           style={{ fontFamily: 'Sora, sans-serif' }}
         >
           A Janela de Oportunidade{' '}

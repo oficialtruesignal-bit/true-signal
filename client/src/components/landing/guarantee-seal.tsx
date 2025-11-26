@@ -48,7 +48,7 @@ export function GuaranteeSeal() {
               transition={{ delay: 0.3 }}
               className="text-center mb-8"
             >
-              <h2 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
+              <h2 className="text-3xl md:text-3xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
                 Garantia{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-yellow-500">
                   Risco Zero
