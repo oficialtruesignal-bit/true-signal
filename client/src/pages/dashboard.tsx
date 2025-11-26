@@ -3,6 +3,7 @@ import { useDashboardData } from "@/hooks/use-dashboard-data";
 import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LiveMetricsBar } from "@/components/live-metrics-bar";
+import { InstallAppBanner } from "@/components/install-app-banner";
 import { useState, useEffect } from "react";
 import { useLanguage } from "@/hooks/use-language";
 
@@ -255,41 +256,46 @@ export default function Dashboard() {
         </div>
 
         {/* AI Scanner - Right Sidebar */}
-        <div className="lg:col-span-4 bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <Bot className="w-5 h-5 text-primary animate-pulse" />
-              AI Scanner
-            </h2>
-            <span className="text-[9px] font-bold bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 animate-pulse">
-              SCANNING
-            </span>
+        <div className="lg:col-span-4 space-y-4">
+          <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] overflow-hidden">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
+                <Bot className="w-5 h-5 text-primary animate-pulse" />
+                AI Scanner
+              </h2>
+              <span className="text-[9px] font-bold bg-primary/10 text-primary px-2 py-1 rounded border border-primary/20 animate-pulse">
+                SCANNING
+              </span>
+            </div>
+            
+            <div 
+              className="font-mono text-[11px] space-y-2 h-[300px] overflow-hidden"
+              data-testid="ai-scanner"
+            >
+              {scannerMessages.map((msg, index) => (
+                <div 
+                  key={index} 
+                  className="text-primary/70 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                  style={{ 
+                    opacity: 1 - (scannerMessages.length - index - 1) * 0.15,
+                    animationDelay: `${index * 50}ms`
+                  }}
+                >
+                  {msg}
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 pt-4 border-t border-primary/10">
+              <p className="text-[10px] text-muted-foreground flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
+                Sistema Ativo • Processando mercados globais
+              </p>
+            </div>
           </div>
-          
-          <div 
-            className="font-mono text-[11px] space-y-2 h-[300px] overflow-hidden"
-            data-testid="ai-scanner"
-          >
-            {scannerMessages.map((msg, index) => (
-              <div 
-                key={index} 
-                className="text-primary/70 animate-in fade-in slide-in-from-bottom-2 duration-300"
-                style={{ 
-                  opacity: 1 - (scannerMessages.length - index - 1) * 0.15,
-                  animationDelay: `${index * 50}ms`
-                }}
-              >
-                {msg}
-              </div>
-            ))}
-          </div>
-          
-          <div className="mt-4 pt-4 border-t border-primary/10">
-            <p className="text-[10px] text-muted-foreground flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-              Sistema Ativo • Processando mercados globais
-            </p>
-          </div>
+
+          {/* Install App Banner */}
+          <InstallAppBanner />
         </div>
 
         {/* Recent Activity - Bottom */}
