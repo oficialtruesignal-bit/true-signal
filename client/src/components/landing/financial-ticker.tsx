@@ -5,18 +5,18 @@ const tickerData = [
   { label: 'LUCRO ÚLTIMA HORA', value: '+4.2u', type: 'profit' },
   { label: 'LA LIGA', value: 'BTTS CONFIRMADO', confidence: '91%' },
   { label: 'ROI SEMANAL', value: '+18.7%', type: 'roi' },
-  { label: 'BUNDESLIGA', value: 'UNDER 3.5 @1.85', confidence: '88%' },
-  { label: 'SERIE A', value: 'OVER 1.5 FT @1.65', confidence: '92%' },
+  { label: 'BUNDESLIGA', value: 'UNDER 3.5 1.85', confidence: '88%' },
+  { label: 'SERIE A', value: 'OVER 1.5 FT 1.65', confidence: '92%' },
   { label: 'ASSERTIVIDADE', value: '94.8%', type: 'roi' },
 ];
 
 export function FinancialTicker() {
   return (
-    <div className="relative w-full max-w-full overflow-hidden bg-black/60 backdrop-blur-xl border-y border-[#33b864]/20 py-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+    <div className="relative w-full max-w-full overflow-x-clip bg-black/60 backdrop-blur-xl border-y border-[#33b864]/20 py-3 h-12">
       <motion.div
-        className="flex gap-12 whitespace-nowrap"
+        className="absolute left-0 top-0 flex gap-12 whitespace-nowrap py-3 will-change-transform"
         animate={{
-          x: [0, -2400],
+          x: ["0%", "-50%"],
         }}
         transition={{
           x: {
@@ -27,7 +27,7 @@ export function FinancialTicker() {
           },
         }}
       >
-        {[...tickerData, ...tickerData, ...tickerData, ...tickerData].map((item, i) => (
+        {[...tickerData, ...tickerData].map((item, i) => (
           <div key={i} className="flex items-center gap-3 text-sm font-mono">
             <span className="text-gray-400">{item.label}</span>
             <span 

@@ -16,7 +16,7 @@ import { useRef } from 'react';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-black text-white relative overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-black text-white relative overflow-x-clip w-full max-w-full">
       {/* Background effects */}
       <MatrixRain />
       
