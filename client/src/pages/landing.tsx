@@ -1,10 +1,11 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { motion, useInView, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import { useRef, useState, useEffect, MouseEvent } from 'react';
 import { Link } from 'wouter';
 import { Check, TrendingUp, Shield, Zap, Users, Target, Brain, Lock } from 'lucide-react';
 import { MatrixRain } from '@/components/landing/matrix-rain';
 import { LiveToast } from '@/components/landing/live-toast';
 import { InfiniteMarquee } from '@/components/landing/infinite-marquee';
+import { TiltCard } from '@/components/landing/tilt-card';
 
 export default function Landing() {
   return (
@@ -39,15 +40,16 @@ function HeroSection() {
           className="text-5xl md:text-7xl font-bold mb-6 leading-tight"
           style={{ fontFamily: 'Syne, sans-serif' }}
         >
-          {headline.split(' ').map((word, i) => (
+          {headline.split('').map((char, i) => (
             <motion.span
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="inline-block mr-3"
+              transition={{ delay: i * 0.03, duration: 0.3 }}
+              className="inline-block"
+              style={{ whiteSpace: char === ' ' ? 'pre' : 'normal' }}
             >
-              {word}
+              {char}
             </motion.span>
           ))}
         </motion.h1>
@@ -138,11 +140,12 @@ function ProblemSolutionSection() {
         <div className="grid md:grid-cols-2 gap-8">
           {/* Card Amador */}
           <motion.div
-            initial={{ opacity: 0, x: -50, rotateY: -15 }}
-            animate={isInView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+            initial={{ opacity: 0, x: -50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-gray-900 to-gray-800 border border-red-500/30 rounded-3xl p-8 shadow-2xl hover:scale-105 transition-transform duration-300"
             style={{ perspective: '1000px' }}
+          >
+            <TiltCard className="bg-gradient-to-br from-gray-900 to-gray-800 border border-red-500/30 rounded-3xl p-8 shadow-2xl h-full"
           >
             <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center">
@@ -166,14 +169,17 @@ function ProblemSolutionSection() {
                 </motion.li>
               ))}
             </ul>
+            </TiltCard>
           </motion.div>
 
           {/* Card Ocean Signal */}
           <motion.div
-            initial={{ opacity: 0, x: 50, rotateY: 15 }}
-            animate={isInView ? { opacity: 1, x: 0, rotateY: 0 } : {}}
+            initial={{ opacity: 0, x: 50 }}
+            animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="bg-gradient-to-br from-[#0a0a0a] to-black border-2 border-[#33b864] rounded-3xl p-8 shadow-2xl shadow-[#33b864]/30 hover:scale-105 transition-transform duration-300 relative overflow-hidden"
+            style={{ perspective: '1000px' }}
+          >
+            <TiltCard className="bg-gradient-to-br from-[#0a0a0a] to-black border-2 border-[#33b864] rounded-3xl p-8 shadow-2xl shadow-[#33b864]/30 relative overflow-hidden h-full"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#33b864]/10 rounded-full blur-3xl" />
             <div className="relative z-10">
@@ -205,6 +211,7 @@ function ProblemSolutionSection() {
                 ))}
               </ul>
             </div>
+            </TiltCard>
           </motion.div>
         </div>
       </div>
@@ -214,8 +221,35 @@ function ProblemSolutionSection() {
 
 function ProductPreviewSection() {
   const ref = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
   const [count, setCount] = useState(0);
+
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  const rotateX = useSpring(useTransform(mouseY, [-300, 300], [10, -10]), {
+    stiffness: 100,
+    damping: 30,
+  });
+  const rotateY = useSpring(useTransform(mouseX, [-300, 300], [-10, 10]), {
+    stiffness: 100,
+    damping: 30,
+  });
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    mouseX.set(e.clientX - centerX);
+    mouseY.set(e.clientY - centerY);
+  };
+
+  const handleMouseLeave = () => {
+    mouseX.set(0);
+    mouseY.set(0);
+  };
 
   useEffect(() => {
     if (isInView && count < 91.9) {
@@ -247,11 +281,18 @@ function ProductPreviewSection() {
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, rotateX: 20 }}
-          animate={isInView ? { opacity: 1, scale: 1, rotateX: 0 } : {}}
+          ref={containerRef}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={isInView ? { opacity: 1, scale: 1 } : {}}
           transition={{ duration: 1, type: 'spring' }}
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+          style={{
+            rotateX,
+            rotateY,
+            transformStyle: 'preserve-3d',
+          }}
           className="relative mx-auto max-w-4xl"
-          style={{ perspective: '2000px' }}
         >
           <div className="bg-gradient-to-br from-gray-900 via-black to-gray-900 rounded-3xl p-8 border border-[#33b864]/30 shadow-2xl shadow-[#33b864]/20">
             <div className="bg-[#0a0a0a] rounded-2xl p-6 border border-[#33b864]/20">
