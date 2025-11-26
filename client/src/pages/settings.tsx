@@ -11,7 +11,7 @@ import { Link } from "wouter";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
-  const { isTrial, isPremium, daysRemaining, subscriptionStatus } = useAccessControl();
+  const { isTrial, isPremium, daysRemaining } = useAccessControl();
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -87,9 +87,10 @@ export default function SettingsPage() {
               <div className="space-y-2 text-sm text-gray-400">
                 {isPremium && (
                   <>
-                    <p>✓ Sinais ilimitados</p>
-                    <p>✓ Análises avançadas com IA</p>
-                    <p>✓ Suporte prioritário 24/7</p>
+                    <p>✓ Acesso ilimitado</p>
+                    <p>✓ Sinais ilimitados no dia</p>
+                    <p>✓ Alertas push em tempo real</p>
+                    <p>✓ IA sempre atualizada</p>
                   </>
                 )}
                 {isTrial && (
