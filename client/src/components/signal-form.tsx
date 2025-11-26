@@ -19,6 +19,9 @@ const formSchema = z.object({
   league: z.string().min(2),
   homeTeam: z.string().min(2),
   awayTeam: z.string().min(2),
+  homeTeamLogo: z.string().optional(),
+  awayTeamLogo: z.string().optional(),
+  fixtureId: z.string().optional(),
   market: z.string().min(2),
   odd: z.string().refine((val) => !isNaN(Number(val)), {
     message: "Must be a number",
@@ -38,6 +41,9 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       league: initialData?.league || "",
       homeTeam: initialData?.homeTeam || "",
       awayTeam: initialData?.awayTeam || "",
+      homeTeamLogo: initialData?.homeTeamLogo || "",
+      awayTeamLogo: initialData?.awayTeamLogo || "",
+      fixtureId: initialData?.fixtureId || "",
       market: "",
       odd: "",
       betLink: "",
@@ -50,6 +56,9 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       odd: Number(values.odd),
       status: "pending",
       isLive: false, // Default to pre-match, could be toggleable
+      homeTeamLogo: values.homeTeamLogo || undefined,
+      awayTeamLogo: values.awayTeamLogo || undefined,
+      fixtureId: values.fixtureId || undefined,
     };
     
     onAdd(newSignal);

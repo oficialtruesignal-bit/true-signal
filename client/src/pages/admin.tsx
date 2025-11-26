@@ -259,6 +259,9 @@ export default function Admin() {
                 league: selectedMatch.league.name,
                 homeTeam: selectedMatch.teams.home.name,
                 awayTeam: selectedMatch.teams.away.name,
+                homeTeamLogo: selectedMatch.teams.home.logo,
+                awayTeamLogo: selectedMatch.teams.away.logo,
+                fixtureId: selectedMatch.fixture.id.toString(),
               }}
               onAdd={handleCreateTip} 
             />
