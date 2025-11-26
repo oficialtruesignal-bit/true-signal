@@ -27,9 +27,7 @@ interface CreateSubscriptionParams {
   reason: string;
   external_reference: string;
   payer_email: string;
-  card_token_id?: string;
   back_url: string;
-  status: 'authorized' | 'pending';
 }
 
 export class MercadoPagoService {
@@ -123,7 +121,6 @@ export class MercadoPagoService {
       back_url: process.env.REPLIT_DEV_DOMAIN 
         ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
         : 'http://localhost:5000/app',
-      status: 'pending', // Will be authorized after payment
     };
 
     try {
