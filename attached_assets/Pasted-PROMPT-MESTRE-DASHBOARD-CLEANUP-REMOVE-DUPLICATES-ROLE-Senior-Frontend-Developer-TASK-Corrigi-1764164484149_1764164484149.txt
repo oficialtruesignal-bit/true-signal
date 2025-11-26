@@ -1,0 +1,66 @@
+PROMPT MESTRE: DASHBOARD CLEANUP (REMOVE DUPLICATES)
+ROLE: Senior Frontend Developer.
+
+TASK: Corrigir o componente CompactLiveHud.tsx. ERRO CRÍTICO: O código atual tem seções duplicadas (duas Odd Média) e seções antigas que deveriam ter sido apagadas (Sinais Mês, Sequência). AÇÃO: Apague TODO o conteúdo abaixo do bloco principal (Círculo) e substitua por este Grid 2x2 limpo e padronizado.
+
+1. CÓDIGO DE SUBSTITUIÇÃO (GRID INFERIOR)
+Localize o fechamento da div do bloco superior (aquele que tem o Círculo e os cards de Banca/Lucro). IMEDIATAMENTE ABAIXO DELE, apague tudo o que existir e cole APENAS isto:
+
+TypeScript
+
+  {/* --- BLOCO INFERIOR: GRID 2x2 (MÉTRICAS TÁTICAS) --- */}
+  <div className="grid grid-cols-2 gap-4 mt-4">
+    
+    {/* CARD 1: ODD MÉDIA */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center relative shadow-lg">
+      <div className="flex items-center gap-2 mb-2">
+         <ScaleIcon className="w-4 h-4 text-orange-500" />
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ODD MÉDIA</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-orange-500">@1.92</span>
+    </div>
+
+    {/* CARD 2: INVESTIDORES ONLINE (Pulsante) */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center relative shadow-lg">
+      <div className="flex items-center gap-2 mb-2">
+         <UsersIcon className="w-4 h-4 text-[#33b864]" />
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">ONLINE AGORA</span>
+      </div>
+      <div className="flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse"></span>
+        {/* Use sua variável de oscilação aqui (ex: 620) */}
+        <span className="text-3xl font-sora font-bold text-white">620</span>
+      </div>
+    </div>
+
+    {/* CARD 3: UNIDADES GANHAS (Positivo) */}
+    <div className="h-28 bg-[#121212] border border-[#33b864]/20 rounded-xl p-4 flex flex-col justify-center relative shadow-lg">
+      <div className="flex items-center gap-2 mb-2">
+         <TrendingUpIcon className="w-4 h-4 text-[#33b864]" />
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">GANHOS</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-[#33b864]">+104.3u</span>
+    </div>
+
+    {/* CARD 4: UNIDADES PERDIDAS (Negativo) */}
+    <div className="h-28 bg-[#121212] border border-red-500/20 rounded-xl p-4 flex flex-col justify-center relative shadow-lg">
+      <div className="flex items-center gap-2 mb-2">
+         <TrendingDownIcon className="w-4 h-4 text-red-500" />
+         <span className="text-[10px] text-gray-400 uppercase font-bold tracking-wider">PERDAS</span>
+      </div>
+      <span className="text-3xl font-sora font-bold text-red-500">-12.0u</span>
+    </div>
+
+  </div>
+2. CHECKLIST DE LIMPEZA (DELETAR SEM DÓ)
+Certifique-se de que NÃO SOBROU nenhum código renderizando:
+
+❌ Card "Sequência"
+
+❌ Card "Sinais (Mês)"
+
+❌ Card "Investidores" (o antigo verde escuro)
+
+❌ Card duplicado de "Odd Média"
+
+RESULTADO: A tela deve ter apenas 2 blocos: O Bloco Superior (Círculo + 2 Cards) e o Bloco Inferior (4 Cards iguais). Fim.
