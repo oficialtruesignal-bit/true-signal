@@ -28,6 +28,7 @@ const NotFound = React.lazy(() => import("@/pages/not-found"));
 // Import access control and paywall
 import { useAccessControl } from "@/hooks/use-access-control";
 import { LockedScreen } from "@/components/paywall/locked-screen";
+import { LoadingScreen } from "@/components/loading-screen";
 
 function ProtectedRoute({ component: Component, adminOnly = false }: { component: React.ComponentType<any>, adminOnly?: boolean }) {
   const { user, isLoading } = useAuth();
@@ -43,7 +44,7 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
   }, [user, isLoading, adminOnly, setLocation]);
 
   if (isLoading || !user) {
-    return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+    return <LoadingScreen />;
   }
 
   // Show paywall if user's trial has expired (admins bypass)
@@ -107,7 +108,7 @@ function App() {
         <LanguageProvider>
           <AuthProvider>
             <TooltipProvider>
-              <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>}>
+              <Suspense fallback={<LoadingScreen />}>
                 <Router />
                 <Toaster position="top-right" closeButton richColors />
               </Suspense>
