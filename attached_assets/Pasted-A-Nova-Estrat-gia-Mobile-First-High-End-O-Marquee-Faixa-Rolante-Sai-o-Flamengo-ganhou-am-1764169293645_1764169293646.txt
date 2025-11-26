@@ -1,0 +1,97 @@
+A Nova Estratégia "Mobile-First High-End":
+
+O Marquee (Faixa Rolante): Sai o "Flamengo ganhou ✅" (amador). Entra o "Ticker Financeiro". Dados técnicos, horários, odds e lucro líquido. Parece a Bloomberg.
+
+Gráficos de Verdade: Vamos colocar um Simulador de Lucro Composto interativo. O usuário arrasta um slider ("Investimento Inicial") e vê a curva de lucro explodir na tela. Isso gera dopamina imediata.
+
+Copywriting Neuro-Associativo: Vamos usar termos como "Assimetria de Informação", "Ineficiência de Mercado", "Algoritmo Preditivo". Nada de "sorte".
+
+Visual Matrix/Tech: O fundo não será estático. Será um canvas vivo.
+
+Aqui está o Prompt Definitivo para transformar sua Home Page em uma máquina de vendas de milhões.
+
+PROMPT MESTRE: LANDING PAGE REBUILD (MOBILE-FIRST CONVERSION MONSTER)
+ROLE: Chief Marketing Officer (CMO) & Senior Creative Developer.
+
+TASK: Destruir a Landing Page atual e reconstruir do zero. OBJETIVO: Criar a página de vendas mais sofisticada, persuasiva e tecnologicamente avançada do nicho de apostas esportivas. REFERÊNCIAS: Estética "Thiago Finch" (Luxo/Mistério) + Estrutura de Copy "Pedro Sobral" (Lógica/Mecanismo Único).
+
+1. TECNOLOGIA VISUAL (MANDATÓRIO)
+Framework de Animação: Instale e use framer-motion para TUDO. Nada entra na tela parado. Tudo desliza, flutua ou expande.
+
+Mobile-First: O design deve ser pensado para telas verticais. Botões grandes (polegar), textos escaneáveis, imagens que ocupam a largura total.
+
+Tipografia:
+
+Headline: Syne (ExtraBold, Wide).
+
+Dados/Números: Sora ou JetBrains Mono.
+
+Texto: Inter (Leitura fácil).
+
+2. ESTRUTURA DA NARRATIVA (SEÇÃO POR SEÇÃO)
+SEÇÃO 1: HERO (IMPACTO & PROMESSA)
+Headline: "Você está do lado errado da matemática." (Texto branco, grande).
+
+Subheadline: "Enquanto você aposta com emoção, o Ocean Signal opera com ineficiência de mercado. A primeira IA que prevê movimentos de Odds antes das casas ajustarem."
+
+Visual: Fundo preto com uma "Rede Neural" verde neon conectando nós (canvas animado).
+
+CTA: Botão pulsante: "DESBLOQUEAR O ALGORITMO".
+
+Ticker (Faixa Rolante):
+
+Estilo: Fundo vidro fosco, bordas finas.
+
+Conteúdo: [LIVE] PREMIER LEAGUE: OVER 2.5 DETECTADO (94% CONFIDENCE) • LUCRO ÚLTIMA HORA: +4.2u • SAQUE APROVADO: R$ 4.200 (M. SILVA)
+
+SEÇÃO 2: A DOPAMINA (SIMULADOR INTERATIVO)
+Título: "O Poder dos Juros Compostos na Sua Mão."
+
+Componente: Um gráfico de linha (recharts) que sobe exponencialmente.
+
+Interação: Um Slider onde o usuário define "Banca Inicial" (R$ 100 a R$ 5.000).
+
+Resultado: Conforme ele arrasta, o gráfico muda e mostra: "Resultado projetado em 30 dias: R$ XX.XXX".
+
+Gatilho: Isso faz a pessoa sentir o dinheiro antes de comprar.
+
+SEÇÃO 3: O MECANISMO ÚNICO (POR QUE FUNCIONA?)
+Layout: Cards estilo "Bento Grid" (Vidro escuro, ícones neon).
+
+Card 1 (Big Data): "Varredura de 1.400 ligas por segundo. Nenhum humano consegue fazer isso."
+
+Card 2 (Velocidade): "Entramos no mercado 3 segundos antes da Odd derreter. Timing cirúrgico."
+
+Card 3 (Validação Híbrida): "A IA filtra o ruído. Nossos 20 analistas confirmam o sinal. Dupla barreira de segurança."
+
+SEÇÃO 4: PROVA SOCIAL (AUTORIDADE DISCRETA)
+Nada de prints falsos de WhatsApp.
+
+Galeria de Saques: Um carrossel automático mostrando notificações de banco (Nubank, Inter, etc) com valores altos, mas censurados parcialmente para parecer real e discreto.
+
+Status do Sistema: Um terminal mostrando: "Uptime: 99.9%", "Sinais Enviados Hoje: 14", "Assertividade Semanal: 92.4%".
+
+SEÇÃO 5: A OFERTA (ESCASSEZ REAL)
+Conceito: "Não vendemos curso. Vendemos acesso à nossa infraestrutura."
+
+Card de Preço: Preto, borda dourada ou verde neon (dependendo do plano).
+
+Gatilho de Urgência: Uma barra de progresso real: "Capacidade do Servidor: 94% ocupado. Restam poucas conexões."
+
+Garantia: Selo "Risco Zero / Protocolo de Reembolso Automático".
+
+3. REFINAMENTO DE COPY (TROCA DE PALAVRAS)
+O Agente deve substituir termos amadores por termos profissionais em todo o site:
+
+❌ "Apostas" ➔ ✅ "Operações Estruturadas".
+
+❌ "Ganhar dinheiro" ➔ ✅ "Rentabilizar Capital".
+
+❌ "Grupo VIP" ➔ ✅ "Ecossistema Ocean".
+
+❌ "Palpites" ➔ ✅ "Sinais Probabilísticos".
+
+4. BOTÃO "STICKY" (MOBILE)
+No celular, ao rolar a página, mantenha um botão "ACESSAR AGORA" fixo no rodapé da tela, com um brilho verde, para que o usuário possa comprar a qualquer momento sem voltar ao topo.
+
+COMANDO: Execute a reconstrução total da Home. Use todo o poder do CSS (gradientes, sombras, blur) e Framer Motion para criar uma experiência imersiva. A página deve carregar rápido, mas parecer um filme de ficção científica financeira.
