@@ -53,6 +53,9 @@ export const translations = {
       subtitle: "Jogos programados para a semana inteira",
       noGames: "Nenhum jogo programado para esta data.",
       error: "Erro ao carregar jogos. Tente novamente mais tarde.",
+      searchPlaceholder: "Buscar por time ou liga...",
+      noResults: "Nenhum jogo encontrado para",
+      clearSearch: "Limpar busca",
     },
     settings: {
       title: "Configurações",
@@ -149,6 +152,9 @@ export const translations = {
       subtitle: "Matches scheduled for the entire week",
       noGames: "No matches scheduled for this date.",
       error: "Error loading matches. Please try again later.",
+      searchPlaceholder: "Search by team or league...",
+      noResults: "No matches found for",
+      clearSearch: "Clear search",
     },
     settings: {
       title: "Settings",
@@ -245,6 +251,9 @@ export const translations = {
       subtitle: "Partidos programados para toda la semana",
       noGames: "No hay partidos programados para esta fecha.",
       error: "Error al cargar partidos. Por favor, inténtalo de nuevo más tarde.",
+      searchPlaceholder: "Buscar por equipo o liga...",
+      noResults: "No se encontraron partidos para",
+      clearSearch: "Limpiar búsqueda",
     },
     settings: {
       title: "Configuración",
@@ -341,6 +350,9 @@ export const translations = {
       subtitle: "Matchs programmés pour toute la semaine",
       noGames: "Aucun match programmé pour cette date.",
       error: "Erreur lors du chargement des matchs. Veuillez réessayer plus tard.",
+      searchPlaceholder: "Rechercher par équipe ou ligue...",
+      noResults: "Aucun match trouvé pour",
+      clearSearch: "Effacer la recherche",
     },
     settings: {
       title: "Paramètres",
@@ -437,6 +449,9 @@ export const translations = {
       subtitle: "Partite programmate per tutta la settimana",
       noGames: "Nessuna partita programmata per questa data.",
       error: "Errore nel caricamento delle partite. Riprova più tardi.",
+      searchPlaceholder: "Cerca per squadra o lega...",
+      noResults: "Nessuna partita trovata per",
+      clearSearch: "Cancella ricerca",
     },
     settings: {
       title: "Impostazioni",
@@ -533,6 +548,9 @@ export const translations = {
       subtitle: "整周预定的比赛",
       noGames: "此日期没有预定的比赛。",
       error: "加载比赛时出错。请稍后再试。",
+      searchPlaceholder: "按团队或联赛搜索...",
+      noResults: "未找到匹配项",
+      clearSearch: "清除搜索",
     },
     settings: {
       title: "设置",

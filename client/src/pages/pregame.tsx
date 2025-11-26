@@ -1,11 +1,11 @@
 import { Layout } from "@/components/layout";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQueries } from "@tanstack/react-query";
-import { Calendar, AlertCircle, Clock } from "lucide-react";
+import { Calendar, AlertCircle, Clock, Search, X } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, addDays, isAfter, addMinutes, isSameDay } from "date-fns";
 import { ptBR, enUS, es, fr, it, zhCN } from "date-fns/locale";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
 
 // Map language to date-fns locale
@@ -21,6 +21,9 @@ const localeMap = {
 export default function PreGamePage() {
   const { t, language } = useLanguage();
   const dateLocale = localeMap[language] || ptBR;
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  
   // Today + Next 6 days (7 days window)
   const dates = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
 
@@ -34,7 +37,7 @@ export default function PreGamePage() {
   });
 
   // Combina todos os fixtures e filtra
-  const { fixtures, isLoading, hasError } = useMemo(() => {
+  const { allFixtures, isLoading, hasError } = useMemo(() => {
     const now = new Date();
     const oneMinuteFromNow = addMinutes(now, 1);
     
@@ -45,15 +48,15 @@ export default function PreGamePage() {
     const error = queries.some(q => q.error);
     
     // Combina todos os fixtures de todas as queries
-    const allFixtures: FootballMatch[] = [];
+    const combined: FootballMatch[] = [];
     queries.forEach(q => {
       if (q.data) {
-        allFixtures.push(...q.data);
+        combined.push(...q.data);
       }
     });
     
     // Filtra: apenas jogos que começam em MAIS de 1 minuto
-    const filtered = allFixtures.filter((match) => {
+    const filtered = combined.filter((match) => {
       const matchDate = new Date(match.fixture.date);
       return isAfter(matchDate, oneMinuteFromNow);
     });
@@ -64,21 +67,67 @@ export default function PreGamePage() {
     );
     
     return {
-      fixtures: filtered,
+      allFixtures: filtered,
       isLoading: loading,
       hasError: error
     };
   }, [queries]);
 
+  // Filtra jogos baseado na pesquisa
+  const fixtures = useMemo(() => {
+    if (!searchQuery.trim()) return allFixtures;
+    
+    const query = searchQuery.toLowerCase();
+    return allFixtures.filter((match) => 
+      match.teams.home.name.toLowerCase().includes(query) ||
+      match.teams.away.name.toLowerCase().includes(query) ||
+      match.league.name.toLowerCase().includes(query)
+    );
+  }, [allFixtures, searchQuery]);
+
   return (
     <Layout>
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
-            <Calendar className="w-5 h-5 text-blue-500" />
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+              <Calendar className="w-5 h-5 text-blue-500" />
+            </div>
+            <h1 className="text-2xl font-display font-bold text-white">{t.pregame.title}</h1>
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">{t.pregame.title}</h1>
+          
+          {/* Search Toggle */}
+          <button
+            onClick={() => {
+              setIsSearchOpen(!isSearchOpen);
+              if (isSearchOpen) setSearchQuery("");
+            }}
+            className="w-10 h-10 rounded-lg bg-primary/10 border border-primary/20 hover:border-primary/40 flex items-center justify-center transition-colors"
+            data-testid="button-search-toggle-pregame"
+          >
+            {isSearchOpen ? (
+              <X className="w-5 h-5 text-primary" />
+            ) : (
+              <Search className="w-5 h-5 text-primary" />
+            )}
+          </button>
         </div>
+
+        {/* Search Input */}
+        {isSearchOpen && (
+          <div className="mb-4 animate-in fade-in slide-in-from-top-2 duration-200">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={t.pregame.searchPlaceholder}
+              className="w-full px-4 py-3 bg-card border border-primary/20 rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              data-testid="input-search-pregame"
+              autoFocus
+            />
+          </div>
+        )}
+        
         <p className="text-muted-foreground">
           {t.pregame.subtitle}
         </p>
@@ -99,10 +148,24 @@ export default function PreGamePage() {
         </div>
       )}
 
-      {!isLoading && !hasError && fixtures.length === 0 && (
+      {!isLoading && !hasError && allFixtures.length === 0 && (
         <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
           <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
           <p className="text-muted-foreground">{t.pregame.noGames}</p>
+        </div>
+      )}
+
+      {!isLoading && !hasError && allFixtures.length > 0 && fixtures.length === 0 && (
+        <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
+          <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
+          <p className="text-muted-foreground">{t.pregame.noResults} "{searchQuery}"</p>
+          <button
+            onClick={() => setSearchQuery("")}
+            className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors"
+            data-testid="button-clear-search-pregame"
+          >
+            {t.pregame.clearSearch}
+          </button>
         </div>
       )}
 
