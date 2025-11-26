@@ -55,7 +55,7 @@ export function GuaranteeSeal() {
                 </span>
               </h2>
               <p className="text-xl text-gray-300">
-                Teste a IA por 15 Dias. Não Lucrou? Devolvemos Tudo.
+                Teste a Plataforma por 15 Dias. Não Gostou? Devolvemos Tudo.
               </p>
             </motion.div>
             
@@ -85,10 +85,12 @@ export function GuaranteeSeal() {
               className="text-center p-6 bg-gradient-to-r from-[#33b864]/10 to-yellow-500/10 border border-[#33b864]/30 rounded-2xl"
             >
               <p className="text-lg text-gray-300 leading-relaxed">
-                Se você <span className="text-white font-bold">não lucrar</span> ou{' '}
-                <span className="text-white font-bold">não ficar satisfeito</span> por qualquer motivo,
+                Se você <span className="text-white font-bold">não ficar satisfeito</span> com a plataforma por qualquer motivo,
                 basta solicitar o reembolso dentro de 15 dias.{' '}
                 <span className="text-[#33b864] font-bold">100% do seu dinheiro de volta</span>. Sem perguntas.
+              </p>
+              <p className="text-xs text-gray-500 mt-4 italic">
+                *Garantia refere-se ao valor da assinatura, não a resultados de apostas. Apostas envolvem risco de perda.
               </p>
             </motion.div>
             

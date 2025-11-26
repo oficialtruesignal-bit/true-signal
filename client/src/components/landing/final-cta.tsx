@@ -59,15 +59,15 @@ export function FinalCTA() {
         >
           <div className="p-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-xl">
             <div className="text-3xl font-black text-[#33b864] mb-1">94.8%</div>
-            <div className="text-xs text-gray-500">Assertividade</div>
+            <div className="text-xs text-gray-500">Histórico*</div>
           </div>
           <div className="p-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-xl">
             <div className="text-3xl font-black text-[#33b864] mb-1">1.420+</div>
             <div className="text-xs text-gray-500">Operadores</div>
           </div>
           <div className="p-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-xl">
-            <div className="text-3xl font-black text-[#33b864] mb-1">R$ 497</div>
-            <div className="text-xs text-gray-500">Investimento</div>
+            <div className="text-3xl font-black text-[#33b864] mb-1">R$ 99,87</div>
+            <div className="text-xs text-gray-500">Mensal</div>
           </div>
         </motion.div>
         

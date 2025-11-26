@@ -51,8 +51,8 @@ export function HeroShot() {
             className="text-lg text-gray-400 mb-10 leading-relaxed"
           >
             Esqueça grupos viciados e análises manuais. O Ocean Signal escaneia{' '}
-            <span className="text-[#33b864] font-semibold">milhares de jogos em tempo real</span> e te entrega apenas as oportunidades com{' '}
-            <span className="text-white font-semibold">+90% de chance matemática de Green</span>.
+            <span className="text-[#33b864] font-semibold">milhares de jogos em tempo real</span> e te entrega análises estatísticas baseadas em{' '}
+            <span className="text-white font-semibold">dados históricos e probabilidades</span>.
           </motion.p>
           
           <motion.div
@@ -142,7 +142,7 @@ export function HeroShot() {
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
                         <span className="text-4xl font-black text-[#33b864]">94.8%</span>
-                        <span className="text-xs text-gray-500">Assertividade</span>
+                        <span className="text-xs text-gray-500">Histórico*</span>
                       </div>
                     </div>
                   </div>

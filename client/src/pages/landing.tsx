@@ -213,6 +213,16 @@ function Footer() {
               </div>
             </div>
             
+            {/* Legal Disclaimer */}
+            <div className="text-center text-xs text-gray-600 max-w-4xl mx-auto mb-6 px-4">
+              <p className="leading-relaxed">
+                <strong className="text-gray-500">AVISO LEGAL:</strong> Ocean Signal é uma plataforma de análises estatísticas esportivas. NÃO somos casa de apostas. 
+                Todos os percentuais de assertividade são baseados em dados históricos e NÃO garantem resultados futuros. 
+                Apostas esportivas envolvem risco de perda financeira. Recomendamos apostas responsáveis. Proibido para menores de 18 anos.
+                Resultados passados não são garantia de resultados futuros.
+              </p>
+            </div>
+            
             {/* Copyright */}
             <div className="text-center text-sm text-gray-500">
               <p>© 2024 Ocean Signal. Todos os direitos reservados.</p>

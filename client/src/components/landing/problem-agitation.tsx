@@ -102,7 +102,7 @@ export function ProblemAgitation() {
               </div>
               
               <p className="text-gray-400 mb-8">
-                Como os 1% operam e lucram consistentemente
+                Como os 1% operam com análise profissional
               </p>
               
               <div className="space-y-4">

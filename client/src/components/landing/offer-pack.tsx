@@ -15,7 +15,7 @@ export function OfferPack() {
     {
       icon: FileCheck,
       title: 'Bilhetes Prontos Pré-Jogo Validado por IA',
-      description: 'Receba sinais com +90% de assertividade direto no app. Zero trabalho manual.',
+      description: 'Receba análises estatísticas validadas por IA direto no app. Zero trabalho manual.',
     },
     {
       icon: BarChart3,
@@ -45,7 +45,7 @@ export function OfferPack() {
     {
       icon: CheckCircle2,
       title: 'Garantia de Reembolso Automático',
-      description: '15 dias para testar sem risco. Não lucrou? Devolvemos tudo.',
+      description: '15 dias para testar a plataforma. Não gostou? Devolvemos tudo.',
     },
   ];
   

@@ -164,7 +164,10 @@ export function SocialProof() {
           <div className="relative p-8 bg-gradient-to-br from-white/5 to-black/50 backdrop-blur-xl border border-[#33b864]/20 rounded-3xl">
             <div className="text-6xl text-[#33b864]/20 font-serif mb-4">"</div>
             <p className="text-lg md:text-xl text-gray-300 italic mb-6 leading-relaxed">
-              Gastei anos tentando análises manuais. Em 3 semanas com o Ocean Signal já recuperei tudo que perdi e estou lucrando consistentemente. A IA não erra.
+              Gastei anos tentando análises manuais. Em 3 semanas com o Ocean Signal melhorei muito meus resultados. A tecnologia faz toda diferença.
+            </p>
+            <p className="text-xs text-gray-500 mt-4 italic">
+              *Depoimento pessoal. Resultados podem variar. Apostas envolvem risco.
             </p>
             <div className="flex items-center justify-center gap-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#33b864] to-[#2ea558]" />
