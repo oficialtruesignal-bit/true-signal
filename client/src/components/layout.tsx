@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Home, LayoutDashboard, Settings, LogOut, Bell, Target, Play, Calendar, Plus } from "lucide-react";
+import { Home, LayoutDashboard, Settings, LogOut, Bell, Ticket, Play, Calendar, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
@@ -58,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // Desktop Nav Items (with Admin)
   const desktopNavItems = [
     { icon: Home, label: t.nav.home, path: "/app" },
-    { icon: Target, label: t.nav.tips, path: "/tips" },
+    { icon: Ticket, label: t.nav.tips, path: "/tips" },
     { icon: Play, label: t.nav.live, path: "/live" },
     { icon: Calendar, label: t.nav.pregame, path: "/pregame" },
     { icon: Settings, label: t.nav.settings, path: "/settings" },
@@ -68,7 +68,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   // Mobile Nav Items (5 icons only, no Admin)
   const mobileNavItems = [
     { icon: Home, label: t.nav.home, path: "/app" },
-    { icon: Target, label: t.nav.tips, path: "/tips" },
+    { icon: Ticket, label: t.nav.tips, path: "/tips" },
     { icon: Play, label: t.nav.live, path: "/live" },
     { icon: Calendar, label: t.nav.pregame, path: "/pregame" },
     { icon: Settings, label: t.nav.settings, path: "/settings" },
