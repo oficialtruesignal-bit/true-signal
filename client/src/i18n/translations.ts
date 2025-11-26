@@ -1,48 +1,59 @@
 export const translations = {
   pt: {
-    // Navigation
     nav: {
-      home: "Home",
-      tips: "Tips",
+      home: "Painel",
+      tips: "Sinais",
       live: "Ao Vivo",
-      pregame: "Pré-Live",
-      settings: "Config",
-      admin: "Admin",
+      pregame: "Pré-Jogo",
+      settings: "Configurações",
+      admin: "Gestão",
+      logout: "Sair",
+      welcome: "Bem-vindo,",
+      hello: "Olá,",
+      notifications: "Notificações",
+      notificationsDesc: "Ative para receber alertas de novos sinais.",
+      activateNow: "Ativar Agora",
     },
-    
-    // Landing Page
+    dashboard: {
+      title: "Command Center",
+      subtitle: "Performance de Investidor Profissional",
+      performanceChart: "Evolução de Performance",
+      performanceSubtitle: "Últimas 24 horas • Live",
+      realtime: "TEMPO REAL",
+      viewFull: "Ver Dashboard Completo",
+      viewFullDesc: "AI Scanner, histórico completo, análises avançadas e muito mais",
+    },
     landing: {
       headline: "Domine o Mercado com a Fusão Perfeita: 20 Traders de Elite + Inteligência Artificial.",
       subline: "Chega de amadorismo. Acesse análises detalhadas com precisão projetada de até 97%. Saia dos 'grupinhos' e venha para a ferramenta usada mundialmente por profissionais.",
       cta: "Liberar Acesso Profissional",
     },
-    
-    // Tips Page
     tips: {
-      title: "Tips do Dia",
+      title: "Sinais",
       subtitle: "Análises curadas por 20 especialistas + IA com precisão de 97%",
-      noTips: "Nenhuma tip disponível no momento.",
+      noTips: "Nenhum sinal disponível no momento.",
       newSignals: "Novos sinais serão publicados em breve.",
+      available: "sinais disponíveis",
+      error: "Erro ao carregar sinais.",
+      newSignalAvailable: "Novo Sinal Disponível!",
+      signalRemoved: "Sinal removido",
     },
-    
-    // Live Page
     live: {
       title: "Ao Vivo",
       subtitle: "Acompanhe os jogos em tempo real • Clique para ver estatísticas",
       noGames: "Nenhum jogo ao vivo no momento.",
       viewStats: "Clique para ver estatísticas detalhadas",
       error: "Erro ao carregar jogos ao vivo. Tente novamente mais tarde.",
+      searchPlaceholder: "Buscar por time ou liga...",
+      noResults: "Nenhum jogo encontrado para",
+      clearSearch: "Limpar busca",
     },
-    
-    // PreGame Page
     pregame: {
       title: "Pré-Jogo",
-      subtitle: "Jogos programados para as próximas 72 horas",
+      subtitle: "Jogos programados para a semana inteira",
       noGames: "Nenhum jogo programado para esta data.",
       error: "Erro ao carregar jogos. Tente novamente mais tarde.",
     },
-    
-    // Settings Page
     settings: {
       title: "Configurações",
       subtitle: "Personalize sua experiência",
@@ -57,8 +68,6 @@ export const translations = {
       support: "Suporte",
       contactSupport: "Falar com Suporte via WhatsApp",
     },
-    
-    // Match Center Modal
     matchCenter: {
       statsPressure: "Stats Pressure",
       totalAttacks: "Total Ataques",
@@ -73,8 +82,6 @@ export const translations = {
       attack: "ATK",
       noStats: "Estatísticas não disponíveis para este jogo.",
     },
-    
-    // Common
     common: {
       loading: "Carregando...",
       error: "Erro",
@@ -86,45 +93,61 @@ export const translations = {
       welcome: "Bem-vindo,",
     },
   },
-  
   en: {
     nav: {
-      home: "Home",
-      tips: "Tips",
+      home: "Dashboard",
+      tips: "Signals",
       live: "Live",
-      pregame: "Pre",
+      pregame: "Pre-Game",
       settings: "Settings",
       admin: "Admin",
+      logout: "Logout",
+      welcome: "Welcome,",
+      hello: "Hello,",
+      notifications: "Notifications",
+      notificationsDesc: "Enable to receive alerts for new signals.",
+      activateNow: "Activate Now",
     },
-    
+    dashboard: {
+      title: "Command Center",
+      subtitle: "Professional Investor Performance",
+      performanceChart: "Performance Evolution",
+      performanceSubtitle: "Last 24 hours • Live",
+      realtime: "REALTIME",
+      viewFull: "View Full Dashboard",
+      viewFullDesc: "AI Scanner, full history, advanced analytics and more",
+    },
     landing: {
       headline: "Master the Market with the Perfect Fusion: 20 Elite Traders + Artificial Intelligence.",
       subline: "No more amateurism. Access detailed analysis with projected accuracy of up to 97%. Leave the 'groups' and join the tool used worldwide by professionals.",
       cta: "Unlock Professional Access",
     },
-    
     tips: {
-      title: "Today's Tips",
+      title: "Signals",
       subtitle: "Analysis curated by 20 experts + AI with 97% accuracy",
-      noTips: "No tips available at the moment.",
+      noTips: "No signals available at the moment.",
       newSignals: "New signals will be published soon.",
+      available: "signals available",
+      error: "Error loading signals.",
+      newSignalAvailable: "New Signal Available!",
+      signalRemoved: "Signal removed",
     },
-    
     live: {
       title: "Live",
       subtitle: "Follow matches in real time • Click to view statistics",
       noGames: "No live matches at the moment.",
       viewStats: "Click to view detailed statistics",
       error: "Error loading live matches. Please try again later.",
+      searchPlaceholder: "Search by team or league...",
+      noResults: "No matches found for",
+      clearSearch: "Clear search",
     },
-    
     pregame: {
       title: "Pre-Game",
-      subtitle: "Scheduled matches for the next 72 hours",
+      subtitle: "Matches scheduled for the entire week",
       noGames: "No matches scheduled for this date.",
       error: "Error loading matches. Please try again later.",
     },
-    
     settings: {
       title: "Settings",
       subtitle: "Customize your experience",
@@ -139,7 +162,6 @@ export const translations = {
       support: "Support",
       contactSupport: "Contact Support via WhatsApp",
     },
-    
     matchCenter: {
       statsPressure: "Stats Pressure",
       totalAttacks: "Total Attacks",
@@ -154,7 +176,6 @@ export const translations = {
       attack: "ATK",
       noStats: "Statistics not available for this match.",
     },
-    
     common: {
       loading: "Loading...",
       error: "Error",
@@ -166,45 +187,61 @@ export const translations = {
       welcome: "Welcome,",
     },
   },
-  
   es: {
     nav: {
-      home: "Inicio",
-      tips: "Tips",
+      home: "Panel",
+      tips: "Señales",
       live: "En Vivo",
-      pregame: "Pre",
-      settings: "Config",
-      admin: "Admin",
+      pregame: "Pre-Partido",
+      settings: "Configuración",
+      admin: "Gestión",
+      logout: "Salir",
+      welcome: "Bienvenido,",
+      hello: "Hola,",
+      notifications: "Notificaciones",
+      notificationsDesc: "Activa para recibir alertas de nuevas señales.",
+      activateNow: "Activar Ahora",
     },
-    
+    dashboard: {
+      title: "Centro de Comando",
+      subtitle: "Rendimiento de Inversor Profesional",
+      performanceChart: "Evolución de Rendimiento",
+      performanceSubtitle: "Últimas 24 horas • En Vivo",
+      realtime: "TIEMPO REAL",
+      viewFull: "Ver Panel Completo",
+      viewFullDesc: "AI Scanner, historial completo, análisis avanzados y más",
+    },
     landing: {
       headline: "Domina el Mercado con la Fusión Perfecta: 20 Traders de Elite + Inteligencia Artificial.",
       subline: "Se acabó el amateurismo. Accede a análisis detallados con precisión proyectada de hasta 97%. Sal de los 'grupitos' y únete a la herramienta usada mundialmente por profesionales.",
       cta: "Desbloquear Acceso Profesional",
     },
-    
     tips: {
-      title: "Tips del Día",
+      title: "Señales",
       subtitle: "Análisis curado por 20 expertos + IA con 97% de precisión",
-      noTips: "No hay tips disponibles en este momento.",
+      noTips: "No hay señales disponibles en este momento.",
       newSignals: "Nuevas señales se publicarán pronto.",
+      available: "señales disponibles",
+      error: "Error al cargar señales.",
+      newSignalAvailable: "¡Nueva Señal Disponible!",
+      signalRemoved: "Señal eliminada",
     },
-    
     live: {
       title: "En Vivo",
       subtitle: "Sigue los partidos en tiempo real • Haz clic para ver estadísticas",
       noGames: "No hay partidos en vivo en este momento.",
       viewStats: "Haz clic para ver estadísticas detalladas",
       error: "Error al cargar partidos en vivo. Por favor, inténtalo de nuevo más tarde.",
+      searchPlaceholder: "Buscar por equipo o liga...",
+      noResults: "No se encontraron partidos para",
+      clearSearch: "Limpiar búsqueda",
     },
-    
     pregame: {
       title: "Pre-Partido",
-      subtitle: "Partidos programados para las próximas 72 horas",
+      subtitle: "Partidos programados para toda la semana",
       noGames: "No hay partidos programados para esta fecha.",
       error: "Error al cargar partidos. Por favor, inténtalo de nuevo más tarde.",
     },
-    
     settings: {
       title: "Configuración",
       subtitle: "Personaliza tu experiencia",
@@ -219,7 +256,6 @@ export const translations = {
       support: "Soporte",
       contactSupport: "Contactar Soporte vía WhatsApp",
     },
-    
     matchCenter: {
       statsPressure: "Presión de Stats",
       totalAttacks: "Ataques Totales",
@@ -234,7 +270,6 @@ export const translations = {
       attack: "ATQ",
       noStats: "Estadísticas no disponibles para este partido.",
     },
-    
     common: {
       loading: "Cargando...",
       error: "Error",
@@ -246,45 +281,61 @@ export const translations = {
       welcome: "Bienvenido,",
     },
   },
-  
   fr: {
     nav: {
-      home: "Accueil",
-      tips: "Tips",
+      home: "Tableau de Bord",
+      tips: "Signaux",
       live: "En Direct",
-      pregame: "Pré-Live",
-      settings: "Config",
-      admin: "Admin",
+      pregame: "Pré-Match",
+      settings: "Paramètres",
+      admin: "Gestion",
+      logout: "Déconnexion",
+      welcome: "Bienvenue,",
+      hello: "Bonjour,",
+      notifications: "Notifications",
+      notificationsDesc: "Activez pour recevoir des alertes de nouveaux signaux.",
+      activateNow: "Activer Maintenant",
     },
-    
+    dashboard: {
+      title: "Centre de Commande",
+      subtitle: "Performance d'Investisseur Professionnel",
+      performanceChart: "Évolution de la Performance",
+      performanceSubtitle: "Dernières 24 heures • En Direct",
+      realtime: "TEMPS RÉEL",
+      viewFull: "Voir le Tableau de Bord Complet",
+      viewFullDesc: "AI Scanner, historique complet, analyses avancées et plus",
+    },
     landing: {
       headline: "Dominez le Marché avec la Fusion Parfaite: 20 Traders d'Elite + Intelligence Artificielle.",
       subline: "Fini l'amateurisme. Accédez à des analyses détaillées avec une précision projetée jusqu'à 97%. Quittez les 'petits groupes' et rejoignez l'outil utilisé mondialement par les professionnels.",
       cta: "Débloquer l'Accès Professionnel",
     },
-    
     tips: {
-      title: "Tips du Jour",
+      title: "Signaux",
       subtitle: "Analyses curées par 20 experts + IA avec 97% de précision",
-      noTips: "Aucun tip disponible pour le moment.",
+      noTips: "Aucun signal disponible pour le moment.",
       newSignals: "De nouveaux signaux seront publiés bientôt.",
+      available: "signaux disponibles",
+      error: "Erreur lors du chargement des signaux.",
+      newSignalAvailable: "Nouveau Signal Disponible!",
+      signalRemoved: "Signal supprimé",
     },
-    
     live: {
       title: "En Direct",
       subtitle: "Suivez les matchs en temps réel • Cliquez pour voir les statistiques",
       noGames: "Aucun match en direct pour le moment.",
       viewStats: "Cliquez pour voir les statistiques détaillées",
       error: "Erreur lors du chargement des matchs en direct. Veuillez réessayer plus tard.",
+      searchPlaceholder: "Rechercher par équipe ou ligue...",
+      noResults: "Aucun match trouvé pour",
+      clearSearch: "Effacer la recherche",
     },
-    
     pregame: {
       title: "Pré-Match",
-      subtitle: "Matchs programmés pour les prochaines 72 heures",
+      subtitle: "Matchs programmés pour toute la semaine",
       noGames: "Aucun match programmé pour cette date.",
       error: "Erreur lors du chargement des matchs. Veuillez réessayer plus tard.",
     },
-    
     settings: {
       title: "Paramètres",
       subtitle: "Personnalisez votre expérience",
@@ -299,7 +350,6 @@ export const translations = {
       support: "Support",
       contactSupport: "Contacter le Support via WhatsApp",
     },
-    
     matchCenter: {
       statsPressure: "Pression des Stats",
       totalAttacks: "Attaques Totales",
@@ -314,7 +364,6 @@ export const translations = {
       attack: "ATT",
       noStats: "Statistiques non disponibles pour ce match.",
     },
-    
     common: {
       loading: "Chargement...",
       error: "Erreur",
@@ -326,45 +375,61 @@ export const translations = {
       welcome: "Bienvenue,",
     },
   },
-  
   it: {
     nav: {
-      home: "Home",
-      tips: "Tips",
+      home: "Pannello",
+      tips: "Segnali",
       live: "In Diretta",
-      pregame: "Pre",
-      settings: "Impost",
-      admin: "Admin",
+      pregame: "Pre-Partita",
+      settings: "Impostazioni",
+      admin: "Gestione",
+      logout: "Disconnetti",
+      welcome: "Benvenuto,",
+      hello: "Ciao,",
+      notifications: "Notifiche",
+      notificationsDesc: "Attiva per ricevere avvisi di nuovi segnali.",
+      activateNow: "Attiva Ora",
     },
-    
+    dashboard: {
+      title: "Centro di Comando",
+      subtitle: "Performance di Investitore Professionale",
+      performanceChart: "Evoluzione delle Prestazioni",
+      performanceSubtitle: "Ultime 24 ore • In Diretta",
+      realtime: "TEMPO REALE",
+      viewFull: "Visualizza Dashboard Completo",
+      viewFullDesc: "AI Scanner, cronologia completa, analisi avanzate e altro",
+    },
     landing: {
       headline: "Domina il Mercato con la Fusione Perfetta: 20 Trader d'Elite + Intelligenza Artificiale.",
       subline: "Basta dilettantismo. Accedi ad analisi dettagliate con precisione prevista fino al 97%. Lascia i 'gruppetti' e unisciti allo strumento usato a livello mondiale dai professionisti.",
       cta: "Sblocca l'Accesso Professionale",
     },
-    
     tips: {
-      title: "Tips del Giorno",
+      title: "Segnali",
       subtitle: "Analisi curate da 20 esperti + IA con precisione del 97%",
-      noTips: "Nessun tip disponibile al momento.",
+      noTips: "Nessun segnale disponibile al momento.",
       newSignals: "Nuovi segnali saranno pubblicati a breve.",
+      available: "segnali disponibili",
+      error: "Errore nel caricamento dei segnali.",
+      newSignalAvailable: "Nuovo Segnale Disponibile!",
+      signalRemoved: "Segnale rimosso",
     },
-    
     live: {
       title: "In Diretta",
       subtitle: "Segui le partite in tempo reale • Clicca per vedere le statistiche",
       noGames: "Nessuna partita in diretta al momento.",
       viewStats: "Clicca per vedere le statistiche dettagliate",
       error: "Errore nel caricamento delle partite in diretta. Riprova più tardi.",
+      searchPlaceholder: "Cerca per squadra o lega...",
+      noResults: "Nessuna partita trovata per",
+      clearSearch: "Cancella ricerca",
     },
-    
     pregame: {
       title: "Pre-Partita",
-      subtitle: "Partite programmate per le prossime 72 ore",
+      subtitle: "Partite programmate per tutta la settimana",
       noGames: "Nessuna partita programmata per questa data.",
       error: "Errore nel caricamento delle partite. Riprova più tardi.",
     },
-    
     settings: {
       title: "Impostazioni",
       subtitle: "Personalizza la tua esperienza",
@@ -379,7 +444,6 @@ export const translations = {
       support: "Supporto",
       contactSupport: "Contatta il Supporto via WhatsApp",
     },
-    
     matchCenter: {
       statsPressure: "Pressione Stats",
       totalAttacks: "Attacchi Totali",
@@ -394,7 +458,6 @@ export const translations = {
       attack: "ATT",
       noStats: "Statistiche non disponibili per questa partita.",
     },
-    
     common: {
       loading: "Caricamento...",
       error: "Errore",
@@ -406,45 +469,61 @@ export const translations = {
       welcome: "Benvenuto,",
     },
   },
-  
   cn: {
     nav: {
-      home: "首页",
-      tips: "提示",
+      home: "仪表板",
+      tips: "信号",
       live: "直播",
-      pregame: "预告",
+      pregame: "赛前",
       settings: "设置",
       admin: "管理",
+      logout: "登出",
+      welcome: "欢迎,",
+      hello: "你好,",
+      notifications: "通知",
+      notificationsDesc: "启用以接收新信号的警报。",
+      activateNow: "立即激活",
     },
-    
+    dashboard: {
+      title: "指挥中心",
+      subtitle: "专业投资者表现",
+      performanceChart: "性能演变",
+      performanceSubtitle: "过去24小时 • 直播",
+      realtime: "实时",
+      viewFull: "查看完整仪表板",
+      viewFullDesc: "AI扫描器，完整历史记录，高级分析等",
+    },
     landing: {
       headline: "通过完美融合主导市场：20位精英交易员+人工智能。",
       subline: "告别业余。访问详细分析，预计准确率高达97%。离开'小团体'，加入全球专业人士使用的工具。",
       cta: "解锁专业访问",
     },
-    
     tips: {
-      title: "今日提示",
+      title: "信号",
       subtitle: "由20位专家策划的分析+AI，准确率97%",
-      noTips: "目前没有可用的提示。",
+      noTips: "目前没有可用的信号。",
       newSignals: "新信号即将发布。",
+      available: "可用信号",
+      error: "加载信号时出错。",
+      newSignalAvailable: "新信号可用！",
+      signalRemoved: "信号已删除",
     },
-    
     live: {
       title: "直播",
       subtitle: "实时关注比赛 • 点击查看统计数据",
       noGames: "目前没有直播比赛。",
       viewStats: "点击查看详细统计数据",
       error: "加载直播比赛时出错。请稍后再试。",
+      searchPlaceholder: "按团队或联赛搜索...",
+      noResults: "未找到匹配项",
+      clearSearch: "清除搜索",
     },
-    
     pregame: {
       title: "赛前",
-      subtitle: "未来72小时的预定比赛",
+      subtitle: "整周预定的比赛",
       noGames: "此日期没有预定的比赛。",
       error: "加载比赛时出错。请稍后再试。",
     },
-    
     settings: {
       title: "设置",
       subtitle: "自定义您的体验",
@@ -459,7 +538,6 @@ export const translations = {
       support: "支持",
       contactSupport: "通过WhatsApp联系支持",
     },
-    
     matchCenter: {
       statsPressure: "统计压力",
       totalAttacks: "总攻击",
@@ -474,7 +552,6 @@ export const translations = {
       attack: "进攻",
       noStats: "此比赛没有可用的统计数据。",
     },
-    
     common: {
       loading: "加载中...",
       error: "错误",

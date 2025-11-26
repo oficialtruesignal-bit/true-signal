@@ -6,8 +6,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useState, useMemo } from "react";
 import { MatchCenterModal } from "@/components/match-center-modal";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function LivePage() {
+  const { t } = useLanguage();
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -49,7 +51,7 @@ export default function LivePage() {
             <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
               <Play className="w-5 h-5 text-red-500 animate-pulse" />
             </div>
-            <h1 className="text-2xl font-display font-bold text-white">Ao Vivo</h1>
+            <h1 className="text-2xl font-display font-bold text-white">{t.live.title}</h1>
           </div>
           
           {/* Search Toggle */}
@@ -76,7 +78,7 @@ export default function LivePage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar por time ou liga..."
+              placeholder={t.live.searchPlaceholder}
               className="w-full px-4 py-3 bg-card border border-primary/20 rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
               data-testid="input-search-teams"
               autoFocus
@@ -85,7 +87,7 @@ export default function LivePage() {
         )}
         
         <p className="text-muted-foreground">
-          Acompanhe os jogos em tempo real • Clique para ver estatísticas
+          {t.live.subtitle}
         </p>
       </div>
 
@@ -100,27 +102,27 @@ export default function LivePage() {
       {error && (
         <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
-          <span>Erro ao carregar jogos ao vivo. Tente novamente mais tarde.</span>
+          <span>{t.live.error}</span>
         </div>
       )}
 
       {!isLoading && !error && liveGames.length === 0 && (
         <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
           <Play className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-          <p className="text-muted-foreground">Nenhum jogo ao vivo no momento.</p>
+          <p className="text-muted-foreground">{t.live.noGames}</p>
         </div>
       )}
 
       {!isLoading && !error && liveGames.length > 0 && filteredGames.length === 0 && (
         <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
           <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-          <p className="text-muted-foreground">Nenhum jogo encontrado para "{searchQuery}"</p>
+          <p className="text-muted-foreground">{t.live.noResults} "{searchQuery}"</p>
           <button
             onClick={() => setSearchQuery("")}
             className="mt-4 text-sm text-primary hover:text-primary/80 transition-colors"
             data-testid="button-clear-search"
           >
-            Limpar busca
+            {t.live.clearSearch}
           </button>
         </div>
       )}

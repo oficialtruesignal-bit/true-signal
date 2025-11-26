@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Home, LayoutDashboard, Settings, LogOut, Bell, Target, Play, Calendar, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 import { useEffect } from "react";
 import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
@@ -11,6 +12,7 @@ import { ThemeToggle } from "./theme-toggle";
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
+  const { t } = useLanguage();
 
   // Initial OneSignal Init
   useEffect(() => {
@@ -55,21 +57,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
   // Desktop Nav Items (with Admin)
   const desktopNavItems = [
-    { icon: Home, label: "Painel", path: "/app" },
-    { icon: Target, label: "Sinais", path: "/tips" },
-    { icon: Play, label: "Ao Vivo", path: "/live" },
-    { icon: Calendar, label: "Pré-Jogo", path: "/pregame" },
-    { icon: Settings, label: "Configurações", path: "/settings" },
-    { icon: LayoutDashboard, label: "Gestão", path: "/admin", hidden: !(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') },
+    { icon: Home, label: t.nav.home, path: "/app" },
+    { icon: Target, label: t.nav.tips, path: "/tips" },
+    { icon: Play, label: t.nav.live, path: "/live" },
+    { icon: Calendar, label: t.nav.pregame, path: "/pregame" },
+    { icon: Settings, label: t.nav.settings, path: "/settings" },
+    { icon: LayoutDashboard, label: t.nav.admin, path: "/admin", hidden: !(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') },
   ];
 
   // Mobile Nav Items (5 icons only, no Admin)
   const mobileNavItems = [
-    { icon: Home, label: "Painel", path: "/app" },
-    { icon: Target, label: "Sinais", path: "/tips" },
-    { icon: Play, label: "Ao Vivo", path: "/live" },
-    { icon: Calendar, label: "Pré-Live", path: "/pregame" },
-    { icon: Settings, label: "Configurações", path: "/settings" },
+    { icon: Home, label: t.nav.home, path: "/app" },
+    { icon: Target, label: t.nav.tips, path: "/tips" },
+    { icon: Play, label: t.nav.live, path: "/live" },
+    { icon: Calendar, label: t.nav.pregame, path: "/pregame" },
+    { icon: Settings, label: t.nav.settings, path: "/settings" },
   ];
 
   return (
@@ -86,8 +88,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 {user?.firstName?.charAt(0) || "U"}
               </div>
               <div className="flex flex-col overflow-hidden">
-                <span className="text-xs text-muted-foreground">Bem-vindo,</span>
-                <span className="text-sm font-bold text-foreground truncate">{user?.firstName || "Convidado"}</span>
+                <span className="text-xs text-muted-foreground">{t.nav.welcome}</span>
+                <span className="text-sm font-bold text-foreground truncate">{user?.firstName || "..."}</span>
               </div>
            </div>
         </div>
@@ -118,10 +120,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="mt-auto space-y-2">
           <div className="bg-white/60 dark:bg-black/40 border-gray-200 dark:border-white/5 rounded-xl p-4 border">
             <div className="flex items-center gap-2 text-foreground text-sm font-bold mb-2">
-              <Bell className="w-4 h-4 text-primary" /> Notificações
+              <Bell className="w-4 h-4 text-primary" /> {t.nav.notifications}
             </div>
             <p className="text-xs text-muted-foreground mb-3">
-              Ative para receber alertas de novos sinais.
+              {t.nav.notificationsDesc}
             </p>
             <Button 
               variant="outline" 
@@ -132,7 +134,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               }}
               className="w-full text-xs h-7 border-primary/20 text-primary hover:bg-primary/10"
             >
-              Ativar Agora
+              {t.nav.activateNow}
             </Button>
           </div>
 
@@ -143,7 +145,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-red-400 transition-colors flex-1 text-left rounded-lg hover:bg-destructive/10"
             >
               <LogOut className="w-5 h-5" />
-              <span className="font-medium">Sair</span>
+              <span className="font-medium">{t.nav.logout}</span>
             </button>
           </div>
         </div>
@@ -153,7 +155,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       <header className="md:hidden fixed top-0 left-0 right-0 h-16 bg-background/80 backdrop-blur-md border-b border-gray-200 dark:border-primary/20 z-50 flex items-center justify-between px-4">
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
-           <span className="text-sm font-bold text-foreground mr-2">Olá, {user?.firstName}</span>
+           <span className="text-sm font-bold text-foreground mr-2">{t.nav.hello} {user?.firstName}</span>
            <ThemeToggle />
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-red-400">
             <LogOut className="w-5 h-5" />

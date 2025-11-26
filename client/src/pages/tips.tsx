@@ -7,9 +7,11 @@ import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { BetCard } from "@/components/bet-card";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function TipsPage() {
   const queryClient = useQueryClient();
+  const { t } = useLanguage();
   
   const { data: tips = [], isLoading, error } = useQuery({
     queryKey: ['tips'],
@@ -34,7 +36,7 @@ export default function TipsPage() {
         // Show toast notification with correct field names
         const newTip = payload.new as any;
         if (newTip.home_team && newTip.away_team && newTip.market) {
-          toast.success('Novo Sinal Disponível!', {
+          toast.success(t.tips.newSignalAvailable, {
             description: `${newTip.home_team} vs ${newTip.away_team} - ${newTip.market}`,
           });
         }
@@ -63,7 +65,7 @@ export default function TipsPage() {
         // Invalidate to remove deleted signal
         queryClient.invalidateQueries({ queryKey: ['tips'] });
         
-        toast.info('Sinal removido');
+        toast.info(t.tips.signalRemoved);
       })
       .subscribe((status) => {
         if (status === 'SUBSCRIBED') {
@@ -81,9 +83,9 @@ export default function TipsPage() {
     <Layout>
       {/* Compact Header */}
       <div className="mb-4">
-        <h1 className="text-2xl font-bold text-white">Sinais</h1>
+        <h1 className="text-2xl font-bold text-white">{t.tips.title}</h1>
         <p className="text-sm text-muted-foreground">
-          {tips.length} sinais disponíveis
+          {tips.length} {t.tips.available}
         </p>
       </div>
 
@@ -98,14 +100,14 @@ export default function TipsPage() {
       {error && (
         <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2 text-sm">
           <AlertCircle className="w-4 h-4" />
-          <span>Erro ao carregar sinais.</span>
+          <span>{t.tips.error}</span>
         </div>
       )}
 
       {!isLoading && !error && tips.length === 0 && (
         <div className="p-8 text-center bg-[#121212] border border-[#333]">
           <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-30" />
-          <p className="text-muted-foreground text-sm">Nenhum sinal disponível no momento.</p>
+          <p className="text-muted-foreground text-sm">{t.tips.noTips}</p>
         </div>
       )}
 

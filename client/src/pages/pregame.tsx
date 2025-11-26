@@ -4,10 +4,23 @@ import { useQueries } from "@tanstack/react-query";
 import { Calendar, AlertCircle, Clock } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, addDays, isAfter, addMinutes, isSameDay } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { ptBR, enUS, es, fr, it, zhCN } from "date-fns/locale";
 import { useMemo } from "react";
+import { useLanguage } from "@/hooks/use-language";
+
+// Map language to date-fns locale
+const localeMap = {
+  pt: ptBR,
+  en: enUS,
+  es: es,
+  fr: fr,
+  it: it,
+  cn: zhCN,
+};
 
 export default function PreGamePage() {
+  const { t, language } = useLanguage();
+  const dateLocale = localeMap[language] || ptBR;
   // Today + Next 6 days (7 days window)
   const dates = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
 
@@ -64,10 +77,10 @@ export default function PreGamePage() {
           <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
             <Calendar className="w-5 h-5 text-blue-500" />
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">Pré-Jogo</h1>
+          <h1 className="text-2xl font-display font-bold text-white">{t.pregame.title}</h1>
         </div>
         <p className="text-muted-foreground">
-          Jogos da semana • Removidos automaticamente 1 minuto antes do início
+          {t.pregame.subtitle}
         </p>
       </div>
 
@@ -82,14 +95,14 @@ export default function PreGamePage() {
       {hasError && (
         <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
-          <span>Erro ao carregar jogos. Tente novamente mais tarde.</span>
+          <span>{t.pregame.error}</span>
         </div>
       )}
 
       {!isLoading && !hasError && fixtures.length === 0 && (
         <div className="p-12 text-center rounded-xl bg-card border border-primary/10">
           <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-30" />
-          <p className="text-muted-foreground">Nenhum jogo programado para os próximos 7 dias.</p>
+          <p className="text-muted-foreground">{t.pregame.noGames}</p>
         </div>
       )}
 
@@ -110,7 +123,7 @@ export default function PreGamePage() {
                   <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-primary uppercase">
-                        {format(date, 'EEE', { locale: ptBR })}
+                        {format(date, 'EEE', { locale: dateLocale })}
                       </span>
                       <span className="text-xs text-muted-foreground">•</span>
                       <span className="text-xs font-bold text-white">

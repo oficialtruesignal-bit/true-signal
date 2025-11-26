@@ -4,8 +4,10 @@ import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight } f
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LiveMetricsBar } from "@/components/live-metrics-bar";
 import { useState, useEffect } from "react";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const stats = useDashboardData();
   const [scannerMessages, setScannerMessages] = useState<string[]>([]);
   const [showFullDashboard, setShowFullDashboard] = useState(false);
@@ -49,9 +51,9 @@ export default function Dashboard() {
       <div className="mb-8">
         <h1 className="text-4xl font-display font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-3">
           <Sparkles className="w-8 h-8 text-primary animate-pulse" />
-          Command Center
+          {t.dashboard.title}
         </h1>
-        <p className="text-muted-foreground">Performance de Investidor Profissional</p>
+        <p className="text-muted-foreground">{t.dashboard.subtitle}</p>
       </div>
 
       {/* Dashboard Preview - Clean & Professional */}
@@ -66,12 +68,12 @@ export default function Dashboard() {
               <div>
                 <h3 className="text-lg font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-primary" />
-                  Evolução de Performance
+                  {t.dashboard.performanceChart}
                 </h3>
-                <p className="text-xs text-muted-foreground mt-1">Últimas 24 horas • Live</p>
+                <p className="text-xs text-muted-foreground mt-1">{t.dashboard.performanceSubtitle}</p>
               </div>
               <span className="text-[10px] font-bold bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20">
-                TEMPO REAL
+                {t.dashboard.realtime}
               </span>
             </div>
             
@@ -117,11 +119,11 @@ export default function Dashboard() {
               data-testid="button-view-full-dashboard"
             >
               <Sparkles className="w-5 h-5" />
-              Ver Dashboard Completo
+              {t.dashboard.viewFull}
               <ArrowRight className="w-5 h-5" />
             </button>
             <p className="text-sm text-muted-foreground mt-4">
-              AI Scanner, histórico completo, análises avançadas e muito mais
+              {t.dashboard.viewFullDesc}
             </p>
           </div>
         </div>
