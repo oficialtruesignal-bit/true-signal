@@ -361,7 +361,7 @@ Extraia as seguintes informações em formato JSON estrito:
       "away_team": "Time Fora", 
       "market": "Mercado SIMPLIFICADO",
       "odd": 1.85,
-      "league": null
+      "match_time": "2025-11-27T18:00:00"
     }
   ],
   "total_odd": 2.50,
@@ -384,7 +384,11 @@ REGRAS IMPORTANTES:
 
 4. Extraia a odd EXATA do print (use total_odd para odd combinada)
 
-5. Responda APENAS com o JSON válido, sem texto adicional`;
+5. EXTRAIA O HORÁRIO DO JOGO se visível no print (formato ISO: YYYY-MM-DDTHH:MM:SS)
+   - Se aparecer "27/11 18:00" → "2025-11-27T18:00:00"
+   - Se não encontrar horário, use null
+
+6. Responda APENAS com o JSON válido, sem texto adicional`;
 
       const imagePart = {
         inlineData: {

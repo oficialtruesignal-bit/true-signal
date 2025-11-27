@@ -25,7 +25,7 @@ export default function Admin() {
 ⚽ ${signal.homeTeam} vs ${signal.awayTeam}
 📊 ${signal.market}
 💰 ODD: ${signal.odd.toFixed(2)}
-${signal.link ? `🔗 ${signal.link}` : ''}
+${signal.betLink ? `🔗 ${signal.betLink}` : ''}
 
 📱 @oceansignal`;
     
@@ -207,9 +207,9 @@ ${signal.link ? `🔗 ${signal.link}` : ''}
                       </div>
                       
                       {/* Link if exists */}
-                      {signal.link && (
+                      {signal.betLink && (
                         <a 
-                          href={signal.link} 
+                          href={signal.betLink} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="flex items-center gap-2 text-xs text-primary hover:text-primary/80 mb-4 transition-colors"

@@ -25,6 +25,7 @@ const formSchema = z.object({
   homeTeamLogo: z.string().optional().nullable(),
   awayTeamLogo: z.string().optional().nullable(),
   fixtureId: z.string().optional().nullable(),
+  matchTime: z.string().optional().nullable(),
   market: z.string().min(1, "Mercado obrigatório"),
   odd: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
     message: "Odd obrigatória",
@@ -44,6 +45,7 @@ interface ScannedBet {
   market: string;
   odd: number;
   league: string;
+  match_time?: string;
 }
 
 interface ScanResult {
@@ -68,6 +70,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       homeTeamLogo: initialData?.homeTeamLogo || "",
       awayTeamLogo: initialData?.awayTeamLogo || "",
       fixtureId: initialData?.fixtureId?.toString() || "",
+      matchTime: "",
       market: "",
       odd: "",
       betLink: "",
@@ -137,21 +140,26 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
             .filter(Boolean)
             .join(' + ');
           
-          // Combina todos os times (se diferentes)
-          const uniqueMatches = new Set(data.bets.map(bet => `${bet.home_team} x ${bet.away_team}`));
-          const matchesText = Array.from(uniqueMatches).join(', ');
-          
           form.setValue('league', firstBet.league || '');
           form.setValue('homeTeam', firstBet.home_team || '');
           form.setValue('awayTeam', firstBet.away_team || '');
           form.setValue('market', allMarkets || firstBet.market || '');
           form.setValue('odd', data.total_odd?.toString() || firstBet.odd?.toString() || '');
+          
+          // Horário do jogo extraído pelo scanner
+          if (firstBet.match_time) {
+            form.setValue('matchTime', firstBet.match_time);
+          }
+
+          const timeInfo = firstBet.match_time 
+            ? ` - ${new Date(firstBet.match_time).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}`
+            : '';
 
           toast({ 
             title: "✨ Bilhete lido com sucesso!", 
             description: data.is_multiple 
-              ? `${data.bets.length} mercados: ${allMarkets} - Odd ${data.total_odd}`
-              : `${firstBet.home_team} x ${firstBet.away_team}`,
+              ? `${data.bets.length} mercados: ${allMarkets} - Odd ${data.total_odd}${timeInfo}`
+              : `${firstBet.home_team} x ${firstBet.away_team}${timeInfo}`,
             className: "bg-primary/10 border-primary/20 text-primary" 
           });
         }
@@ -181,6 +189,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       homeTeamLogo: "",
       awayTeamLogo: "",
       fixtureId: "",
+      matchTime: "",
       market: "",
       odd: "",
       betLink: "",
@@ -199,6 +208,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       homeTeamLogo: values.homeTeamLogo || undefined,
       awayTeamLogo: values.awayTeamLogo || undefined,
       fixtureId: values.fixtureId || undefined,
+      matchTime: values.matchTime || undefined,
       market: values.market,
       odd: parseFloat(values.odd),
       betLink: values.betLink || undefined,
