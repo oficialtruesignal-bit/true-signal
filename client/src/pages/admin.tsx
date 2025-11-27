@@ -191,6 +191,11 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                           <h4 className="text-lg font-bold text-white font-sora">
                             {signal.homeTeam} <span className="text-primary">vs</span> {signal.awayTeam}
                           </h4>
+                          {signal.matchTime && (
+                            <span className="text-xs text-muted-foreground mt-1">
+                              ⏰ {new Date(signal.matchTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} às {new Date(signal.matchTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                            </span>
+                          )}
                         </div>
                         
                         {/* ODD Badge */}
@@ -200,10 +205,17 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                         </div>
                       </div>
                       
-                      {/* Market info */}
+                      {/* Market info - organized by topics */}
                       <div className="bg-white/5 rounded-lg px-3 py-2 mb-4">
                         <span className="text-xs text-muted-foreground">Mercado:</span>
-                        <p className="text-sm text-white font-medium">{signal.market}</p>
+                        <div className="mt-1 space-y-0.5">
+                          {signal.market.split(' + ').map((m, idx) => (
+                            <p key={idx} className="text-xs text-white font-medium flex items-start gap-1.5">
+                              <span className="text-primary">•</span>
+                              <span>{m.trim()}</span>
+                            </p>
+                          ))}
+                        </div>
                       </div>
                       
                       {/* Link if exists */}
