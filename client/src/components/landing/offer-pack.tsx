@@ -50,23 +50,25 @@ export function OfferPack() {
               </div>
               
               {/* CTA Button - Pulsing */}
-              <Link href="/auth">
-                <motion.button
-                  animate={{ 
-                    boxShadow: [
-                      '0 0 20px rgba(51, 184, 100, 0.4)',
-                      '0 0 40px rgba(51, 184, 100, 0.8)',
-                      '0 0 20px rgba(51, 184, 100, 0.4)',
-                    ]
-                  }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                  className="w-full md:w-auto px-12 py-5 bg-[#33b864] text-black font-black text-xl rounded-2xl hover:bg-[#2ea558] transition-colors flex items-center justify-center gap-3"
-                  data-testid="button-offer-cta"
-                >
-                  <Zap className="w-6 h-6" />
-                  QUERO ACESSO IMEDIATO
-                </motion.button>
-              </Link>
+              <div className="flex justify-center">
+                <Link href="/auth">
+                  <motion.button
+                    animate={{ 
+                      boxShadow: [
+                        '0 0 20px rgba(51, 184, 100, 0.4)',
+                        '0 0 40px rgba(51, 184, 100, 0.8)',
+                        '0 0 20px rgba(51, 184, 100, 0.4)',
+                      ]
+                    }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="w-full md:w-auto px-12 py-5 bg-[#33b864] text-black font-black text-xl rounded-2xl hover:bg-[#2ea558] transition-colors flex items-center justify-center gap-3"
+                    data-testid="button-offer-cta"
+                  >
+                    <Zap className="w-6 h-6" />
+                    QUERO ACESSO IMEDIATO
+                  </motion.button>
+                </Link>
+              </div>
               
               <p className="text-sm text-gray-400 mt-4">
                 💡 <span className="text-white font-medium">Menos que 1 green paga o mês inteiro</span>
