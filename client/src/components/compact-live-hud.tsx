@@ -140,10 +140,7 @@ export function CompactLiveHud() {
                 {assertivityValue.toFixed(1)}%
               </span>
               <span className="text-[10px] text-gray-400 mt-1">
-                Novembro
-              </span>
-              <span className="text-[8px] text-[#33b864]/70 mt-0.5">
-                Top 1% do Mercado
+                Média Novembro
               </span>
             </div>
 
