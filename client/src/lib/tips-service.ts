@@ -16,6 +16,7 @@ export const tipsService = {
         awayTeam: tip.awayTeam || tip.away_team || '',
         homeTeamLogo: tip.homeTeamLogo || tip.home_team_logo || undefined,
         awayTeamLogo: tip.awayTeamLogo || tip.away_team_logo || undefined,
+        matchTime: tip.matchTime || tip.match_time || undefined,
         market: tip.market,
         odd: Number(tip.odd) || 0,
         status: tip.status,
@@ -37,6 +38,7 @@ export const tipsService = {
         awayTeam: tip.awayTeam,
         homeTeamLogo: tip.homeTeamLogo || null,
         awayTeamLogo: tip.awayTeamLogo || null,
+        matchTime: tip.matchTime || null,
         league: tip.league,
         market: tip.market,
         odd: tip.odd.toString(), // Convert to string for Drizzle decimal schema
@@ -55,6 +57,7 @@ export const tipsService = {
         awayTeam: data.awayTeam || '',
         homeTeamLogo: data.homeTeamLogo || undefined,
         awayTeamLogo: data.awayTeamLogo || undefined,
+        matchTime: data.matchTime || undefined,
         market: data.market,
         odd: parseFloat(data.odd),
         status: data.status,

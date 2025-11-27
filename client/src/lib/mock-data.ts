@@ -21,6 +21,7 @@ export interface Signal {
   awayTeam: string;
   homeTeamLogo?: string; // URL of home team logo
   awayTeamLogo?: string; // URL of away team logo
+  matchTime?: string; // Match kickoff time extracted from betting slip
   market: string;
   odd: number;
   status: "pending" | "green" | "red";
