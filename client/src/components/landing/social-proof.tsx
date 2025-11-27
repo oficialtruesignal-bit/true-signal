@@ -57,13 +57,13 @@ export function SocialProof() {
           className="text-center mb-12"
         >
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-3" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Mural da{' '}
+            Usuários{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              Fama
+              Ocean Signal
             </span>
           </h2>
           <p className="text-sm md:text-base text-gray-400">
-            Resultados reais em tempo real
+            Veja quem está lucrando agora
           </p>
         </motion.div>
         
