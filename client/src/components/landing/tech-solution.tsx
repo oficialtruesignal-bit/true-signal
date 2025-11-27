@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone, Play } from 'lucide-react';
-import appDemoVideo from '@assets/generated_videos/app_bilhetes_copiar_bet365_demo.mp4';
+import appDemoVideo from '@assets/generated_videos/ocean_signal_app_demo_video.mp4';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -124,17 +124,15 @@ export function TechSolution() {
               <p className="text-sm text-gray-400">Basta clicar em "Copiar" e colar na sua casa de apostas</p>
             </div>
             
-            <div className="flex justify-center">
-              <div className="relative mx-auto w-full max-w-[320px] md:max-w-[360px] aspect-[9/16]">
-                <video
-                  src={appDemoVideo}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 h-full w-full object-contain rounded-[20px]"
-                />
-              </div>
+            <div className="flex justify-center w-full">
+              <video
+                src={appDemoVideo}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full max-w-[400px] md:max-w-[450px] h-auto rounded-[24px]"
+              />
             </div>
           </motion.div>
           
