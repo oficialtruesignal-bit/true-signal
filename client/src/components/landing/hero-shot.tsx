@@ -41,8 +41,8 @@ export function HeroShot() {
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
             Chega de perder horas filtrando jogos em aplicativos. Nosso ecossistema une{' '}
-            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos junto com a IA</span>{' '}
-            para processar o mercado em segundos e te trazer as melhores probabilidades.
+            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos juntos com a Inteligência Artificial</span>{' '}
+            para processar o mercado em segundos e te trazer as melhores probabilidades de acerto.
           </motion.p>
           
           <motion.p
