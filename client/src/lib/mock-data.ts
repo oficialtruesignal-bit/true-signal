@@ -30,6 +30,7 @@ export interface Signal {
   isLive?: boolean;
   legs?: BetLeg[]; // Multiple selections for combo bets
   fixtureId?: string; // ID from API-Football to fetch official data
+  imageUrl?: string; // URL of uploaded bet slip image
 }
 
 export interface LiveGame {

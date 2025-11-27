@@ -23,6 +23,7 @@ export const tipsService = {
         betLink: tip.betLink || tip.bet_link || undefined,
         isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
         fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
+        imageUrl: tip.imageUrl || tip.image_url || undefined,
       }));
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
@@ -43,6 +44,7 @@ export const tipsService = {
         betLink: tip.betLink || null,
         isLive: tip.isLive || false,
         fixtureId: tip.fixtureId || null,
+        imageUrl: tip.imageUrl || null,
       });
       
       const data = response.data.tip;
@@ -60,6 +62,7 @@ export const tipsService = {
         betLink: data.betLink,
         isLive: data.isLive,
         fixtureId: data.fixtureId,
+        imageUrl: data.imageUrl || undefined,
       };
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao criar tip');
