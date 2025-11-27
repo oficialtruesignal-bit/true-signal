@@ -1,20 +1,11 @@
-import { motion, useInView, AnimatePresence } from 'framer-motion';
-import { useRef, useState, useEffect } from 'react';
+import { motion, useInView } from 'framer-motion';
+import { useRef } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
-import bilheteProntos from '@assets/image_1764217131478.png';
-import bet365Screen from '@assets/image_1764216915926.png';
+import handClickVideo from '@assets/generated_videos/hand_clicking_copy_ticket_button.mp4';
 
 export function TechSolution() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const [showBet365, setShowBet365] = useState(false);
-  
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setShowBet365(prev => !prev);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
   
   return (
     <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212] overflow-hidden">
@@ -142,58 +133,17 @@ export function TechSolution() {
                 {/* Phone glow effect */}
                 <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
                 
-                {/* Phone frame */}
-                <div className="relative w-[280px] md:w-[320px] bg-black rounded-[32px] p-2 border-4 border-gray-800 shadow-2xl overflow-hidden">
-                  {/* Animated screens */}
-                  <AnimatePresence mode="wait">
-                    {!showBet365 ? (
-                      <motion.div
-                        key="bilhete"
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 50 }}
-                        transition={{ duration: 0.5 }}
-                        className="relative"
-                      >
-                        <img
-                          src={bilheteProntos}
-                          alt="Bilhetes Prontos - Ocean Signal"
-                          className="w-full h-auto rounded-[24px]"
-                          data-testid="img-bilhete-demo"
-                        />
-                        {/* Finger clicking animation */}
-                        <motion.div
-                          className="absolute bottom-[42%] right-[15%]"
-                          animate={{ scale: [1, 0.9, 1], y: [0, 5, 0] }}
-                          transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
-                        >
-                          <div className="text-4xl">👆</div>
-                        </motion.div>
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#33b864] text-black text-xs font-bold px-4 py-2 rounded-full animate-pulse whitespace-nowrap">
-                          Clicando em Copiar Bilhete...
-                        </div>
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        key="bet365"
-                        initial={{ opacity: 0, x: -50 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 50 }}
-                        transition={{ duration: 0.5 }}
-                        className="relative"
-                      >
-                        <img
-                          src={bet365Screen}
-                          alt="Bet365 - Colando bilhete"
-                          className="w-full h-auto rounded-[24px]"
-                          data-testid="img-bet365-demo"
-                        />
-                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#ffdf1b] text-black text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap">
-                          Bilhete colado na Bet365!
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                {/* Video with real hand clicking */}
+                <div className="relative w-[300px] md:w-[340px]">
+                  <video
+                    src={handClickVideo}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="w-full h-auto rounded-[24px] shadow-2xl"
+                    data-testid="video-demo"
+                  />
                 </div>
               </motion.div>
             </div>
