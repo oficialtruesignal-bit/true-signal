@@ -1,0 +1,54 @@
+import { Clock, Zap, ArrowRight } from 'lucide-react';
+
+export function TimeComparison() {
+  return (
+    <div className="w-full max-w-3xl mx-auto mt-12 mb-12">
+      
+      {/* Título Agressivo */}
+      <h3 className="text-center text-gray-400 font-sora text-sm uppercase tracking-widest mb-6 font-semibold">
+        A MATEMÁTICA DA EFICIÊNCIA
+      </h3>
+
+      {/* O Card de Comparação */}
+      <div className="relative bg-[#121212] border border-[#33b864]/20 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-[0_0_40px_rgba(51,184,100,0.05)]">
+        
+        {/* Lado ESQUERDO: O Jeito Antigo (A Dor) */}
+        <div className="flex flex-col items-center md:items-start text-center md:text-left opacity-50 grayscale transition-all hover:grayscale-0 hover:opacity-80">
+          <div className="flex items-center gap-2 mb-2 text-red-500">
+            <Clock className="w-5 h-5" />
+            <span className="font-bold font-sora text-xs uppercase tracking-wider">Jeito Amador</span>
+          </div>
+          <span className="text-2xl md:text-3xl font-sora font-bold text-gray-300 line-through decoration-red-500/50 decoration-2">
+            4 Horas / dia
+          </span>
+          <p className="text-xs text-gray-500 mt-1 max-w-[200px]">
+            Analisando tabelas, lendo notícias e sofrendo com dúvidas.
+          </p>
+        </div>
+
+        {/* O Divisor (Seta Neon) */}
+        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-[#33b864]/10 border border-[#33b864]/30 text-[#33b864] animate-pulse">
+          <ArrowRight className="w-6 h-6" />
+        </div>
+
+        {/* Lado DIREITO: O Jeito Ocean (A Glória) */}
+        <div className="flex flex-col items-center md:items-end text-center md:text-right relative">
+          {/* Glow Effect */}
+          <div className="absolute -inset-4 bg-[#33b864]/10 blur-xl rounded-full opacity-50 pointer-events-none"></div>
+          
+          <div className="flex items-center gap-2 mb-2 text-[#33b864]">
+            <span className="font-bold font-sora text-xs uppercase tracking-wider">Com Ocean Signal</span>
+            <Zap className="w-5 h-5 fill-current" />
+          </div>
+          <span className="text-3xl md:text-5xl font-sora font-black text-white drop-shadow-[0_0_10px_rgba(51,184,100,0.5)]">
+            30 Segundos
+          </span>
+          <p className="text-xs text-gray-400 mt-2 max-w-[200px]">
+            Recebeu a notificação. Copiou. Colou. <span className="text-white font-bold">Lucrou.</span>
+          </p>
+        </div>
+
+      </div>
+    </div>
+  );
+}

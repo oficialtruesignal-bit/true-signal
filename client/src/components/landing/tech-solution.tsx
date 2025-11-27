@@ -3,6 +3,7 @@ import { useRef } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
 import demoVideo from '@assets/generated_videos/copy_ticket_to_bet365_flow.mp4';
 import { ProfitSimulator } from './profit-simulator';
+import { TimeComparison } from './time-comparison';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -159,19 +160,13 @@ export function TechSolution() {
             </div>
           </motion.div>
           
-          {/* Result card */}
+          {/* Time Comparison - Before vs After */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-10"
           >
-            <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border border-[#33b864]/40 rounded-2xl p-6 md:p-8 text-center">
-              <p className="text-gray-300 mb-2">Resultado:</p>
-              <p className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
-                Você gasta <span className="text-[#33b864]">30 segundos</span> no que antes levava <span className="text-red-400 line-through">horas</span>
-              </p>
-            </div>
+            <TimeComparison />
           </motion.div>
         </div>
       </div>
