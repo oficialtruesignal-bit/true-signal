@@ -1,0 +1,59 @@
+PROMPT MESTRE: "THE PAIN SECTION" (AGITATION & REALITY CHECK)
+ROLE: Expert Direct Response Copywriter & UI Designer.
+
+TASK: Reescrever a seção de "Problema vs Solução" da LandingPage.tsx. OBJETIVO: Criar um contraste visceral entre a "Vida de Perdedor" (Vermelho) e a "Vida Profissional" (Verde). TOM DE VOZ: Duro, direto, confrontacional. Deve fazer o usuário sentir o peso do tempo e dinheiro jogados fora.
+
+1. ESTRUTURA VISUAL (O CONTRASTE)
+Use um layout de Split Screen (Tela Dividida) ou Cards Lado a Lado com forte distinção visual.
+
+LADO A: O CICLO DA FALÊNCIA (O Lado Vermelho)
+Design: Fundo com gradiente vertical sutil: bg-gradient-to-b from-red-900/10 via-[#1a0505] to-transparent. Borda fina vermelha apagada.
+
+Ícone Topo: Um gráfico de linha caindo ou um sinal de alerta ⚠️ em vermelho escuro.
+
+Título: "O Caminho Padrão (98% das Pessoas)"
+
+LADO B: A VANTAGEM ESTATÍSTICA (O Lado Verde - Ocean Signal)
+Design: Fundo Dark Clean, Borda Verde Neon brilhante.
+
+Ícone Topo: O Logo do Ocean Signal ou um Escudo de Proteção.
+
+Título: "A Inteligência Ocean Signal (O 1% que Lucra)"
+
+2. COPYWRITING (A "FACA NO PEITO")
+Substitua os textos genéricos por estes argumentos psicológicos pesados:
+
+PARA O LADO VERMELHO (A DOR):
+
+Headline Interna: "Você financia a casa e os gurus."
+
+A Ilusão do Bingo: "Você queima dinheiro em múltiplas impossíveis ('Bingos') vendidas por gurus que apagam os Reds e só mostram os Greens. Você é a liquidez deles."
+
+O Custo do Tempo: "Horas do seu dia jogadas no lixo analisando gráficos no SofaScore, achando que encontrou um padrão, só para ver o gol sair do outro lado aos 90min."
+
+O Descontrole: "Tentando recuperar o prejuízo na emoção. A cada aposta impulsiva, você cava um buraco mais fundo na sua banca."
+
+O Resultado: "Ansiedade, frustração e a sensação de que 'quase' ganhou. Mas o saldo continua zero."
+
+PARA O LADO VERDE (A CURA):
+
+Headline Interna: "Frieza Matemática e Execução."
+
+Probabilidade Real: "Sem achismos. Operamos apenas onde a matemática diz que a chance de Green é superior a 87%."
+
+Zero Esforço: "Nós gastamos as horas analisando. Você gasta 30 segundos copiando. Seu tempo volta a ser seu."
+
+Gestão Profissional: "Não buscamos o milagre de ficar rico em um dia. Buscamos a consistência de fechar o mês positivo, mês após mês."
+
+O Resultado: "Dormir tranquilo sabendo que sua operação está nas mãos de 20 especialistas e uma IA de ponta."
+
+3. DETALHES DE IMPLEMENTAÇÃO (CSS)
+Use a fonte Sora.
+
+Nos tópicos do lado vermelho, use ícones de X (X-Circle) em vermelho fosco.
+
+Nos tópicos do lado verde, use ícones de Check (Check-Circle) em verde neon brilhante.
+
+Adicione um leve efeito de "Noise" (Ruído) no fundo vermelho para dar uma textura de "sujeira" ou "caos", contrastando com a limpeza do lado verde.
+
+COMANDO: Execute essa seção. O usuário deve ler o lado vermelho, se enxergar nele e sentir uma necessidade urgente de pular para o lado verde para parar de sofrer.
