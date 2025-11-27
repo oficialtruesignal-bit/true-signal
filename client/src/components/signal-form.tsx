@@ -34,9 +34,6 @@ const formSchema = z.object({
 });
 
 const imageFormSchema = z.object({
-  odd: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Odd obrigatória",
-  }),
   betLink: z.string().url().optional().or(z.literal('')),
   imageUrl: z.string().min(1, "Imagem obrigatória"),
 });
@@ -110,7 +107,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
         homeTeam: "Via Imagem",
         awayTeam: "Via Imagem",
         market: "Ver Print",
-        odd: parseFloat(values.odd),
+        odd: 1.00, // Odd fixa - a odd real está no print
         betLink: values.betLink || undefined,
         imageUrl: uploadedImageUrl,
         status: "pending" as const,
@@ -241,42 +238,23 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
                 </button>
               )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="odd"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Odd Total *</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="1.90" 
-                          {...field} 
-                          className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="betLink"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-white">Link Bet</FormLabel>
-                      <FormControl>
-                        <Input 
-                          placeholder="https://..." 
-                          {...field} 
-                          className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="betLink"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="https://..." 
+                        {...field} 
+                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
           </>
         ) : (

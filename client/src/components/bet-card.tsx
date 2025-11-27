@@ -311,11 +311,6 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
             alt="Bilhete" 
             className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
           />
-          
-          {/* Badge da ODD sobreposta na imagem */}
-          <div className="absolute top-3 right-3 bg-black/80 backdrop-blur-md border border-[#33b864] px-3 py-1.5 rounded-lg">
-            <span className="text-[#33b864] font-sora font-bold text-lg">@{totalOdd.toFixed(2)}</span>
-          </div>
 
           {/* Badge de Status */}
           <div className={cn(
