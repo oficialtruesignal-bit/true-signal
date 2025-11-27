@@ -359,7 +359,7 @@ Extraia as seguintes informações em formato JSON estrito:
     {
       "home_team": "Time Casa",
       "away_team": "Time Fora", 
-      "market": "Mercado SIMPLIFICADO",
+      "market": "Mercado EXATO do print",
       "odd": 1.85,
       "match_time": "2025-11-27T18:00:00"
     }
@@ -369,26 +369,21 @@ Extraia as seguintes informações em formato JSON estrito:
 }
 
 REGRAS IMPORTANTES:
-1. SIMPLIFIQUE O MERCADO! Use termos curtos e diretos:
-   - "Ambos Marcam - Sim" → "Ambos Marcam"
-   - "Mais de 2.5 Gols" ou "Over 2.5" → "+2.5 Gols"
-   - "Menos de 2.5 Gols" ou "Under 2.5" → "-2.5 Gols"
-   - "Total de Escanteios Mais de 8" → "+8 Escanteios"
-   - "Resultado Final - Vitória Casa" → "Vitória Casa"
-   - "Resultado Final - Empate" → "Empate"
-   - "Handicap Asiático -1" → "Handicap -1"
-   
-2. REMOVA prefixos redundantes como "Partida -", "Para", "Total de", etc.
+1. COPIE O MERCADO EXATAMENTE COMO ESTÁ NO PRINT!
+   - NÃO abrevie, NÃO simplifique
+   - Copie o texto completo do mercado como aparece no bilhete
+   - Exemplo: Se no print diz "Para Ambos os Times Marcarem - Sim", use exatamente isso
+   - Exemplo: Se no print diz "Total de Gols - Mais de 2.5", use exatamente isso
 
-3. Se houver múltiplas apostas, liste CADA UMA separadamente no array
+2. Se houver múltiplas apostas, liste CADA UMA separadamente no array
 
-4. Extraia a odd EXATA do print (use total_odd para odd combinada)
+3. Extraia a odd EXATA do print (use total_odd para odd combinada)
 
-5. EXTRAIA O HORÁRIO DO JOGO se visível no print (formato ISO: YYYY-MM-DDTHH:MM:SS)
+4. EXTRAIA O HORÁRIO DO JOGO se visível no print (formato ISO: YYYY-MM-DDTHH:MM:SS)
    - Se aparecer "27/11 18:00" → "2025-11-27T18:00:00"
    - Se não encontrar horário, use null
 
-6. Responda APENAS com o JSON válido, sem texto adicional`;
+5. Responda APENAS com o JSON válido, sem texto adicional`;
 
       const imagePart = {
         inlineData: {
