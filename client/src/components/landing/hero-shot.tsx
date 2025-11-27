@@ -153,13 +153,13 @@ export function HeroShot() {
                   
                   {/* Stats */}
                   <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-3">
-                      <div className="text-xs text-gray-400 mb-1">Lucro Hoje</div>
-                      <div className="text-lg font-bold text-[#33b864]">+R$ 842</div>
+                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-2">
+                      <div className="text-[9px] text-gray-400 mb-0.5">Lucro Mensal</div>
+                      <div className="text-sm font-bold text-[#33b864]">R$ 84.755</div>
                     </div>
-                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-3">
-                      <div className="text-xs text-gray-400 mb-1">Sequência</div>
-                      <div className="text-lg font-bold text-[#33b864]">7 Greens</div>
+                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-2">
+                      <div className="text-[9px] text-gray-400 mb-0.5">Assertividade</div>
+                      <div className="text-sm font-bold text-[#33b864]">87%</div>
                     </div>
                   </div>
                   
