@@ -13,20 +13,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { Signal } from "@/lib/mock-data";
-import { MarketSelector } from "@/components/admin/market-selector";
 import { imageUploadService } from "@/lib/image-upload-service";
 import { useState, useRef } from "react";
-import { Upload, X, ScanLine, Loader2, Sparkles, Check } from "lucide-react";
+import { X, ScanLine, Loader2, Sparkles, Check } from "lucide-react";
 import axios from "axios";
 
 const formSchema = z.object({
-  league: z.string().min(1),
-  homeTeam: z.string().min(1),
-  awayTeam: z.string().min(1),
+  league: z.string().min(1, "Liga obrigatória"),
+  homeTeam: z.string().min(1, "Time casa obrigatório"),
+  awayTeam: z.string().min(1, "Time fora obrigatório"),
   homeTeamLogo: z.string().optional().nullable(),
   awayTeamLogo: z.string().optional().nullable(),
   fixtureId: z.string().optional().nullable(),
-  market: z.string().min(1),
+  market: z.string().min(1, "Mercado obrigatório"),
   odd: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
     message: "Odd obrigatória",
   }),
@@ -55,7 +54,6 @@ interface ScanResult {
 
 export function SignalForm({ onAdd, initialData }: SignalFormProps) {
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState<ScanResult | null>(null);
   const [scanError, setScanError] = useState<string | null>(null);
@@ -103,22 +101,18 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     setScanError(null);
     setScanResult(null);
 
-    // Converter para base64 primeiro (para preview e scan)
     const base64 = await convertToBase64(file);
-    setUploadedImageUrl(base64); // Usa base64 como preview temporário
+    setUploadedImageUrl(base64);
 
-    // Tentar upload em background (opcional - não bloqueia o scan)
     imageUploadService.uploadTipImage(file).then((uploadResult) => {
       if (uploadResult.success && uploadResult.url) {
         setUploadedImageUrl(uploadResult.url);
         form.setValue('imageUrl', uploadResult.url);
       }
     }).catch(() => {
-      // Upload falhou, continua com base64 (não salva imagem no tip)
       console.log('Upload falhou, usando apenas scan');
     });
 
-    // Escanear com IA imediatamente
     setIsScanning(true);
     toast({ 
       title: "🤖 IA está lendo seu bilhete...", 
@@ -126,7 +120,6 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     });
 
     try {
-      // Chama o backend para escanear (a API key está segura no servidor)
       const response = await axios.post('/api/scan-ticket', { 
         imageBase64: base64 
       });
@@ -135,7 +128,6 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
         const data = response.data.data as ScanResult;
         setScanResult(data);
 
-        // Auto-preenche o formulário com os dados escaneados
         if (data.bets && data.bets.length > 0) {
           const firstBet = data.bets[0];
           
@@ -172,14 +164,13 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     setUploadedImageUrl(null);
     setScanResult(null);
     setScanError(null);
-    form.setValue('imageUrl', '');
     form.reset({
-      league: initialData?.league || "",
-      homeTeam: initialData?.homeTeam || "",
-      awayTeam: initialData?.awayTeam || "",
-      homeTeamLogo: initialData?.homeTeamLogo || "",
-      awayTeamLogo: initialData?.awayTeamLogo || "",
-      fixtureId: initialData?.fixtureId?.toString() || "",
+      league: "",
+      homeTeam: "",
+      awayTeam: "",
+      homeTeamLogo: "",
+      awayTeamLogo: "",
+      fixtureId: "",
       market: "",
       odd: "",
       betLink: "",
@@ -201,26 +192,14 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       market: values.market,
       odd: parseFloat(values.odd),
       betLink: values.betLink || undefined,
-      imageUrl: uploadedImageUrl || undefined,
+      imageUrl: uploadedImageUrl?.startsWith('http') ? uploadedImageUrl : undefined,
       status: "pending" as const,
       isLive: false,
     };
     
     onAdd(newSignal);
     
-    form.reset({
-      league: "",
-      homeTeam: "",
-      awayTeam: "",
-      homeTeamLogo: "",
-      awayTeamLogo: "",
-      fixtureId: "",
-      market: "",
-      odd: "",
-      betLink: "",
-      imageUrl: "",
-    });
-    
+    form.reset();
     setUploadedImageUrl(null);
     setScanResult(null);
     setScanError(null);
@@ -238,7 +217,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         
-        {/* DROPZONE MÁGICA - Scanner de Bilhete */}
+        {/* DROPZONE - Scanner de Bilhete */}
         <div className="space-y-3">
           <input
             ref={fileInputRef}
@@ -263,7 +242,6 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
                 <X className="w-4 h-4" />
               </button>
               
-              {/* Status do Scan */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
                 {isScanning ? (
                   <div className="flex items-center gap-2 text-primary">
@@ -282,7 +260,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
                   </div>
                 ) : scanError ? (
                   <div className="flex items-center gap-2 text-yellow-500">
-                    <span className="text-sm">⚠️ {scanError}</span>
+                    <span className="text-sm">⚠️ Preencha os campos manualmente</span>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 text-gray-400">
@@ -295,150 +273,131 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading || isScanning}
-              className="w-full h-32 border-2 border-dashed border-primary/40 bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary/70 hover:bg-primary/10 transition-all cursor-pointer group"
+              disabled={isScanning}
+              className="w-full h-40 border-2 border-dashed border-primary/40 bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-primary/70 hover:bg-primary/10 transition-all cursor-pointer group"
             >
-              {isUploading ? (
-                <>
-                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                  <span className="text-sm text-gray-400">Enviando...</span>
-                </>
-              ) : (
-                <>
-                  <div className="relative">
-                    <ScanLine className="w-10 h-10 text-primary group-hover:scale-110 transition-transform" />
-                    <Sparkles className="w-4 h-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
-                  </div>
-                  <span className="text-sm text-gray-300 font-medium">
-                    Arraste o Print da Bet aqui
-                  </span>
-                  <span className="text-xs text-primary">
-                    🪄 A IA preenche tudo automaticamente
-                  </span>
-                </>
-              )}
+              <div className="relative">
+                <ScanLine className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" />
+                <Sparkles className="w-5 h-5 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+              </div>
+              <div className="text-center">
+                <span className="text-base text-gray-300 font-medium block">
+                  Clique para subir o Print
+                </span>
+                <span className="text-sm text-primary mt-1 block">
+                  🪄 A IA preenche tudo automaticamente
+                </span>
+              </div>
             </button>
           )}
         </div>
 
-        {/* Formulário Editável (preenchido pela IA ou manualmente) */}
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="league"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Competição</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Ex: Premier League" 
-                    {...field} 
-                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="odd"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Odd Total</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="1.90" 
-                    {...field} 
-                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        
-        <div className="grid grid-cols-2 gap-4">
-          <FormField
-            control={form.control}
-            name="homeTeam"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Time Casa</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Ex: Arsenal" 
-                    {...field} 
-                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="awayTeam"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-white">Time Fora</FormLabel>
-                <FormControl>
-                  <Input 
-                    placeholder="Ex: Chelsea" 
-                    {...field} 
-                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        {/* Campos preenchidos pela IA (editáveis) */}
+        {(uploadedImageUrl || scanResult) && (
+          <div className="space-y-4 pt-2 border-t border-primary/10">
+            <p className="text-xs text-muted-foreground">Confira e corrija se necessário:</p>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="league"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-xs">Liga</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Premier League" 
+                        {...field} 
+                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="odd"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-xs">Odd Total</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="1.90" 
+                        {...field} 
+                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <FormField
+                control={form.control}
+                name="homeTeam"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-xs">Time Casa</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Arsenal" 
+                        {...field} 
+                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="awayTeam"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-white text-xs">Time Fora</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="Ex: Chelsea" 
+                        {...field} 
+                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
-        <FormField
-          control={form.control}
-          name="market"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Mercado (Entrada)</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="Ex: Over 2.5 Gols, Ambas Marcam" 
-                  {...field} 
-                  className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+            <FormField
+              control={form.control}
+              name="market"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white text-xs">Mercado</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Ex: Over 2.5 Gols, Ambas Marcam" 
+                      {...field} 
+                      className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="betLink"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="https://..." 
-                  {...field} 
-                  className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <Button 
-          type="submit" 
-          disabled={isUploading || isScanning}
-          className="w-full bg-primary hover:bg-primary-dark text-black font-bold shadow-glow disabled:opacity-50"
-        >
-          {isScanning ? 'Aguarde a IA...' : 'Publicar Sinal'}
-        </Button>
+            <Button 
+              type="submit" 
+              disabled={isScanning}
+              className="w-full bg-primary hover:bg-primary/90 text-black font-bold shadow-glow disabled:opacity-50"
+            >
+              {isScanning ? 'Aguarde a IA...' : 'Publicar Sinal'}
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );
