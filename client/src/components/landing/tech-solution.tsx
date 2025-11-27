@@ -1,7 +1,7 @@
 import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
-import bilheteReal from '@assets/image_1764216831721.png';
+import bilheteProntos from '@assets/image_1764217131478.png';
 import bet365Screen from '@assets/image_1764216915926.png';
 
 export function TechSolution() {
@@ -153,15 +153,24 @@ export function TechSolution() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 50 }}
                         transition={{ duration: 0.5 }}
+                        className="relative"
                       >
                         <img
-                          src={bilheteReal}
-                          alt="Bilhete Ocean Signal"
+                          src={bilheteProntos}
+                          alt="Bilhetes Prontos - Ocean Signal"
                           className="w-full h-auto rounded-[24px]"
                           data-testid="img-bilhete-demo"
                         />
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#33b864] text-black text-xs font-bold px-4 py-2 rounded-full animate-pulse">
-                          Copiando bilhete...
+                        {/* Finger clicking animation */}
+                        <motion.div
+                          className="absolute bottom-[42%] right-[15%]"
+                          animate={{ scale: [1, 0.9, 1], y: [0, 5, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5, ease: 'easeInOut' }}
+                        >
+                          <div className="text-4xl">👆</div>
+                        </motion.div>
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#33b864] text-black text-xs font-bold px-4 py-2 rounded-full animate-pulse whitespace-nowrap">
+                          Clicando em Copiar Bilhete...
                         </div>
                       </motion.div>
                     ) : (
@@ -171,6 +180,7 @@ export function TechSolution() {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 50 }}
                         transition={{ duration: 0.5 }}
+                        className="relative"
                       >
                         <img
                           src={bet365Screen}
@@ -178,8 +188,8 @@ export function TechSolution() {
                           className="w-full h-auto rounded-[24px]"
                           data-testid="img-bet365-demo"
                         />
-                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#ffdf1b] text-black text-xs font-bold px-4 py-2 rounded-full">
-                          Bilhete colado!
+                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-[#ffdf1b] text-black text-xs font-bold px-4 py-2 rounded-full whitespace-nowrap">
+                          Bilhete colado na Bet365!
                         </div>
                       </motion.div>
                     )}
