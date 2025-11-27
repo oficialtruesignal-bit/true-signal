@@ -145,8 +145,8 @@ export function HeroShot() {
                         />
                       </svg>
                       <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-black text-[#33b864]">94.8%</span>
-                        <span className="text-xs text-gray-500">Histórico*</span>
+                        <span className="text-4xl font-black text-[#33b864]">91.4%</span>
+                        <span className="text-[8px] text-gray-400 text-center px-2">Melhor mês registrado</span>
                       </div>
                     </div>
                   </div>
