@@ -1,20 +1,10 @@
 import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
 import { tipsService } from "@/lib/tips-service";
-import { footballService, FootballMatch } from "@/lib/football-service";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert, Trash2, ScanLine, Sparkles } from "lucide-react";
-import { format } from "date-fns";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -48,10 +38,6 @@ export default function Admin() {
       </Layout>
     );
   }
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isManualDialogOpen, setIsManualDialogOpen] = useState(false);
 
   // Fetch Tips
   const { data: signals = [] } = useQuery({
@@ -59,20 +45,12 @@ export default function Admin() {
     queryFn: tipsService.getAll,
   });
 
-  // Fetch Fixtures for selection
-  const { data: fixtures = [], isLoading: isLoadingFixtures } = useQuery({
-    queryKey: ['fixtures', selectedDate],
-    queryFn: () => footballService.getFixturesByDate(selectedDate),
-  });
-
   // Mutations with admin check
   const createMutation = useMutation({
     mutationFn: tipsService.create,
     onSuccess: async (newTip) => {
       queryClient.invalidateQueries({ queryKey: ['tips'] });
-      setIsDialogOpen(false);
-      setSelectedMatch(null);
-      toast.success("Tip criado com sucesso!");
+      toast.success("Sinal criado com sucesso!");
       
       // Send push notification to users
       try {
@@ -132,66 +110,17 @@ export default function Admin() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
-          {/* AI Scanner Button */}
-          <button
-            onClick={() => setIsManualDialogOpen(true)}
-            className="w-full p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-dashed border-primary/50 rounded-xl hover:border-primary hover:bg-primary/10 transition-all group cursor-pointer"
-          >
-            <div className="flex flex-col items-center gap-3">
-              <div className="relative">
-                <ScanLine className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" />
-                <Sparkles className="w-5 h-5 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
-              </div>
-              <div className="text-center">
-                <h3 className="font-bold text-white text-lg">Subir Print de Bilhete</h3>
-                <p className="text-sm text-primary mt-1">🪄 IA preenche tudo automaticamente</p>
-              </div>
-            </div>
-          </button>
-
+          {/* AI Scanner - Criar Sinal */}
           <div className="bg-card border border-primary/20 rounded-xl p-6">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-              <Search className="w-4 h-4 text-primary" />
-              Ou Selecionar Jogo Real
+              <ScanLine className="w-5 h-5 text-primary" />
+              Criar Novo Sinal
             </h3>
-            
-            <div className="flex gap-2 mb-4">
-              <Input 
-                type="date" 
-                value={selectedDate} 
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="bg-black/40 border-primary/20 text-white"
-              />
-            </div>
-
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-2">
-              {isLoadingFixtures ? (
-                <div className="flex justify-center py-8"><Loader2 className="animate-spin text-primary" /></div>
-              ) : fixtures.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">Nenhum jogo encontrado.</p>
-              ) : (
-                fixtures.map(match => (
-                  <div 
-                    key={match.fixture.id}
-                    onClick={() => {
-                      setSelectedMatch(match);
-                      setIsDialogOpen(true);
-                    }}
-                    className="p-3 rounded-lg border border-white/5 hover:border-primary/50 hover:bg-primary/5 cursor-pointer transition-all group"
-                  >
-                    <div className="flex justify-between items-center mb-2">
-                      <span className="text-[10px] text-muted-foreground">{format(new Date(match.fixture.date), 'HH:mm')}</span>
-                      <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 rounded">{match.league.name}</span>
-                    </div>
-                    <div className="flex justify-between items-center text-sm font-medium text-white">
-                      <span>{match.teams.home.name}</span>
-                      <span className="text-muted-foreground text-xs">vs</span>
-                      <span>{match.teams.away.name}</span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+            <SignalForm 
+              onAdd={(data) => {
+                handleCreateTip(data);
+              }} 
+            />
           </div>
         </div>
 
@@ -264,46 +193,6 @@ export default function Admin() {
           </div>
         </div>
       </div>
-
-      {/* Create Tip Modal (from match selection) */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="bg-[#121212] border-primary/20 text-white">
-          <DialogHeader>
-            <DialogTitle>Criar Sinal: {selectedMatch?.teams.home.name} x {selectedMatch?.teams.away.name}</DialogTitle>
-          </DialogHeader>
-          {selectedMatch && (
-            <SignalForm 
-              initialData={{
-                league: selectedMatch.league.name,
-                homeTeam: selectedMatch.teams.home.name,
-                awayTeam: selectedMatch.teams.away.name,
-                homeTeamLogo: selectedMatch.teams.home.logo,
-                awayTeamLogo: selectedMatch.teams.away.logo,
-                fixtureId: selectedMatch.fixture.id.toString(),
-              }}
-              onAdd={handleCreateTip} 
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* AI Scanner Modal (manual upload) */}
-      <Dialog open={isManualDialogOpen} onOpenChange={setIsManualDialogOpen}>
-        <DialogContent className="bg-[#121212] border-primary/20 text-white max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ScanLine className="w-5 h-5 text-primary" />
-              Scanner de Bilhete com IA
-            </DialogTitle>
-          </DialogHeader>
-          <SignalForm 
-            onAdd={(data) => {
-              handleCreateTip(data);
-              setIsManualDialogOpen(false);
-            }} 
-          />
-        </DialogContent>
-      </Dialog>
     </Layout>
   );
 }
