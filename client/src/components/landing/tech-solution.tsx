@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone, Play } from 'lucide-react';
-import appDemoVideo from '@assets/generated_videos/app_demo_copying_betting_ticket.mp4';
+import appDemoVideo from '@assets/generated_videos/app_bilhetes_copiar_bet365_demo.mp4';
 
 export function TechSolution() {
   const ref = useRef(null);
