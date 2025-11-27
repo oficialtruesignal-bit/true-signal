@@ -1,6 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone } from 'lucide-react';
+import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone, Play } from 'lucide-react';
+import appDemoVideo from '@assets/generated_videos/app_demo_copying_betting_ticket.mp4';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -109,11 +110,39 @@ export function TechSolution() {
             </motion.div>
           </div>
           
+          {/* Demo Video */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="mt-12"
+          >
+            <div className="text-center mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                Veja como é <span className="text-[#33b864]">simples</span>
+              </h3>
+              <p className="text-sm text-gray-400">Basta clicar em "Copiar" e colar na sua casa de apostas</p>
+            </div>
+            
+            <div className="flex justify-center">
+              <div className="relative w-[280px] md:w-[320px] rounded-[40px] overflow-hidden border-4 border-gray-800 shadow-2xl shadow-[#33b864]/20">
+                <video
+                  src={appDemoVideo}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </motion.div>
+          
           {/* Result card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
             className="mt-10"
           >
             <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border border-[#33b864]/40 rounded-2xl p-6 md:p-8 text-center">
