@@ -279,18 +279,7 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
     timeZone: 'America/Sao_Paulo'
   });
 
-  // Data do jogo para exibir no cabeçalho (apenas DD/MM)
-  const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
-    ? signal.legs[0].time 
-    : matchDate.toLocaleString('pt-BR', { 
-        day: '2-digit', 
-        month: '2-digit',
-        timeZone: 'America/Sao_Paulo'
-      });
-
-  // Horário formatado "Hoje às HH:MM" ou "DD/MM às HH:MM"
-  const today = new Date();
-  const isToday = matchDate.toDateString() === today.toDateString();
+  // Horário do jogo formatado
   const timeOnly = matchDate.toLocaleString('pt-BR', { 
     hour: '2-digit', 
     minute: '2-digit',
@@ -301,7 +290,11 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
     month: '2-digit',
     timeZone: 'America/Sao_Paulo'
   });
-  const formattedMatchTime = isToday ? `Hoje às ${timeOnly}` : `${dateOnly} às ${timeOnly}`;
+
+  // Data + Horário para o cabeçalho (ex: "27/11 às 18:07")
+  const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
+    ? signal.legs[0].time 
+    : `${dateOnly} às ${timeOnly}`;
 
   // Data/hora de criação do bilhete (horário de Brasília)
   const createdDateTime = new Date(signal.timestamp).toLocaleString('pt-BR', { 
@@ -516,29 +509,21 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
       {/* --- 3. CONTAINER DE INFORMAÇÃO (CAIXA ESCURA) --- */}
       <div className="bg-[#121212] rounded-xl p-4 border border-white/5 flex items-center justify-between mb-4">
         
-        {/* Lado Esquerdo: Horário + Mercados */}
-        <div className="flex flex-col gap-2">
-          {/* Horário do Jogo */}
-          <span className="text-gray-400 font-sora text-xs font-medium">
-            {formattedMatchTime}
-          </span>
-          
-          {/* Mercados com bullets */}
+        {/* Lado Esquerdo: Mercados com bullets */}
+        <div className="flex flex-col gap-1">
           {hasMultipleLegs ? (
             <span className="text-[#33b864] font-sora font-bold text-xs uppercase">
               APOSTA COMBINADA
             </span>
           ) : (
-            <div className="flex flex-col gap-1">
-              {signal.market.split(' + ').map((market, idx) => (
-                <div key={idx} className="flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-                  <span className="text-gray-300 font-sora text-xs">
-                    {market.trim()}
-                  </span>
-                </div>
-              ))}
-            </div>
+            signal.market.split(' + ').map((market, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
+                <span className="text-gray-300 font-sora text-xs">
+                  {market.trim()}
+                </span>
+              </div>
+            ))
           )}
         </div>
 
