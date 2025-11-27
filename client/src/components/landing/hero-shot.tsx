@@ -158,7 +158,7 @@ export function HeroShot() {
                       <div className="text-sm font-bold text-[#33b864]">R$ 84.755</div>
                     </div>
                     <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-2">
-                      <div className="text-[9px] text-gray-400 mb-0.5">Assertividade</div>
+                      <div className="text-[8px] text-gray-400 mb-0.5">Assertividade do mês</div>
                       <div className="text-sm font-bold text-[#33b864]">87%</div>
                     </div>
                   </div>
