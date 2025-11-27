@@ -375,15 +375,21 @@ REGRAS IMPORTANTES:
    - Exemplo: Se no print diz "Para Ambos os Times Marcarem - Sim", use exatamente isso
    - Exemplo: Se no print diz "Total de Gols - Mais de 2.5", use exatamente isso
 
-2. Se houver múltiplas apostas, liste CADA UMA separadamente no array
+2. MERCADOS REPETIDOS:
+   - Se TODAS as apostas tiverem o MESMO mercado (ex: todas "Resultado Final"), 
+     NÃO repita - coloque o mercado apenas na PRIMEIRA aposta
+   - Para as demais apostas com mercado idêntico, use "" (string vazia) no campo market
+   - Só coloque mercado diferente se realmente for diferente entre as apostas
 
-3. Extraia a odd EXATA do print (use total_odd para odd combinada)
+4. Se houver múltiplas apostas, liste CADA UMA separadamente no array
 
-4. EXTRAIA O HORÁRIO DO JOGO se visível no print (formato ISO: YYYY-MM-DDTHH:MM:SS)
+5. Extraia a odd EXATA do print (use total_odd para odd combinada)
+
+6. EXTRAIA O HORÁRIO DO JOGO se visível no print (formato ISO: YYYY-MM-DDTHH:MM:SS)
    - Se aparecer "27/11 18:00" → "2025-11-27T18:00:00"
    - Se não encontrar horário, use null
 
-5. Responda APENAS com o JSON válido, sem texto adicional`;
+7. Responda APENAS com o JSON válido, sem texto adicional`;
 
       const imagePart = {
         inlineData: {
