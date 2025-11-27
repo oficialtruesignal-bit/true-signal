@@ -117,7 +117,7 @@ export function BenefitsGrid() {
               <Sparkles className="absolute top-4 left-4 w-5 h-5 text-[#33b864]/50" />
               <Sparkles className="absolute bottom-4 right-4 w-5 h-5 text-[#33b864]/50" />
               
-              <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-6">
+              <div className="flex flex-col items-center justify-center gap-3">
                 <span className="text-gray-500 text-lg line-through">
                   De R$ 2.847/mês
                 </span>
@@ -128,6 +128,9 @@ export function BenefitsGrid() {
                   </span>
                   <span className="text-gray-400">/mês</span>
                 </div>
+                <p className="text-sm text-gray-400 mt-1">
+                  💡 <span className="text-white font-medium">Menos que 1 green paga o mês inteiro</span>
+                </p>
               </div>
             </div>
           </motion.div>
