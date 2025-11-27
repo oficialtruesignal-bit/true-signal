@@ -62,9 +62,13 @@ export function SocialProof() {
               Ocean Signal
             </span>
           </h2>
-          <p className="text-sm md:text-base text-gray-400">
+          <p className="text-sm md:text-base text-gray-400 mb-3">
             Veja quem está lucrando agora
           </p>
+          <div className="inline-flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse" />
+            <span className="text-sm text-[#33b864] font-medium">Atualizando em tempo real</span>
+          </div>
         </motion.div>
         
         {/* Animated Notification Feed - Marquee vertical */}
@@ -95,19 +99,7 @@ export function SocialProof() {
           </div>
         </div>
         
-        {/* Live indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ delay: 1 }}
-          className="flex justify-center mt-8"
-        >
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-full">
-            <div className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse" />
-            <span className="text-sm text-[#33b864] font-medium">Atualizando em tempo real</span>
-          </div>
-        </motion.div>
-      </div>
+        </div>
       
       {/* Add keyframes for marquee animation */}
       <style>{`
