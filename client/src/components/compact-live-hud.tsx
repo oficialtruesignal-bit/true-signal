@@ -110,7 +110,7 @@ export function CompactLiveHud() {
                 {assertivityValue.toFixed(1)}%
               </span>
               <span className="text-[10px] text-gray-400 mt-1">
-                Melhor mês registrado
+                Novembro
               </span>
             </div>
 
