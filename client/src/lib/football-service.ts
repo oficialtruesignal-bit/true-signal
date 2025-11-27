@@ -75,6 +75,29 @@ export interface FixtureStatistics {
   saves: number;
 }
 
+// Pre-game Insights (last 5 matches + H2H)
+export interface TeamAverages {
+  goalsFor: string;
+  goalsAgainst: string;
+  corners: string; // Can be "-" when stats unavailable
+  yellowCards: string; // Can be "-" when stats unavailable
+  redCards: string; // Can be "-" when stats unavailable
+  matchCount: number;
+  statsCount?: number; // Number of matches with detailed stats
+}
+
+export interface PregameInsights {
+  recentForm: {
+    home: { matches: any[]; averages: TeamAverages | null };
+    away: { matches: any[]; averages: TeamAverages | null };
+  };
+  headToHead: {
+    matches: any[];
+    home: { averages: TeamAverages | null };
+    away: { averages: TeamAverages | null };
+  };
+}
+
 // Team Season Statistics (for pre-game)
 export interface TeamSeasonStats {
   team: {
@@ -319,6 +342,23 @@ export const footballService = {
       return stats || null;
     } catch (error) {
       console.error('❌ [API-Football] Error fetching team statistics:', error);
+      return null;
+    }
+  },
+
+  async getPregameInsights(homeTeamId: number, awayTeamId: number, leagueId: number, season: number): Promise<PregameInsights | null> {
+    try {
+      console.log(`📊 [API-Football] Fetching pregame insights for ${homeTeamId} vs ${awayTeamId}...`);
+      
+      const response = await axios.get<PregameInsights>(
+        `/api/football/pregame-insights`,
+        { params: { homeTeamId, awayTeamId, league: leagueId, season } }
+      );
+
+      console.log(`✅ [API-Football] Pregame insights found`);
+      return response.data || null;
+    } catch (error) {
+      console.error('❌ [API-Football] Error fetching pregame insights:', error);
       return null;
     }
   },

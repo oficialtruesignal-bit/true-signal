@@ -94,6 +94,138 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Pre-game Insights - Last 5 matches + H2H averages
+  app.get("/api/football/pregame-insights", async (req, res) => {
+    try {
+      const { homeTeamId, awayTeamId, league, season } = req.query;
+      
+      if (!homeTeamId || !awayTeamId || !league || !season) {
+        return res.status(400).json({ error: "homeTeamId, awayTeamId, league and season are required" });
+      }
+
+      const apiHeaders = { "x-apisports-key": FOOTBALL_API_KEY };
+
+      // Helper to get stat value from fixtures/statistics response
+      const getStatValue = (stats: any[], type: string): number => {
+        const stat = stats?.find((s: any) => s.type === type);
+        if (!stat || stat.value === null) return 0;
+        if (typeof stat.value === 'string' && stat.value.includes('%')) {
+          return parseInt(stat.value.replace('%', ''));
+        }
+        return typeof stat.value === 'number' ? stat.value : parseInt(stat.value) || 0;
+      };
+
+      // Fetch last 5 finished fixtures for a team
+      const fetchTeamLastMatches = async (teamId: string) => {
+        const fixturesRes = await axios.get("https://v3.football.api-sports.io/fixtures", {
+          params: { team: teamId, season, status: "FT", last: 5 },
+          headers: apiHeaders,
+        });
+        return fixturesRes.data.response || [];
+      };
+
+      // Fetch statistics for a single fixture
+      const fetchFixtureStats = async (fixtureId: number) => {
+        try {
+          const statsRes = await axios.get("https://v3.football.api-sports.io/fixtures/statistics", {
+            params: { fixture: fixtureId },
+            headers: apiHeaders,
+          });
+          return statsRes.data.response || [];
+        } catch {
+          return [];
+        }
+      };
+
+      // Fetch H2H matches
+      const fetchH2H = async () => {
+        const h2hRes = await axios.get("https://v3.football.api-sports.io/fixtures/headtohead", {
+          params: { h2h: `${homeTeamId}-${awayTeamId}`, status: "FT", last: 3 },
+          headers: apiHeaders,
+        });
+        return h2hRes.data.response || [];
+      };
+
+      // Calculate averages from matches with stats
+      const calculateAverages = async (matches: any[], teamId: string) => {
+        let goalsFor = 0, goalsAgainst = 0, corners = 0, yellowCards = 0, redCards = 0;
+        let matchCount = 0;
+        let statsCount = 0; // Count only matches with detailed stats
+
+        for (const match of matches) {
+          const isHome = match.teams.home.id === parseInt(teamId);
+          const goals = match.goals;
+          
+          // Goals are always available from fixture data
+          goalsFor += isHome ? (goals.home || 0) : (goals.away || 0);
+          goalsAgainst += isHome ? (goals.away || 0) : (goals.home || 0);
+          matchCount++;
+
+          // Get fixture stats for corners and cards (may not be available)
+          const stats = await fetchFixtureStats(match.fixture.id);
+          const teamStats = stats.find((s: any) => s.team.id === parseInt(teamId));
+          
+          if (teamStats?.statistics && teamStats.statistics.length > 0) {
+            corners += getStatValue(teamStats.statistics, 'Corner Kicks');
+            yellowCards += getStatValue(teamStats.statistics, 'Yellow Cards');
+            redCards += getStatValue(teamStats.statistics, 'Red Cards');
+            statsCount++;
+          }
+        }
+
+        if (matchCount === 0) return null;
+
+        return {
+          goalsFor: (goalsFor / matchCount).toFixed(1),
+          goalsAgainst: (goalsAgainst / matchCount).toFixed(1),
+          // For corners/cards, use statsCount to avoid misleading averages
+          corners: statsCount > 0 ? (corners / statsCount).toFixed(1) : "-",
+          yellowCards: statsCount > 0 ? (yellowCards / statsCount).toFixed(1) : "-",
+          redCards: statsCount > 0 ? (redCards / statsCount).toFixed(1) : "-",
+          matchCount,
+          statsCount,
+        };
+      };
+
+      // Fetch all data in parallel
+      const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+        fetchTeamLastMatches(homeTeamId as string),
+        fetchTeamLastMatches(awayTeamId as string),
+        fetchH2H(),
+      ]);
+
+      // Calculate averages
+      const [homeAverages, awayAverages] = await Promise.all([
+        calculateAverages(homeMatches, homeTeamId as string),
+        calculateAverages(awayMatches, awayTeamId as string),
+      ]);
+
+      // Calculate H2H averages for both teams
+      let h2hHomeAvg = null, h2hAwayAvg = null;
+      if (h2hMatches.length > 0) {
+        [h2hHomeAvg, h2hAwayAvg] = await Promise.all([
+          calculateAverages(h2hMatches, homeTeamId as string),
+          calculateAverages(h2hMatches, awayTeamId as string),
+        ]);
+      }
+
+      return res.json({
+        recentForm: {
+          home: { matches: homeMatches.slice(0, 5), averages: homeAverages },
+          away: { matches: awayMatches.slice(0, 5), averages: awayAverages },
+        },
+        headToHead: {
+          matches: h2hMatches,
+          home: { averages: h2hHomeAvg },
+          away: { averages: h2hAwayAvg },
+        },
+      });
+    } catch (error: any) {
+      console.error(`[API-Football] Error fetching pregame insights:`, error.message);
+      return res.status(500).json({ error: "Failed to fetch pregame insights", details: error.message });
+    }
+  });
+
   // Team Statistics - Season averages (goals, cards, form, etc.)
   app.get("/api/football/teams/statistics", async (req, res) => {
     try {

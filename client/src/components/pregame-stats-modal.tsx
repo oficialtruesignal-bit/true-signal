@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { footballService, FootballMatch, TeamSeasonStats } from "@/lib/football-service";
-import { useQueries } from "@tanstack/react-query";
-import { X, Trophy, Target, AlertTriangle, TrendingUp, Loader2 } from "lucide-react";
+import { footballService, FootballMatch, PregameInsights, TeamAverages } from "@/lib/football-service";
+import { useQuery } from "@tanstack/react-query";
+import { X, Target, AlertTriangle, Loader2, CornerUpRight, Square } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -11,22 +11,16 @@ interface PregameStatsModalProps {
   onClose: () => void;
 }
 
-function countCards(cards: Record<string, { total: number | null; percentage: string | null }>): number {
-  return Object.values(cards).reduce((sum, card) => sum + (card.total || 0), 0);
-}
-
 function StatCompare({ 
   label, 
   homeValue, 
   awayValue,
   icon: Icon,
-  suffix = ""
 }: { 
   label: string; 
   homeValue: string | number; 
   awayValue: string | number;
   icon?: React.ComponentType<{ className?: string }>;
-  suffix?: string;
 }) {
   const homeNum = typeof homeValue === 'string' ? parseFloat(homeValue) : homeValue;
   const awayNum = typeof awayValue === 'string' ? parseFloat(awayValue) : awayValue;
@@ -34,72 +28,97 @@ function StatCompare({
   const awayWins = awayNum > homeNum;
   
   return (
-    <div className="flex items-center justify-between py-3 border-b border-white/5 last:border-0">
-      <span className={`text-lg font-bold ${homeWins ? 'text-[#33b864]' : 'text-white'}`}>
-        {homeValue}{suffix}
+    <div className="flex items-center justify-between py-2.5 border-b border-white/5 last:border-0">
+      <span className={`text-base font-bold ${homeWins ? 'text-[#33b864]' : 'text-white'}`}>
+        {homeValue}
       </span>
       <div className="flex items-center gap-2 text-gray-400">
-        {Icon && <Icon className="w-4 h-4" />}
-        <span className="text-xs uppercase tracking-wider">{label}</span>
+        {Icon && <Icon className="w-3.5 h-3.5" />}
+        <span className="text-[10px] uppercase tracking-wider">{label}</span>
       </div>
-      <span className={`text-lg font-bold ${awayWins ? 'text-[#33b864]' : 'text-white'}`}>
-        {awayValue}{suffix}
+      <span className={`text-base font-bold ${awayWins ? 'text-[#33b864]' : 'text-white'}`}>
+        {awayValue}
       </span>
     </div>
   );
 }
 
-function FormBadge({ form }: { form: string }) {
-  if (!form) return null;
-  
-  const lastFive = form.slice(0, 5).split('');
-  
+function StatsSection({ 
+  title, 
+  homeAverages, 
+  awayAverages,
+  matchCount,
+}: { 
+  title: string; 
+  homeAverages: TeamAverages | null; 
+  awayAverages: TeamAverages | null;
+  matchCount?: string;
+}) {
+  if (!homeAverages || !awayAverages) {
+    return (
+      <div className="bg-[#121212] rounded-xl p-4 border border-white/5">
+        <div className="text-center mb-3">
+          <span className="text-xs text-primary font-bold uppercase tracking-wider">{title}</span>
+        </div>
+        <p className="text-center text-gray-500 text-sm py-4">Dados insuficientes</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex gap-1">
-      {lastFive.map((result, i) => (
-        <span
-          key={i}
-          className={`w-6 h-6 rounded text-xs font-bold flex items-center justify-center ${
-            result === 'W' ? 'bg-[#33b864] text-black' :
-            result === 'D' ? 'bg-gray-500 text-white' :
-            'bg-red-500 text-white'
-          }`}
-        >
-          {result === 'W' ? 'V' : result === 'D' ? 'E' : 'D'}
-        </span>
-      ))}
+    <div className="bg-[#121212] rounded-xl p-4 border border-white/5">
+      <div className="text-center mb-3">
+        <span className="text-xs text-primary font-bold uppercase tracking-wider">{title}</span>
+        {matchCount && <span className="text-[10px] text-gray-500 ml-2">({matchCount})</span>}
+      </div>
+      <StatCompare 
+        label="Gols Marcados" 
+        homeValue={homeAverages.goalsFor} 
+        awayValue={awayAverages.goalsFor}
+        icon={Target}
+      />
+      <StatCompare 
+        label="Gols Sofridos" 
+        homeValue={homeAverages.goalsAgainst} 
+        awayValue={awayAverages.goalsAgainst}
+      />
+      <StatCompare 
+        label="Escanteios" 
+        homeValue={homeAverages.corners} 
+        awayValue={awayAverages.corners}
+        icon={CornerUpRight}
+      />
+      <StatCompare 
+        label="Cartões Amarelos" 
+        homeValue={homeAverages.yellowCards} 
+        awayValue={awayAverages.yellowCards}
+        icon={Square}
+      />
+      <StatCompare 
+        label="Cartões Vermelhos" 
+        homeValue={homeAverages.redCards} 
+        awayValue={awayAverages.redCards}
+      />
     </div>
   );
 }
 
 export function PregameStatsModal({ match, open, onClose }: PregameStatsModalProps) {
-  const queries = useQueries({
-    queries: match ? [
-      {
-        queryKey: ['team-stats', match.teams.home.id, match.league.id, match.league.season],
-        queryFn: () => footballService.getTeamStatistics(match.teams.home.id, match.league.id, match.league.season),
-        enabled: open && !!match,
-        staleTime: 5 * 60 * 1000,
-      },
-      {
-        queryKey: ['team-stats', match.teams.away.id, match.league.id, match.league.season],
-        queryFn: () => footballService.getTeamStatistics(match.teams.away.id, match.league.id, match.league.season),
-        enabled: open && !!match,
-        staleTime: 5 * 60 * 1000,
-      }
-    ] : []
+  const { data: insights, isLoading } = useQuery({
+    queryKey: ['pregame-insights', match?.teams.home.id, match?.teams.away.id, match?.league.id, match?.league.season],
+    queryFn: () => footballService.getPregameInsights(
+      match!.teams.home.id, 
+      match!.teams.away.id, 
+      match!.league.id, 
+      match!.league.season
+    ),
+    enabled: open && !!match,
+    staleTime: 5 * 60 * 1000,
   });
 
   if (!match) return null;
 
-  const isLoading = queries.some(q => q.isLoading);
-  const homeStats = queries[0]?.data as TeamSeasonStats | null;
-  const awayStats = queries[1]?.data as TeamSeasonStats | null;
-
-  const homeYellowCards = homeStats?.cards?.yellow ? countCards(homeStats.cards.yellow) : 0;
-  const awayYellowCards = awayStats?.cards?.yellow ? countCards(awayStats.cards.yellow) : 0;
-  const homeRedCards = homeStats?.cards?.red ? countCards(homeStats.cards.red) : 0;
-  const awayRedCards = awayStats?.cards?.red ? countCards(awayStats.cards.red) : 0;
+  const hasData = insights?.recentForm?.home?.averages || insights?.recentForm?.away?.averages;
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -108,7 +127,7 @@ export function PregameStatsModal({ match, open, onClose }: PregameStatsModalPro
           {match.teams.home.name} vs {match.teams.away.name}
         </DialogTitle>
         <DialogDescription className="sr-only">
-          Estatísticas da temporada para {match.league.name}
+          Estatísticas dos últimos jogos e confrontos diretos
         </DialogDescription>
         
         {/* Header */}
@@ -140,7 +159,6 @@ export function PregameStatsModal({ match, open, onClose }: PregameStatsModalPro
               <span className="text-sm font-bold text-white text-center max-w-[100px] truncate">
                 {match.teams.home.name}
               </span>
-              {homeStats?.form && <FormBadge form={homeStats.form} />}
             </div>
 
             <div className="px-4">
@@ -156,98 +174,40 @@ export function PregameStatsModal({ match, open, onClose }: PregameStatsModalPro
               <span className="text-sm font-bold text-white text-center max-w-[100px] truncate">
                 {match.teams.away.name}
               </span>
-              {awayStats?.form && <FormBadge form={awayStats.form} />}
             </div>
           </div>
         </div>
 
         {/* Stats Content */}
-        <div className="p-5">
+        <div className="p-5 space-y-4">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
               <p className="text-gray-400 text-sm">Carregando estatísticas...</p>
             </div>
-          ) : (!homeStats || !awayStats) ? (
+          ) : !hasData ? (
             <div className="text-center py-12">
               <AlertTriangle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
               <p className="text-gray-400">Estatísticas indisponíveis para esta partida</p>
             </div>
           ) : (
-            <div className="space-y-6">
-              {/* Season Stats Title */}
-              <div className="text-center">
-                <h3 className="text-sm font-bold text-primary uppercase tracking-wider">
-                  Estatísticas da Temporada {match.league.season}
-                </h3>
-              </div>
+            <>
+              {/* Last 5 Matches */}
+              <StatsSection 
+                title="Últimos 5 jogos" 
+                homeAverages={insights?.recentForm?.home?.averages || null}
+                awayAverages={insights?.recentForm?.away?.averages || null}
+                matchCount={`média por jogo`}
+              />
 
-              {/* Stats Grid */}
-              <div className="bg-[#121212] rounded-xl p-4 border border-white/5">
-                <StatCompare 
-                  label="Vitórias" 
-                  homeValue={homeStats.fixtures?.wins?.total || 0} 
-                  awayValue={awayStats.fixtures?.wins?.total || 0}
-                  icon={Trophy}
-                />
-                <StatCompare 
-                  label="Jogos" 
-                  homeValue={homeStats.fixtures?.played?.total || 0} 
-                  awayValue={awayStats.fixtures?.played?.total || 0}
-                />
-                <StatCompare 
-                  label="Média Gols" 
-                  homeValue={homeStats.goals?.for?.average?.total || "0"} 
-                  awayValue={awayStats.goals?.for?.average?.total || "0"}
-                  icon={Target}
-                />
-                <StatCompare 
-                  label="Gols Marcados" 
-                  homeValue={homeStats.goals?.for?.total?.total || 0} 
-                  awayValue={awayStats.goals?.for?.total?.total || 0}
-                />
-                <StatCompare 
-                  label="Gols Sofridos" 
-                  homeValue={homeStats.goals?.against?.total?.total || 0} 
-                  awayValue={awayStats.goals?.against?.total?.total || 0}
-                />
-                <StatCompare 
-                  label="Cartões Amarelos" 
-                  homeValue={homeYellowCards} 
-                  awayValue={awayYellowCards}
-                  icon={AlertTriangle}
-                />
-                <StatCompare 
-                  label="Cartões Vermelhos" 
-                  homeValue={homeRedCards} 
-                  awayValue={awayRedCards}
-                />
-              </div>
-
-              {/* Win Rate */}
-              <div className="bg-[#121212] rounded-xl p-4 border border-white/5">
-                <div className="text-center mb-3">
-                  <span className="text-xs text-gray-400 uppercase tracking-wider">Taxa de Vitória</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="text-center flex-1">
-                    <span className="text-3xl font-black text-[#33b864]">
-                      {homeStats.fixtures?.played?.total 
-                        ? Math.round((homeStats.fixtures.wins.total / homeStats.fixtures.played.total) * 100) 
-                        : 0}%
-                    </span>
-                  </div>
-                  <div className="w-px h-12 bg-white/10" />
-                  <div className="text-center flex-1">
-                    <span className="text-3xl font-black text-white">
-                      {awayStats.fixtures?.played?.total 
-                        ? Math.round((awayStats.fixtures.wins.total / awayStats.fixtures.played.total) * 100) 
-                        : 0}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              {/* H2H - Last 3 Matches */}
+              <StatsSection 
+                title="Últimos 3 confrontos diretos" 
+                homeAverages={insights?.headToHead?.home?.averages || null}
+                awayAverages={insights?.headToHead?.away?.averages || null}
+                matchCount={`H2H`}
+              />
+            </>
           )}
         </div>
       </DialogContent>
