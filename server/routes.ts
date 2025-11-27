@@ -358,56 +358,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Tips Statistics - Dashboard metrics calculated from real tips
+  // Tips Statistics - Dashboard metrics calculated from real tips + baseline
   app.get("/api/tips/stats", async (req, res) => {
     try {
+      // ========================================
+      // BASELINE: Dados fictícios de lançamento
+      // 196 entradas com 87% de assertividade
+      // Odd média de 1.85
+      // ========================================
+      const BASELINE = {
+        greens: 170,        // 196 × 87% = 170
+        reds: 26,           // 196 - 170 = 26
+        totalResolved: 196,
+        oddSum: 362.6,      // 196 × 1.85 = 362.6 (soma das odds para média ponderada)
+        profitUnits: 118.5  // 170 × (1.85 - 1) - 26 = 118.5 unidades de lucro
+      };
+      
       const allTips = await storage.getAllTips();
       
       // Filter resolved tips only (green or red)
       const resolvedTips = allTips.filter(tip => tip.status === 'green' || tip.status === 'red');
       
-      // Count greens and reds
-      const greens = resolvedTips.filter(tip => tip.status === 'green').length;
-      const reds = resolvedTips.filter(tip => tip.status === 'red').length;
+      // Count real greens and reds
+      const realGreens = resolvedTips.filter(tip => tip.status === 'green').length;
+      const realReds = resolvedTips.filter(tip => tip.status === 'red').length;
       const pending = allTips.filter(tip => tip.status === 'pending').length;
-      const totalResolved = greens + reds;
       
-      // Calculate assertivity percentage (only from resolved tips)
+      // Combine baseline + real data
+      const totalGreens = BASELINE.greens + realGreens;
+      const totalReds = BASELINE.reds + realReds;
+      const totalResolved = totalGreens + totalReds;
+      
+      // Calculate assertivity percentage (baseline + real)
       const assertivity = totalResolved > 0 
-        ? (greens / totalResolved) * 100 
+        ? (totalGreens / totalResolved) * 100 
         : 0;
       
-      // Calculate average odd from RESOLVED tips only (filter out null/invalid odds)
-      const resolvedOdds = resolvedTips
+      // Calculate average odd (weighted average of baseline + real)
+      const realOdds = resolvedTips
         .map(tip => parseFloat(tip.odd))
         .filter(odd => !isNaN(odd) && odd > 0);
-      const averageOdd = resolvedOdds.length > 0 
-        ? resolvedOdds.reduce((sum, odd) => sum + odd, 0) / resolvedOdds.length 
+      const realOddSum = realOdds.reduce((sum, odd) => sum + odd, 0);
+      const totalOddSum = BASELINE.oddSum + realOddSum;
+      const averageOdd = totalResolved > 0 
+        ? totalOddSum / totalResolved 
         : 0;
       
-      // Calculate bankroll growth from resolved tips
-      // Greens: win (odd - 1) units per green
-      // Reds: lose 1 unit per red
+      // Calculate bankroll growth (baseline + real)
       const INITIAL_BANKROLL = 100; // 100 units base (1 unit per bet)
-      const greenTips = resolvedTips.filter(tip => tip.status === 'green');
-      const greenOdds = greenTips
+      const realGreenTips = resolvedTips.filter(tip => tip.status === 'green');
+      const realGreenOdds = realGreenTips
         .map(tip => parseFloat(tip.odd))
         .filter(odd => !isNaN(odd) && odd > 0);
-      const profitFromGreens = greenOdds.reduce((sum, odd) => sum + (odd - 1), 0);
-      const lossFromReds = reds * 1;
-      const netProfit = profitFromGreens - lossFromReds;
-      const growthPercentage = (netProfit / INITIAL_BANKROLL) * 100;
+      const realProfitFromGreens = realGreenOdds.reduce((sum, odd) => sum + (odd - 1), 0);
+      const realLossFromReds = realReds * 1;
+      const realNetProfit = realProfitFromGreens - realLossFromReds;
+      
+      // Total profit = baseline profit + real profit
+      const totalNetProfit = BASELINE.profitUnits + realNetProfit;
+      const growthPercentage = (totalNetProfit / INITIAL_BANKROLL) * 100;
       
       return res.json({
-        greens,
-        reds,
+        greens: totalGreens,
+        reds: totalReds,
         pending,
-        totalEntries: allTips.length,
+        totalEntries: BASELINE.totalResolved + allTips.length,
         totalResolved,
         assertivity: parseFloat(assertivity.toFixed(1)),
         averageOdd: parseFloat(averageOdd.toFixed(2)),
         growthPercentage: parseFloat(growthPercentage.toFixed(1)),
-        profitUnits: parseFloat(netProfit.toFixed(1)),
+        profitUnits: parseFloat(totalNetProfit.toFixed(1)),
+        // Debug: separate baseline and real data
+        _baseline: BASELINE,
+        _real: {
+          greens: realGreens,
+          reds: realReds,
+          pending,
+          profitUnits: parseFloat(realNetProfit.toFixed(1))
+        }
       });
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
