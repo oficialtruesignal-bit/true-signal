@@ -4,12 +4,12 @@ import { storage } from "./storage";
 import { insertTipSchema, insertProfileSchema } from "@shared/schema";
 import axios from "axios";
 import { mercadoPagoService } from "./mercadopago-service";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-const openai = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
 if (!FOOTBALL_API_KEY) {
   console.warn('⚠️ FOOTBALL_API_KEY NOT FOUND - check environment variables');
@@ -325,7 +325,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ============================================
-  // AI Bet Slip Scanner (OpenAI Vision)
+  // AI Bet Slip Scanner (Google Gemini Vision)
   // ============================================
   app.post("/api/scan-ticket", async (req, res) => {
     try {
@@ -335,24 +335,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Image is required" });
       }
 
-      if (!openai) {
+      if (!genAI) {
         return res.status(503).json({ 
-          error: "OpenAI not configured",
-          message: "A chave da OpenAI não está configurada. Preencha o bilhete manualmente."
+          error: "Gemini not configured",
+          message: "A chave do Gemini não está configurada. Preencha o bilhete manualmente."
         });
       }
 
-      console.log("🔍 Scanning bet slip with AI Vision...");
+      console.log("🔍 Scanning bet slip with Gemini Vision...");
 
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: `Analise esta imagem de bilhete de aposta esportiva.
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+      // Extract base64 data (remove data:image/xxx;base64, prefix if present)
+      const base64Data = imageBase64.includes(',') 
+        ? imageBase64.split(',')[1] 
+        : imageBase64;
+
+      const prompt = `Analise esta imagem de bilhete de aposta esportiva.
                 
 Extraia as seguintes informações em formato JSON estrito:
 {
@@ -370,27 +369,25 @@ Extraia as seguintes informações em formato JSON estrito:
 }
 
 REGRAS:
-- Se houver múltiplas apostas (combinada/múltipla), liste todas no array "bets" e some as odds em "total_odd"
+- Se houver múltiplas apostas (combinada/múltipla), liste todas no array "bets" e calcule total_odd multiplicando as odds
 - Se for aposta simples, retorne apenas 1 item no array
 - "is_multiple" = true se tiver mais de 1 aposta
 - Extraia a odd EXATA que aparece no print
 - Se não conseguir ler algum campo, use null
-- Responda APENAS com o JSON, sem texto adicional`
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`,
-                }
-              }
-            ]
-          }
-        ],
-        max_tokens: 1000,
-      });
+- Responda APENAS com o JSON, sem texto adicional`;
 
-      const content = response.choices[0]?.message?.content || "";
-      console.log("🤖 AI Response:", content);
+      const imagePart = {
+        inlineData: {
+          data: base64Data,
+          mimeType: "image/jpeg"
+        }
+      };
+
+      const result = await model.generateContent([prompt, imagePart]);
+      const response = result.response;
+      const content = response.text();
+      
+      console.log("🤖 Gemini Response:", content);
 
       // Parse JSON from response
       let parsed;
@@ -403,7 +400,7 @@ REGRAS:
           throw new Error("No JSON found in response");
         }
       } catch (parseError) {
-        console.error("Failed to parse AI response:", parseError);
+        console.error("Failed to parse Gemini response:", parseError);
         return res.status(422).json({ 
           error: "Failed to parse bet slip",
           message: "A IA não conseguiu interpretar o bilhete. Preencha manualmente.",
