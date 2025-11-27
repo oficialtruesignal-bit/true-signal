@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Cpu, Database, Zap, Target, CheckCircle2 } from 'lucide-react';
+import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone } from 'lucide-react';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -20,151 +20,107 @@ export function TechSolution() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="text-center mb-20"
+          className="text-center mb-16"
         >
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-            O motor por trás dos{' '}
+            Como funciona na{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              Greens
+              prática
             </span>
           </h2>
-          <p className="text-base md:text-xl text-gray-400">
-            Nossa tecnologia proprietária em ação
+          <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
+            Simples: nós analisamos, você recebe pronto no celular
           </p>
         </motion.div>
         
-        {/* HUD-style diagram */}
-        <div className="relative max-w-5xl mx-auto">
-          {/* Input Stage */}
-          <motion.div
-            initial={{ opacity: 0, x: -100 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8 }}
-            className="flex flex-col items-center mb-8"
-          >
-            <div className="relative group">
-              <div className="absolute inset-0 bg-[#33b864]/20 rounded-2xl blur-xl" />
-              <div className="relative bg-gradient-to-br from-[#33b864]/10 to-black border border-[#33b864]/30 rounded-2xl p-6 backdrop-blur-xl">
-                <div className="flex items-center gap-4 mb-4">
-                  <Database className="w-8 h-8 text-[#33b864]" />
-                  <div>
-                    <h3 className="text-xl font-bold text-white">INPUT: Coleta Massiva</h3>
-                    <p className="text-sm text-gray-400">1.400+ ligas escaneadas simultaneamente</p>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
-                  {['Premier', 'LaLiga', 'Serie A', 'Bundesliga', 'Ligue 1', 'Brasileirão'].map((league, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ scale: 0 }}
-                      animate={isInView ? { scale: 1 } : {}}
-                      transition={{ delay: i * 0.1 + 0.3 }}
-                      className="px-2 py-1 bg-[#33b864]/20 border border-[#33b864]/40 rounded text-xs text-[#33b864] text-center font-semibold"
-                    >
-                      {league}
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            
-            {/* Arrow down */}
+        {/* Simple 3-step flow */}
+        <div className="relative max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
+            {/* Step 1 */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 0.5 }}
-              className="my-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="relative"
             >
-              <Zap className="w-8 h-8 text-[#33b864] animate-pulse" />
-            </motion.div>
-          </motion.div>
-          
-          {/* Processing Stage (The Core) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 1, delay: 0.6 }}
-            className="flex flex-col items-center mb-8"
-          >
-            <div className="relative group">
-              <div className="absolute inset-0 bg-[#33b864]/30 rounded-3xl blur-2xl animate-pulse" />
-              
-              <div className="relative bg-gradient-to-br from-[#33b864]/20 via-[#0a0a0a] to-black border-2 border-[#33b864]/50 rounded-3xl p-8 backdrop-blur-xl">
-                <div className="flex flex-col items-center mb-6">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#33b864] to-[#2ea558] flex items-center justify-center mb-4 shadow-2xl shadow-[#33b864]/50">
-                    <Cpu className="w-10 h-10 text-black" />
-                  </div>
-                  <h3 className="text-2xl font-black text-white mb-2">O NÚCLEO DE IA</h3>
-                  <p className="text-sm text-gray-400">Processamento em tempo real</p>
+              <div className="bg-gradient-to-br from-[#33b864]/10 to-black border border-[#33b864]/30 rounded-2xl p-6 h-full">
+                <div className="w-14 h-14 rounded-full bg-[#33b864]/20 flex items-center justify-center mb-4">
+                  <Globe className="w-7 h-7 text-[#33b864]" />
                 </div>
-                
-                <div className="grid md:grid-cols-3 gap-4">
-                  {[
-                    { title: 'Machine Learning', desc: 'Padrões históricos' },
-                    { title: 'Análise Estatística', desc: 'Probabilidade real' },
-                    { title: 'Validação Humana', desc: '20 especialistas' },
-                  ].map((item, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ delay: 1 + i * 0.15 }}
-                      className="text-center p-4 bg-black/40 border border-[#33b864]/20 rounded-xl"
-                    >
-                      <div className="text-sm font-bold text-[#33b864] mb-1">{item.title}</div>
-                      <div className="text-xs text-gray-500">{item.desc}</div>
-                    </motion.div>
-                  ))}
-                </div>
+                <div className="text-[#33b864] font-bold text-sm mb-2">PASSO 1</div>
+                <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  Monitoramos tudo
+                </h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Nossa tecnologia acompanha jogos do mundo inteiro, 24 horas por dia, buscando as melhores oportunidades.
+                </p>
               </div>
-            </div>
+              
+              {/* Arrow (desktop only) */}
+              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                <Zap className="w-6 h-6 text-[#33b864]/50" />
+              </div>
+            </motion.div>
             
-            {/* Arrow down */}
+            {/* Step 2 */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={isInView ? { opacity: 1 } : {}}
-              transition={{ delay: 1.2 }}
-              className="my-6"
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="relative"
             >
-              <Zap className="w-8 h-8 text-[#33b864] animate-pulse" />
-            </motion.div>
-          </motion.div>
-          
-          {/* Output Stage */}
-          <motion.div
-            initial={{ opacity: 0, x: 100 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="flex flex-col items-center"
-          >
-            <div className="relative group w-full max-w-md">
-              <div className="absolute inset-0 bg-[#33b864]/20 rounded-2xl blur-xl" />
-              
-              <div className="relative bg-gradient-to-br from-[#33b864]/10 to-black border border-[#33b864]/30 rounded-2xl p-6 backdrop-blur-xl">
-                <div className="flex items-center gap-4 mb-4">
-                  <Target className="w-8 h-8 text-[#33b864]" />
-                  <div>
-                    <h3 className="text-xl font-bold text-white">OUTPUT: Bilhete Pronto</h3>
-                    <p className="text-sm text-gray-400">Entregue direto no seu app</p>
-                  </div>
+              <div className="bg-gradient-to-br from-[#33b864]/10 to-black border border-[#33b864]/30 rounded-2xl p-6 h-full">
+                <div className="w-14 h-14 rounded-full bg-[#33b864]/20 flex items-center justify-center mb-4">
+                  <Users className="w-7 h-7 text-[#33b864]" />
                 </div>
-                
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 bg-[#33b864]/5 border border-[#33b864]/20 rounded-xl">
-                    <span className="text-sm text-gray-300">Manchester City vs Arsenal</span>
-                    <CheckCircle2 className="w-5 h-5 text-[#33b864]" />
-                  </div>
-                  <div className="flex items-center justify-between p-3 bg-[#33b864]/5 border border-[#33b864]/20 rounded-xl">
-                    <span className="text-sm text-gray-300">Over 2.5 Gols</span>
-                    <span className="text-sm text-[#33b864] font-bold">@1.85</span>
-                  </div>
-                  <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#33b864]/20 to-[#33b864]/10 border border-[#33b864]/40 rounded-xl">
-                    <span className="text-sm font-semibold text-white">Assertividade</span>
-                    <span className="text-2xl font-black text-[#33b864]">94.2%</span>
-                  </div>
-                </div>
+                <div className="text-[#33b864] font-bold text-sm mb-2">PASSO 2</div>
+                <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  Especialistas validam
+                </h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Nossa equipe de 20 analistas profissionais revisa cada oportunidade antes de liberar. Só passa o que tem alta chance de acerto.
+                </p>
               </div>
+              
+              {/* Arrow (desktop only) */}
+              <div className="hidden md:block absolute top-1/2 -right-4 transform -translate-y-1/2">
+                <Zap className="w-6 h-6 text-[#33b864]/50" />
+              </div>
+            </motion.div>
+            
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              <div className="bg-gradient-to-br from-[#33b864]/10 to-black border border-[#33b864]/30 rounded-2xl p-6 h-full">
+                <div className="w-14 h-14 rounded-full bg-[#33b864]/20 flex items-center justify-center mb-4">
+                  <Smartphone className="w-7 h-7 text-[#33b864]" />
+                </div>
+                <div className="text-[#33b864] font-bold text-sm mb-2">PASSO 3</div>
+                <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  Você recebe pronto
+                </h3>
+                <p className="text-sm text-gray-400 leading-relaxed">
+                  Chega uma notificação no seu celular com tudo mastigado. É só copiar e colar na sua casa de apostas favorita.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+          
+          {/* Result card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className="mt-10"
+          >
+            <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border border-[#33b864]/40 rounded-2xl p-6 md:p-8 text-center">
+              <p className="text-gray-300 mb-2">Resultado:</p>
+              <p className="text-xl md:text-2xl font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
+                Você gasta <span className="text-[#33b864]">30 segundos</span> no que antes levava <span className="text-red-400 line-through">horas</span>
+              </p>
             </div>
           </motion.div>
         </div>
