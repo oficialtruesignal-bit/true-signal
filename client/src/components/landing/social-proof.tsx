@@ -7,14 +7,14 @@ export function SocialProof() {
   const isInView = useInView(ref, { once: true });
   
   const notifications = [
-    { name: 'Rafael S.', initials: 'RS', action: 'bateu a meta', value: '+R$ 3.247', detail: '12 Greens seguidos', icon: Target },
-    { name: 'Ana C.', initials: 'AC', action: 'sacou', value: '+R$ 5.120', detail: 'este mês', icon: Banknote },
-    { name: 'Carlos M.', initials: 'CM', action: 'lucrou', value: '+R$ 4.523', detail: '15 dias de teste', icon: TrendingUp },
-    { name: 'Juliana F.', initials: 'JF', action: 'fechou em alta', value: '+R$ 2.156', detail: 'sequência perfeita', icon: Flame },
-    { name: 'Pedro H.', initials: 'PH', action: 'multiplicou', value: '+R$ 2.780', detail: 'banca inicial R$500', icon: TrendingUp },
-    { name: 'Mariana L.', initials: 'ML', action: 'alcançou', value: '+R$ 1.890', detail: 'primeira semana', icon: Target },
-    { name: 'Lucas B.', initials: 'LB', action: 'bateu recorde', value: '+R$ 6.340', detail: '18 Greens', icon: Flame },
-    { name: 'Fernanda R.', initials: 'FR', action: 'sacou', value: '+R$ 3.890', detail: 'lucro líquido', icon: Banknote },
+    { name: 'Rafael S.', initials: 'RS', action: 'bateu ROI de', value: '+146%', detail: '12 Greens seguidos', icon: Target },
+    { name: 'Ana C.', initials: 'AC', action: 'lucrou', value: '+R$ 5.120', detail: 'em 3 semanas', icon: TrendingUp },
+    { name: 'Carlos M.', initials: 'CM', action: 'dobrou a banca:', value: '+R$ 4.523', detail: '15 dias de operação', icon: Flame },
+    { name: 'Juliana F.', initials: 'JF', action: 'fechou o mês com', value: '+R$ 2.156', detail: 'sequência de 9 greens', icon: Target },
+    { name: 'Pedro H.', initials: 'PH', action: 'multiplicou banca por', value: '3.2x', detail: 'começou com R$500', icon: TrendingUp },
+    { name: 'Mariana L.', initials: 'ML', action: 'bateu meta semanal:', value: '+R$ 1.890', detail: 'primeira semana', icon: Target },
+    { name: 'Lucas B.', initials: 'LB', action: 'atingiu ROI de', value: '+187%', detail: '18 Greens no mês', icon: Flame },
+    { name: 'Fernanda R.', initials: 'FR', action: 'lucrou', value: '+R$ 3.890', detail: 'resultado mensal', icon: TrendingUp },
   ];
   
   const NotificationCard = ({ notification, index }: { notification: typeof notifications[0], index: number }) => {
