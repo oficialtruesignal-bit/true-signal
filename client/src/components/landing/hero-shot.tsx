@@ -140,7 +140,7 @@ export function HeroShot() {
                           fill="none"
                           strokeLinecap="round"
                           initial={{ strokeDasharray: '0 440' }}
-                          animate={{ strokeDasharray: '418 440' }}
+                          animate={{ strokeDasharray: '402 440' }}
                           transition={{ duration: 2, delay: 1 }}
                         />
                       </svg>
