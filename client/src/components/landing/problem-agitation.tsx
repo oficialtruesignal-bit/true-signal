@@ -47,7 +47,7 @@ export function ProblemAgitation() {
   ];
   
   return (
-    <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-[#121212] via-[#0a0a0a] to-black overflow-hidden">
+    <section ref={ref} className="relative py-12 px-4 bg-gradient-to-b from-[#121212] via-[#0a0a0a] to-black overflow-hidden">
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left: The Pain (Red Side) */}
