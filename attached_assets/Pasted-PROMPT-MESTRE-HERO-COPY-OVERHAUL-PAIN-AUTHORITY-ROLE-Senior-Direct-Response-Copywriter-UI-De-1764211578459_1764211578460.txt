@@ -1,0 +1,45 @@
+PROMPT MESTRE: HERO COPY OVERHAUL (PAIN & AUTHORITY)
+ROLE: Senior Direct Response Copywriter & UI Designer.
+
+TASK: Reescrever a Hero Section da LandingPage.tsx. OBJETIVO: Substituir o texto genérico por uma copy agressiva que toca na ferida do usuário (perda de tempo em grupos/apps) e apresenta a Ocean Signal como uma Instituição de Inteligência.
+
+1. A NOVA COPY (TEXTOS OBRIGATÓRIOS)
+Substitua os textos atuais pelos seguintes (respeitando a formatação):
+
+HEADLINE (H1 - O Impacto):
+
+"Pare de tentar vencer a casa sozinho analisando estatísticas no FlashScore." (Nota: Se preferir algo mais curto: "Silencie os Grupos. Largue o SofaScore. Opere com Inteligência Institucional.")
+
+SUBHEADLINE (H2 - A Solução Lógica):
+
+"Você se sente perdido em dezenas de grupos de Telegram e desperdiça horas tentando encontrar um padrão? Pare.
+
+O Ocean Signal não é um 'grupo de dicas'. Somos uma empresa de inteligência. Unimos 20 Traders com 7 anos de mercado + IA de Reconhecimento de Padrões para filtrar os últimos 10 jogos de cada time. Nós fazemos o trabalho duro. Você recebe a decisão pronta com até 93% de assertividade técnica."
+
+BOTÃO CTA (Ação):
+
+"PARAR DE PERDER TEMPO E COMEÇAR AGORA"
+
+TAGLINE (Abaixo do botão):
+
+Teste a tecnologia gratuitamente por 15 dias. Sem compromisso.
+
+2. AJUSTE VISUAL (HIERARQUIA)
+Para essa quantidade de texto funcionar e não ficar cansativo:
+
+Destaques em Neon: No H2, coloque em negrito e cor Verde Neon (text-[#33b864]) as partes chaves: "20 Traders", "IA de Reconhecimento" e "Decisão Pronta".
+
+Fonte: Use font-sora com peso Light ou Regular para o texto longo, para facilitar a leitura, e ExtraBold apenas na Headline.
+
+Espaçamento: Dê um bom espaçamento (leading-relaxed) no parágrafo da subheadline. Não deixe o texto espremido.
+
+3. ELEMENTO DE SUPORTE VISUAL
+Ao lado desse texto (no Desktop) ou abaixo (no Mobile), mantenha o Mockup do Celular, mas adicione 3 "Badges Flutuantes" ao redor dele com ícones para reforçar a mensagem:
+
+🚫 Badge 1 (Vermelho): "Adeus Grupos de Telegram".
+
+🚫 Badge 2 (Vermelho): "Fim das Análises Manuais".
+
+✅ Badge 3 (Verde Neon): "Curadoria Profissional Ativada".
+
+COMANDO: Reescreva a primeira dobra do site. O usuário deve ler isso e sentir um alívio imediato: "Graças a Deus, não preciso mais fazer isso sozinho."
