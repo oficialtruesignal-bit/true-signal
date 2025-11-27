@@ -2,7 +2,7 @@ import { Clock, Zap, ArrowRight } from 'lucide-react';
 
 export function TimeComparison() {
   return (
-    <div className="w-full max-w-3xl mx-auto mt-12 mb-12">
+    <div className="w-full max-w-3xl mx-auto mt-12 mb-4 lg:mb-0">
       
       <h3 className="text-center text-gray-400 text-sm uppercase tracking-widest mb-6 font-semibold" style={{ fontFamily: 'Sora, sans-serif' }}>
         A MATEMÁTICA DA EFICIÊNCIA
