@@ -26,12 +26,12 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-6 leading-[1.1]"
+            className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-8 leading-[1.1]"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            A primeira IA de apostas que{' '}
+            Pare de tentar vencer a casa sozinho analisando estatísticas no{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              realmente funciona
+              FlashScore
             </span>
           </motion.h1>
           
@@ -39,20 +39,23 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed"
+            className="text-lg md:text-xl text-gray-300 mb-10 leading-relaxed font-light"
+            style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Pare de jogar, comece a <span className="text-white font-bold">operar</span>.
+            Você se sente perdido em dezenas de grupos de Telegram e desperdiça horas tentando encontrar um padrão? <span className="text-white font-semibold">Pare</span>.
           </motion.p>
           
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-lg text-gray-400 mb-10 leading-relaxed"
+            className="text-lg md:text-xl text-gray-300 mb-10 leading-relaxed font-light"
+            style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Esqueça grupos viciados e análises manuais. O Ocean Signal escaneia{' '}
-            <span className="text-[#33b864] font-semibold">milhares de jogos em tempo real</span> e te entrega análises estatísticas baseadas em{' '}
-            <span className="text-white font-semibold">dados históricos e probabilidades</span>.
+            O Ocean Signal não é um 'grupo de dicas'. Somos uma empresa de inteligência. Unimos{' '}
+            <span className="text-[#33b864] font-bold">20 Traders</span> com 7 anos de mercado +{' '}
+            <span className="text-[#33b864] font-bold">IA de Reconhecimento de Padrões</span> para filtrar os últimos 10 jogos de cada time. Nós fazemos o trabalho duro. Você recebe a{' '}
+            <span className="text-[#33b864] font-bold">decisão pronta</span> com até 93% de assertividade técnica.
           </motion.p>
           
           <motion.div
