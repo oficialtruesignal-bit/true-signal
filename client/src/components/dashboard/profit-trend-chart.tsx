@@ -33,7 +33,7 @@ export function ProfitTrendChart({ growthPercentage }: ProfitTrendChartProps) {
       {/* Label com barra vertical */}
       <div className="flex items-center gap-2 mb-2 z-10">
         <div className="w-1 h-3 rounded-full" style={{ backgroundColor: color }}></div>
-        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Crescimento Banca</span>
+        <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Crescimento</span>
       </div>
 
       {/* Valor com glow */}
