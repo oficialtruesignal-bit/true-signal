@@ -12,12 +12,12 @@ export function FinalCTA() {
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#33b864]/15 rounded-full blur-[150px]" />
       
-      <div className="relative z-10 max-w-3xl mx-auto text-center">
+      <div className="relative z-10 max-w-3xl mx-auto text-center lg:max-w-4xl lg:px-8">
         {/* Main headline */}
         <motion.h2
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
-          className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4 leading-tight"
+          className="text-2xl md:text-3xl lg:text-5xl font-black text-white mb-4 leading-tight"
           style={{ fontFamily: 'Sora, sans-serif' }}
         >
           Confie em quem{' '}

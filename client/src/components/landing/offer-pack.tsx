@@ -12,7 +12,7 @@ export function OfferPack() {
       {/* Background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#33b864]/10 rounded-full blur-[200px]" />
       
-      <div className="relative z-10 max-w-3xl mx-auto">
+      <div className="relative z-10 max-w-3xl mx-auto lg:max-w-4xl lg:px-8">
         {/* Pricing Card */}
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -23,7 +23,7 @@ export function OfferPack() {
           {/* Glow ring */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 to-[#33b864]/30 rounded-3xl blur-xl" />
           
-          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 backdrop-blur-xl">
+          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
             {/* Top badge */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
               <div className="flex items-center gap-2 px-4 py-2 bg-[#33b864] text-black font-bold text-sm rounded-full shadow-lg shadow-[#33b864]/50">

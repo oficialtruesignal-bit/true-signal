@@ -8,7 +8,7 @@ export function BenefitsGrid() {
   
   return (
     <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-[#121212] via-black to-[#0a0a0a]">
-      <div className="max-w-5xl mx-auto">
+      <div className="max-w-6xl mx-auto lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -26,7 +26,7 @@ export function BenefitsGrid() {
         </motion.div>
         
         {/* Bento Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 lg:gap-6">
           {/* Box 1 - O Cérebro (Grande - 2x2) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
