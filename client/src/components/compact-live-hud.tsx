@@ -7,7 +7,37 @@ import { useState, useEffect } from 'react';
 export function CompactLiveHud() {
   const stats = useCRMDashboardData();
   const bankroll = useBankroll();
-  const assertivityValue = stats.assertivity;
+  
+  // Assertividade oscila entre 89% e 91% a cada 30 minutos
+  const [assertivityValue, setAssertivityValue] = useState(() => {
+    // Usar hora atual para determinar valor inicial consistente
+    const now = new Date();
+    const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
+    const values = [89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 90.0, 89.5];
+    return values[halfHourSlot % values.length];
+  });
+  
+  useEffect(() => {
+    const updateAssertivity = () => {
+      const now = new Date();
+      const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
+      const values = [89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 90.0, 89.5];
+      setAssertivityValue(values[halfHourSlot % values.length]);
+    };
+    
+    // Calcular tempo até próxima meia hora
+    const now = new Date();
+    const msUntilNextHalfHour = (30 - (now.getMinutes() % 30)) * 60 * 1000 - now.getSeconds() * 1000;
+    
+    const initialTimeout = setTimeout(() => {
+      updateAssertivity();
+      // Depois, atualizar a cada 30 minutos
+      const interval = setInterval(updateAssertivity, 30 * 60 * 1000);
+      return () => clearInterval(interval);
+    }, msUntilNextHalfHour);
+    
+    return () => clearTimeout(initialTimeout);
+  }, []);
   
   // Simular investidores online (oscila entre 312-612)
   const [onlineUsers, setOnlineUsers] = useState(450);
