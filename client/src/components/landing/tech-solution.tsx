@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
-import handClickVideo from '@assets/generated_videos/hand_clicking_copy_ticket_button.mp4';
+import demoVideo from '@assets/generated_videos/copy_ticket_to_bet365_flow.mp4';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -133,10 +133,10 @@ export function TechSolution() {
                 {/* Phone glow effect */}
                 <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
                 
-                {/* Video with real hand clicking */}
+                {/* Video with real hand clicking and Bet365 transition */}
                 <div className="relative w-[300px] md:w-[340px]">
                   <video
-                    src={handClickVideo}
+                    src={demoVideo}
                     autoPlay
                     loop
                     muted
