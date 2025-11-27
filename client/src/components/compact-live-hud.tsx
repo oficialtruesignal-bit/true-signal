@@ -19,6 +19,19 @@ export function CompactLiveHud() {
   const calculatedWins = Math.round(TOTAL_ENTRIES * (assertivityValue / 100));
   const calculatedLosses = TOTAL_ENTRIES - calculatedWins;
   
+  // Odd média fixa para cálculo
+  const ODD_MEDIA = 1.85;
+  
+  // Cálculo do crescimento da banca baseado nos resultados
+  // Ganhos: Greens × (odd - 1) = lucro em unidades
+  // Perdas: Reds × 1 = perda em unidades
+  // Crescimento = (lucro - perdas) / banca inicial × 100
+  const BANCA_INICIAL = 100; // 100 unidades
+  const lucroUnidades = calculatedWins * (ODD_MEDIA - 1);
+  const perdaUnidades = calculatedLosses * 1;
+  const lucroLiquido = lucroUnidades - perdaUnidades;
+  const calculatedGrowth = (lucroLiquido / BANCA_INICIAL) * 100;
+  
   // Usuários online oscila entre 254-403 com movimento suave
   const [onlineUsers, setOnlineUsers] = useState(330);
   const [direction, setDirection] = useState<'up' | 'down'>('up');
@@ -131,7 +144,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* DIREITA: GRÁFICO DE LUCRO */}
-        <ProfitTrendChart growthPercentage={bankrollGrowth} />
+        <ProfitTrendChart growthPercentage={calculatedGrowth} />
 
       </div>
 
@@ -151,7 +164,7 @@ export function CompactLiveHud() {
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
           </div>
           <div className="flex items-center gap-2 z-10">
-            <span className="text-3xl font-sora font-bold text-white">{bankroll.averageOdd.toFixed(2)}</span>
+            <span className="text-3xl font-sora font-bold text-white">{ODD_MEDIA.toFixed(2)}</span>
             <span className="text-[9px] bg-[#33b864]/20 text-[#33b864] px-2 py-0.5 rounded-full font-bold">
               ▲ 20% acima
             </span>
