@@ -502,11 +502,24 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
       <div className="bg-[#121212] rounded-xl p-4 border border-white/5 flex items-center justify-between mb-4">
         
         {/* Lado Esquerdo: Mercado */}
-        <div className="flex flex-col gap-1">
-          <span className="text-[#33b864] font-sora font-extrabold text-lg uppercase leading-none">
-            {hasMultipleLegs ? "APOSTA COMBINADA" : signal.market}
-          </span>
-          <span className="text-gray-500 text-[10px] font-medium">
+        <div className="flex flex-col gap-0.5">
+          {hasMultipleLegs ? (
+            <span className="text-[#33b864] font-sora font-extrabold text-sm uppercase leading-tight">
+              APOSTA COMBINADA
+            </span>
+          ) : (
+            <div className="flex flex-col gap-0.5">
+              {signal.market.split(' + ').map((market, idx) => (
+                <span 
+                  key={idx} 
+                  className="text-[#33b864] font-sora font-bold text-xs uppercase leading-tight"
+                >
+                  {market.trim()}
+                </span>
+              ))}
+            </div>
+          )}
+          <span className="text-gray-500 text-[10px] font-medium mt-1">
             Mercado Principal
           </span>
         </div>
