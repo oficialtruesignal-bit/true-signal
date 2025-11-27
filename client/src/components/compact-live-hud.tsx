@@ -8,11 +8,15 @@ export function CompactLiveHud() {
   const stats = useCRMDashboardData();
   const bankroll = useBankroll();
   
-  // Assertividade oscila entre 89% e 91% a cada 30 minutos
+  // Total de entradas fixo
+  const TOTAL_ENTRIES = 180;
+  
+  // Assertividade oscila entre 83% e 91% a cada 30 minutos
   const [assertivityValue, setAssertivityValue] = useState(() => {
     const now = new Date();
     const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
-    const values = [89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 90.0, 89.5];
+    // Valores oscilando entre 83% e 91%
+    const values = [83.0, 84.5, 86.0, 87.5, 89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 89.5, 88.0, 86.5, 85.0, 84.0];
     return values[halfHourSlot % values.length];
   });
   
@@ -20,7 +24,7 @@ export function CompactLiveHud() {
     const updateAssertivity = () => {
       const now = new Date();
       const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
-      const values = [89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 90.0, 89.5];
+      const values = [83.0, 84.5, 86.0, 87.5, 89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 89.5, 88.0, 86.5, 85.0, 84.0];
       setAssertivityValue(values[halfHourSlot % values.length]);
     };
     
@@ -35,6 +39,10 @@ export function CompactLiveHud() {
     
     return () => clearTimeout(initialTimeout);
   }, []);
+  
+  // Cálculo matemático: Ganhos e Perdas baseados na assertividade
+  const calculatedWins = Math.round(TOTAL_ENTRIES * (assertivityValue / 100));
+  const calculatedLosses = TOTAL_ENTRIES - calculatedWins;
   
   // Usuários online oscila entre 254-403 com movimento suave
   const [onlineUsers, setOnlineUsers] = useState(330);
@@ -204,7 +212,7 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* CARD C: GANHOS com barra de progresso */}
+        {/* CARD C: GANHOS (calculado baseado na assertividade) */}
         <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -216,32 +224,23 @@ export function CompactLiveHud() {
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
               <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhos</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Greens</span>
             </div>
             <span 
               className="text-3xl font-sora font-bold text-[#33b864] z-10"
               style={{ textShadow: '0 0 20px rgba(51, 184, 100, 0.4)' }}
             >
-              {bankroll.greenCount > 0 ? '+' : ''}{bankroll.totalProfitUnits > 0 ? bankroll.totalProfitUnits.toFixed(1) : '0.0'}u
+              {calculatedWins}
             </span>
           </div>
           
-          {/* Barra de progresso da meta */}
+          {/* Total de entradas */}
           <div className="z-10 border-t border-white/5 pt-2 mt-2">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-[8px] text-gray-500">Meta Mensal</span>
-              <span className="text-[8px] text-[#33b864]">{progressPercentage.toFixed(0)}%</span>
-            </div>
-            <div className="h-1 bg-[#1a1a1a] rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-[#33b864] to-[#22c55e] rounded-full transition-all duration-500"
-                style={{ width: `${progressPercentage}%` }}
-              />
-            </div>
+            <span className="text-[8px] text-gray-500">de {TOTAL_ENTRIES} entradas</span>
           </div>
         </div>
 
-        {/* CARD D: PERDAS com proteção */}
+        {/* CARD D: PERDAS (calculado baseado na assertividade) */}
         <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/30 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -253,11 +252,11 @@ export function CompactLiveHud() {
           
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
-              <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdas</span>
+              <div className="w-1 h-3 bg-red-500 rounded-full"></div>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Reds</span>
             </div>
-            <span className="text-3xl font-sora font-bold text-white z-10">
-              {bankroll.redCount > 0 ? bankroll.redCount : 0}
+            <span className="text-3xl font-sora font-bold text-red-500 z-10">
+              {calculatedLosses}
             </span>
           </div>
           
