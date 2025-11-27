@@ -7,7 +7,6 @@ import { useEffect } from "react";
 import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
 import { Logo } from "./logo";
-import { ThemeToggle } from "./theme-toggle";
 import { useQuery } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
@@ -159,7 +158,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex items-center gap-2 px-2">
-            <ThemeToggle />
             <button 
               onClick={logout}
               className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-red-400 transition-colors flex-1 text-left rounded-lg hover:bg-destructive/10"
@@ -176,7 +174,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-2">
            <span className="text-sm font-bold text-foreground mr-2">{t.nav.hello} {user?.firstName?.split(' ')[0] || user?.firstName}</span>
-           <ThemeToggle />
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-red-400">
             <LogOut className="w-5 h-5" />
           </button>
