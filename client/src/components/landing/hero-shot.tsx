@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { Zap, Sparkles } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { Logo } from '@/components/logo';
 
 export function HeroShot() {
   return (
@@ -16,10 +17,9 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-full mb-6"
+            className="mb-6"
           >
-            <Sparkles className="w-4 h-4 text-[#33b864]" />
-            <span className="text-sm text-[#33b864] font-semibold">Tecnologia Proprietária</span>
+            <Logo size="lg" showText={true} />
           </motion.div>
           
           <motion.h1
