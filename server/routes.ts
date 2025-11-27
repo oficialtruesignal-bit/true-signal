@@ -344,7 +344,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       console.log("🔍 Scanning bet slip with Gemini Vision...");
 
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
       // Extract base64 data (remove data:image/xxx;base64, prefix if present)
       const base64Data = imageBase64.includes(',') 
