@@ -95,10 +95,10 @@ export function BenefitsGrid() {
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-bold text-white mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    Comunidade VIP
+                    Suporte VIP
                   </h3>
                   <p className="text-gray-400 text-sm leading-relaxed">
-                    Networking com quem vive de mercado esportivo.
+                    Atendimento prioritário 24/7 para tirar suas dúvidas.
                   </p>
                 </div>
               </div>
