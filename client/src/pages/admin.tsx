@@ -4,19 +4,36 @@ import { tipsService } from "@/lib/tips-service";
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export default function Admin() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   
-  // Force console log to verify page is loading fresh code
-  console.log('🔧 Admin Page Loaded - Version 2.0 - ODD Format Changed');
+  console.log('🔧 Admin Page Loaded - Version 3.0 - Premium Cards');
+
+  const copyTicket = (signal: Signal) => {
+    const text = `🎯 OCEAN SIGNAL
+
+⚽ ${signal.homeTeam} vs ${signal.awayTeam}
+📊 ${signal.market}
+💰 ODD: ${signal.odd.toFixed(2)}
+${signal.link ? `🔗 ${signal.link}` : ''}
+
+📱 @oceansignal`;
+    
+    navigator.clipboard.writeText(text);
+    setCopiedId(signal.id);
+    toast.success("Bilhete copiado!");
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   // Redirect if not admin
   useEffect(() => {
@@ -127,68 +144,155 @@ export default function Admin() {
         {/* Right Column: Active Signals Management */}
         <div className="lg:col-span-2">
           <div className="bg-card border border-primary/20 rounded-xl overflow-hidden">
-            <div className="p-4 border-b border-primary/10 bg-primary/5 flex justify-between items-center">
-              <h3 className="font-bold text-white">Sinais Disponíveis</h3>
-              <span className="text-xs bg-primary/20 text-primary px-2 py-1 rounded-full">{signals.length} Total</span>
+            <div className="p-4 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent flex justify-between items-center">
+              <h3 className="font-bold text-white flex items-center gap-2">
+                <Zap className="w-5 h-5 text-primary" />
+                Sinais Disponíveis
+              </h3>
+              <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold">{signals.length} Total</span>
             </div>
-            <div className="divide-y divide-white/5">
-              {signals.map((signal) => (
-                <div key={signal.id} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between hover:bg-white/5 transition-colors gap-4">
-                  <div className="flex flex-col">
-                    <span className="text-sm font-bold text-white flex items-center gap-2">
-                      {signal.homeTeam} vs {signal.awayTeam}
-                      {signal.isLive && <span className="text-[10px] text-red-500 bg-red-500/10 px-1 rounded animate-pulse">LIVE</span>}
-                    </span>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-primary border border-primary/20 px-1.5 rounded font-sora">{signal.league}</span>
-                      <span className="text-xs text-white font-sora font-semibold">{signal.market} | ODD {signal.odd.toFixed(2)}</span>
+            
+            <div className="p-4 space-y-4">
+              {signals.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  Nenhum sinal criado ainda
+                </div>
+              ) : (
+                signals.map((signal) => (
+                  <div 
+                    key={signal.id} 
+                    className="relative bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-primary/20 rounded-xl overflow-hidden group hover:border-primary/40 transition-all"
+                  >
+                    {/* Status indicator bar */}
+                    <div className={`absolute top-0 left-0 right-0 h-1 ${
+                      signal.status === 'green' ? 'bg-gradient-to-r from-green-500 to-green-400' :
+                      signal.status === 'red' ? 'bg-gradient-to-r from-red-500 to-red-400' :
+                      'bg-gradient-to-r from-yellow-500 to-yellow-400'
+                    }`} />
+                    
+                    <div className="p-4">
+                      {/* Header with match info */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            {signal.isLive && (
+                              <span className="text-[10px] text-red-500 bg-red-500/20 px-2 py-0.5 rounded-full animate-pulse font-bold">
+                                LIVE
+                              </span>
+                            )}
+                            <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                              signal.status === 'green' ? 'bg-green-500/20 text-green-400' :
+                              signal.status === 'red' ? 'bg-red-500/20 text-red-400' :
+                              'bg-yellow-500/20 text-yellow-400'
+                            }`}>
+                              {signal.status === 'green' ? 'GREEN' : signal.status === 'red' ? 'RED' : 'PENDENTE'}
+                            </span>
+                          </div>
+                          <h4 className="text-lg font-bold text-white font-sora">
+                            {signal.homeTeam} <span className="text-primary">vs</span> {signal.awayTeam}
+                          </h4>
+                        </div>
+                        
+                        {/* ODD Badge */}
+                        <div className="bg-primary/20 border border-primary/30 rounded-lg px-3 py-2 text-center">
+                          <span className="text-[10px] text-primary/70 block">ODD</span>
+                          <span className="text-xl font-bold text-primary font-sora">{signal.odd.toFixed(2)}</span>
+                        </div>
+                      </div>
+                      
+                      {/* Market info */}
+                      <div className="bg-white/5 rounded-lg px-3 py-2 mb-4">
+                        <span className="text-xs text-muted-foreground">Mercado:</span>
+                        <p className="text-sm text-white font-medium">{signal.market}</p>
+                      </div>
+                      
+                      {/* Link if exists */}
+                      {signal.link && (
+                        <a 
+                          href={signal.link} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 text-xs text-primary hover:text-primary/80 mb-4 transition-colors"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          Abrir na casa de apostas
+                        </a>
+                      )}
+                      
+                      {/* Actions row */}
+                      <div className="flex items-center justify-between pt-3 border-t border-white/10">
+                        {/* Status buttons */}
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className={`h-8 px-3 ${signal.status === 'green' ? 'bg-green-500/20 border-green-500 text-green-400' : 'border-white/20 hover:border-green-500 hover:text-green-400'}`}
+                            onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'green' })}
+                            data-testid={`button-status-green-${signal.id}`}
+                          >
+                            <Trophy className="w-4 h-4 mr-1" />
+                            Green
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className={`h-8 px-3 ${signal.status === 'red' ? 'bg-red-500/20 border-red-500 text-red-400' : 'border-white/20 hover:border-red-500 hover:text-red-400'}`}
+                            onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'red' })}
+                            data-testid={`button-status-red-${signal.id}`}
+                          >
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Red
+                          </Button>
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className={`h-8 px-3 ${signal.status === 'pending' ? 'bg-yellow-500/20 border-yellow-500 text-yellow-400' : 'border-white/20 hover:border-yellow-500 hover:text-yellow-400'}`}
+                            onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'pending' })}
+                            data-testid={`button-status-pending-${signal.id}`}
+                          >
+                            <Clock className="w-4 h-4 mr-1" />
+                          </Button>
+                        </div>
+                        
+                        {/* Copy and Delete buttons */}
+                        <div className="flex items-center gap-2">
+                          <Button 
+                            size="sm"
+                            className={`h-8 px-4 ${copiedId === signal.id ? 'bg-green-500 hover:bg-green-600' : 'bg-primary hover:bg-primary/90'} text-black font-semibold`}
+                            onClick={() => copyTicket(signal)}
+                            data-testid={`button-copy-${signal.id}`}
+                          >
+                            {copiedId === signal.id ? (
+                              <>
+                                <Check className="w-4 h-4 mr-1" />
+                                Copiado!
+                              </>
+                            ) : (
+                              <>
+                                <Copy className="w-4 h-4 mr-1" />
+                                Copiar
+                              </>
+                            )}
+                          </Button>
+                          <Button 
+                            size="icon" 
+                            variant="outline" 
+                            className="h-8 w-8 border-white/20 hover:border-red-500 hover:text-red-500 hover:bg-red-500/10"
+                            onClick={() => {
+                              if (confirm(`Deletar o sinal ${signal.homeTeam} vs ${signal.awayTeam}?`)) {
+                                deleteMutation.mutate(signal.id);
+                              }
+                            }}
+                            data-testid={`button-delete-${signal.id}`}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2">
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className={`w-8 h-8 ${signal.status === 'green' ? 'bg-green-500/20 border-green-500 text-green-500' : 'border-white/10 hover:border-green-500 hover:text-green-500'}`}
-                      onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'green' })}
-                      data-testid={`button-status-green-${signal.id}`}
-                    >
-                      <Trophy className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className={`w-8 h-8 ${signal.status === 'red' ? 'bg-red-500/20 border-red-500 text-red-500' : 'border-white/10 hover:border-red-500 hover:text-red-500'}`}
-                      onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'red' })}
-                      data-testid={`button-status-red-${signal.id}`}
-                    >
-                      <XCircle className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className={`w-8 h-8 ${signal.status === 'pending' ? 'bg-yellow-500/20 border-yellow-500 text-yellow-500' : 'border-white/10 hover:border-yellow-500 hover:text-yellow-500'}`}
-                      onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'pending' })}
-                      data-testid={`button-status-pending-${signal.id}`}
-                    >
-                      <Clock className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="icon" 
-                      variant="outline" 
-                      className="w-8 h-8 border-white/10 hover:border-red-500 hover:text-red-500 hover:bg-red-500/10"
-                      onClick={() => {
-                        if (confirm(`Deletar o sinal ${signal.homeTeam} vs ${signal.awayTeam}?`)) {
-                          deleteMutation.mutate(signal.id);
-                        }
-                      }}
-                      data-testid={`button-delete-${signal.id}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
