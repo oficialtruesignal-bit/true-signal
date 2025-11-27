@@ -149,17 +149,17 @@ function Footer() {
         <div className="border-t border-gray-800 pt-8">
           <div className="flex flex-col gap-6">
             {/* Responsibility Badges */}
-            <div className="flex flex-wrap items-center justify-center gap-4">
-              <div className="flex items-center gap-2 px-4 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
-                <div className="text-3xl">🔞</div>
+            <div className="flex items-center justify-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="text-2xl">🔞</div>
                 <div className="text-sm">
                   <p className="text-yellow-400 font-bold">+18</p>
                   <p className="text-yellow-600 text-xs">Proibido para menores</p>
                 </div>
               </div>
               
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl">
-                <div className="text-3xl">🎲</div>
+              <div className="flex items-center gap-2">
+                <div className="text-2xl">🎲</div>
                 <div className="text-sm">
                   <p className="text-[#33b864] font-bold">Jogo Responsável</p>
                   <p className="text-gray-500 text-xs">Aposte com moderação</p>
