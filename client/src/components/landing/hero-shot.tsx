@@ -53,7 +53,7 @@ export function HeroShot() {
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
             Nós fazemos o trabalho pesado. Você recebe a decisão pronta, validada e com até{' '}
-            <span className="text-white font-bold">93% de assertividade</span> técnica.
+            <span className="text-white font-bold">87% de assertividade</span> técnica.
           </motion.p>
           
           <motion.div
