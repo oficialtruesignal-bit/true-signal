@@ -389,6 +389,24 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
               )}
             />
 
+            <FormField
+              control={form.control}
+              name="betLink"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white text-xs">Link da Bet (Opcional)</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="https://bet365.com/..." 
+                      {...field} 
+                      className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <Button 
               type="submit" 
               disabled={isScanning}
