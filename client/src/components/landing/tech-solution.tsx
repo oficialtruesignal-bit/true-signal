@@ -2,6 +2,7 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
 import demoVideo from '@assets/generated_videos/copy_ticket_to_bet365_flow.mp4';
+import { ProfitSimulator } from './profit-simulator';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -110,42 +111,51 @@ export function TechSolution() {
             </motion.div>
           </div>
           
-          {/* Demo Video */}
+          {/* Demo Video + Simulator Grid (Desktop: side by side) */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.4 }}
             className="mt-12"
           >
-            <div className="text-center mb-6">
+            <div className="text-center mb-6 lg:mb-10">
               <h3 className="text-xl md:text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
                 Veja como é <span className="text-[#33b864]">simples</span>
               </h3>
               <p className="text-sm text-gray-400">Basta clicar em "Copiar" e colar na sua casa de apostas</p>
             </div>
             
-            <div className="flex justify-center w-full">
-              <motion.div
-                animate={{ y: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                className="relative"
-              >
-                {/* Phone glow effect */}
-                <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
-                
-                {/* Video with real hand clicking and Bet365 transition */}
-                <div className="relative w-[300px] md:w-[340px]">
-                  <video
-                    src={demoVideo}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="w-full h-auto rounded-[24px] shadow-2xl"
-                    data-testid="video-demo"
-                  />
-                </div>
-              </motion.div>
+            {/* Desktop: 2 columns, Mobile: stacked */}
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-center lg:gap-12">
+              {/* Left: Video */}
+              <div className="flex justify-center w-full lg:w-auto">
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                  className="relative"
+                >
+                  {/* Phone glow effect */}
+                  <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
+                  
+                  {/* Video with real hand clicking and Bet365 transition */}
+                  <div className="relative w-[300px] md:w-[340px]">
+                    <video
+                      src={demoVideo}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-auto rounded-[24px] shadow-2xl"
+                      data-testid="video-demo"
+                    />
+                  </div>
+                </motion.div>
+              </div>
+              
+              {/* Right: Profit Simulator (Desktop only, hidden on mobile - shown separately below) */}
+              <div className="hidden lg:block lg:w-[480px]">
+                <ProfitSimulator />
+              </div>
             </div>
           </motion.div>
           

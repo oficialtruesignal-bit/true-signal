@@ -55,7 +55,7 @@ function SimulatorSection() {
   const isInView = useInView(ref, { once: true });
   
   return (
-    <section ref={ref} className="relative py-12 px-4 bg-gradient-to-b from-[#0a0a0a] via-[#121212] to-black">
+    <section ref={ref} className="relative py-12 px-4 bg-gradient-to-b from-[#0a0a0a] via-[#121212] to-black lg:hidden">
       <div className="max-w-xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
