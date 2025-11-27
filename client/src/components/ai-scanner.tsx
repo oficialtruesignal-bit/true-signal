@@ -84,9 +84,9 @@ export function AIScanner() {
             Scanning Probabilities
           </h3>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-primary rounded-full animate-ping" />
-          <span className="text-[9px] text-primary font-mono">AO VIVO</span>
+        <div className="flex items-center gap-1">
+          <div className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
+          <span className="text-[8px] text-primary font-mono">LIVE</span>
         </div>
       </div>
 
