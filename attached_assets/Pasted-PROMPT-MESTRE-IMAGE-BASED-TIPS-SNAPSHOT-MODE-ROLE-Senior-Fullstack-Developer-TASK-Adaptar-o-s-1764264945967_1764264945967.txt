@@ -1,0 +1,74 @@
+PROMPT MESTRE: IMAGE-BASED TIPS (SNAPSHOT MODE)
+ROLE: Senior Fullstack Developer.
+
+TASK: Adaptar o sistema para suportar Tips Baseadas em Imagem (Prints). OBJETIVO: Permitir que o Admin faça upload de um print (screenshot) do bilhete. Se houver imagem, o Card deve exibir a imagem em destaque em vez de texto.
+
+1. BANCO DE DADOS E STORAGE (SUPABASE)
+Precisamos de um lugar para guardar as fotos.
+
+Storage: Crie um Bucket no Supabase chamado tip-images (público).
+
+Tabela: Adicione a coluna image_url na tabela tips.
+
+2. ADMIN: UPLOAD DE IMAGEM (CreateTipForm.tsx)
+Adicione um campo de Upload de Arquivo no formulário.
+
+Lógica:
+
+O Admin seleciona o arquivo.
+
+O sistema faz upload para o bucket tip-images.
+
+A URL retornada é salva no banco.
+
+Campos Obrigatórios:
+
+Se tiver Imagem, os campos "Time Casa", "Time Fora" e "Mercado" tornam-se Opcionais (ou podem ser preenchidos genericamente como "Bilhete Pronto").
+
+ODD: Continua Obrigatório (para o cálculo da banca).
+
+Link da Bet: Continua Obrigatório (para o botão de ação).
+
+3. O CARD DE IMAGEM (SignalCard.tsx)
+Altere a lógica de renderização do Card.
+
+Lógica Condicional:
+
+Se tip.image_url existir: Renderize o Layout de Imagem.
+
+Se não existir: Renderize o Layout de Texto (o antigo).
+
+DESIGN DO CARD DE IMAGEM:
+
+TypeScript
+
+<div className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl overflow-hidden shadow-lg relative group">
+  
+  {/* 1. O PRINT (IMAGEM) */}
+  <div className="relative w-full">
+    <img 
+      src={tip.image_url} 
+      alt="Bilhete" 
+      className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
+    />
+    
+    {/* Badge da ODD (Sobreposta na imagem para não perder a info) */}
+    <div className="absolute top-2 right-2 bg-black/80 backdrop-blur-md border border-[#33b864] px-3 py-1 rounded-lg">
+      <span className="text-[#33b864] font-sora font-bold text-lg">@{tip.odd}</span>
+    </div>
+  </div>
+
+  {/* 2. BOTÃO DE AÇÃO (RODAPÉ) */}
+  {/* O botão fica fixo embaixo da imagem */}
+  <div className="p-3 bg-[#121212] border-t border-[#33b864]/10">
+    <button 
+      onClick={() => window.open(tip.bet_url, '_blank')}
+      className="w-full bg-[#33b864] hover:bg-[#289a54] text-black font-sora font-bold h-12 rounded-xl flex items-center justify-center gap-2 uppercase tracking-wide transition-transform active:scale-[0.98]"
+    >
+      <TicketIcon className="w-5 h-5" />
+      PEGAR BILHETE AGORA
+    </button>
+  </div>
+
+</div>
+COMANDO: Implemente o sistema de Upload no Admin e o Layout de Imagem no Card. Agora o Admin pode escolher: ou monta o bilhete digitando, ou apenas sobe o print da Bet365 e coloca a Odd.

@@ -45,6 +45,7 @@ export const tips = pgTable("tips", {
   odd: decimal("odd", { precision: 5, scale: 2 }).notNull(),
   status: text("status", { enum: ["pending", "green", "red"] }).notNull().default("pending"),
   betLink: text("bet_link"),
+  imageUrl: text("image_url"), // URL of uploaded bet slip image
   isLive: boolean("is_live").notNull().default(false),
   createdBy: uuid("created_by").references(() => profiles.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
