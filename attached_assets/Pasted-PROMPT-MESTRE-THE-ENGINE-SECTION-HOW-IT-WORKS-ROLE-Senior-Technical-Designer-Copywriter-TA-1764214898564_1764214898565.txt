@@ -1,0 +1,52 @@
+PROMPT MESTRE: "THE ENGINE" SECTION (HOW IT WORKS)
+ROLE: Senior Technical Designer & Copywriter.
+
+TASK: Construir a seção "Como Funciona" (HowItWorks.tsx) na Landing Page. OBJETIVO: Explicar visualmente o processo de curadoria (IA -> Humano -> Usuário) para gerar credibilidade técnica. O usuário deve sentir que existe uma "fábrica de greens" trabalhando para ele.
+
+1. DESIGN VISUAL (ESQUEMA TÁTICO)
+Em vez de texto corrido, crie um Diagrama Horizontal (Desktop) ou Vertical (Mobile) com 3 passos conectados por setas de neon.
+
+Estilo dos Cards do Processo:
+
+Fundo: Vidro escuro (bg-[#121212]/80 backdrop-blur).
+
+Borda: border border-[#33b864]/20.
+
+Ícone: Grande, centralizado, com brilho (drop-shadow).
+
+PASSO 1: A Varredura (IA)
+Ícone: Um Radar ou Chip (Cpu ou Radar do Lucide).
+
+Título: "1. Scanner Global"
+
+Texto: "Nossos algoritmos monitoram 1.000+ ligas simultaneamente, identificando padrões estatísticos invisíveis ao olho humano em tempo real."
+
+PASSO 2: A Validação (Humana)
+Ícone: Um Escudo com Check (ShieldCheck ou UserCheck).
+
+Título: "2. Filtro de Elite"
+
+Texto: "A IA detecta a oportunidade, mas nossos 20 Traders Profissionais validam. Se houver risco de lesão, clima ou desfalque, o sinal é descartado. Só passa o filé."
+
+PASSO 3: O Lucro (Você)
+Ícone: Um Smartphone recebendo notificação (Smartphone ou BellRing).
+
+Título: "3. Execução Simples"
+
+Texto: "Você recebe o bilhete pronto no seu celular. Basta clicar em 'Copiar', colar na sua casa de aposta e aguardar o resultado."
+
+2. COPYWRITING (AUTORIDADE)
+Título da Seção:
+
+"Não é Sorte. É Engenharia de Dados."
+
+Subtítulo:
+
+"Enquanto você dorme ou trabalha, nossa infraestrutura processa milhões de dados para encontrar a entrada perfeita."
+
+3. DETALHE VISUAL (CONECTORES)
+Use setas ou linhas pontilhadas (border-dashed) conectando os cards para dar a ideia de fluxo.
+
+A cor da linha deve pulsar ou ter um gradiente para parecer que os dados estão fluindo da esquerda para a direita.
+
+COMANDO: Construa essa seção. Ela deve parecer um diagrama de uma empresa de software de ponta, mostrando transparência e robustez no processo.

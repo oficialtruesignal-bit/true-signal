@@ -1,7 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { TrendingDown, XCircle, CheckCircle, Shield } from 'lucide-react';
-import { Logo } from '@/components/logo';
+import { TrendingDown, XCircle, Cpu, ShieldCheck, Smartphone, ArrowRight, ArrowDown } from 'lucide-react';
 
 export function ProblemAgitation() {
   const ref = useRef(null);
@@ -25,30 +24,32 @@ export function ProblemAgitation() {
       text: 'Ansiedade, frustração e a sensação de que "quase" ganhou. Mas o saldo continua zero.' 
     },
   ];
-  
-  const solutionPoints = [
-    { 
-      title: 'Probabilidade Real', 
-      text: 'Sem achismos. Operamos apenas onde a matemática diz que a chance de Green é superior a 87%.' 
+
+  const steps = [
+    {
+      icon: Cpu,
+      step: '1',
+      title: 'Scanner Global',
+      text: 'Nossos algoritmos monitoram 1.000+ ligas simultaneamente, identificando padrões estatísticos invisíveis ao olho humano em tempo real.'
     },
-    { 
-      title: 'Zero Esforço', 
-      text: 'Nós gastamos as horas analisando. Você gasta 30 segundos copiando. Seu tempo volta a ser seu.' 
+    {
+      icon: ShieldCheck,
+      step: '2',
+      title: 'Filtro de Elite',
+      text: 'A IA detecta a oportunidade, mas nossos 20 Traders Profissionais validam. Se houver risco de lesão, clima ou desfalque, o sinal é descartado. Só passa o filé.'
     },
-    { 
-      title: 'Gestão Profissional', 
-      text: 'Não buscamos o milagre de ficar rico em um dia. Buscamos a consistência de fechar o mês positivo, mês após mês.' 
-    },
-    { 
-      title: 'O Resultado', 
-      text: 'Dormir tranquilo sabendo que sua operação está nas mãos de 20 especialistas e uma IA de ponta.' 
+    {
+      icon: Smartphone,
+      step: '3',
+      title: 'Execução Simples',
+      text: 'Você recebe o bilhete pronto no seu celular. Basta clicar em "Copiar", colar na sua casa de aposta e aguardar o resultado.'
     },
   ];
   
   return (
     <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-[#121212] via-[#0a0a0a] to-black overflow-hidden">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Left: The Pain (Red Side) */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -103,49 +104,68 @@ export function ProblemAgitation() {
             </div>
           </motion.div>
           
-          {/* Right: The Solution (Green Side) */}
+          {/* Right: The Engine (Green Side - How It Works) */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
-            className="relative group"
+            className="relative"
           >
-            <div className="absolute inset-0 bg-[#33b864]/20 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity" />
+            <div className="absolute inset-0 bg-[#33b864]/10 rounded-3xl blur-2xl opacity-40" />
             
-            <div className="relative bg-gradient-to-br from-[#33b864]/10 via-[#0a0a0a] to-black border-2 border-[#33b864]/40 rounded-3xl p-6 md:p-8 backdrop-blur-xl h-full shadow-lg shadow-[#33b864]/10">
+            <div className="relative bg-gradient-to-br from-[#121212]/90 via-[#0a0a0a] to-black border-2 border-[#33b864]/30 rounded-3xl p-6 md:p-8 backdrop-blur-xl h-full">
               {/* Header */}
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-[#33b864]/30 flex items-center justify-center">
-                  <Shield className="w-5 h-5 md:w-6 md:h-6 text-[#33b864]" />
-                </div>
-                <div>
-                  <h3 className="text-lg md:text-xl font-bold text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    A Inteligência Ocean Signal
-                  </h3>
-                  <p className="text-xs md:text-sm text-[#33b864]/60">(O 1% que Lucra)</p>
-                </div>
+              <div className="mb-6">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  Não é Sorte. É <span className="text-[#33b864]">Engenharia de Dados</span>.
+                </h3>
+                <p className="text-sm text-gray-400">
+                  Enquanto você dorme ou trabalha, nossa infraestrutura processa milhões de dados para encontrar a entrada perfeita.
+                </p>
               </div>
               
-              {/* Headline */}
-              <p className="text-base md:text-lg text-[#33b864] font-semibold mb-6 border-l-2 border-[#33b864]/50 pl-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-                "Frieza Matemática e Execução."
-              </p>
-              
-              {/* Solution Points */}
+              {/* Steps */}
               <div className="space-y-4">
-                {solutionPoints.map((item, i) => (
+                {steps.map((step, i) => (
                   <motion.div
                     key={i}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={isInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: i * 0.1 + 0.3 }}
-                    className="flex items-start gap-3"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ delay: i * 0.15 + 0.4 }}
                   >
-                    <CheckCircle className="w-5 h-5 text-[#33b864] flex-shrink-0 mt-0.5" />
-                    <div>
-                      <span className="text-[#33b864] font-semibold text-sm">{item.title}:</span>
-                      <p className="text-gray-300 text-sm leading-relaxed">{item.text}</p>
+                    <div className="relative bg-[#121212]/80 backdrop-blur border border-[#33b864]/20 rounded-xl p-4">
+                      <div className="flex items-start gap-4">
+                        {/* Icon */}
+                        <div className="w-12 h-12 rounded-xl bg-[#33b864]/20 flex items-center justify-center flex-shrink-0" style={{ filter: 'drop-shadow(0 0 10px rgba(51, 184, 100, 0.4))' }}>
+                          <step.icon className="w-6 h-6 text-[#33b864]" />
+                        </div>
+                        
+                        {/* Content */}
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[#33b864] font-bold text-xs">{step.step}.</span>
+                            <h4 className="text-white font-semibold text-sm" style={{ fontFamily: 'Sora, sans-serif' }}>
+                              {step.title}
+                            </h4>
+                          </div>
+                          <p className="text-gray-400 text-xs leading-relaxed">
+                            {step.text}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+                    
+                    {/* Connector Arrow */}
+                    {i < steps.length - 1 && (
+                      <div className="flex justify-center py-2">
+                        <motion.div
+                          animate={{ y: [0, 5, 0] }}
+                          transition={{ repeat: Infinity, duration: 1.5 }}
+                        >
+                          <ArrowDown className="w-5 h-5 text-[#33b864]/50" />
+                        </motion.div>
+                      </div>
+                    )}
                   </motion.div>
                 ))}
               </div>
