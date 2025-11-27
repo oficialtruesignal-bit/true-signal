@@ -68,7 +68,10 @@ export function OfferPack() {
                 </motion.button>
               </Link>
               
-              <p className="text-gray-500 text-sm mt-4">
+              <p className="text-sm text-gray-400 mt-4">
+                💡 <span className="text-white font-medium">Menos que 1 green paga o mês inteiro</span>
+              </p>
+              <p className="text-gray-500 text-xs mt-2">
                 Cancele quando quiser. Sem multas.
               </p>
             </div>

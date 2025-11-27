@@ -1,6 +1,6 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Cpu, Shield, Users, Sparkles } from 'lucide-react';
+import { Cpu, Shield, Users } from 'lucide-react';
 
 export function BenefitsGrid() {
   const ref = useRef(null);
@@ -105,36 +105,7 @@ export function BenefitsGrid() {
             </div>
           </motion.div>
           
-          {/* Box 4 - O Valor (Pequeno Destaque - 2x1) */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="col-span-2 md:col-span-4 relative"
-          >
-            <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border-2 border-[#33b864]/50 rounded-3xl p-6 md:p-8 text-center">
-              {/* Sparkle decorations */}
-              <Sparkles className="absolute top-4 left-4 w-5 h-5 text-[#33b864]/50" />
-              <Sparkles className="absolute bottom-4 right-4 w-5 h-5 text-[#33b864]/50" />
-              
-              <div className="flex flex-col items-center justify-center gap-3">
-                <span className="text-gray-500 text-lg line-through">
-                  De R$ 2.847/mês
-                </span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-gray-300 text-lg">Por apenas</span>
-                  <span className="text-4xl md:text-5xl font-black text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    R$ 99,87
-                  </span>
-                  <span className="text-gray-400">/mês</span>
-                </div>
-                <p className="text-sm text-gray-400 mt-1">
-                  💡 <span className="text-white font-medium">Menos que 1 green paga o mês inteiro</span>
-                </p>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+          </div>
       </div>
     </section>
   );
