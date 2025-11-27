@@ -27,46 +27,44 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-black text-white mb-8 leading-[1.1]"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tighter leading-tight"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Pare de tentar vencer a casa sozinho analisando estatísticas no{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              FlashScore
-            </span>
+            Terceirize sua análise. Pare de lutar contra o mercado sozinho.
           </motion.h1>
           
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-gray-300 mb-10 leading-relaxed font-light"
+            className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Você se sente perdido em dezenas de grupos de Telegram e desperdiça horas tentando encontrar um padrão? <span className="text-white font-semibold">Pare</span>.
+            Chega de perder horas filtrando ruído e 'achismos'. Nosso ecossistema une{' '}
+            <span className="text-[#33b864] font-bold">IA Preditiva + 20 Traders de Elite</span>{' '}
+            para processar o mercado em segundos.
           </motion.p>
           
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-lg md:text-xl text-gray-300 mb-10 leading-relaxed font-light"
+            className="text-base md:text-lg text-gray-300 mt-4 mb-8 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            O Ocean Signal não é um 'grupo de dicas'. Somos uma empresa de inteligência. Unimos{' '}
-            <span className="text-[#33b864] font-bold">20 Traders</span> com 7 anos de mercado +{' '}
-            <span className="text-[#33b864] font-bold">IA de Reconhecimento de Padrões</span> para filtrar os últimos 10 jogos de cada time. Nós fazemos o trabalho duro. Você recebe a{' '}
-            <span className="text-[#33b864] font-bold">decisão pronta</span> com até 93% de assertividade técnica.
+            Nós fazemos o trabalho pesado. Você recebe a decisão pronta, validada e com até{' '}
+            <span className="text-white font-bold">93% de assertividade</span> técnica.
           </motion.p>
           
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-col items-center lg:items-start gap-4"
           >
             <Link href="/auth">
               <button
-                className="group relative px-8 md:px-12 py-5 md:py-6 bg-[#33b864] text-black font-black text-lg md:text-xl rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
+                className="group relative px-8 md:px-10 py-5 md:py-6 bg-[#33b864] text-black font-black text-base md:text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
                 data-testid="button-access-ai"
               >
                 <motion.div
@@ -81,11 +79,14 @@ export function HeroShot() {
                   }}
                 />
                 <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  <Zap className="w-6 h-6" />
-                  ACESSAR GRÁTIS
+                  <Zap className="w-5 h-5" />
+                  QUERO RECEBER AS ENTRADAS PRONTAS
                 </span>
               </button>
             </Link>
+            <p className="text-sm text-gray-500 font-light" style={{ fontFamily: 'Sora, sans-serif' }}>
+              Acesso imediato. 15 dias de degustação gratuita.
+            </p>
           </motion.div>
         </div>
         
