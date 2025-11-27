@@ -1,11 +1,20 @@
-import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useEffect } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
 import bilheteReal from '@assets/image_1764216831721.png';
+import bet365Screen from '@assets/image_1764216915926.png';
 
 export function TechSolution() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const [showBet365, setShowBet365] = useState(false);
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowBet365(prev => !prev);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
   
   return (
     <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212] overflow-hidden">
@@ -134,14 +143,47 @@ export function TechSolution() {
                 <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
                 
                 {/* Phone frame */}
-                <div className="relative w-[280px] md:w-[320px] bg-black rounded-[32px] p-2 border-4 border-gray-800 shadow-2xl">
-                  {/* Screen with real screenshot */}
-                  <img
-                    src={bilheteReal}
-                    alt="Bilhete Ocean Signal"
-                    className="w-full h-auto rounded-[24px]"
-                    data-testid="img-bilhete-demo"
-                  />
+                <div className="relative w-[280px] md:w-[320px] bg-black rounded-[32px] p-2 border-4 border-gray-800 shadow-2xl overflow-hidden">
+                  {/* Animated screens */}
+                  <AnimatePresence mode="wait">
+                    {!showBet365 ? (
+                      <motion.div
+                        key="bilhete"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 50 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <img
+                          src={bilheteReal}
+                          alt="Bilhete Ocean Signal"
+                          className="w-full h-auto rounded-[24px]"
+                          data-testid="img-bilhete-demo"
+                        />
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#33b864] text-black text-xs font-bold px-4 py-2 rounded-full animate-pulse">
+                          Copiando bilhete...
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="bet365"
+                        initial={{ opacity: 0, x: -50 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 50 }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <img
+                          src={bet365Screen}
+                          alt="Bet365 - Colando bilhete"
+                          className="w-full h-auto rounded-[24px]"
+                          data-testid="img-bet365-demo"
+                        />
+                        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#ffdf1b] text-black text-xs font-bold px-4 py-2 rounded-full">
+                          Bilhete colado!
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               </motion.div>
             </div>
