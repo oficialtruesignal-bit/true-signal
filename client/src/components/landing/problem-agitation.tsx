@@ -74,11 +74,6 @@ export function ProblemAgitation() {
                   </motion.div>
                 ))}
               </div>
-              
-              <div className="mt-8 p-4 bg-red-950/30 border border-red-900/30 rounded-xl">
-                <div className="text-sm text-red-400 font-semibold mb-1">Resultado Médio:</div>
-                <div className="text-3xl font-black text-red-400 font-mono">-R$ 2.847/mês</div>
-              </div>
             </div>
           </motion.div>
           
@@ -118,11 +113,6 @@ export function ProblemAgitation() {
                     <span className="text-gray-300">{item.text}</span>
                   </motion.div>
                 ))}
-              </div>
-              
-              <div className="mt-8 p-4 bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl shadow-lg shadow-[#33b864]/20">
-                <div className="text-sm text-[#33b864] font-semibold mb-1">Resultado Médio:</div>
-                <div className="text-3xl font-black text-[#33b864] font-mono">+R$ 4.638/mês</div>
               </div>
             </div>
           </motion.div>
