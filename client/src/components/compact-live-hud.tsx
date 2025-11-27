@@ -39,32 +39,36 @@ export function CompactLiveHud() {
     return () => clearTimeout(initialTimeout);
   }, []);
   
-  // Simular investidores online (oscila entre 312-612)
-  const [onlineUsers, setOnlineUsers] = useState(450);
+  // Usuários online oscila entre 254-403 com movimento suave
+  const [onlineUsers, setOnlineUsers] = useState(330);
+  const [direction, setDirection] = useState<'up' | 'down'>('up');
   
   useEffect(() => {
-    const oscillate = () => {
+    const interval = setInterval(() => {
       setOnlineUsers(prev => {
-        const variation = Math.floor(Math.random() * 40) - 15;
-        const newValue = prev + variation;
-        return Math.max(312, Math.min(612, newValue));
+        // Variação aleatória entre 15 e 35
+        const step = Math.floor(Math.random() * 20) + 15;
+        
+        if (direction === 'up') {
+          const newValue = prev + step;
+          if (newValue >= 403) {
+            setDirection('down');
+            return 403;
+          }
+          return newValue;
+        } else {
+          const newValue = prev - step;
+          if (newValue <= 254) {
+            setDirection('up');
+            return 254;
+          }
+          return newValue;
+        }
       });
-    };
+    }, 30000); // A cada 30 segundos
     
-    const getRandomInterval = () => Math.random() * 2000 + 3000;
-    
-    let timeoutId: number;
-    const scheduleNext = () => {
-      timeoutId = window.setTimeout(() => {
-        oscillate();
-        scheduleNext();
-      }, getRandomInterval());
-    };
-    
-    scheduleNext();
-    
-    return () => clearTimeout(timeoutId);
-  }, []);
+    return () => clearInterval(interval);
+  }, [direction]);
   
   // Calcular crescimento da banca em %
   const bankrollGrowth = bankroll.initialBankroll > 0 
