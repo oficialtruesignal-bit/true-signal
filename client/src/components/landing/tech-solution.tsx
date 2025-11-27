@@ -1,7 +1,7 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Cpu, Zap, Target, CheckCircle2, Globe, Users, Smartphone, Play } from 'lucide-react';
-import appDemoVideo from '@assets/generated_videos/ocean_signal_app_demo_video.mp4';
+import { Zap, Globe, Users, Smartphone } from 'lucide-react';
+import bilheteReal from '@assets/image_1764216831721.png';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -125,14 +125,25 @@ export function TechSolution() {
             </div>
             
             <div className="flex justify-center w-full">
-              <video
-                src={appDemoVideo}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full max-w-[400px] md:max-w-[450px] h-auto rounded-[24px]"
-              />
+              <motion.div
+                animate={{ y: [0, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                className="relative"
+              >
+                {/* Phone glow effect */}
+                <div className="absolute inset-0 bg-[#33b864]/30 rounded-[32px] blur-2xl scale-105" />
+                
+                {/* Phone frame */}
+                <div className="relative w-[280px] md:w-[320px] bg-black rounded-[32px] p-2 border-4 border-gray-800 shadow-2xl">
+                  {/* Screen with real screenshot */}
+                  <img
+                    src={bilheteReal}
+                    alt="Bilhete Ocean Signal"
+                    className="w-full h-auto rounded-[24px]"
+                    data-testid="img-bilhete-demo"
+                  />
+                </div>
+              </motion.div>
             </div>
           </motion.div>
           
