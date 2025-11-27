@@ -83,30 +83,27 @@ export function OfferPack() {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="mt-8 bg-gradient-to-br from-white/5 to-black/50 border border-[#33b864]/20 rounded-2xl p-6 md:p-8"
+          className="mt-12 text-center"
         >
-          <div className="flex items-start gap-4">
-            {/* Shield icon */}
-            <div className="w-16 h-16 flex-shrink-0 rounded-2xl bg-gradient-to-br from-[#33b864]/20 to-[#33b864]/5 border border-[#33b864]/30 flex items-center justify-center">
-              <Shield className="w-8 h-8 text-[#33b864]" />
-            </div>
-            
-            <div className="flex-1">
-              <h4 className="text-xl font-black text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
-                O risco é 100% nosso
-              </h4>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                Você tem <span className="text-[#33b864] font-bold">15 DIAS</span> de teste. Se não lucrar, se não gostar do design ou se simplesmente mudar de ideia, nós devolvemos cada centavo. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
-              </p>
-            </div>
+          {/* Shield icon centered */}
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-[#33b864]/20 to-[#33b864]/5 border border-[#33b864]/30 flex items-center justify-center mb-6">
+            <Shield className="w-8 h-8 text-[#33b864]" />
           </div>
           
-          {/* Guarantee badges */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-6">
+          <h4 className="text-2xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
+            O risco é 100% nosso
+          </h4>
+          
+          <p className="text-gray-400 text-base leading-relaxed max-w-lg mx-auto mb-8">
+            Você tem <span className="text-[#33b864] font-bold">15 DIAS</span> de teste. Se não lucrar, se não gostar ou mudar de ideia, devolvemos cada centavo. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
+          </p>
+          
+          {/* Guarantee badges - 2x2 grid with more spacing */}
+          <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
             {['15 dias de teste', 'Reembolso total', 'Sem perguntas', 'Risco zero'].map((text, i) => (
-              <div key={i} className="flex items-center gap-2 p-3 bg-black/30 border border-[#33b864]/10 rounded-xl">
-                <CheckCircle2 className="w-4 h-4 text-[#33b864] flex-shrink-0" />
-                <span className="text-xs text-gray-300">{text}</span>
+              <div key={i} className="flex items-center justify-center gap-2 py-3">
+                <CheckCircle2 className="w-5 h-5 text-[#33b864]" />
+                <span className="text-sm text-gray-300">{text}</span>
               </div>
             ))}
           </div>
