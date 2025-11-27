@@ -4,8 +4,12 @@ import { storage } from "./storage";
 import { insertTipSchema, insertProfileSchema } from "@shared/schema";
 import axios from "axios";
 import { mercadoPagoService } from "./mercadopago-service";
+import OpenAI from "openai";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
+const openai = OPENAI_API_KEY ? new OpenAI({ apiKey: OPENAI_API_KEY }) : null;
 
 if (!FOOTBALL_API_KEY) {
   console.warn('⚠️ FOOTBALL_API_KEY NOT FOUND - check environment variables');
@@ -317,6 +321,108 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json({ tips: allTips });
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
+  // AI Bet Slip Scanner (OpenAI Vision)
+  // ============================================
+  app.post("/api/scan-ticket", async (req, res) => {
+    try {
+      const { imageBase64 } = req.body;
+
+      if (!imageBase64) {
+        return res.status(400).json({ error: "Image is required" });
+      }
+
+      if (!openai) {
+        return res.status(503).json({ 
+          error: "OpenAI not configured",
+          message: "A chave da OpenAI não está configurada. Preencha o bilhete manualmente."
+        });
+      }
+
+      console.log("🔍 Scanning bet slip with AI Vision...");
+
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Analise esta imagem de bilhete de aposta esportiva.
+                
+Extraia as seguintes informações em formato JSON estrito:
+{
+  "bets": [
+    {
+      "home_team": "Nome do time da casa",
+      "away_team": "Nome do time visitante", 
+      "market": "Tipo de aposta (ex: Over 2.5 Gols, Ambas Marcam, Vitória Casa)",
+      "odd": 1.85,
+      "league": "Nome da liga/campeonato"
+    }
+  ],
+  "total_odd": 2.50,
+  "is_multiple": false
+}
+
+REGRAS:
+- Se houver múltiplas apostas (combinada/múltipla), liste todas no array "bets" e some as odds em "total_odd"
+- Se for aposta simples, retorne apenas 1 item no array
+- "is_multiple" = true se tiver mais de 1 aposta
+- Extraia a odd EXATA que aparece no print
+- Se não conseguir ler algum campo, use null
+- Responda APENAS com o JSON, sem texto adicional`
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: imageBase64.startsWith('data:') ? imageBase64 : `data:image/jpeg;base64,${imageBase64}`,
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 1000,
+      });
+
+      const content = response.choices[0]?.message?.content || "";
+      console.log("🤖 AI Response:", content);
+
+      // Parse JSON from response
+      let parsed;
+      try {
+        // Try to extract JSON from the response
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          parsed = JSON.parse(jsonMatch[0]);
+        } else {
+          throw new Error("No JSON found in response");
+        }
+      } catch (parseError) {
+        console.error("Failed to parse AI response:", parseError);
+        return res.status(422).json({ 
+          error: "Failed to parse bet slip",
+          message: "A IA não conseguiu interpretar o bilhete. Preencha manualmente.",
+          raw: content
+        });
+      }
+
+      console.log("✅ Parsed bet slip:", parsed);
+      return res.json({ 
+        success: true,
+        data: parsed
+      });
+
+    } catch (error: any) {
+      console.error("Scan ticket error:", error);
+      return res.status(500).json({ 
+        error: "AI scan failed",
+        message: error.message || "Erro ao processar imagem"
+      });
     }
   });
 

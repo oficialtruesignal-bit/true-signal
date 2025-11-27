@@ -16,7 +16,8 @@ import { Signal } from "@/lib/mock-data";
 import { MarketSelector } from "@/components/admin/market-selector";
 import { imageUploadService } from "@/lib/image-upload-service";
 import { useState, useRef } from "react";
-import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, ScanLine, Loader2, Sparkles, Check } from "lucide-react";
+import axios from "axios";
 
 const formSchema = z.object({
   league: z.string().min(1),
@@ -33,24 +34,35 @@ const formSchema = z.object({
   imageUrl: z.string().optional().nullable(),
 });
 
-const imageFormSchema = z.object({
-  betLink: z.string().url().optional().or(z.literal('')),
-  imageUrl: z.string().min(1, "Imagem obrigatória"),
-});
-
 interface SignalFormProps {
   onAdd: (signal: any) => void;
   initialData?: Partial<Signal>;
 }
 
+interface ScannedBet {
+  home_team: string;
+  away_team: string;
+  market: string;
+  odd: number;
+  league: string;
+}
+
+interface ScanResult {
+  bets: ScannedBet[];
+  total_odd: number;
+  is_multiple: boolean;
+}
+
 export function SignalForm({ onAdd, initialData }: SignalFormProps) {
-  const [isImageMode, setIsImageMode] = useState(false);
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanResult, setScanResult] = useState<ScanResult | null>(null);
+  const [scanError, setScanError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(isImageMode ? imageFormSchema : formSchema),
+    resolver: zodResolver(formSchema),
     defaultValues: {
       league: initialData?.league || "",
       homeTeam: initialData?.homeTeam || "",
@@ -64,6 +76,15 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       imageUrl: "",
     },
   });
+
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+    });
+  };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,60 +100,80 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       return;
     }
 
+    setScanError(null);
+    setScanResult(null);
+
+    // 1. Upload da imagem para o storage
     setIsUploading(true);
-    const result = await imageUploadService.uploadTipImage(file);
+    const uploadResult = await imageUploadService.uploadTipImage(file);
+    
+    if (!uploadResult.success || !uploadResult.url) {
+      setIsUploading(false);
+      toast({ title: uploadResult.error || "Erro no upload", variant: "destructive" });
+      return;
+    }
+    
+    setUploadedImageUrl(uploadResult.url);
+    form.setValue('imageUrl', uploadResult.url);
     setIsUploading(false);
 
-    if (result.success && result.url) {
-      setUploadedImageUrl(result.url);
-      form.setValue('imageUrl', result.url);
-      toast({ title: "Imagem enviada com sucesso!", className: "bg-primary/10 border-primary/20 text-primary" });
-    } else {
-      toast({ title: result.error || "Erro no upload", variant: "destructive" });
+    // 2. Converter para base64 e enviar para IA escanear
+    setIsScanning(true);
+    toast({ 
+      title: "🤖 IA está lendo seu bilhete...", 
+      className: "bg-primary/10 border-primary/20 text-primary" 
+    });
+
+    try {
+      const base64 = await convertToBase64(file);
+      
+      // Chama o backend para escanear (a API key está segura no servidor)
+      const response = await axios.post('/api/scan-ticket', { 
+        imageBase64: base64 
+      });
+
+      if (response.data.success && response.data.data) {
+        const data = response.data.data as ScanResult;
+        setScanResult(data);
+
+        // Auto-preenche o formulário com os dados escaneados
+        if (data.bets && data.bets.length > 0) {
+          const firstBet = data.bets[0];
+          
+          form.setValue('league', firstBet.league || 'Liga Detectada');
+          form.setValue('homeTeam', firstBet.home_team || '');
+          form.setValue('awayTeam', firstBet.away_team || '');
+          form.setValue('market', firstBet.market || '');
+          form.setValue('odd', data.total_odd?.toString() || firstBet.odd?.toString() || '');
+
+          toast({ 
+            title: "✨ Bilhete lido com sucesso!", 
+            description: data.is_multiple 
+              ? `${data.bets.length} apostas detectadas - Odd Total: ${data.total_odd}`
+              : `${firstBet.home_team} x ${firstBet.away_team}`,
+            className: "bg-primary/10 border-primary/20 text-primary" 
+          });
+        }
+      }
+    } catch (error: any) {
+      console.error('Scan error:', error);
+      const errorMessage = error.response?.data?.message || 'Erro ao escanear. Preencha manualmente.';
+      setScanError(errorMessage);
+      toast({ 
+        title: "IA não conseguiu ler", 
+        description: errorMessage,
+        variant: "destructive" 
+      });
+    } finally {
+      setIsScanning(false);
     }
   };
 
   const removeImage = () => {
     setUploadedImageUrl(null);
+    setScanResult(null);
+    setScanError(null);
     form.setValue('imageUrl', '');
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    if (isImageMode) {
-      const newSignal = {
-        league: "Bilhete Pronto",
-        homeTeam: "Via Imagem",
-        awayTeam: "Via Imagem",
-        market: "Ver Print",
-        odd: 1.00, // Odd fixa - a odd real está no print
-        betLink: values.betLink || undefined,
-        imageUrl: uploadedImageUrl,
-        status: "pending" as const,
-        isLive: false,
-      };
-      
-      onAdd(newSignal);
-    } else {
-      const newSignal = {
-        league: values.league,
-        homeTeam: values.homeTeam,
-        awayTeam: values.awayTeam,
-        homeTeamLogo: values.homeTeamLogo || undefined,
-        awayTeamLogo: values.awayTeamLogo || undefined,
-        fixtureId: values.fixtureId || undefined,
-        market: values.market,
-        odd: parseFloat(values.odd),
-        betLink: values.betLink || undefined,
-        status: "pending" as const,
-        isLive: false,
-      };
-      
-      onAdd(newSignal);
-    }
-    
     form.reset({
       league: initialData?.league || "",
       homeTeam: initialData?.homeTeam || "",
@@ -145,8 +186,45 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       betLink: "",
       imageUrl: "",
     });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    const newSignal = {
+      league: values.league,
+      homeTeam: values.homeTeam,
+      awayTeam: values.awayTeam,
+      homeTeamLogo: values.homeTeamLogo || undefined,
+      awayTeamLogo: values.awayTeamLogo || undefined,
+      fixtureId: values.fixtureId || undefined,
+      market: values.market,
+      odd: parseFloat(values.odd),
+      betLink: values.betLink || undefined,
+      imageUrl: uploadedImageUrl || undefined,
+      status: "pending" as const,
+      isLive: false,
+    };
+    
+    onAdd(newSignal);
+    
+    form.reset({
+      league: "",
+      homeTeam: "",
+      awayTeam: "",
+      homeTeamLogo: "",
+      awayTeamLogo: "",
+      fixtureId: "",
+      market: "",
+      odd: "",
+      betLink: "",
+      imageUrl: "",
+    });
     
     setUploadedImageUrl(null);
+    setScanResult(null);
+    setScanError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -161,198 +239,206 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         
-        <div className="flex gap-2 p-1 bg-black/40 rounded-xl border border-primary/10">
-          <button
-            type="button"
-            onClick={() => { setIsImageMode(false); removeImage(); }}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all ${
-              !isImageMode 
-                ? 'bg-primary text-black' 
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            Digitar Bilhete
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsImageMode(true)}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-              isImageMode 
-                ? 'bg-primary text-black' 
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <ImageIcon className="w-4 h-4" />
-            Subir Print
-          </button>
+        {/* DROPZONE MÁGICA - Scanner de Bilhete */}
+        <div className="space-y-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          
+          {uploadedImageUrl ? (
+            <div className="relative rounded-xl overflow-hidden border-2 border-primary/50 bg-primary/5">
+              <img 
+                src={uploadedImageUrl} 
+                alt="Preview" 
+                className="w-full h-48 object-cover"
+              />
+              <button
+                type="button"
+                onClick={removeImage}
+                className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+              
+              {/* Status do Scan */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-3">
+                {isScanning ? (
+                  <div className="flex items-center gap-2 text-primary">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="text-sm font-medium">IA está lendo o bilhete...</span>
+                  </div>
+                ) : scanResult ? (
+                  <div className="flex items-center gap-2 text-primary">
+                    <Check className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      {scanResult.is_multiple 
+                        ? `${scanResult.bets.length} apostas • Odd ${scanResult.total_odd}`
+                        : 'Bilhete lido com sucesso!'
+                      }
+                    </span>
+                  </div>
+                ) : scanError ? (
+                  <div className="flex items-center gap-2 text-yellow-500">
+                    <span className="text-sm">⚠️ {scanError}</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <span className="text-sm">Imagem carregada</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading || isScanning}
+              className="w-full h-32 border-2 border-dashed border-primary/40 bg-primary/5 rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary/70 hover:bg-primary/10 transition-all cursor-pointer group"
+            >
+              {isUploading ? (
+                <>
+                  <Loader2 className="w-8 h-8 text-primary animate-spin" />
+                  <span className="text-sm text-gray-400">Enviando...</span>
+                </>
+              ) : (
+                <>
+                  <div className="relative">
+                    <ScanLine className="w-10 h-10 text-primary group-hover:scale-110 transition-transform" />
+                    <Sparkles className="w-4 h-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+                  </div>
+                  <span className="text-sm text-gray-300 font-medium">
+                    Arraste o Print da Bet aqui
+                  </span>
+                  <span className="text-xs text-primary">
+                    🪄 A IA preenche tudo automaticamente
+                  </span>
+                </>
+              )}
+            </button>
+          )}
         </div>
 
-        {isImageMode ? (
-          <>
-            <div className="space-y-4">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                className="hidden"
-              />
-              
-              {uploadedImageUrl ? (
-                <div className="relative rounded-xl overflow-hidden border border-primary/30">
-                  <img 
-                    src={uploadedImageUrl} 
-                    alt="Preview" 
-                    className="w-full h-48 object-cover"
+        {/* Formulário Editável (preenchido pela IA ou manualmente) */}
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="league"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Competição</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Ex: Premier League" 
+                    {...field} 
+                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
                   />
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="absolute top-2 right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                  <div className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-sm px-2 py-1 rounded text-xs text-primary">
-                    Imagem pronta
-                  </div>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="w-full h-40 border-2 border-dashed border-primary/30 rounded-xl flex flex-col items-center justify-center gap-3 hover:border-primary/50 hover:bg-primary/5 transition-all"
-                >
-                  {isUploading ? (
-                    <>
-                      <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                      <span className="text-sm text-gray-400">Enviando...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-8 h-8 text-primary" />
-                      <span className="text-sm text-gray-400">Clique para enviar o print do bilhete</span>
-                      <span className="text-xs text-gray-500">PNG, JPG até 5MB</span>
-                    </>
-                  )}
-                </button>
-              )}
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="odd"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Odd Total</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="1.90" 
+                    {...field} 
+                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="homeTeam"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Time Casa</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Ex: Arsenal" 
+                    {...field} 
+                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="awayTeam"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-white">Time Fora</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="Ex: Chelsea" 
+                    {...field} 
+                    className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-              <FormField
-                control={form.control}
-                name="betLink"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="https://..." 
-                        {...field} 
-                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="league"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Competição</FormLabel>
-                    <FormControl>
-                      <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="odd"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Odd</FormLabel>
-                    <FormControl>
-                      <Input placeholder="1.90" {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <FormField
-                control={form.control}
-                name="homeTeam"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Casa</FormLabel>
-                    <FormControl>
-                      <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="awayTeam"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Fora</FormLabel>
-                    <FormControl>
-                      <Input {...field} readOnly className="bg-black/20 border-primary/10 text-muted-foreground" />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+        <FormField
+          control={form.control}
+          name="market"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Mercado (Entrada)</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Ex: Over 2.5 Gols, Ambas Marcam" 
+                  {...field} 
+                  className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-            <FormField
-              control={form.control}
-              name="market"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Mercado (Entrada)</FormLabel>
-                  <FormControl>
-                    <MarketSelector value={field.value} onChange={field.onChange} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="betLink"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://..." {...field} className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </>
-        )}
+        <FormField
+          control={form.control}
+          name="betLink"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-white">Link da Bet (Opcional)</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="https://..." 
+                  {...field} 
+                  className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary" 
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <Button 
           type="submit" 
-          disabled={isImageMode && !uploadedImageUrl}
+          disabled={isUploading || isScanning}
           className="w-full bg-primary hover:bg-primary-dark text-black font-bold shadow-glow disabled:opacity-50"
         >
-          {isImageMode ? 'Publicar Print' : 'Confirmar Sinal'}
+          {isScanning ? 'Aguarde a IA...' : 'Publicar Sinal'}
         </Button>
       </form>
     </Form>

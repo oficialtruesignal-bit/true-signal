@@ -1,0 +1,80 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: VISÃO COMPUTACIONAL (OCR DE APOSTAS) 🟢
+
+Irmão, você subiu o nível para o teto agora. O que você quer é OCR (Reconhecimento Óptico de Caracteres) com Inteligência Artificial.
+
+Para o sistema "ler" uma imagem (que para o computador é só um monte de pixels coloridos) e entender o que é "Time", o que é "Odd" e o que é "Mercado", nós não podemos usar código simples. Precisamos de um Cérebro Visual.
+
+A Solução de Bilhões: Vamos integrar a OpenAI Vision API (GPT-4o) no seu Admin.
+
+Você sobe o print.
+
+O sistema envia para a IA.
+
+A IA "lê" o bilhete e devolve o JSON prontinho.
+
+O formulário se preenche sozinho magicamente.
+
+Se você não tiver chave da OpenAI, o código ficará pronto esperando por ela, e você terá que preencher manualmente enquanto isso.
+
+Aqui está o Prompt para criar essa funcionalidade de "Auto-Preenchimento Mágico".
+
+PROMPT MESTRE: AI BET SLIP SCANNER (AUTO-FILL)
+ROLE: Senior AI Engineer & Fullstack Developer.
+
+TASK: Implementar a funcionalidade de "Leitura Automática de Bilhete" no formulário de criação de Tips (CreateTipForm.tsx). OBJETIVO: Ao fazer upload de uma imagem, o sistema deve processá-la usando IA (OpenAI Vision) para extrair automaticamente: Times, Mercado e Odd, preenchendo os campos do formulário.
+
+1. BACKEND: O SERVIÇO DE VISÃO (imageScanner.ts)
+Crie uma Server Function (ou API Route) que recebe a imagem e chama a OpenAI.
+
+Rota: /api/scan-ticket
+
+Lógica:
+
+Recebe a imagem em base64.
+
+Envia para o modelo gpt-4o com o prompt:
+
+"Analise esta imagem de bilhete de aposta. Extraia em JSON estrito: { home_team, away_team, market (ex: 'Over 2.5'), odd (number), league }."
+
+Retorna o JSON limpo para o Frontend.
+
+Dependência: npm install openai. Env Var: OPENAI_API_KEY (Adicionar aos Secrets).
+
+2. FRONTEND: O BOTÃO DE UPLOAD INTELIGENTE
+Atualize o CreateTipForm para ter uma "Dropzone Mágica".
+
+Visual: Uma área tracejada grande no topo do formulário.
+
+Texto: "Arraste o Print da Bet aqui para preencher tudo automaticamente 🪄".
+
+Comportamento (handleImageUpload):
+
+Ao soltar a imagem, mostre um Spinner Futurista: "A IA está lendo seu bilhete..."
+
+Envie para a API /api/scan-ticket.
+
+Auto-Fill: Ao receber a resposta, use setValue (do React Hook Form) para preencher os campos:
+
+Time Casa
+
+Time Fora
+
+Mercado (Tente dar match no texto do Select)
+
+Odd
+
+Link da Imagem (Já salva a imagem no Storage também).
+
+3. FALLBACK MANUAL (SEGURANÇA)
+A IA pode falhar ou o usuário pode estar sem créditos.
+
+O formulário deve continuar editável.
+
+Se a IA preencher errado (ex: leu "2.50" como "2.80"), o Admin pode clicar no campo e corrigir manualmente antes de salvar.
+
+4. DESIGN DA ÁREA DE UPLOAD
+Estilo: border-2 border-dashed border-[#33b864]/50 bg-[#33b864]/5 rounded-xl p-8 text-center cursor-pointer hover:bg-[#33b864]/10 transition-colors.
+
+Ícone: Uma câmera ou scanner (ScanLine do Lucide).
+
+COMANDO: Implemente a integração com OpenAI Vision para leitura de bilhetes. Transforme o upload de imagem no gatilho que preenche o formulário, economizando tempo do Admin.
