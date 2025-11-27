@@ -77,16 +77,16 @@ export function AIScanner() {
 
   return (
     <div className="bg-[#0a0a0a] border border-[#222] rounded-lg p-4 overflow-hidden">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Brain className="w-4 h-4 text-primary animate-pulse" />
-          <h3 className="text-[10px] font-bold text-white uppercase tracking-wide whitespace-nowrap">
-            Scanning Probabilities
+      <div className="flex items-center justify-between mb-2">
+        <div className="flex items-center gap-1">
+          <Brain className="w-3 h-3 text-primary animate-pulse" />
+          <h3 className="text-[7px] font-bold text-white uppercase tracking-tight">
+            Scanning
           </h3>
         </div>
         <div className="flex items-center gap-1">
           <div className="w-1.5 h-1.5 bg-primary rounded-full animate-ping" />
-          <span className="text-[8px] text-primary font-mono">LIVE</span>
+          <span className="text-[7px] text-primary font-mono">LIVE</span>
         </div>
       </div>
 
