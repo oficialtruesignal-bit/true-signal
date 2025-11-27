@@ -1,6 +1,5 @@
 import { MatrixRain } from '@/components/landing/matrix-rain';
 import { HeroShot } from '@/components/landing/hero-shot';
-import { FinancialTicker } from '@/components/landing/financial-ticker';
 import { ProblemAgitation } from '@/components/landing/problem-agitation';
 import { TechSolution } from '@/components/landing/tech-solution';
 import { ProfitSimulator } from '@/components/landing/profit-simulator';
@@ -24,9 +23,6 @@ export default function Landing() {
       <div className="relative z-10">
         {/* 1. HERO SECTION (A PROMESSA IMPACTANTE) */}
         <HeroShot />
-        
-        {/* 1.5. FINANCIAL TICKER (Bloomberg-style live data) */}
-        <FinancialTicker />
         
         {/* 2. PROBLEMA & AGITAÇÃO (O "INFERNO") */}
         <ProblemAgitation />
