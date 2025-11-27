@@ -75,6 +75,41 @@ export interface FixtureStatistics {
   saves: number;
 }
 
+// Team Season Statistics (for pre-game)
+export interface TeamSeasonStats {
+  team: {
+    id: number;
+    name: string;
+    logo: string;
+  };
+  league: {
+    id: number;
+    name: string;
+    season: number;
+  };
+  fixtures: {
+    played: { home: number; away: number; total: number };
+    wins: { home: number; away: number; total: number };
+    draws: { home: number; away: number; total: number };
+    loses: { home: number; away: number; total: number };
+  };
+  goals: {
+    for: {
+      total: { home: number; away: number; total: number };
+      average: { home: string; away: string; total: string };
+    };
+    against: {
+      total: { home: number; away: number; total: number };
+      average: { home: string; away: string; total: string };
+    };
+  };
+  cards: {
+    yellow: Record<string, { total: number | null; percentage: string | null }>;
+    red: Record<string, { total: number | null; percentage: string | null }>;
+  };
+  form: string;
+}
+
 // API-Football Response Types
 interface APIFootballResponse<T> {
   response: T;
@@ -266,6 +301,25 @@ export const footballService = {
         }
       }
       return [];
+    }
+  },
+
+  async getTeamStatistics(teamId: number, leagueId: number, season: number): Promise<TeamSeasonStats | null> {
+    try {
+      console.log(`📊 [API-Football] Fetching team statistics for team ${teamId}...`);
+      
+      const response = await axios.get<APIFootballResponse<TeamSeasonStats>>(
+        `/api/football/teams/statistics`,
+        { params: { team: teamId, league: leagueId, season } }
+      );
+
+      const stats = response.data.response;
+      console.log(`✅ [API-Football] Team statistics found`);
+
+      return stats || null;
+    } catch (error) {
+      console.error('❌ [API-Football] Error fetching team statistics:', error);
+      return null;
     }
   },
 };

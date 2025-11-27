@@ -1,12 +1,13 @@
 import { Layout } from "@/components/layout";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQueries } from "@tanstack/react-query";
-import { Calendar, AlertCircle, Clock, Search, X } from "lucide-react";
+import { Calendar, AlertCircle, Clock, Search, X, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, addDays, isAfter, addMinutes, isSameDay } from "date-fns";
 import { ptBR, enUS, es, fr, it, zhCN } from "date-fns/locale";
 import { useMemo, useState } from "react";
 import { useLanguage } from "@/hooks/use-language";
+import { PregameStatsModal } from "@/components/pregame-stats-modal";
 
 // Map language to date-fns locale
 const localeMap = {
@@ -24,6 +25,7 @@ export default function PreGamePage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [selectedDateIndex, setSelectedDateIndex] = useState<number | null>(null); // null = todos os dias
+  const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   
   // Today + Next 6 days (7 days window)
   const dates = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
@@ -229,10 +231,11 @@ export default function PreGamePage() {
                 {/* Jogos do dia */}
                 <div className="space-y-3">
                   {matchesForDate.map((match) => (
-                    <div
+                    <button
                       key={match.fixture.id}
+                      onClick={() => setSelectedMatch(match)}
                       data-testid={`match-pregame-${match.fixture.id}`}
-                      className="bg-card border border-primary/10 p-5 rounded-xl hover:border-primary/20 transition-colors"
+                      className="w-full text-left bg-card border border-primary/10 p-5 rounded-xl hover:border-primary/30 hover:bg-card/80 transition-all cursor-pointer group"
                     >
                       {/* League & Time */}
                       <div className="flex justify-between items-center mb-3">
@@ -240,6 +243,7 @@ export default function PreGamePage() {
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Clock className="w-3 h-3" />
                           <span>{format(new Date(match.fixture.date), 'HH:mm')}</span>
+                          <ChevronRight className="w-4 h-4 text-primary/50 group-hover:text-primary transition-colors" />
                         </div>
                       </div>
 
@@ -273,7 +277,7 @@ export default function PreGamePage() {
                           />
                         </div>
                       </div>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -281,6 +285,13 @@ export default function PreGamePage() {
           })}
         </div>
       )}
+
+      {/* Pre-game Stats Modal */}
+      <PregameStatsModal 
+        match={selectedMatch}
+        open={selectedMatch !== null}
+        onClose={() => setSelectedMatch(null)}
+      />
     </Layout>
   );
 }

@@ -94,6 +94,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Team Statistics - Season averages (goals, cards, form, etc.)
+  app.get("/api/football/teams/statistics", async (req, res) => {
+    try {
+      const { team, league, season } = req.query;
+      
+      if (!team || !league || !season) {
+        return res.status(400).json({ error: "team, league and season parameters are required" });
+      }
+      
+      const response = await axios.get("https://v3.football.api-sports.io/teams/statistics", {
+        params: { team, league, season },
+        headers: {
+          "x-apisports-key": FOOTBALL_API_KEY,
+        },
+      });
+      return res.json(response.data);
+    } catch (error: any) {
+      console.error(`[API-Football] Error fetching team statistics:`, error.message);
+      if (axios.isAxiosError(error) && error.response) {
+        console.error("[API-Football] Response Status:", error.response.status);
+        console.error("[API-Football] Response Data:", error.response.data);
+      }
+      return res.status(500).json({ error: "Failed to fetch team statistics", details: error.message });
+    }
+  });
+
   // Auth Routes
   app.post("/api/auth/register", async (req, res) => {
     try {
