@@ -20,9 +20,9 @@ export function FinalCTA() {
           className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-4 leading-tight"
           style={{ fontFamily: 'Sora, sans-serif' }}
         >
-          Pronto para{' '}
+          Confie em quem{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-            terceirizar sua análise?
+            domina o mercado
           </span>
         </motion.h2>
         
