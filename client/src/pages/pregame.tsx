@@ -225,21 +225,23 @@ export default function PreGamePage() {
             
             return (
               <div key={date.toISOString()}>
-                {/* Separador de data */}
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-primary uppercase">
-                        {format(date, 'EEE', { locale: dateLocale })}
-                      </span>
-                      <span className="text-xs text-muted-foreground">•</span>
-                      <span className="text-xs font-bold text-white">
-                        {format(date, 'dd/MM')}
-                      </span>
+                {/* Separador de data - só mostra quando "Todos" está selecionado */}
+                {selectedDateIndex === null && (
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-1.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-primary uppercase">
+                          {format(date, 'EEE', { locale: dateLocale })}
+                        </span>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <span className="text-xs font-bold text-white">
+                          {format(date, 'dd/MM')}
+                        </span>
+                      </div>
                     </div>
+                    <div className="flex-1 h-px bg-white/5"></div>
                   </div>
-                  <div className="flex-1 h-px bg-white/5"></div>
-                </div>
+                )}
                 
                 {/* Jogos do dia */}
                 <div className="space-y-3">
