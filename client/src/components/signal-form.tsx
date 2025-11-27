@@ -103,21 +103,22 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     setScanError(null);
     setScanResult(null);
 
-    // 1. Upload da imagem para o storage
-    setIsUploading(true);
-    const uploadResult = await imageUploadService.uploadTipImage(file);
-    
-    if (!uploadResult.success || !uploadResult.url) {
-      setIsUploading(false);
-      toast({ title: uploadResult.error || "Erro no upload", variant: "destructive" });
-      return;
-    }
-    
-    setUploadedImageUrl(uploadResult.url);
-    form.setValue('imageUrl', uploadResult.url);
-    setIsUploading(false);
+    // Converter para base64 primeiro (para preview e scan)
+    const base64 = await convertToBase64(file);
+    setUploadedImageUrl(base64); // Usa base64 como preview temporário
 
-    // 2. Converter para base64 e enviar para IA escanear
+    // Tentar upload em background (opcional - não bloqueia o scan)
+    imageUploadService.uploadTipImage(file).then((uploadResult) => {
+      if (uploadResult.success && uploadResult.url) {
+        setUploadedImageUrl(uploadResult.url);
+        form.setValue('imageUrl', uploadResult.url);
+      }
+    }).catch(() => {
+      // Upload falhou, continua com base64 (não salva imagem no tip)
+      console.log('Upload falhou, usando apenas scan');
+    });
+
+    // Escanear com IA imediatamente
     setIsScanning(true);
     toast({ 
       title: "🤖 IA está lendo seu bilhete...", 
@@ -125,8 +126,6 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
     });
 
     try {
-      const base64 = await convertToBase64(file);
-      
       // Chama o backend para escanear (a API key está segura no servidor)
       const response = await axios.post('/api/scan-ticket', { 
         imageBase64: base64 
