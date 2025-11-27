@@ -79,34 +79,38 @@ export function CompactLiveHud() {
 
         {/* ESQUERDA: GAUGE DE ASSERTIVIDADE */}
         <div className="relative flex items-center justify-center h-full w-full">
-          <div className="relative w-44 h-44 flex items-center justify-center">
+          <div className="relative w-36 h-36 flex items-center justify-center">
             
-            <svg className="w-full h-full" viewBox="0 0 100 100">
-              {Array.from({ length: 60 }).map((_, i) => {
-                const isActive = i < Math.round((assertivityValue / 100) * 60);
-                const color = isActive ? "#33b864" : "#222222"; 
-                // Começa do topo (12 horas) e vai no sentido horário
-                const angle = (i * 6) - 90; // -90 para começar no topo
-                
-                return (
-                  <line
-                    key={i}
-                    x1="50" y1="6" x2="50" y2="16"
-                    stroke={color}
-                    strokeWidth="1.5"
-                    transform={`rotate(${angle} 50 50)`}
-                    style={{ transition: 'stroke 0.5s ease' }}
-                  />
-                );
-              })}
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              {/* Círculo de fundo */}
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                stroke="#1a1a1a"
+                strokeWidth="8"
+                fill="none"
+              />
+              {/* Círculo de progresso */}
+              <circle
+                cx="50"
+                cy="50"
+                r="42"
+                stroke="#33b864"
+                strokeWidth="8"
+                fill="none"
+                strokeLinecap="round"
+                strokeDasharray={`${(assertivityValue / 100) * 2 * Math.PI * 42} ${2 * Math.PI * 42}`}
+                style={{ transition: 'stroke-dasharray 0.5s ease' }}
+              />
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <span className="text-[32px] font-sora font-black text-white tracking-tight drop-shadow-lg leading-none">
-                {assertivityValue.toFixed(1)}<span className="text-base text-[#33b864]">%</span>
+              <span className="text-[28px] font-black text-[#33b864] tracking-tight leading-none" style={{ fontFamily: 'Sora, sans-serif' }}>
+                {assertivityValue.toFixed(1)}%
               </span>
-              <span className="text-[10px] text-gray-500 uppercase tracking-[0.08em] mt-1.5 px-1">
-                Assertividade
+              <span className="text-[10px] text-gray-400 mt-1">
+                Melhor mês registrado
               </span>
             </div>
 
