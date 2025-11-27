@@ -288,6 +288,21 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         timeZone: 'America/Sao_Paulo'
       });
 
+  // Horário formatado "Hoje às HH:MM" ou "DD/MM às HH:MM"
+  const today = new Date();
+  const isToday = matchDate.toDateString() === today.toDateString();
+  const timeOnly = matchDate.toLocaleString('pt-BR', { 
+    hour: '2-digit', 
+    minute: '2-digit',
+    timeZone: 'America/Sao_Paulo'
+  });
+  const dateOnly = matchDate.toLocaleString('pt-BR', { 
+    day: '2-digit', 
+    month: '2-digit',
+    timeZone: 'America/Sao_Paulo'
+  });
+  const formattedMatchTime = isToday ? `Hoje às ${timeOnly}` : `${dateOnly} às ${timeOnly}`;
+
   // Data/hora de criação do bilhete (horário de Brasília)
   const createdDateTime = new Date(signal.timestamp).toLocaleString('pt-BR', { 
     day: '2-digit', 
@@ -501,27 +516,30 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
       {/* --- 3. CONTAINER DE INFORMAÇÃO (CAIXA ESCURA) --- */}
       <div className="bg-[#121212] rounded-xl p-4 border border-white/5 flex items-center justify-between mb-4">
         
-        {/* Lado Esquerdo: Mercado */}
-        <div className="flex flex-col gap-0.5">
+        {/* Lado Esquerdo: Horário + Mercados */}
+        <div className="flex flex-col gap-2">
+          {/* Horário do Jogo */}
+          <span className="text-gray-400 font-sora text-xs font-medium">
+            {formattedMatchTime}
+          </span>
+          
+          {/* Mercados com bullets */}
           {hasMultipleLegs ? (
-            <span className="text-[#33b864] font-sora font-extrabold text-sm uppercase leading-tight">
+            <span className="text-[#33b864] font-sora font-bold text-xs uppercase">
               APOSTA COMBINADA
             </span>
           ) : (
-            <div className="flex flex-col gap-0.5">
+            <div className="flex flex-col gap-1">
               {signal.market.split(' + ').map((market, idx) => (
-                <span 
-                  key={idx} 
-                  className="text-[#33b864] font-sora font-bold text-xs uppercase leading-tight"
-                >
-                  {market.trim()}
-                </span>
+                <div key={idx} className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
+                  <span className="text-gray-300 font-sora text-xs">
+                    {market.trim()}
+                  </span>
+                </div>
               ))}
             </div>
           )}
-          <span className="text-gray-500 text-[10px] font-medium mt-1">
-            Mercado Principal
-          </span>
         </div>
 
         {/* Lado Direito: ODD */}
