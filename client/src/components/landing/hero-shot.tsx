@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'wouter';
 import { Zap } from 'lucide-react';
 import { Logo } from '@/components/logo';
+import { AIScanner } from '@/components/ai-scanner';
 
 export function HeroShot() {
   return (
@@ -162,17 +163,9 @@ export function HeroShot() {
                     </div>
                   </div>
                   
-                  {/* Chart placeholder */}
-                  <div className="bg-[#1a1a1a] border border-[#33b864]/20 rounded-xl p-3 h-24 flex items-end justify-between gap-1">
-                    {[40, 65, 45, 80, 55, 90, 75].map((height, i) => (
-                      <motion.div
-                        key={i}
-                        initial={{ height: 0 }}
-                        animate={{ height: `${height}%` }}
-                        transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
-                        className="flex-1 bg-gradient-to-t from-[#33b864] to-[#2ea558] rounded-t"
-                      />
-                    ))}
+                  {/* AI Scanner */}
+                  <div className="mt-2">
+                    <AIScanner />
                   </div>
                 </div>
               </div>
