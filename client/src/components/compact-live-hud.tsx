@@ -59,9 +59,9 @@ export function CompactLiveHud() {
                 return (
                   <line
                     key={i}
-                    x1="50" y1="12" x2="50" y2="20"
+                    x1="50" y1="6" x2="50" y2="16"
                     stroke={color}
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     transform={`rotate(${i * (360 / 60)} 50 50)`}
                     style={{ transition: 'stroke 0.5s ease' }}
                   />
@@ -70,10 +70,10 @@ export function CompactLiveHud() {
             </svg>
 
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <span className="text-4xl font-sora font-black text-white tracking-tighter drop-shadow-lg">
-                {assertivityValue.toFixed(1)}<span className="text-lg text-[#33b864]">%</span>
+              <span className="text-[32px] font-sora font-black text-white tracking-tight drop-shadow-lg leading-none">
+                {assertivityValue.toFixed(1)}<span className="text-base text-[#33b864]">%</span>
               </span>
-              <span className="text-[9px] text-gray-500 uppercase tracking-[0.15em] mt-1 bg-black/40 px-2 py-0.5 rounded backdrop-blur-sm">
+              <span className="text-[10px] text-gray-500 uppercase tracking-[0.08em] mt-1.5 px-1">
                 Assertividade
               </span>
             </div>
