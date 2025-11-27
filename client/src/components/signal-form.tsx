@@ -19,7 +19,7 @@ import { X, ScanLine, Loader2, Sparkles, Check } from "lucide-react";
 import axios from "axios";
 
 const formSchema = z.object({
-  league: z.string().min(1, "Liga obrigatória"),
+  league: z.string().optional(),
   homeTeam: z.string().min(1, "Time casa obrigatório"),
   awayTeam: z.string().min(1, "Time fora obrigatório"),
   homeTeamLogo: z.string().optional().nullable(),
@@ -297,42 +297,23 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
           <div className="space-y-4 pt-2 border-t border-primary/10">
             <p className="text-xs text-muted-foreground">Confira e corrija se necessário:</p>
             
-            <div className="grid grid-cols-2 gap-3">
-              <FormField
-                control={form.control}
-                name="league"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white text-xs">Liga</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="Ex: Premier League" 
-                        {...field} 
-                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="odd"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white text-xs">Odd Total</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="1.90" 
-                        {...field} 
-                        className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="odd"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white text-xs">Odd Total</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="1.90" 
+                      {...field} 
+                      className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
             <div className="grid grid-cols-2 gap-3">
               <FormField
