@@ -1,0 +1,64 @@
+PROMPT MESTRE: DASHBOARD UPGRADE "BILLIONAIRE EDITION"
+ROLE: Lead Product Designer & Data Visualization Expert.
+
+TASK: Refinar visualmente os cards do Dashboard (CompactLiveHud.tsx e ProfitTrendChart.tsx). OBJETIVO: Adicionar "Micro-Interações" e "Micro-Visualizações" dentro dos cards para aumentar a percepção de valor e profissionalismo.
+
+1. UPGRADE NO CÍRCULO (ASSERTIVIDADE COM META)
+O círculo atual diz "89%". Vamos dar contexto.
+
+Adição: Um segundo anel, bem fino e cinza escuro, atrás do verde, indicando a "Meta Perfeita (100%)".
+
+Texto Extra: Abaixo de "Novembro", adicione pequeno em cinza: "Top 1% do Mercado".
+
+2. UPGRADE NO GRÁFICO (REFERENCE LINE)
+No ProfitTrendChart:
+
+Linha de Referência: Adicione uma linha pontilhada horizontal cinza bem fraca no meio do gráfico.
+
+Label: "Performance Média".
+
+Efeito: A linha verde da banca deve estar acima dessa linha pontilhada.
+
+Mensagem: Isso subliminarmente diz: "Você está acima da média."
+
+3. UPGRADE NOS 4 CARDS PEQUENOS (A MÁGICA)
+Card A: ODD MÉDIA (Comparativo)
+Visual: Mantenha o valor 2.67.
+
+Adição: Uma badge pequena verde ao lado: "▲ 20% acima da Bet365".
+
+Por que: Prova que seus sinais pagam mais.
+
+Card B: USUÁRIOS ONLINE (Latência/Tech)
+Visual: O número 366.
+
+Adição: Um rodapé no card com um ponto verde piscando e o texto: "Latência: 12ms (Tempo Real)".
+
+Por que: Passa a sensação de tecnologia de ponta, velocidade e segurança.
+
+Card C: GANHOS (Gamificação)
+Visual: O valor +5.5u.
+
+Adição: Uma barra de progresso fina no fundo do card.
+
+Cor: Cinza escuro (fundo) e Verde (progresso).
+
+Texto pequeno: "Meta Mensal: 25%".
+
+Por que: Faz o usuário querer continuar operando para "encher a barrinha".
+
+Card D: PERDAS (Proteção)
+Visual: 0.
+
+Adição: Um ícone de Escudo 🛡️ ao fundo (marca d'água).
+
+Texto: "Proteção de Banca Ativa".
+
+Por que: Transforma um dado negativo (Perdas) em uma sensação de segurança (Proteção).
+
+4. POLIMENTO VISUAL (GLOW & NOISE)
+Adicione uma textura de granulação (noise) quase imperceptível (opacity-[0.02]) no fundo dos cards pretos para tirar o aspecto de "plástico" e dar aspecto de "metal/carbono".
+
+Aumente o drop-shadow dos textos verdes para parecerem neon de verdade.
+
+COMANDO: Execute essas micro-alterações. O objetivo é que cada card conte uma pequena história de sucesso, não apenas mostre um número frio.
