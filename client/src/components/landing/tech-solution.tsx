@@ -8,7 +8,7 @@ export function TechSolution() {
   const isInView = useInView(ref, { once: true });
   
   return (
-    <section ref={ref} className="relative py-20 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212] overflow-hidden">
+    <section ref={ref} className="relative py-16 px-4 bg-gradient-to-b from-black via-[#0a0a0a] to-[#121212] overflow-hidden">
       {/* Background grid */}
       <div className="absolute inset-0 opacity-10">
         <div className="absolute inset-0" style={{
