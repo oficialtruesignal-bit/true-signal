@@ -124,15 +124,15 @@ export function TechSolution() {
               <p className="text-sm text-gray-400">Basta clicar em "Copiar" e colar na sua casa de apostas</p>
             </div>
             
-            <div className="flex justify-center px-4">
-              <div className="relative w-[240px] md:w-[280px] shadow-2xl shadow-[#33b864]/20">
+            <div className="flex justify-center">
+              <div className="relative mx-auto w-full max-w-[320px] md:max-w-[360px] aspect-[9/16]">
                 <video
                   src={appDemoVideo}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-auto rounded-[16px]"
+                  className="absolute inset-0 h-full w-full object-contain rounded-[20px]"
                 />
               </div>
             </div>
