@@ -9,38 +9,13 @@ export function CompactLiveHud() {
   const bankroll = useBankroll();
   
   // Total de entradas fixo
-  const TOTAL_ENTRIES = 180;
+  const TOTAL_ENTRIES = 193;
   
-  // Assertividade oscila entre 83% e 91% a cada 30 minutos
-  const [assertivityValue, setAssertivityValue] = useState(() => {
-    const now = new Date();
-    const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
-    // Valores oscilando entre 83% e 91%
-    const values = [83.0, 84.5, 86.0, 87.5, 89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 89.5, 88.0, 86.5, 85.0, 84.0];
-    return values[halfHourSlot % values.length];
-  });
-  
-  useEffect(() => {
-    const updateAssertivity = () => {
-      const now = new Date();
-      const halfHourSlot = Math.floor(now.getTime() / (30 * 60 * 1000));
-      const values = [83.0, 84.5, 86.0, 87.5, 89.0, 89.5, 90.0, 90.5, 91.0, 90.5, 89.5, 88.0, 86.5, 85.0, 84.0];
-      setAssertivityValue(values[halfHourSlot % values.length]);
-    };
-    
-    const now = new Date();
-    const msUntilNextHalfHour = (30 - (now.getMinutes() % 30)) * 60 * 1000 - now.getSeconds() * 1000;
-    
-    const initialTimeout = setTimeout(() => {
-      updateAssertivity();
-      const interval = setInterval(updateAssertivity, 30 * 60 * 1000);
-      return () => clearInterval(interval);
-    }, msUntilNextHalfHour);
-    
-    return () => clearTimeout(initialTimeout);
-  }, []);
+  // Assertividade fixa em 87%
+  const assertivityValue = 87.0;
   
   // Cálculo matemático: Ganhos e Perdas baseados na assertividade
+  // 193 × 87% = 168 Greens, 193 - 168 = 25 Reds
   const calculatedWins = Math.round(TOTAL_ENTRIES * (assertivityValue / 100));
   const calculatedLosses = TOTAL_ENTRIES - calculatedWins;
   
@@ -178,7 +153,7 @@ export function CompactLiveHud() {
           <div className="flex items-center gap-2 z-10">
             <span className="text-3xl font-sora font-bold text-white">{bankroll.averageOdd.toFixed(2)}</span>
             <span className="text-[9px] bg-[#33b864]/20 text-[#33b864] px-2 py-0.5 rounded-full font-bold">
-              ▲ 20% acima Bet365
+              ▲ 20% acima
             </span>
           </div>
         </div>
