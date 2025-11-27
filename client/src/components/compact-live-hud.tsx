@@ -81,10 +81,12 @@ export function CompactLiveHud() {
         <div className="relative flex items-center justify-center h-full w-full">
           <div className="relative w-44 h-44 flex items-center justify-center">
             
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+            <svg className="w-full h-full" viewBox="0 0 100 100">
               {Array.from({ length: 60 }).map((_, i) => {
                 const isActive = i < Math.round((assertivityValue / 100) * 60);
                 const color = isActive ? "#33b864" : "#222222"; 
+                // Começa do topo (12 horas) e vai no sentido horário
+                const angle = (i * 6) - 90; // -90 para começar no topo
                 
                 return (
                   <line
@@ -92,7 +94,7 @@ export function CompactLiveHud() {
                     x1="50" y1="6" x2="50" y2="16"
                     stroke={color}
                     strokeWidth="1.5"
-                    transform={`rotate(${i * (360 / 60)} 50 50)`}
+                    transform={`rotate(${angle} 50 50)`}
                     style={{ transition: 'stroke 0.5s ease' }}
                   />
                 );
