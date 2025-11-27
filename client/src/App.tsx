@@ -24,6 +24,7 @@ const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
 const RiskDisclaimerPage = React.lazy(() => import("@/pages/risk-disclaimer"));
 const PricingPage = React.lazy(() => import("@/pages/pricing"));
 const CheckoutPage = React.lazy(() => import("@/pages/checkout"));
+const ComingSoonPage = React.lazy(() => import("@/pages/coming-soon"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
 // Import access control and paywall
@@ -92,6 +93,9 @@ function Router() {
       </Route>
       <Route path="/checkout">
         {() => <ProtectedRoute component={CheckoutPage} />}
+      </Route>
+      <Route path="/coming-soon">
+        {() => <ProtectedRoute component={ComingSoonPage} />}
       </Route>
       <Route path="/admin">
         {() => <ProtectedRoute component={Admin} adminOnly={true} />}
