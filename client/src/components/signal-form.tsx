@@ -131,16 +131,26 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
         if (data.bets && data.bets.length > 0) {
           const firstBet = data.bets[0];
           
-          form.setValue('league', firstBet.league || 'Liga Detectada');
+          // Combina todos os mercados com " + "
+          const allMarkets = data.bets
+            .map(bet => bet.market)
+            .filter(Boolean)
+            .join(' + ');
+          
+          // Combina todos os times (se diferentes)
+          const uniqueMatches = new Set(data.bets.map(bet => `${bet.home_team} x ${bet.away_team}`));
+          const matchesText = Array.from(uniqueMatches).join(', ');
+          
+          form.setValue('league', firstBet.league || '');
           form.setValue('homeTeam', firstBet.home_team || '');
           form.setValue('awayTeam', firstBet.away_team || '');
-          form.setValue('market', firstBet.market || '');
+          form.setValue('market', allMarkets || firstBet.market || '');
           form.setValue('odd', data.total_odd?.toString() || firstBet.odd?.toString() || '');
 
           toast({ 
             title: "✨ Bilhete lido com sucesso!", 
             description: data.is_multiple 
-              ? `${data.bets.length} apostas detectadas - Odd Total: ${data.total_odd}`
+              ? `${data.bets.length} mercados: ${allMarkets} - Odd ${data.total_odd}`
               : `${firstBet.home_team} x ${firstBet.away_team}`,
             className: "bg-primary/10 border-primary/20 text-primary" 
           });
