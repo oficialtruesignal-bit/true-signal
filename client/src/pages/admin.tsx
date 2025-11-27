@@ -193,7 +193,7 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                           </h4>
                           {signal.matchTime && (
                             <span className="text-xs text-muted-foreground mt-1">
-                              ⏰ {new Date(signal.matchTime).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} às {new Date(signal.matchTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                              ⏰ {signal.matchTime}
                             </span>
                           )}
                         </div>
