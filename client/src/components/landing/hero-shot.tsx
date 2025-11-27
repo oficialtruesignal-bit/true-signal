@@ -40,9 +40,9 @@ export function HeroShot() {
             className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Chega de perder horas filtrando ruído e 'achismos'. Nosso ecossistema une{' '}
-            <span className="text-[#33b864] font-bold">IA Preditiva + 20 Traders de Elite</span>{' '}
-            para processar o mercado em segundos.
+            Chega de perder horas filtrando jogos em aplicativos. Nosso ecossistema une{' '}
+            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos junto com a IA</span>{' '}
+            para processar o mercado em segundos e te trazer as melhores probabilidades.
           </motion.p>
           
           <motion.p
