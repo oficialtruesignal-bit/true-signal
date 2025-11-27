@@ -5,7 +5,7 @@ import { footballService, FootballMatch } from "@/lib/football-service";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert, Trash2 } from "lucide-react";
+import { Trophy, XCircle, Clock, Calendar, Search, Loader2, ShieldAlert, Trash2, ScanLine, Sparkles } from "lucide-react";
 import { format } from "date-fns";
 import {
   Dialog,
@@ -51,6 +51,7 @@ export default function Admin() {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isManualDialogOpen, setIsManualDialogOpen] = useState(false);
 
   // Fetch Tips
   const { data: signals = [] } = useQuery({
@@ -131,10 +132,27 @@ export default function Admin() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
+          {/* AI Scanner Button */}
+          <button
+            onClick={() => setIsManualDialogOpen(true)}
+            className="w-full p-6 bg-gradient-to-br from-primary/20 to-primary/5 border-2 border-dashed border-primary/50 rounded-xl hover:border-primary hover:bg-primary/10 transition-all group cursor-pointer"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="relative">
+                <ScanLine className="w-12 h-12 text-primary group-hover:scale-110 transition-transform" />
+                <Sparkles className="w-5 h-5 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
+              </div>
+              <div className="text-center">
+                <h3 className="font-bold text-white text-lg">Subir Print de Bilhete</h3>
+                <p className="text-sm text-primary mt-1">🪄 IA preenche tudo automaticamente</p>
+              </div>
+            </div>
+          </button>
+
           <div className="bg-card border border-primary/20 rounded-xl p-6">
             <h3 className="font-bold text-white mb-4 flex items-center gap-2">
               <Search className="w-4 h-4 text-primary" />
-              Selecionar Jogo Real
+              Ou Selecionar Jogo Real
             </h3>
             
             <div className="flex gap-2 mb-4">
@@ -247,7 +265,7 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* Create Tip Modal */}
+      {/* Create Tip Modal (from match selection) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="bg-[#121212] border-primary/20 text-white">
           <DialogHeader>
@@ -266,6 +284,24 @@ export default function Admin() {
               onAdd={handleCreateTip} 
             />
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* AI Scanner Modal (manual upload) */}
+      <Dialog open={isManualDialogOpen} onOpenChange={setIsManualDialogOpen}>
+        <DialogContent className="bg-[#121212] border-primary/20 text-white max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ScanLine className="w-5 h-5 text-primary" />
+              Scanner de Bilhete com IA
+            </DialogTitle>
+          </DialogHeader>
+          <SignalForm 
+            onAdd={(data) => {
+              handleCreateTip(data);
+              setIsManualDialogOpen(false);
+            }} 
+          />
         </DialogContent>
       </Dialog>
     </Layout>
