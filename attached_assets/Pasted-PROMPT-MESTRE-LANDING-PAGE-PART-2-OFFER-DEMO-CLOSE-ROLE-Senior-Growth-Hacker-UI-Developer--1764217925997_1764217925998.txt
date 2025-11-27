@@ -1,0 +1,98 @@
+PROMPT MESTRE: LANDING PAGE PART 2 (OFFER, DEMO & CLOSE)
+ROLE: Senior Growth Hacker & UI Developer.
+
+TASK: Construir a metade final da LandingPage.tsx (Do vídeo até o rodapé). OBJETIVO: Encurtar os textos, aumentar o impacto visual e levar ao checkout. ESTILO: Design System "Ocean Signal" (Sora Font, Neon Green, Dark Mode).
+
+1. SEÇÃO: A PROVA VISUAL (VÍDEO DEMO)
+Logo após explicar a IA, mostre a facilidade.
+
+Título: "A complexidade é nossa. A facilidade é sua."
+
+Componente: Crie um container de vídeo (<video> ou iframe) envolto em uma moldura de smartphone ou laptop futurista com brilho neon (box-shadow).
+
+Legenda: "Veja como é simples copiar um bilhete em 15 segundos."
+
+2. SEÇÃO: CALCULADORA DE POTENCIAL (GAMIFICATION)
+Transforme o texto de "Juros Compostos" em um Widget Interativo.
+
+Título: "Simule seu Crescimento."
+
+Componente Interativo:
+
+Slider (Range Input): "Investimento Inicial" (De R$ 100 a R$ 5.000).
+
+Display de Resultado: Ao mover o slider, atualize dinamicamente:
+
+"Lucro Estimado (30 dias): R$ [Valor]" (Use cor Verde Neon).
+
+"ROI Projetado: +142%".
+
+Copy Curta: "Baseado na performance média histórica de 3%/dia. Matemática, não mágica."
+
+3. SEÇÃO: O ARSENAL (BENTO GRID)
+Fusão das seções "Transformação" e "Tudo Incluído". Não use listas longas.
+
+Layout: Grid estilo Apple/Bento (Caixas de tamanhos variados encaixadas).
+
+Caixa 1 (Grande): O Cérebro.
+
+Ícone: Chip IA.
+
+Texto: "Scanner 24/7". "Monitoramos 1.400 ligas enquanto você dorme."
+
+Caixa 2 (Média): A Proteção.
+
+Ícone: Escudo.
+
+Texto: "Gestão de Banca". "O sistema diz quanto apostar para proteger seu capital."
+
+Caixa 3 (Média): A Elite.
+
+Ícone: Grupo/Coroa.
+
+Texto: "Comunidade VIP". "Networking com quem vive de mercado."
+
+Caixa 4 (Pequena - Destaque): O Valor.
+
+Texto Riscado: "De ~~R$ 2.847/mês~~".
+
+Texto Destaque: "Por apenas R$ 99,87".
+
+4. SEÇÃO: MURAL DA FAMA (PROVA SOCIAL)
+Converta os depoimentos de texto em "Notificações de Lucro".
+
+Visual: Cards horizontais que parecem notificações de banco ou app.
+
+[Avatar] Rafael S. acabou de bater a meta: +R$ 3.247 (12 Greens seguidos).
+
+[Avatar] Ana C. sacou +R$ 5.120 este mês.
+
+Animação: Faça um scroll automático vertical lento (Marquee vertical), passando a sensação de que "tem muita gente ganhando agora".
+
+5. A CARTADA FINAL (OFERTA & GARANTIA)
+Esta é a seção mais importante. O fechamento.
+
+Card de Preço (Highlight):
+
+Título: "Plano Ocean Prime"
+
+Preço: R$ 99,87 / mês.
+
+Botão (Pulsante): "QUERO ACESSO IMEDIATO"
+
+Subtexto: "Cancele quando quiser."
+
+A Garantia Blindada (O "Risk Reversal"):
+
+Ícone: Cadeado Aberto ou Selo de Garantia Neon.
+
+Headline: "O Risco é 100% Nosso."
+
+Copy (Curta e Grossa): "Você tem 15 DIAS de teste. Se não lucrar, se não gostar do design ou se simplesmente mudar de ideia, nós devolvemos cada centavo. Sem perguntas. Sem burocracia."
+
+6. RODAPÉ JURÍDICO (COMPLIANCE)
+Insira os links de Termos, Privacidade e o Aviso Legal ("Não somos banco, somos analistas") que criamos anteriormente.
+
+INSTRUÇÃO TÉCNICA FINAL: O código deve ser limpo, usando framer-motion para que as seções apareçam (FadeInUp) conforme o usuário desce a tela. A fonte Sora deve ser onipresente. No mobile, garanta que o botão de compra esteja sempre acessível (Sticky Bottom ou repetido várias vezes).
+
+COMANDO: Execute a construção final. A página deve fluir como uma conversa que termina inevitavelmente no clique de compra.
