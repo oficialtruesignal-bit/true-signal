@@ -32,7 +32,7 @@ export function FinalCTA() {
           transition={{ delay: 0.1 }}
           className="text-gray-400 text-lg mb-8"
         >
-          Junte-se a milhares de operadores que já automatizaram suas análises
+          Sistema global com operadores em dezenas de países
         </motion.p>
         
         {/* CTA Button */}
