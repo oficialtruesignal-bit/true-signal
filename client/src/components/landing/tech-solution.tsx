@@ -125,7 +125,7 @@ export function TechSolution() {
             </div>
             
             <div className="flex justify-center">
-              <div className="relative w-[280px] md:w-[320px] rounded-[40px] overflow-hidden border-4 border-gray-800 shadow-2xl shadow-[#33b864]/20">
+              <div className="relative w-full max-w-[400px] md:max-w-[500px] rounded-[30px] overflow-hidden border-4 border-gray-800 shadow-2xl shadow-[#33b864]/20">
                 <video
                   src={appDemoVideo}
                   autoPlay
