@@ -125,15 +125,14 @@ export function TechSolution() {
             </div>
             
             <div className="flex justify-center px-4">
-              <div className="relative w-full max-w-[360px] md:max-w-[420px] rounded-[20px] overflow-visible border-4 border-gray-800 shadow-2xl shadow-[#33b864]/20 bg-black">
+              <div className="relative w-[240px] md:w-[280px] shadow-2xl shadow-[#33b864]/20">
                 <video
                   src={appDemoVideo}
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-auto object-contain"
-                  style={{ display: 'block' }}
+                  className="w-full h-auto rounded-[16px]"
                 />
               </div>
             </div>
