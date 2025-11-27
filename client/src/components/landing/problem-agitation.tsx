@@ -115,10 +115,13 @@ export function ProblemAgitation() {
             
             <div className="relative bg-gradient-to-br from-[#121212]/90 via-[#0a0a0a] to-black border-2 border-[#33b864]/30 rounded-3xl p-6 md:p-8 backdrop-blur-xl h-full">
               {/* Header */}
-              <div className="mb-6">
-                <h3 className="text-xl md:text-2xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  Não é Sorte. É <span className="text-[#33b864]">Engenharia de Dados</span>.
+              <div className="mb-6 text-center">
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  AQUI NÃO É SORTE
                 </h3>
+                <h4 className="text-lg md:text-xl font-bold text-[#33b864] mb-3" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  É ENGENHARIA DE DADOS
+                </h4>
                 <p className="text-sm text-gray-400">
                   Enquanto você dorme ou trabalha, nossa infraestrutura processa milhões de dados para encontrar a entrada perfeita.
                 </p>
