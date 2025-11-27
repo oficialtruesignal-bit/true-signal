@@ -1,36 +1,19 @@
 import { Scale, Users, TrendingDown, TrendingUp, Shield } from 'lucide-react';
-import { useCRMDashboardData } from '@/hooks/use-crm-dashboard-data';
-import { useBankroll } from '@/hooks/use-bankroll';
 import { ProfitTrendChart } from './dashboard/profit-trend-chart';
+import { useTipsStats } from '@/hooks/use-tips-stats';
 import { useState, useEffect } from 'react';
 
 export function CompactLiveHud() {
-  const stats = useCRMDashboardData();
-  const bankroll = useBankroll();
+  // Buscar estatísticas reais dos bilhetes
+  const { data: stats, isLoading } = useTipsStats();
   
-  // Total de entradas fixo
-  const TOTAL_ENTRIES = 193;
-  
-  // Assertividade fixa em 87%
-  const assertivityValue = 87.0;
-  
-  // Cálculo matemático: Ganhos e Perdas baseados na assertividade
-  // 193 × 87% = 168 Greens, 193 - 168 = 25 Reds
-  const calculatedWins = Math.round(TOTAL_ENTRIES * (assertivityValue / 100));
-  const calculatedLosses = TOTAL_ENTRIES - calculatedWins;
-  
-  // Odd média fixa para cálculo
-  const ODD_MEDIA = 1.85;
-  
-  // Cálculo do crescimento da banca baseado nos resultados
-  // Ganhos: Greens × (odd - 1) = lucro em unidades
-  // Perdas: Reds × 1 = perda em unidades
-  // Crescimento = (lucro - perdas) / banca inicial × 100
-  const BANCA_INICIAL = 100; // 100 unidades
-  const lucroUnidades = calculatedWins * (ODD_MEDIA - 1);
-  const perdaUnidades = calculatedLosses * 1;
-  const lucroLiquido = lucroUnidades - perdaUnidades;
-  const calculatedGrowth = (lucroLiquido / BANCA_INICIAL) * 100;
+  // Valores calculados a partir dos bilhetes reais
+  const greens = stats?.greens ?? 0;
+  const reds = stats?.reds ?? 0;
+  const totalEntries = stats?.totalResolved ?? 0;
+  const assertivityValue = stats?.assertivity ?? 0;
+  const averageOdd = stats?.averageOdd ?? 0;
+  const growthPercentage = stats?.growthPercentage ?? 0;
   
   // Usuários online oscila entre 254-403 com movimento suave
   const [onlineUsers, setOnlineUsers] = useState(330);
@@ -67,15 +50,6 @@ export function CompactLiveHud() {
     
     return () => clearInterval(interval);
   }, [direction]);
-  
-  // Calcular crescimento da banca em %
-  const bankrollGrowth = bankroll.initialBankroll > 0 
-    ? ((bankroll.currentBankroll - bankroll.initialBankroll) / bankroll.initialBankroll * 100)
-    : 0;
-
-  // Calcular progresso da meta mensal (meta: 25 unidades)
-  const monthlyGoal = 25;
-  const progressPercentage = Math.min((bankroll.totalProfitUnits / monthlyGoal) * 100, 100);
 
   return (
     <div className="w-full mb-8 flex flex-col gap-6">
@@ -133,7 +107,7 @@ export function CompactLiveHud() {
                   textShadow: '0 0 20px rgba(51, 184, 100, 0.5)'
                 }}
               >
-                {assertivityValue.toFixed(1)}%
+                {isLoading ? '--' : `${assertivityValue.toFixed(1)}%`}
               </span>
               <span className="text-[10px] text-gray-400 mt-1">
                 Média Novembro
@@ -144,7 +118,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* DIREITA: GRÁFICO DE LUCRO */}
-        <ProfitTrendChart growthPercentage={calculatedGrowth} />
+        <ProfitTrendChart growthPercentage={growthPercentage} />
 
       </div>
 
@@ -164,7 +138,9 @@ export function CompactLiveHud() {
             <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Odd Média</span>
           </div>
           <div className="flex items-center gap-2 z-10">
-            <span className="text-3xl font-sora font-bold text-white">{ODD_MEDIA.toFixed(2)}</span>
+            <span className="text-3xl font-sora font-bold text-white">
+              {isLoading ? '--' : averageOdd.toFixed(2)}
+            </span>
             <span className="text-[9px] bg-[#33b864]/20 text-[#33b864] px-2 py-0.5 rounded-full font-bold">
               ▲ 20% acima
             </span>
@@ -200,7 +176,7 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* CARD C: GANHOS (calculado baseado na assertividade) */}
+        {/* CARD C: GREENS (dados reais dos bilhetes) */}
         <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -218,17 +194,17 @@ export function CompactLiveHud() {
               className="text-3xl font-sora font-bold text-[#33b864] z-10"
               style={{ textShadow: '0 0 20px rgba(51, 184, 100, 0.4)' }}
             >
-              {calculatedWins}
+              {isLoading ? '--' : greens}
             </span>
           </div>
           
           {/* Total de entradas */}
           <div className="z-10 border-t border-white/5 pt-2 mt-2">
-            <span className="text-[8px] text-gray-500">de {TOTAL_ENTRIES} entradas</span>
+            <span className="text-[8px] text-gray-500">de {totalEntries} entradas</span>
           </div>
         </div>
 
-        {/* CARD D: PERDAS (calculado baseado na assertividade) */}
+        {/* CARD D: REDS (dados reais dos bilhetes) */}
         <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/30 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -244,7 +220,7 @@ export function CompactLiveHud() {
               <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Reds</span>
             </div>
             <span className="text-3xl font-sora font-bold text-red-500 z-10">
-              {calculatedLosses}
+              {isLoading ? '--' : reds}
             </span>
           </div>
           

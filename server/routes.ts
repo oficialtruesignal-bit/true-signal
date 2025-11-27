@@ -358,6 +358,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Tips Statistics - Dashboard metrics calculated from real tips
+  app.get("/api/tips/stats", async (req, res) => {
+    try {
+      const allTips = await storage.getAllTips();
+      
+      // Filter resolved tips only (green or red)
+      const resolvedTips = allTips.filter(tip => tip.status === 'green' || tip.status === 'red');
+      
+      // Count greens and reds
+      const greens = resolvedTips.filter(tip => tip.status === 'green').length;
+      const reds = resolvedTips.filter(tip => tip.status === 'red').length;
+      const pending = allTips.filter(tip => tip.status === 'pending').length;
+      const totalResolved = greens + reds;
+      
+      // Calculate assertivity percentage (only from resolved tips)
+      const assertivity = totalResolved > 0 
+        ? (greens / totalResolved) * 100 
+        : 0;
+      
+      // Calculate average odd from RESOLVED tips only (filter out null/invalid odds)
+      const resolvedOdds = resolvedTips
+        .map(tip => parseFloat(tip.odd))
+        .filter(odd => !isNaN(odd) && odd > 0);
+      const averageOdd = resolvedOdds.length > 0 
+        ? resolvedOdds.reduce((sum, odd) => sum + odd, 0) / resolvedOdds.length 
+        : 0;
+      
+      // Calculate bankroll growth from resolved tips
+      // Greens: win (odd - 1) units per green
+      // Reds: lose 1 unit per red
+      const INITIAL_BANKROLL = 100; // 100 units base (1 unit per bet)
+      const greenTips = resolvedTips.filter(tip => tip.status === 'green');
+      const greenOdds = greenTips
+        .map(tip => parseFloat(tip.odd))
+        .filter(odd => !isNaN(odd) && odd > 0);
+      const profitFromGreens = greenOdds.reduce((sum, odd) => sum + (odd - 1), 0);
+      const lossFromReds = reds * 1;
+      const netProfit = profitFromGreens - lossFromReds;
+      const growthPercentage = (netProfit / INITIAL_BANKROLL) * 100;
+      
+      return res.json({
+        greens,
+        reds,
+        pending,
+        totalEntries: allTips.length,
+        totalResolved,
+        assertivity: parseFloat(assertivity.toFixed(1)),
+        averageOdd: parseFloat(averageOdd.toFixed(2)),
+        growthPercentage: parseFloat(growthPercentage.toFixed(1)),
+        profitUnits: parseFloat(netProfit.toFixed(1)),
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // ============================================
   // Mercado Pago Routes
   // ============================================
