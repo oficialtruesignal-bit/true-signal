@@ -80,7 +80,7 @@ export function HeroShot() {
                 />
                 <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-5 h-5" />
-                  QUERO RECEBER AS ENTRADAS PRONTAS
+                  COMEÇAR AGORA
                 </span>
               </button>
             </Link>
