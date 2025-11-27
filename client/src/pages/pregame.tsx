@@ -23,6 +23,7 @@ export default function PreGamePage() {
   const dateLocale = localeMap[language] || ptBR;
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [selectedDateIndex, setSelectedDateIndex] = useState<number | null>(null); // null = todos os dias
   
   // Today + Next 6 days (7 days window)
   const dates = Array.from({ length: 7 }, (_, i) => addDays(new Date(), i));
@@ -73,17 +74,30 @@ export default function PreGamePage() {
     };
   }, [queries]);
 
-  // Filtra jogos baseado na pesquisa
+  // Filtra jogos baseado na pesquisa e dia selecionado
   const fixtures = useMemo(() => {
-    if (!searchQuery.trim()) return allFixtures;
+    let filtered = allFixtures;
     
-    const query = searchQuery.toLowerCase();
-    return allFixtures.filter((match) => 
-      match.teams.home.name.toLowerCase().includes(query) ||
-      match.teams.away.name.toLowerCase().includes(query) ||
-      match.league.name.toLowerCase().includes(query)
-    );
-  }, [allFixtures, searchQuery]);
+    // Filtra por dia selecionado
+    if (selectedDateIndex !== null) {
+      const selectedDate = dates[selectedDateIndex];
+      filtered = filtered.filter(match => 
+        isSameDay(new Date(match.fixture.date), selectedDate)
+      );
+    }
+    
+    // Filtra por pesquisa
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter((match) => 
+        match.teams.home.name.toLowerCase().includes(query) ||
+        match.teams.away.name.toLowerCase().includes(query) ||
+        match.league.name.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
+  }, [allFixtures, searchQuery, selectedDateIndex, dates]);
 
   return (
     <Layout>
@@ -131,6 +145,36 @@ export default function PreGamePage() {
         <p className="text-muted-foreground">
           {t.pregame.subtitle}
         </p>
+        
+        {/* Day Filter Tabs */}
+        <div className="flex gap-2 mt-4 overflow-x-auto pb-2 scrollbar-hide">
+          <button
+            onClick={() => setSelectedDateIndex(null)}
+            className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all ${
+              selectedDateIndex === null 
+                ? 'bg-primary text-black' 
+                : 'bg-card border border-primary/20 text-muted-foreground hover:border-primary/40'
+            }`}
+            data-testid="filter-all-days"
+          >
+            Todos
+          </button>
+          {dates.map((date, index) => (
+            <button
+              key={date.toISOString()}
+              onClick={() => setSelectedDateIndex(index)}
+              className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                selectedDateIndex === index 
+                  ? 'bg-primary text-black' 
+                  : 'bg-card border border-primary/20 text-muted-foreground hover:border-primary/40'
+              }`}
+              data-testid={`filter-day-${index}`}
+            >
+              <span className="uppercase">{format(date, 'EEE', { locale: dateLocale })}</span>
+              <span className="ml-1 text-[10px] opacity-70">{format(date, 'dd/MM')}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {isLoading && (
