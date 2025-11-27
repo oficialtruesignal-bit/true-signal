@@ -352,29 +352,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         : imageBase64;
 
       const prompt = `Analise esta imagem de bilhete de aposta esportiva.
-                
+
 Extraia as seguintes informações em formato JSON estrito:
 {
   "bets": [
     {
-      "home_team": "Nome do time da casa",
-      "away_team": "Nome do time visitante", 
-      "market": "Tipo de aposta (ex: Over 2.5 Gols, Ambas Marcam, Vitória Casa)",
+      "home_team": "Time Casa",
+      "away_team": "Time Fora", 
+      "market": "Mercado SIMPLIFICADO",
       "odd": 1.85,
-      "league": "Nome da liga/campeonato"
+      "league": null
     }
   ],
   "total_odd": 2.50,
   "is_multiple": false
 }
 
-REGRAS:
-- Se houver múltiplas apostas (combinada/múltipla), liste todas no array "bets" e calcule total_odd multiplicando as odds
-- Se for aposta simples, retorne apenas 1 item no array
-- "is_multiple" = true se tiver mais de 1 aposta
-- Extraia a odd EXATA que aparece no print
-- Se não conseguir ler algum campo, use null
-- Responda APENAS com o JSON, sem texto adicional`;
+REGRAS IMPORTANTES:
+1. SIMPLIFIQUE O MERCADO! Use termos curtos e diretos:
+   - "Ambos Marcam - Sim" → "Ambos Marcam"
+   - "Mais de 2.5 Gols" ou "Over 2.5" → "+2.5 Gols"
+   - "Menos de 2.5 Gols" ou "Under 2.5" → "-2.5 Gols"
+   - "Total de Escanteios Mais de 8" → "+8 Escanteios"
+   - "Resultado Final - Vitória Casa" → "Vitória Casa"
+   - "Resultado Final - Empate" → "Empate"
+   - "Handicap Asiático -1" → "Handicap -1"
+   
+2. REMOVA prefixos redundantes como "Partida -", "Para", "Total de", etc.
+
+3. Se houver múltiplas apostas, liste CADA UMA separadamente no array
+
+4. Extraia a odd EXATA do print (use total_odd para odd combinada)
+
+5. Responda APENAS com o JSON válido, sem texto adicional`;
 
       const imagePart = {
         inlineData: {
