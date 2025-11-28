@@ -228,7 +228,10 @@ export class MercadoPagoService {
     const preferenceData = {
       items: [
         {
+          id: 'vantage-prime-monthly',
           title: params.title,
+          description: 'Acesso mensal à plataforma Vantage Prime com sinais de apostas esportivas',
+          category_id: 'services',
           unit_price: params.amount,
           quantity: params.quantity,
           currency_id: 'BRL',
@@ -251,6 +254,10 @@ export class MercadoPagoService {
         default_installments: 1,
       },
       statement_descriptor: 'VANTAGE PRIME',
+      purpose: 'wallet_purchase',
+      binary_mode: false,
+      expires: false,
+      marketplace: 'NONE',
     };
 
     try {
