@@ -12,6 +12,7 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/use-auth";
 import { Logo } from "@/components/logo";
 import { Link } from "wouter";
+import { analytics } from "@/lib/analytics";
 import {
   Dialog,
   DialogContent,
@@ -55,6 +56,7 @@ export default function AuthPage() {
     setIsLoading(true);
     try {
       await login(data.email, data.password);
+      analytics.trackLogin();
     } catch (error) {
       // Error handled in hook
     } finally {
@@ -66,6 +68,8 @@ export default function AuthPage() {
     setIsLoading(true);
     try {
       await register(data.name, data.email, data.password);
+      analytics.trackRegistration(data.email);
+      analytics.trackTrialStart();
     } catch (error) {
       toast.error("Erro ao criar conta");
     } finally {

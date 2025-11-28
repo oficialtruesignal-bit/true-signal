@@ -3,6 +3,7 @@ import { useLocation } from "wouter";
 import { CheckCircle2, Crown, Sparkles, ArrowRight, Ticket, Shield, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
+import { analytics } from "@/lib/analytics";
 
 export default function ThankYouPage() {
   const [, setLocation] = useLocation();
@@ -29,6 +30,9 @@ export default function ThankYouPage() {
 
   useEffect(() => {
     pollSubscriptionStatus();
+    
+    // Track purchase conversion on thank you page
+    analytics.trackPurchase('thank_you_page', 49.93);
     
     const timer = setTimeout(() => setShowConfetti(false), 5000);
     return () => clearTimeout(timer);

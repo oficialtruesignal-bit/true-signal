@@ -10,6 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
+import { analytics, fbPixel, ga4 } from "@/lib/analytics";
 
 type PaymentMethod = 'card' | 'pix';
 type CardPaymentStatus = 'idle' | 'processing' | 'success' | 'error';
@@ -160,6 +161,8 @@ export default function CheckoutPage() {
 
       if (response.data.success && response.data.status === 'approved') {
         setCardPaymentStatus('success');
+        // Track successful purchase
+        analytics.trackPurchase(response.data.paymentId || Date.now().toString(), 49.93);
         toast.success("Pagamento aprovado! Redirecionando...");
         setTimeout(() => {
           window.location.href = '/obrigado';
@@ -192,6 +195,11 @@ export default function CheckoutPage() {
       toast.error("Você precisa estar logado para assinar");
       return;
     }
+
+    // Track checkout initiation
+    analytics.trackCheckoutStart();
+    fbPixel.addPaymentInfo({ value: 49.93, currency: 'BRL' });
+    ga4.addPaymentInfo(49.93, paymentMethod);
 
     setIsLoading(true);
     try {
