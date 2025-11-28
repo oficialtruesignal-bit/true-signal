@@ -1,0 +1,55 @@
+PROMPT MESTRE: REBRANDING TO "TRUE SIGNAL"
+ROLE: Senior Brand Designer & Frontend Developer.
+
+TASK: Executar o rebranding total da aplicação para TRUE SIGNAL. CONCEITO: "A Verdade em meio ao Ruído". Clareza, precisão e confiança.
+
+1. O NOVO LOGO (THE "VERIFIED PULSE")
+Substitua o componente Logo.tsx. O ícone deve representar a validação do sinal.
+
+Descrição do Símbolo (SVG):
+
+Conceito: Um "Check" (✓) estilizado onde a perna longa se transforma em uma linha de batimento cardíaco/sinal digital.
+
+Geometria:
+
+Começa com a perna curta do Check (descendo).
+
+Sobe para formar o Check.
+
+Ao chegar no topo, continua horizontalmente e faz um pequeno "pulso" (sobe e desce) para indicar que é um sinal vivo/eletrônico.
+
+Estilo: Traço grosso (strokeWidth="6"), cantos arredondados (strokeLinecap="round").
+
+Cor: Verde Neon (#33b864).
+
+Tipografia:
+
+Texto: TRUE SIGNAL (Caixa Alta).
+
+Fonte: Sora, Peso Black (900).
+
+Detalhe: A palavra "TRUE" em Branco, a palavra "SIGNAL" em Verde Neon (ou vice-versa, teste para ver qual fica mais legível, mas geralmente tudo branco com o ícone verde é mais 'Apple'). Vamos de Tudo Branco para máxima elegância.
+
+TypeScript
+
+// Exemplo do SVG Path para o Agente (Check-Pulse)
+<path d="M10 50 L35 75 L60 25 L75 50 L85 40 L95 50" ... /> 
+// (O agente ajustará as curvas para ficar perfeito)
+2. ATUALIZAÇÃO GLOBAL (TEXTOS E TÍTULOS)
+<title> no HTML: Mude para True Signal | Inteligência Esportiva.
+
+Header/Sidebar: Onde estiver Ocean Signal ou Vantage, substitua por True Signal.
+
+Rodapé: "Copyright © 2024 True Signal."
+
+3. DOMÍNIOS SUGERIDOS (PARA O USUÁRIO SABER)
+(Nota mental para o usuário registrar: usetruesignal.com, truesignal.pro, truesignal.ai).
+
+4. AJUSTE NA COPY DA HOME
+Ajuste a frase de impacto para casar com o nome:
+
+De: "Não analise o mercado. Domine-o."
+
+Para: "Em um mar de ruído, siga o Sinal Verdadeiro." (Ou "In a sea of noise, follow the True Signal" se fosse em inglês, mas mantenha PT-BR: "Encontre a Verdade no Mercado.")
+
+COMANDO: Execute o Rebranding. O logo deve passar a sensação de "Sinal Verificado e Correto".

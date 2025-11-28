@@ -6,28 +6,29 @@ interface LogoProps {
 
 export function Logo({ className = "", showText = true, size = 'md' }: LogoProps) {
   const sizes = {
-    sm: { h: 'h-6', w: 'w-6', text: 'text-lg' },
-    md: { h: 'h-8', w: 'w-8', text: 'text-2xl' },
-    lg: { h: 'h-12', w: 'w-12', text: 'text-4xl' },
-    xl: { h: 'h-16', w: 'w-16', text: 'text-5xl' },
+    sm: { h: 'h-6', w: 'w-8', text: 'text-base', gap: 'gap-2' },
+    md: { h: 'h-8', w: 'w-12', text: 'text-xl', gap: 'gap-2' },
+    lg: { h: 'h-10', w: 'w-14', text: 'text-2xl', gap: 'gap-3' },
+    xl: { h: 'h-14', w: 'w-20', text: 'text-4xl', gap: 'gap-4' },
   }[size];
 
   return (
-    <div className={`flex items-center gap-3 ${className} select-none`}>
+    <div className={`flex items-center ${sizes.gap} ${className} select-none`}>
       
-      {/* O SÍMBOLO "DIAMOND V-SHIELD" */}
+      {/* THE "VERIFIED PULSE" ICON */}
+      {/* Concept: A stylized Check (✓) where the long leg transforms into a heartbeat/digital signal line */}
       <svg 
-        className={`${sizes.h} ${sizes.w} text-[#33b864] flex-shrink-0`} 
-        viewBox="0 0 100 100" 
+        className={`${sizes.h} ${sizes.w} flex-shrink-0`} 
+        viewBox="0 0 120 60" 
         fill="none" 
         xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient id="pulse-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#33b864" stopOpacity="1" />
-            <stop offset="100%" stopColor="#2a9d54" stopOpacity="0.8" />
+            <stop offset="100%" stopColor="#2dd970" stopOpacity="1" />
           </linearGradient>
-          <filter id="shield-glow" x="-30%" y="-30%" width="160%" height="160%">
+          <filter id="pulse-glow" x="-20%" y="-40%" width="140%" height="180%">
             <feGaussianBlur stdDeviation="2" result="coloredBlur" />
             <feMerge>
               <feMergeNode in="coloredBlur" />
@@ -36,44 +37,45 @@ export function Logo({ className = "", showText = true, size = 'md' }: LogoProps
           </filter>
         </defs>
         
-        {/* Caminho externo (O Escudo/Diamante) */}
+        {/* The Verified Pulse Path:
+            - Starts descending (short leg of check)
+            - Goes up to form the check peak
+            - Continues horizontally with a signal pulse
+        */}
         <path 
-          d="M50 5L85 25V75L50 95L15 75V25L50 5Z" 
-          stroke="url(#shield-gradient)" 
+          d="M5 35 L20 50 L45 15 L55 35 L65 25 L75 35 L85 30 L95 35 L105 32 L115 35" 
+          stroke="url(#pulse-gradient)" 
           strokeWidth="6" 
+          strokeLinecap="round"
           strokeLinejoin="round"
           fill="none"
-          filter="url(#shield-glow)"
+          filter="url(#pulse-glow)"
         />
         
-        {/* Faceta superior esquerda (volume 3D) */}
-        <path 
-          d="M50 5L15 25V40L50 20L85 40V25L50 5Z" 
+        {/* Subtle animated dot at the end (signal alive indicator) */}
+        <circle 
+          cx="115" 
+          cy="35" 
+          r="4" 
           fill="#33b864"
-          fillOpacity="0.15"
-        />
-        
-        {/* O V Interno (O "Core") */}
-        <path 
-          d="M30 38L50 68L70 38" 
-          stroke="currentColor" 
-          strokeWidth="7" 
-          strokeLinecap="round" 
-          strokeLinejoin="round"
-          filter="url(#shield-glow)"
-        />
-        
-        {/* O Ponto de Poder (topo) */}
-        <circle cx="50" cy="22" r="4" fill="currentColor" filter="url(#shield-glow)" />
+          filter="url(#pulse-glow)"
+        >
+          <animate 
+            attributeName="opacity" 
+            values="1;0.4;1" 
+            dur="1.5s" 
+            repeatCount="indefinite" 
+          />
+        </circle>
       </svg>
 
-      {/* O NOME */}
+      {/* THE BRAND NAME - TRUE SIGNAL */}
       {showText && (
         <span 
-          className={`font-extrabold text-white tracking-[0.2em] ${sizes.text}`}
+          className={`font-black text-white tracking-wide ${sizes.text}`}
           style={{ fontFamily: 'Sora, sans-serif' }}
         >
-          VANTAGE
+          TRUE<span className="text-white"> SIGNAL</span>
         </span>
       )}
     </div>
