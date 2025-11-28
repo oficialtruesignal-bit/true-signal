@@ -59,7 +59,7 @@ export default function DashboardCRM() {
       <TrialBanner />
       
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 mt-4">
         <h1 className="text-3xl font-display font-bold text-slate-900 dark:text-white mb-2">
           Central de Operações
         </h1>
