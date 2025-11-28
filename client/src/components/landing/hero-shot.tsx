@@ -1,8 +1,42 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { Zap } from 'lucide-react';
+import { Zap, TrendingUp, Users, Target } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { AIScanner } from '@/components/ai-scanner';
+
+// Demo bet cards for mockup
+const demoBets = [
+  {
+    id: '1',
+    homeTeam: 'Manchester City',
+    awayTeam: 'Arsenal',
+    homeLogo: 'https://media.api-sports.io/football/teams/50.png',
+    awayLogo: 'https://media.api-sports.io/football/teams/42.png',
+    market: 'Ambas Marcam - Sim',
+    odd: 1.85,
+    status: 'green' as const,
+  },
+  {
+    id: '2',
+    homeTeam: 'Real Madrid',
+    awayTeam: 'Barcelona',
+    homeLogo: 'https://media.api-sports.io/football/teams/541.png',
+    awayLogo: 'https://media.api-sports.io/football/teams/529.png',
+    market: 'Over 2.5 Gols',
+    odd: 1.72,
+    status: 'pending' as const,
+  },
+  {
+    id: '3',
+    homeTeam: 'PSG',
+    awayTeam: 'Bayern',
+    homeLogo: 'https://media.api-sports.io/football/teams/85.png',
+    awayLogo: 'https://media.api-sports.io/football/teams/157.png',
+    market: 'Casa Vence',
+    odd: 2.10,
+    status: 'green' as const,
+  },
+];
 
 export function HeroShot() {
   return (
@@ -116,58 +150,106 @@ export function HeroShot() {
               {/* Screen */}
               <div className="w-full h-full bg-gradient-to-b from-[#0a0a0a] to-black rounded-[42px] overflow-hidden border border-[#33b864]/20">
                 {/* Notch */}
-                <div className="h-8 bg-black rounded-b-3xl mx-auto w-40 mb-4" />
+                <div className="h-6 bg-black rounded-b-2xl mx-auto w-28 mb-2" />
                 
-                {/* App Content */}
-                <div className="px-4 space-y-4">
-                  {/* Circle Gauge */}
-                  <div className="flex justify-center mb-6">
-                    <div className="relative w-40 h-40">
-                      <svg className="w-full h-full transform -rotate-90">
-                        <circle
-                          cx="80"
-                          cy="80"
-                          r="70"
-                          stroke="#1a1a1a"
-                          strokeWidth="12"
-                          fill="none"
+                {/* App Content - Dashboard Preview */}
+                <div className="px-3 space-y-2 overflow-hidden">
+                  {/* Mini Stats Row */}
+                  <div className="grid grid-cols-3 gap-1.5">
+                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg p-1.5 text-center">
+                      <Target className="w-3 h-3 text-[#33b864] mx-auto mb-0.5" />
+                      <div className="text-[10px] font-bold text-[#33b864]">91.4%</div>
+                      <div className="text-[6px] text-gray-500">Assertividade</div>
+                    </div>
+                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg p-1.5 text-center">
+                      <Users className="w-3 h-3 text-[#33b864] mx-auto mb-0.5" />
+                      <div className="text-[10px] font-bold text-[#33b864]">1.247</div>
+                      <div className="text-[6px] text-gray-500">Online</div>
+                    </div>
+                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg p-1.5 text-center">
+                      <TrendingUp className="w-3 h-3 text-[#33b864] mx-auto mb-0.5" />
+                      <div className="text-[10px] font-bold text-[#33b864]">847</div>
+                      <div className="text-[6px] text-gray-500">Sinais</div>
+                    </div>
+                  </div>
+                  
+                  {/* Section Title */}
+                  <div className="flex items-center gap-1 pt-1">
+                    <div className="w-1 h-3 bg-[#33b864] rounded-full" />
+                    <span className="text-[8px] font-bold text-white uppercase tracking-wider">Sinais Premium</span>
+                    <div className="ml-auto flex items-center gap-1">
+                      <div className="w-1.5 h-1.5 bg-[#33b864] rounded-full animate-pulse" />
+                      <span className="text-[6px] text-[#33b864]">LIVE</span>
+                    </div>
+                  </div>
+                  
+                  {/* Demo Bet Cards */}
+                  <div className="space-y-1.5">
+                    {demoBets.map((bet, index) => (
+                      <motion.div
+                        key={bet.id}
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 1.2 + index * 0.2 }}
+                        className="relative bg-gradient-to-r from-[#0d0d0d] to-[#111] border border-[#33b864]/20 rounded-lg p-2 overflow-hidden"
+                      >
+                        {/* Status indicator */}
+                        <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${bet.status === 'green' ? 'bg-[#33b864]' : 'bg-yellow-500'}`} />
+                        
+                        {/* Teams */}
+                        <div className="flex items-center justify-between mb-1">
+                          <div className="flex items-center gap-1">
+                            <img src={bet.homeLogo} alt="" className="w-4 h-4 object-contain" />
+                            <span className="text-[7px] text-white font-medium truncate max-w-[50px]">{bet.homeTeam}</span>
+                          </div>
+                          <span className="text-[6px] text-gray-500">vs</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[7px] text-white font-medium truncate max-w-[50px]">{bet.awayTeam}</span>
+                            <img src={bet.awayLogo} alt="" className="w-4 h-4 object-contain" />
+                          </div>
+                        </div>
+                        
+                        {/* Market & Odd */}
+                        <div className="flex items-center justify-between">
+                          <span className="text-[6px] text-gray-400">{bet.market}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[8px] font-bold text-[#33b864] bg-[#33b864]/20 px-1.5 py-0.5 rounded">
+                              {bet.odd.toFixed(2)}
+                            </span>
+                            {bet.status === 'green' && (
+                              <div className="w-2.5 h-2.5 bg-[#33b864] rounded-full flex items-center justify-center">
+                                <span className="text-[6px] text-black font-bold">✓</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                  
+                  {/* AI Scanner Mini */}
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 2 }}
+                    className="bg-[#0a0a0a] border border-[#33b864]/20 rounded-lg p-2"
+                  >
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <div className="w-1.5 h-1.5 bg-[#33b864] rounded-full animate-pulse" />
+                      <span className="text-[7px] font-bold text-[#33b864] uppercase">IA Analisando</span>
+                    </div>
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-1">
+                        <motion.div 
+                          className="h-0.5 bg-[#33b864]/50 rounded-full"
+                          initial={{ width: 0 }}
+                          animate={{ width: '60%' }}
+                          transition={{ duration: 1.5, delay: 2.2, repeat: Infinity, repeatType: 'reverse' }}
                         />
-                        <motion.circle
-                          cx="80"
-                          cy="80"
-                          r="70"
-                          stroke="#33b864"
-                          strokeWidth="12"
-                          fill="none"
-                          strokeLinecap="round"
-                          initial={{ strokeDasharray: '0 440' }}
-                          animate={{ strokeDasharray: '402 440' }}
-                          transition={{ duration: 2, delay: 1 }}
-                        />
-                      </svg>
-                      <div className="absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-4xl font-black text-[#33b864]">91.4%</span>
-                        <span className="text-[8px] text-gray-400 text-center px-2">Novembro</span>
                       </div>
+                      <span className="text-[5px] text-gray-500">Processando mercados em tempo real...</span>
                     </div>
-                  </div>
-                  
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-2">
-                      <div className="text-[9px] text-gray-400 mb-0.5">Lucro Mensal</div>
-                      <div className="text-sm font-bold text-[#33b864]">R$ 84.755</div>
-                    </div>
-                    <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-2">
-                      <div className="text-[7px] text-gray-400 mb-0.5 whitespace-nowrap">Assertividade do mês</div>
-                      <div className="text-sm font-bold text-[#33b864]">87%</div>
-                    </div>
-                  </div>
-                  
-                  {/* AI Scanner */}
-                  <div className="mt-2">
-                    <AIScanner />
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
