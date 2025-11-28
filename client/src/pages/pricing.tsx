@@ -181,7 +181,7 @@ export default function PricingPage() {
 
               <div className="mb-8">
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-[#33b864]">R$ 99,87</span>
+                  <span className="text-5xl font-black text-[#33b864]">R$ 2,00</span>
                   <span className="text-gray-400">/mês</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-2">Cancele quando quiser, sem multas</p>

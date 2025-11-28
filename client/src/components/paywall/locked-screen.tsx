@@ -75,7 +75,7 @@ export function LockedScreen() {
               </div>
               
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-5xl md:text-6xl font-black text-white font-mono">R$ 99,87</span>
+                <span className="text-5xl md:text-6xl font-black text-white font-mono">R$ 2,00</span>
                 <span className="text-gray-400 text-lg">/mês</span>
               </div>
               
@@ -109,7 +109,7 @@ export function LockedScreen() {
               data-testid="button-subscribe-premium"
             >
               <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-black py-5 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 text-lg touch-manipulation">
-                ASSINAR VANTAGE PRIME - R$ 99,87/MÊS
+                ASSINAR VANTAGE PRIME - R$ 2,00/MÊS
               </button>
             </a>
             

@@ -43,7 +43,7 @@ export function OfferPack() {
                 <div className="text-gray-500 line-through text-lg mb-2">De R$ 2.847/mês</div>
                 <div className="flex items-end justify-center gap-2">
                   <span className="text-5xl md:text-7xl font-black text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    R$ 99,87
+                    R$ 2,00
                   </span>
                   <span className="text-gray-400 text-xl pb-3">/mês</span>
                 </div>

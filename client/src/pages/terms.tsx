@@ -59,7 +59,7 @@ export default function TermsPage() {
             </ul>
             <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-6 mt-4">
               <p className="text-[#33b864] font-semibold">
-                Após os 15 dias, o acesso total requer assinatura do plano Vantage Prime (R$ 99,87/mês).
+                Após os 15 dias, o acesso total requer assinatura do plano Vantage Prime (R$ 2,00/mês).
               </p>
             </div>
           </section>
@@ -70,7 +70,7 @@ export default function TermsPage() {
               A assinatura <strong className="text-white">Vantage Prime</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
-              <li>Cobrança mensal recorrente de <strong className="text-white">R$ 99,87</strong>;</li>
+              <li>Cobrança mensal recorrente de <strong className="text-white">R$ 2,00</strong>;</li>
               <li>Renovação automática até cancelamento;</li>
               <li>Garantia de reembolso de 15 dias (primeira assinatura);</li>
               <li>Pagamento processado via gateway seguro (PCI DSS).</li>

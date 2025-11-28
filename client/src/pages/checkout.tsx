@@ -229,7 +229,7 @@ export default function CheckoutPage() {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Vantage Prime (mensal)</span>
-                    <span className="text-white">R$ 99,87</span>
+                    <span className="text-white">R$ 2,00</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Taxa de processamento</span>
@@ -237,7 +237,7 @@ export default function CheckoutPage() {
                   </div>
                   <div className="flex justify-between pt-3 border-t border-white/10">
                     <span className="font-bold text-white">Total</span>
-                    <span className="font-bold text-xl text-white">R$ 99,87</span>
+                    <span className="font-bold text-xl text-white">R$ 2,00</span>
                   </div>
                 </div>
               </div>
@@ -394,7 +394,7 @@ export default function CheckoutPage() {
                 Como funciona a cobrança?
               </h4>
               <p className="text-sm text-gray-400">
-                A cobrança é mensal e recorrente de R$ 99,87. Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
+                A cobrança é mensal e recorrente de R$ 2,00. Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
               </p>
             </div>
           </div>

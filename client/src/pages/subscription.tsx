@@ -219,7 +219,7 @@ export default function SubscriptionPage() {
           <p className="text-gray-400 text-sm uppercase tracking-wider mb-2">Investimento mensal</p>
           <div className="flex items-baseline justify-center gap-1">
             <span className="text-gray-400 text-lg">R$</span>
-            <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>99,87</span>
+            <span className="text-4xl font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>2,00</span>
             <span className="text-gray-400">/mês</span>
           </div>
           <p className="text-[#33b864] text-sm mt-2">30 dias de acesso completo</p>

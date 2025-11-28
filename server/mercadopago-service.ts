@@ -62,7 +62,7 @@ export class MercadoPagoService {
   }
 
   /**
-   * Create a subscription plan for Ocean Prime (R$ 99,87/month with 15-day trial)
+   * Create a subscription plan for Vantage Prime (R$ 2,00/month with 15-day trial)
    */
   async createSubscriptionPlan(): Promise<any> {
     if (!this.isConfigured()) {
@@ -70,11 +70,11 @@ export class MercadoPagoService {
     }
 
     const planData: CreateSubscriptionPlanParams = {
-      reason: 'Ocean Prime - Assinatura Mensal',
+      reason: 'Vantage Prime - Assinatura Mensal',
       auto_recurring: {
         frequency: 1,
         frequency_type: 'months',
-        transaction_amount: 99.87,
+        transaction_amount: 2.00,
         currency_id: 'BRL',
         free_trial: {
           frequency: 15,
