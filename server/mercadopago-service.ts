@@ -273,30 +273,43 @@ export class MercadoPagoService {
   }
 
   /**
-   * Create a PIX payment directly (instant payment)
+   * Create a PIX payment directly (instant payment - transparent checkout)
    */
   async createPixPayment(params: {
     amount: number;
     userId: string;
     userEmail: string;
     description: string;
+    firstName?: string;
+    lastName?: string;
+    document?: string;
   }): Promise<any> {
     if (!this.isConfigured()) {
       throw new Error('Mercado Pago not configured');
     }
 
-    const paymentData = {
+    const paymentData: any = {
       transaction_amount: params.amount,
       description: params.description,
       payment_method_id: 'pix',
       payer: {
         email: params.userEmail,
+        first_name: params.firstName || 'Usuario',
+        last_name: params.lastName || 'Vantage',
       },
       external_reference: params.userId,
       notification_url: process.env.REPLIT_DEV_DOMAIN 
         ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/mercadopago/webhook`
         : 'http://localhost:5000/api/mercadopago/webhook',
     };
+
+    // Add CPF if provided
+    if (params.document) {
+      paymentData.payer.identification = {
+        type: 'CPF',
+        number: params.document,
+      };
+    }
 
     try {
       const response = await axios.post(

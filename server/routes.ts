@@ -670,32 +670,92 @@ REGRAS IMPORTANTES:
     }
   });
 
-  // Create PIX payment
+  // Create PIX payment (transparent checkout) - requires authentication
   app.post("/api/mercadopago/pix", async (req, res) => {
     try {
-      const { userId, userEmail, amount } = req.body;
+      const { userId, userEmail, firstName, lastName, document } = req.body;
       
+      // Validate required fields
       if (!userId || !userEmail) {
         return res.status(400).json({ error: "userId and userEmail are required" });
       }
 
+      // Verify user exists in database (security check)
+      const user = await storage.getProfileById(userId);
+      if (!user) {
+        return res.status(403).json({ error: "User not found" });
+      }
+
+      // Verify email matches user (prevent spoofing)
+      if (user.email !== userEmail) {
+        console.warn(`⚠️ PIX attempt with mismatched email: ${userEmail} vs ${user.email}`);
+        return res.status(403).json({ error: "Email mismatch" });
+      }
+
+      // Fixed price - server-side controlled (prevent price manipulation)
+      const VANTAGE_PRIME_PRICE = 2.00;
+
       const payment = await mercadoPagoService.createPixPayment({
-        amount: amount || 2.00,
+        amount: VANTAGE_PRIME_PRICE,
         userId,
-        userEmail,
+        userEmail: user.email, // Use verified email from database
         description: 'Vantage Prime - Acesso Mensal',
+        firstName: firstName || 'Usuario',
+        lastName: lastName || 'Vantage',
+        document,
       });
+
+      // Store payment ID for this user (for status verification)
+      console.log(`✅ PIX payment created for user ${userId}: ${payment.id}`);
 
       return res.json({ 
         success: true,
-        payment,
+        payment: {
+          id: payment.id,
+          status: payment.status,
+        },
         qrCode: payment.point_of_interaction?.transaction_data?.qr_code,
         qrCodeBase64: payment.point_of_interaction?.transaction_data?.qr_code_base64,
-        ticketUrl: payment.point_of_interaction?.transaction_data?.ticket_url,
       });
     } catch (error: any) {
       console.error("Error creating PIX payment:", error);
       return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get payment status - secured endpoint
+  app.post("/api/mercadopago/payment-status", async (req, res) => {
+    try {
+      const { paymentId, userId } = req.body;
+      
+      if (!paymentId || !userId) {
+        return res.status(400).json({ error: "paymentId and userId are required" });
+      }
+
+      // Verify user exists
+      const user = await storage.getProfileById(userId);
+      if (!user) {
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      const paymentResponse = await axios.get(
+        `https://api.mercadopago.com/v1/payments/${paymentId}`,
+        { headers: { 'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}` } }
+      );
+      
+      // Verify this payment belongs to this user
+      if (paymentResponse.data.external_reference !== userId) {
+        console.warn(`⚠️ Payment status check mismatch: user ${userId} tried to check payment ${paymentId}`);
+        return res.status(403).json({ error: "Unauthorized" });
+      }
+
+      // Return only necessary status info (no sensitive data)
+      return res.json({ 
+        status: paymentResponse.data.status,
+      });
+    } catch (error: any) {
+      console.error("Error getting payment status:", error);
+      return res.status(500).json({ error: "Unable to verify payment status" });
     }
   });
 

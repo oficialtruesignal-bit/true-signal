@@ -2,7 +2,7 @@ import { Layout } from "@/components/layout";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText, QrCode } from "lucide-react";
+import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText, QrCode, Copy, Loader2, RefreshCw } from "lucide-react";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { toast } from "sonner";
 import axios from "axios";
@@ -22,6 +22,13 @@ const checkoutSchema = z.object({
 
 type CheckoutFormData = z.infer<typeof checkoutSchema>;
 
+interface PixPaymentData {
+  qrCode: string;
+  qrCodeBase64: string;
+  paymentId: string;
+  expirationDate?: string;
+}
+
 export default function CheckoutPage() {
   const { user } = useAuth();
   const { t } = useLanguage();
@@ -29,6 +36,9 @@ export default function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(127);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
+  const [pixData, setPixData] = useState<PixPaymentData | null>(null);
+  const [pixStatus, setPixStatus] = useState<'pending' | 'approved' | 'expired'>('pending');
+  const [copied, setCopied] = useState(false);
 
   const {
     register,
@@ -57,6 +67,47 @@ export default function CheckoutPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Check PIX payment status periodically
+  useEffect(() => {
+    if (!pixData?.paymentId || !user?.id) return;
+
+    const checkStatus = async () => {
+      try {
+        const response = await axios.post('/api/mercadopago/payment-status', {
+          paymentId: pixData.paymentId,
+          userId: user.id,
+        });
+        const status = response.data.status;
+        
+        if (status === 'approved') {
+          setPixStatus('approved');
+          toast.success("Pagamento confirmado! Redirecionando...");
+          setTimeout(() => {
+            window.location.href = '/obrigado';
+          }, 2000);
+        } else if (status === 'cancelled' || status === 'rejected') {
+          setPixStatus('expired');
+        }
+      } catch (error) {
+        console.error("Error checking payment status:", error);
+      }
+    };
+
+    // Check immediately, then every 5 seconds
+    checkStatus();
+    const interval = setInterval(checkStatus, 5000);
+    return () => clearInterval(interval);
+  }, [pixData?.paymentId, user?.id]);
+
+  const copyPixCode = () => {
+    if (pixData?.qrCode) {
+      navigator.clipboard.writeText(pixData.qrCode);
+      setCopied(true);
+      toast.success("Código PIX copiado!");
+      setTimeout(() => setCopied(false), 3000);
+    }
+  };
+
   const onSubmit = async (data: CheckoutFormData) => {
     if (!user) {
       toast.error("Você precisa estar logado para assinar");
@@ -66,22 +117,26 @@ export default function CheckoutPage() {
     setIsLoading(true);
     try {
       if (paymentMethod === 'pix') {
-        // Create PIX preference (one-time payment with PIX enabled)
-        const response = await axios.post("/api/mercadopago/preference", {
+        // Create PIX payment directly (transparent checkout)
+        const response = await axios.post("/api/mercadopago/pix", {
           userId: user.id,
           userEmail: data.email,
-          title: "Vantage Prime - Acesso Mensal",
           amount: 2.00,
-          quantity: 1,
+          firstName: data.fullName.split(' ')[0],
+          lastName: data.fullName.split(' ').slice(1).join(' ') || 'Usuario',
+          document: data.document.replace(/\D/g, ''),
         });
 
-        const { init_point } = response.data.preference;
-
-        if (init_point) {
-          window.open(init_point, '_blank');
-          toast.success("Checkout PIX aberto em nova aba! Complete o pagamento lá.");
+        if (response.data.success) {
+          setPixData({
+            qrCode: response.data.qrCode,
+            qrCodeBase64: response.data.qrCodeBase64,
+            paymentId: response.data.payment.id,
+          });
+          setPixStatus('pending');
+          toast.success("QR Code PIX gerado! Escaneie para pagar.");
         } else {
-          toast.error("Erro ao criar checkout PIX. Tente novamente.");
+          toast.error("Erro ao gerar PIX. Tente novamente.");
         }
       } else {
         // Create card subscription (recurring monthly)
@@ -123,6 +178,123 @@ export default function CheckoutPage() {
           <p className="text-gray-300 mb-8">
             Aproveite todos os benefícios da sua assinatura premium.
           </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show PIX QR Code screen when PIX payment is generated
+  if (pixData) {
+    return (
+      <Layout>
+        <div className="max-w-md mx-auto py-10">
+          <div className="bg-card border border-white/10 rounded-xl p-8 text-center">
+            {/* Header */}
+            <div className="mb-6">
+              <div className="w-16 h-16 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                {pixStatus === 'approved' ? (
+                  <Check className="w-8 h-8 text-[#33b864]" />
+                ) : pixStatus === 'expired' ? (
+                  <AlertCircle className="w-8 h-8 text-red-500" />
+                ) : (
+                  <QrCode className="w-8 h-8 text-[#33b864]" />
+                )}
+              </div>
+              <h2 className="text-2xl font-sora font-bold text-white mb-2">
+                {pixStatus === 'approved' 
+                  ? 'Pagamento Confirmado!' 
+                  : pixStatus === 'expired'
+                  ? 'PIX Expirado'
+                  : 'Pague com PIX'}
+              </h2>
+              <p className="text-gray-400">
+                {pixStatus === 'approved'
+                  ? 'Sua assinatura foi ativada com sucesso!'
+                  : pixStatus === 'expired'
+                  ? 'O código PIX expirou. Gere um novo.'
+                  : 'Escaneie o QR Code ou copie o código'}
+              </p>
+            </div>
+
+            {pixStatus === 'pending' && (
+              <>
+                {/* QR Code */}
+                <div className="bg-white p-4 rounded-xl mb-6 inline-block">
+                  <img 
+                    src={`data:image/png;base64,${pixData.qrCodeBase64}`}
+                    alt="QR Code PIX"
+                    className="w-48 h-48"
+                    data-testid="img-pix-qrcode"
+                  />
+                </div>
+
+                {/* Timer */}
+                <div className="flex items-center justify-center gap-2 text-gray-400 mb-6">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm">Aguardando pagamento...</span>
+                </div>
+
+                {/* Copy Code Button */}
+                <div className="space-y-3">
+                  <button
+                    onClick={copyPixCode}
+                    className="w-full py-3 px-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+                    data-testid="button-copy-pix"
+                  >
+                    {copied ? (
+                      <>
+                        <Check className="w-5 h-5" />
+                        Copiado!
+                      </>
+                    ) : (
+                      <>
+                        <Copy className="w-5 h-5" />
+                        Copiar código PIX
+                      </>
+                    )}
+                  </button>
+
+                  {/* PIX Code Display */}
+                  <div className="bg-white/5 border border-white/10 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 mb-1">Código Copia e Cola:</p>
+                    <p className="text-xs text-gray-300 break-all font-mono max-h-20 overflow-y-auto">
+                      {pixData.qrCode}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Value */}
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Valor:</span>
+                    <span className="text-2xl font-bold text-white">R$ 2,00</span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Acesso por 30 dias ao Vantage Prime
+                  </p>
+                </div>
+              </>
+            )}
+
+            {pixStatus === 'expired' && (
+              <button
+                onClick={() => {
+                  setPixData(null);
+                  setPixStatus('pending');
+                }}
+                className="w-full py-3 px-4 bg-[#33b864] hover:bg-[#2da055] text-black font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-5 h-5" />
+                Gerar novo PIX
+              </button>
+            )}
+
+            {/* Security Badge */}
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <Shield className="w-4 h-4" />
+              <span>Pagamento processado pelo Mercado Pago</span>
+            </div>
+          </div>
         </div>
       </Layout>
     );
