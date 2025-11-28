@@ -40,7 +40,7 @@ export const translations = {
       performanceLabel: "Performance Atual",
       performanceText: "Assertividade média de",
       performanceTickets: "em nossos bilhetes.",
-      expertBadge: "Validado por Especialistas",
+      expertBadge: "Validado por Especialistas + IA de alta performance",
     },
     live: {
       title: "Ao Vivo",
@@ -143,7 +143,7 @@ export const translations = {
       performanceLabel: "Current Performance",
       performanceText: "Average accuracy of",
       performanceTickets: "on our tickets.",
-      expertBadge: "Validated by Experts",
+      expertBadge: "Validated by Experts + High Performance AI",
     },
     live: {
       title: "Live",
@@ -246,7 +246,7 @@ export const translations = {
       performanceLabel: "Rendimiento Actual",
       performanceText: "Precisión promedio de",
       performanceTickets: "en nuestros boletos.",
-      expertBadge: "Validado por Expertos",
+      expertBadge: "Validado por Expertos + IA de alto rendimiento",
     },
     live: {
       title: "En Vivo",
@@ -349,7 +349,7 @@ export const translations = {
       performanceLabel: "Performance Actuelle",
       performanceText: "Précision moyenne de",
       performanceTickets: "sur nos billets.",
-      expertBadge: "Validé par des Experts",
+      expertBadge: "Validé par des Experts + IA haute performance",
     },
     live: {
       title: "En Direct",
@@ -452,7 +452,7 @@ export const translations = {
       performanceLabel: "Prestazioni Attuali",
       performanceText: "Precisione media di",
       performanceTickets: "sui nostri biglietti.",
-      expertBadge: "Validato dagli Esperti",
+      expertBadge: "Validato dagli Esperti + IA ad alte prestazioni",
     },
     live: {
       title: "In Diretta",
@@ -555,7 +555,7 @@ export const translations = {
       performanceLabel: "当前表现",
       performanceText: "平均准确率",
       performanceTickets: "在我们的投注单上。",
-      expertBadge: "经专家验证",
+      expertBadge: "经专家验证 + 高性能AI",
     },
     live: {
       title: "直播",
