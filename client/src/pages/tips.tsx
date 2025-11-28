@@ -163,9 +163,9 @@ export default function TipsPage() {
       {!isLoading && !error && tips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {tips.map((tip, index) => {
-            // Usuários não-pagantes veem os 4 primeiros bilhetes grátis
-            // A partir do 5º bilhete (índice 4+), mostra blur + paywall
-            const FREE_TIPS_LIMIT = 4;
+            // Usuários não-pagantes veem os 2 primeiros bilhetes grátis
+            // A partir do 3º bilhete (índice 2+), mostra blur + paywall
+            const FREE_TIPS_LIMIT = 2;
             const shouldBlur = !canSeeAllTips && index >= FREE_TIPS_LIMIT;
             
             return (
@@ -191,8 +191,6 @@ export default function TipsPage() {
                       </p>
                       <a
                         href={CHECKOUT_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
                         data-testid="button-unlock-signal"
                       >
                         <button className="px-6 py-3 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto">
@@ -206,6 +204,55 @@ export default function TipsPage() {
               </div>
             );
           })}
+          
+          {/* Placeholder cards bloqueados para mostrar valor do premium */}
+          {!canSeeAllTips && tips.length < 4 && (
+            <>
+              {[...Array(Math.max(0, 3 - tips.length))].map((_, idx) => (
+                <div key={`placeholder-${idx}`} className="relative" data-testid={`placeholder-locked-${idx}`}>
+                  <div className="blur-sm pointer-events-none select-none">
+                    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-6 h-48">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-10 h-10 bg-gray-700/50 rounded-lg animate-pulse"></div>
+                        <div className="flex-1">
+                          <div className="h-4 bg-gray-700/50 rounded w-3/4 mb-2 animate-pulse"></div>
+                          <div className="h-3 bg-gray-700/30 rounded w-1/2 animate-pulse"></div>
+                        </div>
+                      </div>
+                      <div className="space-y-3">
+                        <div className="h-3 bg-gray-700/30 rounded w-full animate-pulse"></div>
+                        <div className="h-3 bg-gray-700/30 rounded w-2/3 animate-pulse"></div>
+                      </div>
+                      <div className="mt-4 flex justify-between items-center">
+                        <div className="h-8 bg-gray-700/50 rounded w-20 animate-pulse"></div>
+                        <div className="h-6 bg-[#33b864]/20 rounded-full w-16 animate-pulse"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl border-2 border-[#33b864]/30">
+                    <div className="text-center p-6">
+                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
+                        <LockKeyhole className="w-8 h-8 text-[#33b864]" />
+                      </div>
+                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                        +{idx + 1} Sinais Exclusivos
+                      </h3>
+                      <p className="text-gray-300 text-sm mb-4">
+                        Disponíveis apenas para assinantes Prime
+                      </p>
+                      <a href={CHECKOUT_URL} data-testid={`button-unlock-placeholder-${idx}`}>
+                        <button className="px-6 py-3 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto">
+                          <Sparkles className="w-4 h-4" />
+                          Desbloquear
+                        </button>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       )}
     </Layout>
