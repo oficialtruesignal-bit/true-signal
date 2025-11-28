@@ -157,25 +157,7 @@ export function TechSolution() {
                     </div>
                   </div>
                   
-                  {/* Animated Hand Pointer - Outside the phone */}
-                  <motion.div
-                    initial={{ opacity: 0, x: 80, y: 50 }}
-                    animate={{ 
-                      opacity: [0, 1, 1, 1, 0],
-                      x: [80, 20, 20, 20, 80],
-                      y: [50, 0, -10, 0, 50]
-                    }}
-                    transition={{ 
-                      repeat: Infinity, 
-                      duration: 4,
-                      times: [0, 0.2, 0.4, 0.6, 1],
-                      ease: 'easeInOut'
-                    }}
-                    className="absolute bottom-32 -right-4 z-30"
-                  >
-                    <span className="text-5xl drop-shadow-2xl">👆</span>
-                  </motion.div>
-                </motion.div>
+                                  </motion.div>
               </div>
               
               {/* Right: Profit Simulator (Desktop only, hidden on mobile - shown separately below) */}
