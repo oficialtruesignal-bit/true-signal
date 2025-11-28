@@ -7,7 +7,7 @@ export function BenefitsGrid() {
   const isInView = useInView(ref, { once: true });
   
   return (
-    <section ref={ref} className="relative py-20 lg:py-12 px-4 bg-gradient-to-b from-[#121212] via-black to-[#0a0a0a]">
+    <section ref={ref} className="relative pt-20 pb-8 lg:pt-12 lg:pb-6 px-4 bg-gradient-to-b from-[#121212] via-black to-[#0a0a0a]">
       <div className="max-w-6xl mx-auto lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
