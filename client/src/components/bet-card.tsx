@@ -320,14 +320,16 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
             className="w-full h-auto object-cover opacity-90 group-hover:opacity-100 transition-opacity"
           />
 
-          {/* Badge de Status */}
-          <div className={cn(
-            "absolute top-3 left-3 px-2.5 py-1 rounded-lg border text-[10px] font-bold uppercase tracking-wide backdrop-blur-md",
-            statusBadge.className,
-            "bg-black/80"
-          )}>
-            {statusBadge.text}
-          </div>
+          {/* Badge de Status - só aparece quando pendente */}
+          {currentStatus === 'pending' && (
+            <div className={cn(
+              "absolute top-3 left-3 px-2.5 py-1 rounded-lg border text-[10px] font-bold uppercase tracking-wide backdrop-blur-md",
+              statusBadge.className,
+              "bg-black/80"
+            )}>
+              {statusBadge.text}
+            </div>
+          )}
 
           {/* Editor Admin (apenas para admin) */}
           {isAdmin && (
@@ -458,12 +460,14 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           </span>
         </div>
         <div className="flex items-center gap-2 ml-2">
-          <div className={cn(
-            "px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wide shrink-0",
-            statusBadge.className
-          )}>
-            {statusBadge.text}
-          </div>
+          {currentStatus === 'pending' && (
+            <div className={cn(
+              "px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wide shrink-0",
+              statusBadge.className
+            )}>
+              {statusBadge.text}
+            </div>
+          )}
           
           {isAdmin && (
             <DropdownMenu>
