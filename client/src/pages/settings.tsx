@@ -106,13 +106,13 @@ export default function SettingsPage() {
             </div>
 
             {/* Action Button */}
-            <Link href="/pricing">
+            <Link href={isPremium ? "/assinatura" : "/checkout"}>
               <Button
                 className="w-full bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
                 data-testid="button-view-plans"
               >
                 <Sparkles className="w-4 h-4 mr-2" />
-                {isPremium ? 'Gerenciar assinatura' : 'Ver planos disponíveis'}
+                {isPremium ? 'Gerenciar assinatura' : 'Assinar Ocean Prime'}
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
