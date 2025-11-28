@@ -130,20 +130,31 @@ export function OfferPack() {
           {/* Glow ring */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 to-[#33b864]/30 rounded-3xl blur-xl" />
           
-          {/* Black Friday Tag */}
+          {/* Black Friday Balloons */}
           <motion.div 
-            className="absolute -top-4 -right-4 md:-top-6 md:-right-6 z-20"
-            initial={{ opacity: 0, rotate: 15, scale: 0.5 }}
-            animate={isInView ? { opacity: 1, rotate: 12, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            className="absolute -top-8 -right-8 md:-top-12 md:-right-12 lg:-top-16 lg:-right-16 z-20"
+            initial={{ opacity: 0, y: 50, scale: 0.5 }}
+            animate={isInView ? { 
+              opacity: 1, 
+              y: [0, -8, 0],
+              scale: 1 
+            } : {}}
+            transition={{ 
+              opacity: { duration: 0.5, delay: 0.3 },
+              y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+              scale: { duration: 0.5, delay: 0.3 }
+            }}
           >
             <img 
-              src="/black-friday-tag.png" 
+              src="/black-friday-balloons.png" 
               alt="Black Friday Sale" 
-              className="w-24 md:w-32 lg:w-36 drop-shadow-2xl"
-              style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,0.8))' }}
+              className="w-28 md:w-40 lg:w-48 drop-shadow-2xl"
+              style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.6))' }}
             />
           </motion.div>
+          
+          {/* Floating balloon reflection/glow */}
+          <div className="absolute -top-4 -right-4 md:-top-8 md:-right-8 w-32 md:w-48 h-32 md:h-48 bg-yellow-500/20 rounded-full blur-3xl z-10" />
           
           <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
             <div className="text-center">
