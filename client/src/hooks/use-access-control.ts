@@ -11,11 +11,28 @@ export function useAccessControl() {
     return {
       daysRemaining: 0,
       subscriptionDaysRemaining: 0,
-      isLocked: true,
+      isLocked: false,
       canSeeAllTips: false,
       isPremium: false,
       isTrial: false,
       isExpired: true,
+      isAdmin: false,
+      subscriptionEndsAt: null,
+    };
+  }
+  
+  // ADMIN users have FULL ACCESS to everything - no restrictions
+  const isAdmin = user.role === 'admin';
+  if (isAdmin) {
+    return {
+      daysRemaining: 999,
+      subscriptionDaysRemaining: 999,
+      isLocked: false,
+      canSeeAllTips: true,
+      isPremium: true,
+      isTrial: false,
+      isExpired: false,
+      isAdmin: true,
       subscriptionEndsAt: null,
     };
   }
@@ -52,6 +69,7 @@ export function useAccessControl() {
           isPremium: false,
           isTrial: false,
           isExpired: true,
+          isAdmin: false,
           subscriptionEndsAt: user.subscriptionEndsAt,
         };
       }
@@ -65,6 +83,7 @@ export function useAccessControl() {
       isPremium: true,
       isTrial: false,
       isExpired: false,
+      isAdmin: false,
       subscriptionEndsAt: user.subscriptionEndsAt,
     };
   }
@@ -79,6 +98,7 @@ export function useAccessControl() {
       isPremium: false,
       isTrial: false,
       isExpired: true,
+      isAdmin: false,
       subscriptionEndsAt: user.subscriptionEndsAt,
     };
   }
@@ -106,6 +126,7 @@ export function useAccessControl() {
     isPremium: false,
     isTrial: true,
     isExpired: false,
+    isAdmin: false,
     subscriptionEndsAt: null,
   };
 }
