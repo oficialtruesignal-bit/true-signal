@@ -541,6 +541,58 @@ export default function CheckoutPage() {
                 )}
               </div>
 
+              {/* Card Payment Form - Mercado Pago */}
+              {paymentMethod === 'card' && mpReady && (
+                <div className="pt-4">
+                  <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+                    <CardPayment
+                      initialization={{
+                        amount: 47.90,
+                      }}
+                      customization={{
+                        paymentMethods: {
+                          maxInstallments: 1,
+                        },
+                        visual: {
+                          style: {
+                            theme: 'dark',
+                          },
+                        },
+                      }}
+                      onSubmit={onCardPaymentSubmit}
+                      onReady={onCardPaymentReady}
+                      onError={onCardPaymentError}
+                    />
+                  </div>
+                  {cardPaymentStatus === 'processing' && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-[#33b864]">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Processando pagamento...</span>
+                    </div>
+                  )}
+                  {cardPaymentStatus === 'success' && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-green-500">
+                      <CheckCircle2 className="w-5 h-5" />
+                      <span>Pagamento aprovado!</span>
+                    </div>
+                  )}
+                  {cardPaymentStatus === 'error' && (
+                    <div className="mt-4 flex items-center justify-center gap-2 text-red-500">
+                      <AlertCircle className="w-5 h-5" />
+                      <span>Erro no pagamento. Tente novamente.</span>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {paymentMethod === 'card' && !mpReady && (
+                <div className="pt-4 flex items-center justify-center gap-2 text-gray-400">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Carregando formulário de pagamento...</span>
+                </div>
+              )}
+
               <h3 className="font-sora font-bold text-white pt-4">Complete seus dados</h3>
 
               {/* Full Name */}
