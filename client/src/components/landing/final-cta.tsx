@@ -54,7 +54,7 @@ export function FinalCTA() {
               />
               <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                 <Zap className="w-6 h-6" />
-                COMEÇAR AGORA
+                USAR GRÁTIS
               </span>
             </button>
           </Link>

@@ -85,7 +85,7 @@ export function HeroShot() {
                 />
                 <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-5 h-5" />
-                  COMEÇAR AGORA
+                  USAR GRÁTIS
                 </span>
               </button>
             </Link>
