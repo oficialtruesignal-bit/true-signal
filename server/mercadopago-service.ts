@@ -311,11 +311,19 @@ export class MercadoPagoService {
       };
     }
 
+    // Generate unique idempotency key for this payment
+    const idempotencyKey = `pix-${params.userId}-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
     try {
       const response = await axios.post(
         `${MP_API_BASE_URL}/v1/payments`,
         paymentData,
-        { headers: this.headers }
+        { 
+          headers: {
+            ...this.headers,
+            'X-Idempotency-Key': idempotencyKey,
+          }
+        }
       );
 
       console.log('✅ PIX payment created:', response.data.id);
