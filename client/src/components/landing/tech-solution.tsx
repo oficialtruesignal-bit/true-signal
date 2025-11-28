@@ -30,7 +30,7 @@ export function TechSolution() {
               prática
             </span>
           </h2>
-          <p className="text-xs md:text-sm lg:text-base text-gray-400 max-w-2xl mx-auto whitespace-nowrap">
+          <p className="text-sm md:text-base text-gray-400 max-w-2xl mx-auto text-center">
             Nós analisamos, você recebe uma notificação no celular te avisando que tem bilhetes disponíveis com alta assertividade
           </p>
         </motion.div>
