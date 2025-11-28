@@ -377,16 +377,34 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
 
         {/* RODAPÉ COM BOTÃO DE AÇÃO */}
         <div className="p-4 bg-[#121212] border-t border-[#33b864]/10">
-          <button 
-            onClick={handleCopy}
-            data-testid={`button-copy-${signal.id}`}
-            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.3)]"
-          >
-            <Copy className="w-5 h-5 text-black" />
-            <span className="text-black font-sora font-bold text-sm tracking-wide uppercase">
-              {isCopied ? "COPIADO" : "PEGAR BILHETE AGORA"}
-            </span>
-          </button>
+          {currentStatus === 'green' ? (
+            <div 
+              className="w-full bg-green-500/20 border border-green-500 h-12 rounded-xl flex items-center justify-center gap-2"
+            >
+              <span className="text-green-400 font-sora font-bold text-sm tracking-wide">
+                ✓ GANHOU
+              </span>
+            </div>
+          ) : currentStatus === 'red' ? (
+            <div 
+              className="w-full bg-red-500/20 border border-red-500 h-12 rounded-xl flex items-center justify-center gap-2"
+            >
+              <span className="text-red-400 font-sora font-bold text-sm tracking-wide">
+                ✗ PERDIDA
+              </span>
+            </div>
+          ) : (
+            <button 
+              onClick={handleCopy}
+              data-testid={`button-copy-${signal.id}`}
+              className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.3)]"
+            >
+              <Copy className="w-5 h-5 text-black" />
+              <span className="text-black font-sora font-bold text-sm tracking-wide uppercase">
+                {isCopied ? "COPIADO" : "PEGAR BILHETE AGORA"}
+              </span>
+            </button>
+          )}
           
           {/* Metadados */}
           <div className="mt-3 flex items-center gap-3 px-1 text-[9px] text-gray-500 font-mono">
@@ -542,16 +560,34 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
 
       {/* --- FOOTER: Botão + Metadados --- */}
       <div className="px-4 pb-4">
-        <button 
-          onClick={handleCopy}
-          data-testid={`button-copy-${signal.id}`}
-          className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-11 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.25)]"
-        >
-          <Copy className="w-4 h-4 text-black" />
-          <span className="text-black font-sora font-bold text-sm tracking-wide">
-            {isCopied ? "COPIADO" : "COPIAR BILHETE"}
-          </span>
-        </button>
+        {currentStatus === 'green' ? (
+          <div 
+            className="w-full bg-green-500/20 border border-green-500 h-11 rounded-xl flex items-center justify-center gap-2"
+          >
+            <span className="text-green-400 font-sora font-bold text-sm tracking-wide">
+              ✓ GANHOU
+            </span>
+          </div>
+        ) : currentStatus === 'red' ? (
+          <div 
+            className="w-full bg-red-500/20 border border-red-500 h-11 rounded-xl flex items-center justify-center gap-2"
+          >
+            <span className="text-red-400 font-sora font-bold text-sm tracking-wide">
+              ✗ PERDIDA
+            </span>
+          </div>
+        ) : (
+          <button 
+            onClick={handleCopy}
+            data-testid={`button-copy-${signal.id}`}
+            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-11 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.25)]"
+          >
+            <Copy className="w-4 h-4 text-black" />
+            <span className="text-black font-sora font-bold text-sm tracking-wide">
+              {isCopied ? "COPIADO" : "COPIAR BILHETE"}
+            </span>
+          </button>
+        )}
       </div>
 
       {/* Dialog de confirmação de delete */}
