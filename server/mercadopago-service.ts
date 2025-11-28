@@ -254,10 +254,7 @@ export class MercadoPagoService {
         default_installments: 1,
       },
       statement_descriptor: 'VANTAGE PRIME',
-      purpose: 'wallet_purchase',
       binary_mode: false,
-      expires: false,
-      marketplace: 'NONE',
     };
 
     try {
