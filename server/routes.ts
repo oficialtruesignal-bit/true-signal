@@ -759,6 +759,74 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // Card Payment - Transparent checkout with tokenized card
+  app.post("/api/mercadopago/card-payment", async (req, res) => {
+    try {
+      const { token, issuerId, paymentMethodId, transactionAmount, installments, userId, userEmail, payer } = req.body;
+      
+      // Validate required fields
+      if (!token || !paymentMethodId || !userId || !userEmail) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Verify user exists in database (security check)
+      const user = await storage.getProfileById(userId);
+      if (!user) {
+        return res.status(403).json({ error: "User not found" });
+      }
+
+      // Verify email matches user (prevent spoofing)
+      if (user.email !== userEmail) {
+        console.warn(`⚠️ Card payment attempt with mismatched email: ${userEmail} vs ${user.email}`);
+        return res.status(403).json({ error: "Email mismatch" });
+      }
+
+      // Fixed price - server-side controlled (prevent price manipulation)
+      const VANTAGE_PRIME_PRICE = 2.00;
+
+      const payment = await mercadoPagoService.createCardPayment({
+        token,
+        issuerId: issuerId || '',
+        paymentMethodId,
+        transactionAmount: VANTAGE_PRIME_PRICE, // Use server-side price
+        installments: installments || 1,
+        userId,
+        userEmail: user.email,
+        payer: {
+          email: user.email,
+          identification: payer?.identification || { type: 'CPF', number: '' },
+        },
+      });
+
+      console.log(`✅ Card payment created for user ${userId}: ${payment.id}, status: ${payment.status}`);
+
+      // If payment approved, activate subscription immediately
+      if (payment.status === 'approved') {
+        const now = new Date();
+        const subscriptionEndsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+        await storage.updateUserSubscription(userId, {
+          subscriptionStatus: "active",
+          subscriptionActivatedAt: now,
+          subscriptionEndsAt: subscriptionEndsAt,
+          mercadopagoSubscriptionId: payment.id.toString(),
+        });
+
+        console.log(`🎉 [Card Payment] User ${userId} subscription activated until ${subscriptionEndsAt.toISOString()}`);
+      }
+
+      return res.json({ 
+        success: payment.status === 'approved',
+        status: payment.status,
+        statusDetail: payment.status_detail,
+        paymentId: payment.id,
+      });
+    } catch (error: any) {
+      console.error("Error creating card payment:", error.response?.data || error.message);
+      return res.status(500).json({ error: error.response?.data?.message || error.message });
+    }
+  });
+
   // Mercado Pago Webhook - Process payment notifications
   app.post("/api/mercadopago/webhook", async (req, res) => {
     try {

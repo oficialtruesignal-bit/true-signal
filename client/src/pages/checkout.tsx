@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText, QrCode, Copy, Loader2, RefreshCw } from "lucide-react";
@@ -9,8 +9,10 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 
 type PaymentMethod = 'card' | 'pix';
+type CardPaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
 const checkoutSchema = z.object({
   fullName: z.string().min(3, "Nome completo é obrigatório"),
@@ -39,6 +41,10 @@ export default function CheckoutPage() {
   const [pixData, setPixData] = useState<PixPaymentData | null>(null);
   const [pixStatus, setPixStatus] = useState<'pending' | 'approved' | 'expired'>('pending');
   const [copied, setCopied] = useState(false);
+  const [mpReady, setMpReady] = useState(false);
+  const [cardPaymentStatus, setCardPaymentStatus] = useState<CardPaymentStatus>('idle');
+  const [publicKey, setPublicKey] = useState<string | null>(null);
+  const [showCardForm, setShowCardForm] = useState(false);
 
   const {
     register,
@@ -54,6 +60,23 @@ export default function CheckoutPage() {
       acceptTerms: false,
     },
   });
+
+  // Initialize Mercado Pago SDK
+  useEffect(() => {
+    const initMP = async () => {
+      try {
+        const response = await axios.get('/api/mercadopago/config');
+        if (response.data.configured && response.data.publicKey) {
+          setPublicKey(response.data.publicKey);
+          initMercadoPago(response.data.publicKey, { locale: 'pt-BR' });
+          setMpReady(true);
+        }
+      } catch (error) {
+        console.error('Error initializing Mercado Pago:', error);
+      }
+    };
+    initMP();
+  }, []);
 
   // Simular contador de usuários online (varia entre 120-150)
   useEffect(() => {
@@ -108,6 +131,62 @@ export default function CheckoutPage() {
     }
   };
 
+  // Handle card payment submission from Mercado Pago SDK
+  const onCardPaymentSubmit = useCallback(async (formData: any) => {
+    if (!user) {
+      toast.error("Você precisa estar logado para assinar");
+      return;
+    }
+
+    setCardPaymentStatus('processing');
+    
+    try {
+      const response = await axios.post('/api/mercadopago/card-payment', {
+        token: formData.token,
+        issuerId: formData.issuer_id,
+        paymentMethodId: formData.payment_method_id,
+        transactionAmount: 2.00,
+        installments: formData.installments || 1,
+        userId: user.id,
+        userEmail: user.email,
+        payer: {
+          email: user.email,
+          identification: {
+            type: formData.payer?.identification?.type || 'CPF',
+            number: formData.payer?.identification?.number || '',
+          }
+        }
+      });
+
+      if (response.data.success && response.data.status === 'approved') {
+        setCardPaymentStatus('success');
+        toast.success("Pagamento aprovado! Redirecionando...");
+        setTimeout(() => {
+          window.location.href = '/obrigado';
+        }, 2000);
+      } else if (response.data.status === 'in_process' || response.data.status === 'pending') {
+        toast.info("Pagamento em análise. Você será notificado quando aprovado.");
+        setCardPaymentStatus('idle');
+      } else {
+        setCardPaymentStatus('error');
+        toast.error(response.data.statusDetail || "Pagamento recusado. Tente outro cartão.");
+      }
+    } catch (error: any) {
+      console.error('Card payment error:', error);
+      setCardPaymentStatus('error');
+      toast.error(error.response?.data?.error || "Erro ao processar pagamento");
+    }
+  }, [user]);
+
+  const onCardPaymentError = useCallback((error: any) => {
+    console.error('Card payment form error:', error);
+    toast.error("Erro no formulário de pagamento");
+  }, []);
+
+  const onCardPaymentReady = useCallback(() => {
+    console.log('Card payment form ready');
+  }, []);
+
   const onSubmit = async (data: CheckoutFormData) => {
     if (!user) {
       toast.error("Você precisa estar logado para assinar");
@@ -139,22 +218,12 @@ export default function CheckoutPage() {
           toast.error("Erro ao gerar PIX. Tente novamente.");
         }
       } else {
-        // Create card subscription (recurring monthly)
-        const response = await axios.post("/api/mercadopago/create-subscription", {
-          userId: user.id,
-          userEmail: data.email,
-          fullName: data.fullName,
-          phone: data.phone,
-          document: data.document,
-        });
-
-        const { initPoint } = response.data;
-
-        if (initPoint) {
-          window.open(initPoint, '_blank');
-          toast.success("Checkout aberto em nova aba! Complete o pagamento lá.");
+        // Show card payment form (transparent checkout)
+        if (mpReady) {
+          setShowCardForm(true);
+          toast.info("Preencha os dados do cartão abaixo");
         } else {
-          toast.error("Erro ao criar checkout. Tente novamente.");
+          toast.error("Sistema de pagamento não está disponível. Tente novamente.");
         }
       }
     } catch (error: any) {
@@ -178,6 +247,93 @@ export default function CheckoutPage() {
           <p className="text-gray-300 mb-8">
             Aproveite todos os benefícios da sua assinatura premium.
           </p>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Show Card Payment Form when card is selected
+  if (showCardForm && mpReady) {
+    return (
+      <Layout>
+        <div className="max-w-md mx-auto py-10">
+          <div className="bg-card border border-white/10 rounded-xl p-8">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                {cardPaymentStatus === 'success' ? (
+                  <Check className="w-8 h-8 text-[#33b864]" />
+                ) : cardPaymentStatus === 'processing' ? (
+                  <Loader2 className="w-8 h-8 text-[#33b864] animate-spin" />
+                ) : (
+                  <CreditCard className="w-8 h-8 text-[#33b864]" />
+                )}
+              </div>
+              <h2 className="text-2xl font-sora font-bold text-white mb-2">
+                {cardPaymentStatus === 'success' 
+                  ? 'Pagamento Aprovado!' 
+                  : cardPaymentStatus === 'processing'
+                  ? 'Processando...'
+                  : 'Pagamento com Cartão'}
+              </h2>
+              <p className="text-gray-400">
+                {cardPaymentStatus === 'success'
+                  ? 'Redirecionando para sua conta...'
+                  : cardPaymentStatus === 'processing'
+                  ? 'Aguarde, estamos processando seu pagamento'
+                  : 'Preencha os dados do cartão abaixo'}
+              </p>
+            </div>
+
+            {cardPaymentStatus !== 'success' && cardPaymentStatus !== 'processing' && (
+              <>
+                {/* Mercado Pago Card Payment Brick */}
+                <div className="mb-6">
+                  <CardPayment
+                    initialization={{ amount: 2.00 }}
+                    onSubmit={onCardPaymentSubmit}
+                    onReady={onCardPaymentReady}
+                    onError={onCardPaymentError}
+                    customization={{
+                      paymentMethods: {
+                        maxInstallments: 1,
+                      },
+                      visual: {
+                        style: {
+                          theme: 'dark',
+                        },
+                      },
+                    }}
+                  />
+                </div>
+
+                {/* Back Button */}
+                <button
+                  onClick={() => setShowCardForm(false)}
+                  className="w-full py-3 px-4 bg-white/10 hover:bg-white/20 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                >
+                  Voltar
+                </button>
+              </>
+            )}
+
+            {/* Value */}
+            <div className="mt-6 pt-6 border-t border-white/10">
+              <div className="flex justify-between items-center">
+                <span className="text-gray-400">Valor:</span>
+                <span className="text-2xl font-bold text-white">R$ 2,00</span>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Acesso por 30 dias ao Vantage Prime
+              </p>
+            </div>
+
+            {/* Security Badge */}
+            <div className="mt-6 flex items-center justify-center gap-2 text-xs text-gray-500">
+              <Shield className="w-4 h-4" />
+              <span>Pagamento seguro via Mercado Pago</span>
+            </div>
+          </div>
         </div>
       </Layout>
     );

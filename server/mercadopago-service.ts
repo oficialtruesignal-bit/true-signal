@@ -361,6 +361,73 @@ export class MercadoPagoService {
       throw error;
     }
   }
+
+  /**
+   * Create a card payment (transparent checkout with tokenized card)
+   */
+  async createCardPayment(params: {
+    token: string;
+    issuerId: string;
+    paymentMethodId: string;
+    transactionAmount: number;
+    installments: number;
+    userId: string;
+    userEmail: string;
+    payer: {
+      email: string;
+      identification: {
+        type: string;
+        number: string;
+      };
+    };
+  }): Promise<any> {
+    if (!this.isConfigured()) {
+      throw new Error('Mercado Pago not configured');
+    }
+
+    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+      : 'http://localhost:5000';
+
+    const paymentData = {
+      token: params.token,
+      issuer_id: params.issuerId,
+      payment_method_id: params.paymentMethodId,
+      transaction_amount: params.transactionAmount,
+      installments: params.installments,
+      description: 'Vantage Prime - Assinatura Mensal',
+      payer: {
+        email: params.payer.email,
+        identification: params.payer.identification,
+      },
+      external_reference: params.userId,
+      notification_url: `${baseUrl}/api/mercadopago/webhook`,
+      statement_descriptor: 'VANTAGE PRIME',
+      binary_mode: false,
+    };
+
+    // Generate unique idempotency key for this payment
+    const idempotencyKey = `card-${params.userId}-${Date.now()}-${Math.random().toString(36).substring(7)}`;
+
+    try {
+      const response = await axios.post(
+        `${MP_API_BASE_URL}/v1/payments`,
+        paymentData,
+        { 
+          headers: {
+            ...this.headers,
+            'X-Idempotency-Key': idempotencyKey,
+          }
+        }
+      );
+
+      console.log('✅ Card payment created:', response.data.id, 'Status:', response.data.status);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error creating card payment:', error.response?.data || error.message);
+      throw error;
+    }
+  }
 }
 
 // Singleton instance
