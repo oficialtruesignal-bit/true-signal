@@ -38,7 +38,8 @@ export function TimeComparison() {
             30 Segundos
           </span>
           <p className="text-xs text-gray-400 mt-2 max-w-[200px]">
-            Recebeu a notificação. Copiou. Colou. <span className="text-white font-bold">Lucrou.</span>
+            Recebeu a notificação?<br />
+            <span className="text-white font-bold">Copiou. Colou.</span>
           </p>
         </div>
 
