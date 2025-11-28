@@ -146,7 +146,7 @@ export function TechSolution() {
                       
                       {/* Video */}
                       <video
-                        src="/attached_assets/VÍDEO_1764357646413.mp4"
+                        src="/attached_assets/truevideo_1764359168903.mp4"
                         autoPlay
                         loop
                         muted
