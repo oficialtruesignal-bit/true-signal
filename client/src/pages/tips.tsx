@@ -163,9 +163,9 @@ export default function TipsPage() {
       {!isLoading && !error && tips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {tips.map((tip, index) => {
-            // Usuários não-pagantes veem os 2 primeiros bilhetes grátis
-            // A partir do 3º bilhete (índice 2+), mostra blur + paywall
-            const FREE_TIPS_LIMIT = 2;
+            // Usuários não-pagantes veem apenas 1 bilhete grátis
+            // A partir do 2º bilhete (índice 1+), mostra blur + paywall
+            const FREE_TIPS_LIMIT = 1;
             const shouldBlur = !canSeeAllTips && index >= FREE_TIPS_LIMIT;
             
             return (
@@ -205,8 +205,8 @@ export default function TipsPage() {
             );
           })}
           
-          {/* Placeholder cards bloqueados para mostrar valor do premium */}
-          {!canSeeAllTips && tips.length < 4 && (
+          {/* Placeholder cards bloqueados para mostrar valor do premium quando há poucos bilhetes */}
+          {!canSeeAllTips && tips.length < 3 && (
             <>
               {[...Array(Math.max(0, 3 - tips.length))].map((_, idx) => (
                 <div key={`placeholder-${idx}`} className="relative" data-testid={`placeholder-locked-${idx}`}>
