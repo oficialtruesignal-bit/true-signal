@@ -21,7 +21,7 @@ export function ProfitChart() {
           <div className="flex items-center gap-4 text-xs">
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-primary" />
-              <span className="text-primary font-semibold">VANTAGE</span>
+              <span className="text-primary font-semibold">TRUE SIGNAL</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-3 h-3 rounded-full bg-gray-500" />

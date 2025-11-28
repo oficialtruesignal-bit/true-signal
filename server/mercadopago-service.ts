@@ -229,7 +229,7 @@ export class MercadoPagoService {
     const preferenceData = {
       items: [
         {
-          id: 'vantage-prime-monthly',
+          id: 'truesignal-pro-monthly',
           title: params.title,
           description: 'Acesso mensal à plataforma True Signal Pro com sinais de apostas esportivas',
           category_id: 'services',
@@ -254,7 +254,7 @@ export class MercadoPagoService {
         installments: 1,
         default_installments: 1,
       },
-      statement_descriptor: 'VANTAGE PRIME',
+      statement_descriptor: 'TRUE SIGNAL PRO',
       binary_mode: false,
     };
 
@@ -296,7 +296,7 @@ export class MercadoPagoService {
       payer: {
         email: params.userEmail,
         first_name: params.firstName || 'Usuario',
-        last_name: params.lastName || 'Vantage',
+        last_name: params.lastName || 'True Signal',
       },
       external_reference: params.userId,
       notification_url: process.env.REPLIT_DEV_DOMAIN 
@@ -403,7 +403,7 @@ export class MercadoPagoService {
       },
       external_reference: params.userId,
       notification_url: `${baseUrl}/api/mercadopago/webhook`,
-      statement_descriptor: 'VANTAGE PRIME',
+      statement_descriptor: 'TRUE SIGNAL PRO',
       binary_mode: false,
     };
 

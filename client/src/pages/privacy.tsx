@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">1. Introdução</h2>
             <p>
-              A <span className="text-[#33b864] font-semibold">VANTAGE</span> valoriza e respeita a privacidade de seus usuários. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais, em conformidade com a <strong className="text-white">LGPD</strong>.
+              A <span className="text-[#33b864] font-semibold">TRUE SIGNAL</span> valoriza e respeita a privacidade de seus usuários. Esta Política de Privacidade descreve como coletamos, usamos, armazenamos e protegemos seus dados pessoais, em conformidade com a <strong className="text-white">LGPD</strong>.
             </p>
           </section>
 
@@ -161,7 +161,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">10. Menores de Idade</h2>
             <p>
-              A VANTAGE não é destinada a menores de <strong className="text-white">18 anos</strong>. Não coletamos intencionalmente dados de menores. Se identificarmos uso por menores, a conta será bloqueada imediatamente.
+              A TRUE SIGNAL não é destinada a menores de <strong className="text-white">18 anos</strong>. Não coletamos intencionalmente dados de menores. Se identificarmos uso por menores, a conta será bloqueada imediatamente.
             </p>
           </section>
 
@@ -186,7 +186,7 @@ export default function PrivacyPage() {
               Última atualização: 26 de novembro de 2024
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Ao usar a VANTAGE, você declara ter lido e aceito esta Política de Privacidade.
+              Ao usar a TRUE SIGNAL, você declara ter lido e aceito esta Política de Privacidade.
             </p>
           </section>
         </div>

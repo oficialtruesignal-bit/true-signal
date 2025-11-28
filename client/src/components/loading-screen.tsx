@@ -220,7 +220,7 @@ export function LoadingScreen() {
               repeat: Infinity,
             }}
           >
-            VANTAGE
+            TRUE SIGNAL
           </motion.span>
         </motion.div>
 

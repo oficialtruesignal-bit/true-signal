@@ -36,7 +36,7 @@ export default function PricingPage() {
             </button>
           </Link>
           <h1 className="text-2xl font-black text-white tracking-[0.15em]" style={{ fontFamily: 'Sora, sans-serif' }}>
-            VANTAGE
+            TRUE SIGNAL
           </h1>
           <div className="w-20" />
         </div>

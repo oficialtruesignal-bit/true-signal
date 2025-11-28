@@ -796,15 +796,15 @@ REGRAS IMPORTANTES:
 
       // Fixed price - server-side controlled (prevent price manipulation)
       // BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF)
-      const VANTAGE_PRIME_PRICE = 47.90;
+      const TRUE_SIGNAL_PRO_PRICE = 47.90;
 
       const payment = await mercadoPagoService.createPixPayment({
-        amount: VANTAGE_PRIME_PRICE,
+        amount: TRUE_SIGNAL_PRO_PRICE,
         userId,
         userEmail: user.email, // Use verified email from database
         description: 'True Signal Pro - Acesso Mensal',
         firstName: firstName || 'Usuario',
-        lastName: lastName || 'Vantage',
+        lastName: lastName || 'True Signal',
         document,
       });
 
@@ -886,13 +886,13 @@ REGRAS IMPORTANTES:
 
       // Fixed price - server-side controlled (prevent price manipulation)
       // BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF)
-      const VANTAGE_PRIME_PRICE = 47.90;
+      const TRUE_SIGNAL_PRO_PRICE = 47.90;
 
       const payment = await mercadoPagoService.createCardPayment({
         token,
         issuerId: issuerId || '',
         paymentMethodId,
-        transactionAmount: VANTAGE_PRIME_PRICE, // Use server-side price
+        transactionAmount: TRUE_SIGNAL_PRO_PRICE, // Use server-side price
         installments: installments || 1,
         userId,
         userEmail: user.email,

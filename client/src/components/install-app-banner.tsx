@@ -108,7 +108,7 @@ export function InstallAppBanner() {
             Adicione à tela inicial!
           </h3>
           <p className="text-sm text-gray-300">
-            Acesse a VANTAGE mais rápido, como se fosse um aplicativo nativo.
+            Acesse a TRUE SIGNAL mais rápido, como se fosse um aplicativo nativo.
             {isIOS && " Disponível no Safari."}
             {isAndroid && " Instalação em um toque."}
             {!isIOS && !isAndroid && " Acesse do celular para instalar."}
@@ -146,7 +146,7 @@ export function InstallAppBanner() {
             </li>
             <li className="flex items-start gap-2">
               <span className="font-bold text-[#33b864] flex-shrink-0">3.</span>
-              <span>Toque em <strong>"Adicionar"</strong>. O ícone da VANTAGE aparecerá na sua tela inicial!</span>
+              <span>Toque em <strong>"Adicionar"</strong>. O ícone da TRUE SIGNAL aparecerá na sua tela inicial!</span>
             </li>
           </ol>
         </div>

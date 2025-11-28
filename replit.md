@@ -1,15 +1,17 @@
-# VANTAGE - Sports Betting Intelligence Platform
+# TRUE SIGNAL - Sports Betting Intelligence Platform
 
 ## Overview
 
-VANTAGE is an AI-powered sports betting intelligence platform that delivers curated betting tips and live match data. It features a public landing page, a protected subscriber dashboard, and an admin panel for managing tips. The platform integrates with the API-Football service for real-time sports data to provide accurate predictions and analysis globally. The business model is freemium, offering a 15-day trial followed by a premium subscription (`Vantage Prime`) for full access, with robust access control and a paywall system.
+TRUE SIGNAL is an AI-powered sports betting intelligence platform that delivers curated betting tips and live match data. It features a public landing page, a protected subscriber dashboard, and an admin panel for managing tips. The platform integrates with the API-Football service for real-time sports data to provide accurate predictions and analysis globally. The business model is freemium, offering a 15-day trial followed by a premium subscription (`True Signal Pro`) for full access, with robust access control and a paywall system.
 
 ## Brand Identity
 
-- **Logo**: Diamond V-Shield design
+- **Logo**: "Verified Pulse" - Check mark transforming into signal pulse line (SVG animation)
 - **Typography**: Sora font (weight 800) for brand name, tracking-wide lettering
 - **Color**: Primary green accent `#33b864`
 - **Style**: Dark cyberpunk aesthetic with neon accents
+- **Brand Message**: "A Verdade em meio ao Ruído" (The Truth amid the Noise)
+- **Coupon Code**: TRUESIGNAL10
 
 ## User Preferences
 
@@ -21,7 +23,7 @@ Preferred communication style: Simple, everyday language.
 
 - **Technology Stack**: React 18 with TypeScript, Vite, Tailwind CSS, shadcn/ui, Wouter, React Query, React Hook Form with Zod.
 - **Design System**: Custom dark theme with `#33b864` green neon accents, Inter and Sora fonts, New York style shadcn/ui components, mobile-first responsive design.
-- **Key UI Components**: `BetCard` (betting tips), `Hero` (landing page), `LiveTicker` (recent signals), `LiveGamesList`, `MatchCenterModal` (detailed match stats with SVG graphics), `SignalForm` (admin tip creation), `LockedScreen`, `TrialBanner`, `Thank You Page`, `Subscription Management Page`.
+- **Key UI Components**: `BetCard` (betting tips), `Hero` (landing page), `LiveTicker` (recent signals), `LiveGamesList`, `MatchCenterModal` (detailed match stats with SVG graphics), `SignalForm` (admin tip creation), `LockedScreen`, `TrialBanner`, `Thank You Page`, `Subscription Management Page`, `ProCouponTicket` (professional coupon component with serrated edges).
 - **Routing**: Comprehensive routing for public pages, authentication, authenticated dashboard sections, admin panel, and legal pages (Terms, Privacy, Risk Disclaimer).
 - **Internationalization**: Full site-wide support for 6 languages (PT, EN, ES, FR, IT, CN) with dynamic date localization and `localStorage` persistence.
 
@@ -38,7 +40,7 @@ Preferred communication style: Simple, everyday language.
 - **BetCard Design**: "Vault Card" design with prominent odds, multi-leg support, dynamic vertical timeline, and copy functionality.
 - **Dashboard Optimization**: Focus on premium signal feed, core HUD metrics (Assertiveness, Online Now, Total Signals), and a simplified AI Scanner.
 - **Admin Panel**: Enables real fixture selection via date picker, integrates with API-Football, and automates push notifications for new tips.
-- **Subscription System**: Freemium model with a 15-day trial, `Vantage Prime` subscription (R$ 2,00/mês), and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
+- **Subscription System**: Freemium model with a 15-day trial, `True Signal Pro` subscription (R$ 47,90/mês - Black Friday 52% off), and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
 - **Synchronization**: Achieved through React Query cache invalidation, Supabase Realtime subscriptions for `tips`, and `localStorage` for preferences.
 - **Legal Compliance**: Dedicated pages for Terms and Conditions, Privacy Policy (LGPD compliant), and Risk Disclaimer, integrated into the landing page footer.
 
@@ -62,7 +64,7 @@ Preferred communication style: Simple, everyday language.
 - **Pagamentos**: Validação server-side de userId e email
 
 ### Proteção de Pagamentos
-- **Preço fixo no servidor**: R$ 2,00 (não pode ser manipulado)
+- **Preço fixo no servidor**: R$ 47,90 (Black Friday - não pode ser manipulado)
 - **Webhook validation**: Log de IP/User-Agent + verificação via API do MP
 - **Idempotency Key**: Previne pagamentos duplicados
 
