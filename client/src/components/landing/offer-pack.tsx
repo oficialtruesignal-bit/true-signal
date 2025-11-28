@@ -136,22 +136,31 @@ export function OfferPack() {
             initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
             animate={isInView ? { 
               opacity: 1, 
-              scale: 1,
+              scale: [1, 1.1, 1],
               rotate: 0
             } : {}}
-            transition={{ duration: 0.5, delay: 0.3 }}
+            transition={{ 
+              opacity: { duration: 0.5, delay: 0.3 },
+              scale: { duration: 1.5, repeat: Infinity, ease: "easeInOut" },
+              rotate: { duration: 0.5, delay: 0.3 }
+            }}
           >
-            <div 
+            <motion.div 
               className="bg-gradient-to-br from-red-600 to-red-800 px-4 py-2 md:px-5 md:py-3 rounded-lg shadow-2xl border border-red-500/50"
-              style={{ 
-                boxShadow: '0 0 20px rgba(239, 68, 68, 0.5), 0 10px 30px rgba(0,0,0,0.6)',
-                fontFamily: 'Sora, sans-serif'
+              animate={{
+                boxShadow: [
+                  '0 0 20px rgba(239, 68, 68, 0.5), 0 10px 30px rgba(0,0,0,0.6)',
+                  '0 0 40px rgba(239, 68, 68, 0.8), 0 10px 40px rgba(0,0,0,0.8)',
+                  '0 0 20px rgba(239, 68, 68, 0.5), 0 10px 30px rgba(0,0,0,0.6)',
+                ]
               }}
+              transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              style={{ fontFamily: 'Sora, sans-serif' }}
             >
               <span className="text-white font-black text-sm md:text-base tracking-wide">
-                -52% OFF
+                -50% OFF
               </span>
-            </div>
+            </motion.div>
           </motion.div>
           
           <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
