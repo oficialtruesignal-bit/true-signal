@@ -1,7 +1,114 @@
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Link } from 'wouter';
-import { Zap, Shield, CheckCircle2, Sparkles } from 'lucide-react';
+import { Zap, Shield, CheckCircle2, Sparkles, Ticket, Scissors, Copy, Check } from 'lucide-react';
+import { toast } from 'sonner';
+
+function ProCouponTicket() {
+  const [copied, setCopied] = useState(false);
+  const code = "VANTAGE10";
+  
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    toast.success("Cupom copiado!");
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, rotateY: -5 }}
+      animate={{ opacity: 1, y: 0, rotateY: 0 }}
+      transition={{ duration: 0.6, delay: 0.3 }}
+      className="relative max-w-sm mx-auto mt-8"
+    >
+      {/* Glow effect */}
+      <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/20 to-[#33b864]/20 rounded-2xl blur-lg" />
+      
+      {/* Ticket container */}
+      <div className="relative flex overflow-hidden rounded-2xl border border-[#33b864]/30 bg-gradient-to-r from-[#0a0a0a] to-black">
+        
+        {/* Left side - Vertical strip */}
+        <div className="relative bg-gradient-to-b from-[#33b864] via-[#2ea558] to-[#1f8a42] w-20 flex flex-col items-center justify-center py-4">
+          {/* Serrated edge effect - circles */}
+          <div className="absolute -right-2 top-0 bottom-0 flex flex-col justify-around">
+            {[...Array(8)].map((_, i) => (
+              <div key={i} className="w-4 h-4 bg-black rounded-full" />
+            ))}
+          </div>
+          
+          {/* Ticket icon */}
+          <div className="mb-2">
+            <Ticket className="w-6 h-6 text-black/70 rotate-90" />
+          </div>
+          
+          {/* Vertical CUPOM text */}
+          <div 
+            className="text-black font-black text-xs tracking-[0.2em] uppercase"
+            style={{ 
+              writingMode: 'vertical-rl',
+              transform: 'rotate(180deg)',
+              fontFamily: 'Sora, sans-serif'
+            }}
+          >
+            CUPOM
+          </div>
+          
+          {/* Discount badge */}
+          <div className="mt-3 bg-black/20 rounded-lg px-2 py-1">
+            <span className="text-white font-black text-sm" style={{ fontFamily: 'Sora, sans-serif' }}>
+              10%
+            </span>
+          </div>
+        </div>
+
+        {/* Scissors divider */}
+        <div className="absolute left-[68px] top-1/2 -translate-y-1/2 z-10 bg-black rounded-full p-1">
+          <Scissors className="w-3 h-3 text-[#33b864]" />
+        </div>
+
+        {/* Right side - Content */}
+        <div className="flex-1 p-5 pl-6">
+          {/* Header */}
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles className="w-3 h-3 text-[#33b864]" />
+            <span className="text-[10px] font-bold text-[#33b864] uppercase tracking-widest">
+              Cupom de Desconto
+            </span>
+          </div>
+
+          {/* Main text */}
+          <p className="text-white font-bold text-base mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
+            10% OFF adicional
+          </p>
+          <p className="text-gray-500 text-xs mb-3">
+            Use no checkout para desconto extra
+          </p>
+
+          {/* Code box with copy */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-[#33b864]/10 border border-[#33b864]/30 border-dashed rounded-lg px-3 py-2 flex items-center justify-between">
+              <code className="text-[#33b864] font-mono font-bold text-sm tracking-widest">
+                {code}
+              </code>
+            </div>
+            <button
+              onClick={handleCopy}
+              className="p-2 bg-[#33b864] hover:bg-[#2ea558] rounded-lg transition-all group"
+              data-testid="button-copy-coupon-offer"
+            >
+              {copied ? (
+                <Check className="w-4 h-4 text-black" />
+              ) : (
+                <Copy className="w-4 h-4 text-black group-hover:scale-110 transition-transform" />
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export function OfferPack() {
   const ref = useRef(null);
@@ -85,6 +192,9 @@ export function OfferPack() {
               <p className="text-gray-500 text-xs mt-2">
                 Cancele quando quiser. Sem multas.
               </p>
+              
+              {/* Professional Coupon Ticket */}
+              <ProCouponTicket />
             </div>
           </div>
         </motion.div>
