@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useLocation } from "wouter";
-import { CheckCircle2, Crown, Sparkles, ArrowRight, Ticket, Shield, Zap } from "lucide-react";
+import { CheckCircle2, Crown, Sparkles, ArrowRight, Ticket, Shield, Zap, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -8,15 +8,49 @@ export default function ThankYouPage() {
   const [, setLocation] = useLocation();
   const { user, reloadProfile } = useAuth();
   const [showConfetti, setShowConfetti] = useState(true);
+  const [isVerifying, setIsVerifying] = useState(true);
+  const [pollCount, setPollCount] = useState(0);
+
+  const isPremium = user?.subscriptionStatus === 'active';
+
+  const pollSubscriptionStatus = useCallback(async () => {
+    if (isPremium) {
+      setIsVerifying(false);
+      return;
+    }
+
+    try {
+      await reloadProfile?.();
+      setPollCount(prev => prev + 1);
+    } catch (error) {
+      console.error('Error polling subscription status:', error);
+    }
+  }, [isPremium, reloadProfile]);
 
   useEffect(() => {
-    // Refresh user data to get updated subscription status
-    reloadProfile?.();
+    pollSubscriptionStatus();
     
-    // Hide confetti after 5 seconds
     const timer = setTimeout(() => setShowConfetti(false), 5000);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (isPremium) {
+      setIsVerifying(false);
+      return;
+    }
+
+    if (pollCount >= 30) {
+      setIsVerifying(false);
+      return;
+    }
+
+    const pollInterval = setInterval(() => {
+      pollSubscriptionStatus();
+    }, 2000);
+
+    return () => clearInterval(pollInterval);
+  }, [isPremium, pollCount, pollSubscriptionStatus]);
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 relative overflow-hidden">
@@ -72,7 +106,16 @@ export default function ThankYouPage() {
 
           {/* Subtitle */}
           <p className="text-gray-400 text-lg mb-8">
-            Seu pagamento foi confirmado com sucesso. Agora você tem acesso a <span className="text-[#33b864] font-semibold">todos os bilhetes</span> por 30 dias!
+            {isVerifying ? (
+              <span className="flex items-center justify-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-[#33b864]" />
+                Verificando seu pagamento...
+              </span>
+            ) : isPremium ? (
+              <>Pagamento confirmado! Agora você tem acesso a <span className="text-[#33b864] font-semibold">todos os bilhetes</span> por 30 dias!</>
+            ) : (
+              <>Seu pagamento está sendo processado. Você receberá acesso em instantes.</>
+            )}
           </p>
 
           {/* Benefits */}
@@ -123,6 +166,14 @@ export default function ThankYouPage() {
             <p className="mt-6 text-gray-500 text-sm">
               Assinatura ativa para: <span className="text-gray-400">{user.email}</span>
             </p>
+          )}
+
+          {/* Status indicator */}
+          {isPremium && (
+            <div className="mt-4 inline-flex items-center gap-2 text-[#33b864] text-sm">
+              <div className="w-2 h-2 rounded-full bg-[#33b864] animate-pulse" />
+              Acesso Prime ativo
+            </div>
           )}
         </div>
 
