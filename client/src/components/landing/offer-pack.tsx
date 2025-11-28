@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { Link } from 'wouter';
 import { Zap, Shield, CheckCircle2, Sparkles, Ticket, Scissors, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import blackFridayBalloons from '@/assets/black-friday-balloons.png';
 
 function ProCouponTicket() {
   const [copied, setCopied] = useState(false);
@@ -131,31 +130,29 @@ export function OfferPack() {
           {/* Glow ring */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 to-[#33b864]/30 rounded-3xl blur-xl" />
           
-          {/* Black Friday Balloons */}
+          {/* Black Friday Badge */}
           <motion.div 
-            className="absolute -top-8 -right-8 md:-top-12 md:-right-12 lg:-top-16 lg:-right-16 z-20"
-            initial={{ opacity: 0, y: 50, scale: 0.5 }}
+            className="absolute -top-3 -right-3 md:-top-4 md:-right-4 z-20"
+            initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
             animate={isInView ? { 
               opacity: 1, 
-              y: [0, -8, 0],
-              scale: 1 
+              scale: 1,
+              rotate: 0
             } : {}}
-            transition={{ 
-              opacity: { duration: 0.5, delay: 0.3 },
-              y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-              scale: { duration: 0.5, delay: 0.3 }
-            }}
+            transition={{ duration: 0.5, delay: 0.3 }}
           >
-            <img 
-              src={blackFridayBalloons} 
-              alt="Black Friday Sale" 
-              className="w-28 md:w-40 lg:w-48 drop-shadow-2xl"
-              style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.6))' }}
-            />
+            <div 
+              className="bg-gradient-to-br from-red-600 to-red-800 px-4 py-2 md:px-5 md:py-3 rounded-lg shadow-2xl border border-red-500/50"
+              style={{ 
+                boxShadow: '0 0 20px rgba(239, 68, 68, 0.5), 0 10px 30px rgba(0,0,0,0.6)',
+                fontFamily: 'Sora, sans-serif'
+              }}
+            >
+              <span className="text-white font-black text-sm md:text-base tracking-wide">
+                -52% OFF
+              </span>
+            </div>
           </motion.div>
-          
-          {/* Floating balloon reflection/glow */}
-          <div className="absolute -top-4 -right-4 md:-top-8 md:-right-8 w-32 md:w-48 h-32 md:h-48 bg-yellow-500/20 rounded-full blur-3xl z-10" />
           
           <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
             <div className="text-center">
