@@ -1,15 +1,16 @@
 import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
+import { TicketBuilder } from "@/components/ticket-builder";
 import { tipsService } from "@/lib/tips-service";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenTool } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
-import { useState } from "react";
 
 export default function Admin() {
   const queryClient = useQueryClient();
@@ -117,6 +118,75 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     createMutation.mutate(formData);
   };
 
+  // Handler para criar tip a partir do TicketBuilder
+  const handleTicketBuilderSubmit = (data: {
+    legs: Array<{
+      homeTeam: string;
+      awayTeam: string;
+      league: string;
+      matchTime: string;
+      category: string;
+      selection: string;
+      odd: string;
+      playerName?: string;
+    }>;
+    totalOdd: number;
+    betLink: string;
+  }) => {
+    if (user?.role !== 'admin' && user?.email !== 'kwillianferreira@gmail.com') {
+      toast.error("Apenas administradores podem criar tips.");
+      return;
+    }
+
+    // Construir o mercado formatado a partir das legs
+    const marketParts = data.legs.map((leg, idx) => {
+      let marketText = "";
+      
+      // Se tem nome do jogador, incluir
+      if (leg.playerName) {
+        marketText = `${leg.playerName} - ${leg.category}: ${leg.selection}`;
+      } else {
+        marketText = `${leg.category}: ${leg.selection}`;
+      }
+      
+      // Se é aposta múltipla e não é a primeira leg, incluir info do jogo
+      if (data.legs.length > 1 && idx > 0) {
+        marketText = `${leg.homeTeam} vs ${leg.awayTeam} - ${marketText}`;
+      }
+      
+      return marketText;
+    });
+
+    // Usar dados da primeira leg para times principais
+    const firstLeg = data.legs[0];
+    
+    // Formatar horário do jogo
+    let matchTime = "";
+    if (firstLeg.matchTime) {
+      const date = new Date(firstLeg.matchTime);
+      matchTime = date.toLocaleString('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).replace(',', ' às');
+    }
+
+    const tipData = {
+      homeTeam: firstLeg.homeTeam,
+      awayTeam: firstLeg.awayTeam,
+      league: firstLeg.league || "Futebol",
+      market: marketParts.join(' + '),
+      odd: data.totalOdd,
+      betLink: data.betLink || "",
+      matchTime: matchTime,
+      status: 'pending' as const,
+      isLive: false
+    };
+
+    createMutation.mutate(tipData);
+  };
+
   return (
     <Layout>
       <div className="mb-8">
@@ -127,17 +197,56 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
-          {/* AI Scanner - Criar Sinal */}
+          {/* Tabs - Scanner ou Criador Manual */}
           <div className="bg-card border border-primary/20 rounded-xl p-6">
-            <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-              <ScanLine className="w-5 h-5 text-primary" />
-              Criar Novo Sinal
-            </h3>
-            <SignalForm 
-              onAdd={(data) => {
-                handleCreateTip(data);
-              }} 
-            />
+            <Tabs defaultValue="builder" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6 bg-background/50">
+                <TabsTrigger 
+                  value="builder" 
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black"
+                  data-testid="tab-builder"
+                >
+                  <PenTool className="w-4 h-4" />
+                  Criar Bilhete
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="scanner" 
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black"
+                  data-testid="tab-scanner"
+                >
+                  <ScanLine className="w-4 h-4" />
+                  Scanner IA
+                </TabsTrigger>
+              </TabsList>
+              
+              {/* Criador Manual - Estilo Bet365 */}
+              <TabsContent value="builder" className="mt-0">
+                <TicketBuilder 
+                  onSubmit={handleTicketBuilderSubmit}
+                  isSubmitting={createMutation.isPending}
+                />
+              </TabsContent>
+              
+              {/* Scanner de Imagem com IA */}
+              <TabsContent value="scanner" className="mt-0">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                      <ScanLine className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-white">Scanner de Bilhete</h3>
+                      <p className="text-xs text-muted-foreground">Envie um print do bilhete para análise</p>
+                    </div>
+                  </div>
+                  <SignalForm 
+                    onAdd={(data) => {
+                      handleCreateTip(data);
+                    }} 
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
 
