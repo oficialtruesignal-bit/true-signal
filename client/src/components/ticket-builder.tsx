@@ -308,6 +308,11 @@ export function TicketBuilder({ onSubmit, isSubmitting }: TicketBuilderProps) {
         toast.error("Preencha a odd corretamente em todas as apostas");
         return;
       }
+      // Validar nome do jogador para categorias que exigem
+      if (needsPlayerName(leg.category) && !leg.playerName?.trim()) {
+        toast.error(`Preencha o nome do jogador para "${leg.category}"`);
+        return;
+      }
     }
 
     onSubmit({

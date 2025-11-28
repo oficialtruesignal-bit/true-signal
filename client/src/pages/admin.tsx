@@ -160,16 +160,15 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     // Usar dados da primeira leg para times principais
     const firstLeg = data.legs[0];
     
-    // Formatar horário do jogo
+    // Formatar horário do jogo (DD/MM às HH:MM - sem ano)
     let matchTime = "";
     if (firstLeg.matchTime) {
       const date = new Date(firstLeg.matchTime);
-      matchTime = date.toLocaleString('pt-BR', {
-        day: '2-digit',
-        month: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      }).replace(',', ' às');
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      matchTime = `${day}/${month} às ${hours}:${minutes}`;
     }
 
     const tipData = {
