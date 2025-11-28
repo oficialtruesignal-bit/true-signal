@@ -22,7 +22,7 @@ export function TrialBanner() {
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: -50, opacity: 0 }}
-        className={`relative ${isUrgent ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-amber-500 to-yellow-500'} text-black px-4 py-1.5 shadow-md z-50`}
+        className={`relative ${isUrgent ? 'bg-gradient-to-r from-red-600 to-red-500' : 'bg-gradient-to-r from-amber-500 to-yellow-500'} text-black px-4 py-1 shadow-md z-50`}
         data-testid="banner-trial-countdown"
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
