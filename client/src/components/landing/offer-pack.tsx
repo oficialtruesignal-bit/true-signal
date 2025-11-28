@@ -193,7 +193,7 @@ export function OfferPack() {
                     data-testid="button-offer-cta"
                   >
                     <Zap className="w-6 h-6" />
-                    QUERO ACESSO IMEDIATO
+                    QUERO ACESSO PRO
                   </motion.button>
                 </Link>
               </div>
