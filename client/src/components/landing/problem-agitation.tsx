@@ -79,7 +79,7 @@ export function ProblemAgitation() {
               </div>
               
               {/* Headline */}
-              <p className="text-base md:text-lg text-red-300 font-semibold mb-6 border-l-2 border-red-500/50 pl-4" style={{ fontFamily: 'Sora, sans-serif' }}>
+              <p className="text-sm md:text-base text-red-300 font-semibold mb-6 border-l-2 border-red-500/50 pl-4 whitespace-nowrap" style={{ fontFamily: 'Sora, sans-serif' }}>
                 Por que a conta nunca fecha no final do mês.
               </p>
               
