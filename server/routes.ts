@@ -668,13 +668,20 @@ REGRAS IMPORTANTES:
         const status = subscription.status;
 
         if (status === "authorized") {
-          // Subscription is active - upgrade user to Ocean Prime
+          // Subscription is active - upgrade user to Ocean Prime (30 days)
+          const now = new Date();
+          const endsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 days
+          
           console.log("✅ [Webhook] Activating Ocean Prime for user:", userId);
+          console.log("📅 [Webhook] Subscription period:", now.toISOString(), "→", endsAt.toISOString());
+          
           await storage.updateUserSubscription(userId, {
             subscriptionStatus: 'active',
             mercadopagoSubscriptionId: subscriptionId,
+            subscriptionActivatedAt: now,
+            subscriptionEndsAt: endsAt,
           });
-          console.log("✅ [Webhook] User upgraded to Ocean Prime successfully");
+          console.log("✅ [Webhook] User upgraded to Ocean Prime successfully (30 days)");
         } else if (status === "cancelled" || status === "paused") {
           // Subscription cancelled/paused - downgrade user
           console.log("⚠️ [Webhook] Deactivating subscription for user:", userId);

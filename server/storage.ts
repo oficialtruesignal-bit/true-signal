@@ -13,6 +13,8 @@ export interface IStorage {
   updateUserSubscription(userId: string, subscriptionData: {
     subscriptionStatus: 'trial' | 'active' | 'expired';
     mercadopagoSubscriptionId?: string | null;
+    subscriptionActivatedAt?: Date | null;
+    subscriptionEndsAt?: Date | null;
   }): Promise<Profile | undefined>;
   updateLegalAcceptance(userId: string, acceptanceData: {
     termsAcceptedAt?: Date;
@@ -84,6 +86,8 @@ export class DatabaseStorage implements IStorage {
     subscriptionData: {
       subscriptionStatus: 'trial' | 'active' | 'expired';
       mercadopagoSubscriptionId?: string | null;
+      subscriptionActivatedAt?: Date | null;
+      subscriptionEndsAt?: Date | null;
     }
   ): Promise<Profile | undefined> {
     const updateData: Partial<Profile> = {
@@ -92,6 +96,14 @@ export class DatabaseStorage implements IStorage {
 
     if (subscriptionData.mercadopagoSubscriptionId !== undefined) {
       updateData.mercadopagoSubscriptionId = subscriptionData.mercadopagoSubscriptionId;
+    }
+
+    if (subscriptionData.subscriptionActivatedAt !== undefined) {
+      updateData.subscriptionActivatedAt = subscriptionData.subscriptionActivatedAt;
+    }
+
+    if (subscriptionData.subscriptionEndsAt !== undefined) {
+      updateData.subscriptionEndsAt = subscriptionData.subscriptionEndsAt;
     }
 
     const [updatedProfile] = await db

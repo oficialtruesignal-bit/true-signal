@@ -14,6 +14,7 @@ export const profiles = pgTable("profiles", {
   trialStartDate: timestamp("trial_start_date").notNull().defaultNow(),
   mercadopagoSubscriptionId: text("mercadopago_subscription_id"), // Mercado Pago subscription ID
   mercadopagoCustomerId: text("mercadopago_customer_id"), // Mercado Pago customer ID
+  subscriptionActivatedAt: timestamp("subscription_activated_at"), // When subscription was activated
   subscriptionEndsAt: timestamp("subscription_ends_at"), // When subscription will end
   termsAcceptedAt: timestamp("terms_accepted_at"),
   privacyAcceptedAt: timestamp("privacy_accepted_at"),

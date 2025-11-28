@@ -82,8 +82,8 @@ export class MercadoPagoService {
         },
       },
       back_url: process.env.REPLIT_DEV_DOMAIN 
-        ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
-        : 'http://localhost:5000/app',
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/obrigado`
+        : 'http://localhost:5000/obrigado',
     };
 
     try {
@@ -120,8 +120,8 @@ export class MercadoPagoService {
       external_reference: params.userId,
       payer_email: params.userEmail,
       back_url: process.env.REPLIT_DEV_DOMAIN 
-        ? `https://${process.env.REPLIT_DEV_DOMAIN}/app`
-        : 'http://localhost:5000/app',
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/obrigado`
+        : 'http://localhost:5000/obrigado',
     };
 
     try {

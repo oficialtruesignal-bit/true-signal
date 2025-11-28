@@ -23,6 +23,8 @@ const PrivacyPage = React.lazy(() => import("@/pages/privacy"));
 const RiskDisclaimerPage = React.lazy(() => import("@/pages/risk-disclaimer"));
 const PricingPage = React.lazy(() => import("@/pages/pricing"));
 const CheckoutPage = React.lazy(() => import("@/pages/checkout"));
+const ThankYouPage = React.lazy(() => import("@/pages/thank-you"));
+const SubscriptionPage = React.lazy(() => import("@/pages/subscription"));
 const ComingSoonPage = React.lazy(() => import("@/pages/coming-soon"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
@@ -92,6 +94,12 @@ function Router() {
       </Route>
       <Route path="/checkout">
         {() => <ProtectedRoute component={CheckoutPage} />}
+      </Route>
+      <Route path="/obrigado">
+        {() => <ProtectedRoute component={ThankYouPage} />}
+      </Route>
+      <Route path="/assinatura">
+        {() => <ProtectedRoute component={SubscriptionPage} />}
       </Route>
       <Route path="/coming-soon">
         {() => <ProtectedRoute component={ComingSoonPage} />}
