@@ -643,6 +643,33 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // Create payment preference (supports PIX, Card, etc.)
+  app.post("/api/mercadopago/preference", async (req, res) => {
+    try {
+      const { userId, userEmail, title, amount, quantity } = req.body;
+      
+      if (!userId || !userEmail) {
+        return res.status(400).json({ error: "userId and userEmail are required" });
+      }
+
+      const preference = await mercadoPagoService.createPreference({
+        title: title || 'Vantage Prime - Acesso Mensal',
+        amount: amount || 2.00,
+        quantity: quantity || 1,
+        userId,
+        userEmail,
+      });
+
+      return res.json({ 
+        success: true,
+        preference,
+      });
+    } catch (error: any) {
+      console.error("Error creating preference:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Create PIX payment
   app.post("/api/mercadopago/pix", async (req, res) => {
     try {

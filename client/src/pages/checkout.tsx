@@ -2,13 +2,15 @@ import { Layout } from "@/components/layout";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText } from "lucide-react";
+import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText, QrCode } from "lucide-react";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { toast } from "sonner";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+
+type PaymentMethod = 'card' | 'pix';
 
 const checkoutSchema = z.object({
   fullName: z.string().min(3, "Nome completo é obrigatório"),
@@ -26,6 +28,7 @@ export default function CheckoutPage() {
   const { daysRemaining, isPremium } = useAccessControl();
   const [isLoading, setIsLoading] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState(127);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
 
   const {
     register,
@@ -62,27 +65,46 @@ export default function CheckoutPage() {
 
     setIsLoading(true);
     try {
-      // Create subscription via backend
-      const response = await axios.post("/api/mercadopago/create-subscription", {
-        userId: user.id,
-        userEmail: data.email,
-        fullName: data.fullName,
-        phone: data.phone,
-        document: data.document,
-      });
+      if (paymentMethod === 'pix') {
+        // Create PIX preference (one-time payment with PIX enabled)
+        const response = await axios.post("/api/mercadopago/preference", {
+          userId: user.id,
+          userEmail: data.email,
+          title: "Vantage Prime - Acesso Mensal",
+          amount: 2.00,
+          quantity: 1,
+        });
 
-      const { initPoint } = response.data;
+        const { init_point } = response.data.preference;
 
-      // Open Mercado Pago checkout in new tab (avoids iframe X-Frame-Options block)
-      if (initPoint) {
-        window.open(initPoint, '_blank');
-        toast.success("Checkout aberto em nova aba! Complete o pagamento lá.");
+        if (init_point) {
+          window.open(init_point, '_blank');
+          toast.success("Checkout PIX aberto em nova aba! Complete o pagamento lá.");
+        } else {
+          toast.error("Erro ao criar checkout PIX. Tente novamente.");
+        }
       } else {
-        toast.error("Erro ao criar checkout. Tente novamente.");
+        // Create card subscription (recurring monthly)
+        const response = await axios.post("/api/mercadopago/create-subscription", {
+          userId: user.id,
+          userEmail: data.email,
+          fullName: data.fullName,
+          phone: data.phone,
+          document: data.document,
+        });
+
+        const { initPoint } = response.data;
+
+        if (initPoint) {
+          window.open(initPoint, '_blank');
+          toast.success("Checkout aberto em nova aba! Complete o pagamento lá.");
+        } else {
+          toast.error("Erro ao criar checkout. Tente novamente.");
+        }
       }
     } catch (error: any) {
-      console.error("Erro ao criar assinatura:", error);
-      toast.error(error.response?.data?.error || "Erro ao processar assinatura");
+      console.error("Erro ao criar pagamento:", error);
+      toast.error(error.response?.data?.error || "Erro ao processar pagamento");
     } finally {
       setIsLoading(false);
     }
@@ -130,7 +152,60 @@ export default function CheckoutPage() {
           {/* Checkout Form */}
           <div className="space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="bg-card border border-white/10 rounded-xl p-8 space-y-6">
-              <h3 className="font-sora font-bold text-white mb-6">Complete seus dados</h3>
+              <h3 className="font-sora font-bold text-white mb-4">Escolha a forma de pagamento</h3>
+              
+              {/* Payment Method Selection */}
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('card')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
+                    paymentMethod === 'card'
+                      ? 'border-[#33b864] bg-[#33b864]/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                  data-testid="button-payment-card"
+                >
+                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-400'}`} />
+                  <span className={`text-sm font-medium ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-300'}`}>
+                    Cartão
+                  </span>
+                  <span className="text-xs text-gray-500">Recorrente</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPaymentMethod('pix')}
+                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
+                    paymentMethod === 'pix'
+                      ? 'border-[#33b864] bg-[#33b864]/10'
+                      : 'border-white/10 bg-white/5 hover:border-white/20'
+                  }`}
+                  data-testid="button-payment-pix"
+                >
+                  <QrCode className={`w-6 h-6 ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-400'}`} />
+                  <span className={`text-sm font-medium ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-300'}`}>
+                    PIX
+                  </span>
+                  <span className="text-xs text-gray-500">Pagamento único</span>
+                </button>
+              </div>
+
+              {/* Payment Method Info */}
+              <div className={`p-3 rounded-lg text-sm ${paymentMethod === 'card' ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-green-500/10 border border-green-500/20'}`}>
+                {paymentMethod === 'card' ? (
+                  <p className="text-blue-300">
+                    <CreditCard className="w-4 h-4 inline mr-2" />
+                    Cobrança automática mensal de R$ 2,00. Cancele quando quiser.
+                  </p>
+                ) : (
+                  <p className="text-green-300">
+                    <QrCode className="w-4 h-4 inline mr-2" />
+                    Pagamento único de R$ 2,00 via PIX. Acesso por 30 dias.
+                  </p>
+                )}
+              </div>
+
+              <h3 className="font-sora font-bold text-white pt-4">Complete seus dados</h3>
 
               {/* Full Name */}
               <div>
