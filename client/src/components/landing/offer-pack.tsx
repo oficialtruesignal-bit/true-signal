@@ -163,7 +163,30 @@ export function OfferPack() {
             </motion.div>
           </motion.div>
           
-          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
+          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl overflow-hidden backdrop-blur-xl">
+            {/* Black Friday Banner */}
+            <div className="relative bg-gradient-to-r from-black via-[#1a1a1a] to-black py-4 px-6 border-b border-[#33b864]/30">
+              <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle, #33b864 1px, transparent 1px)', backgroundSize: '20px 20px' }} />
+              <div className="relative flex items-center justify-center gap-3">
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-2 h-2 bg-[#33b864] rounded-full"
+                />
+                <span className="text-xs md:text-sm font-bold tracking-[0.3em] uppercase" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  <span className="text-white">BLACK</span>
+                  <span className="text-[#33b864]"> FRIDAY</span>
+                  <span className="text-white"> SALE</span>
+                </span>
+                <motion.div
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
+                  className="w-2 h-2 bg-[#33b864] rounded-full"
+                />
+              </div>
+            </div>
+            
+            <div className="p-8 md:p-12 lg:p-16">
             <div className="text-center">
               {/* Plan name */}
               <h3 className="text-2xl md:text-3xl font-black text-white mb-6" style={{ fontFamily: 'Sora, sans-serif' }}>
@@ -213,6 +236,7 @@ export function OfferPack() {
               
               {/* Professional Coupon Ticket */}
               <ProCouponTicket />
+            </div>
             </div>
           </div>
         </motion.div>
