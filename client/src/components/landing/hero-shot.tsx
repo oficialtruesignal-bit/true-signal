@@ -68,9 +68,22 @@ export function HeroShot() {
             className="flex flex-col items-center lg:items-start gap-4"
           >
             <Link href="/auth">
-              <button
+              <motion.button
                 className="group relative px-8 md:px-10 py-5 md:py-6 bg-[#33b864] text-black font-black text-base md:text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
                 data-testid="button-access-ai"
+                animate={{
+                  scale: [1, 1.05, 1],
+                  boxShadow: [
+                    '0 25px 50px -12px rgba(51, 184, 100, 0.6)',
+                    '0 25px 50px -12px rgba(51, 184, 100, 0.9)',
+                    '0 25px 50px -12px rgba(51, 184, 100, 0.6)',
+                  ],
+                }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 2,
+                  ease: 'easeInOut',
+                }}
               >
                 <motion.div
                   className="absolute inset-0 bg-gradient-to-r from-[#33b864] via-white/30 to-[#33b864]"
@@ -87,7 +100,7 @@ export function HeroShot() {
                   <Zap className="w-5 h-5" />
                   FAZER TESTE GRÁTIS
                 </span>
-              </button>
+              </motion.button>
             </Link>
             <p className="text-sm text-gray-500 font-light" style={{ fontFamily: 'Sora, sans-serif' }}>
               Acesso imediato. 15 dias de degustação gratuita.

@@ -44,9 +44,22 @@ export function FinalCTA() {
           className="mb-8"
         >
           <Link href="/auth">
-            <button
+            <motion.button
               className="group relative px-10 py-5 bg-[#33b864] text-black font-black text-lg md:text-xl rounded-2xl overflow-hidden shadow-xl shadow-[#33b864]/40 hover:shadow-[#33b864]/70 transition-all duration-300 hover:scale-105"
               data-testid="button-final-cta"
+              animate={{
+                scale: [1, 1.05, 1],
+                boxShadow: [
+                  '0 10px 40px -10px rgba(51, 184, 100, 0.4)',
+                  '0 10px 40px -10px rgba(51, 184, 100, 0.8)',
+                  '0 10px 40px -10px rgba(51, 184, 100, 0.4)',
+                ],
+              }}
+              transition={{
+                repeat: Infinity,
+                duration: 2,
+                ease: 'easeInOut',
+              }}
             >
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-[#33b864] via-white/30 to-[#33b864]"
@@ -57,7 +70,7 @@ export function FinalCTA() {
                 <Zap className="w-6 h-6" />
                 FAZER TESTE GRÁTIS
               </span>
-            </button>
+            </motion.button>
           </Link>
         </motion.div>
         
