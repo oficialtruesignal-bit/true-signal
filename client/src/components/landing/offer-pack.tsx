@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import { Link } from 'wouter';
 import { Zap, Shield, CheckCircle2, Sparkles, Ticket, Scissors, Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import blackFridayBalloons from '@/assets/black-friday-balloons.png';
 
 function ProCouponTicket() {
   const [copied, setCopied] = useState(false);
@@ -146,7 +147,7 @@ export function OfferPack() {
             }}
           >
             <img 
-              src="/black-friday-balloons.png" 
+              src={blackFridayBalloons} 
               alt="Black Friday Sale" 
               className="w-28 md:w-40 lg:w-48 drop-shadow-2xl"
               style={{ filter: 'drop-shadow(0 10px 30px rgba(0,0,0,0.6))' }}
