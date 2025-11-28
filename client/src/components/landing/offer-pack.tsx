@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 function ProCouponTicket() {
   const [copied, setCopied] = useState(false);
-  const code = "TRUESIGNAL10";
+  const code = "TRUESIGNAL50";
   
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -57,7 +57,7 @@ function ProCouponTicket() {
           {/* Discount badge */}
           <div className="mt-3 bg-black/20 rounded-lg px-2 py-1">
             <span className="text-white font-black text-sm" style={{ fontFamily: 'Sora, sans-serif' }}>
-              10%
+              50%
             </span>
           </div>
         </div>
@@ -79,10 +79,10 @@ function ProCouponTicket() {
 
           {/* Main text */}
           <p className="text-white font-bold text-base mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
-            10% OFF adicional
+            50% OFF
           </p>
           <p className="text-gray-500 text-xs mb-3">
-            Use no checkout para desconto extra
+            De R$ 99,87 por apenas <span className="text-[#33b864] font-bold">R$ 49,93</span>
           </p>
 
           {/* Code box with copy */}
