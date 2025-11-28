@@ -94,9 +94,21 @@ export default function RiskDisclaimerPage() {
             </p>
           </section>
 
+          <section>
+            <h2 className="text-2xl font-bold text-white mb-4">7. Contato</h2>
+            <p className="mb-4">
+              Em caso de dúvidas sobre este documento ou nossas políticas, entre em contato:
+            </p>
+            <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+              <p className="text-gray-300 mb-2"><strong className="text-white">Site:</strong> <a href="https://www.truesignal.com.br" className="text-[#33b864] underline">www.truesignal.com.br</a></p>
+              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:suporte@truesignal.com.br" className="text-[#33b864] underline">suporte@truesignal.com.br</a></p>
+              <p className="text-gray-300"><strong className="text-white">WhatsApp:</strong> <a href="https://wa.me/5516993253866" className="text-[#33b864] underline">+55 16 99325-3866</a></p>
+            </div>
+          </section>
+
           <section className="border-t border-gray-800 pt-8">
             <p className="text-sm text-gray-500 italic">
-              Última atualização: 26 de novembro de 2024
+              Última atualização: 28 de novembro de 2024
             </p>
             <p className="text-sm text-gray-500 mt-2">
               Ao usar a TRUE SIGNAL, você declara ter lido, compreendido e aceito todos os riscos descritos neste documento.

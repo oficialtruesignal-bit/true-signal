@@ -6,12 +6,18 @@ TRUE SIGNAL is an AI-powered sports betting intelligence platform that delivers 
 
 ## Brand Identity
 
-- **Logo**: "Verified Pulse" - Check mark transforming into signal pulse line (SVG animation)
+- **Logo**: Minimalist shield with animated pulse line, Inter font
 - **Typography**: Sora font (weight 800) for brand name, tracking-wide lettering
 - **Color**: Primary green accent `#33b864`
 - **Style**: Dark cyberpunk aesthetic with neon accents
 - **Brand Message**: "A Verdade em meio ao Ruído" (The Truth amid the Noise)
-- **Coupon Code**: TRUESIGNAL10
+- **Coupon Code**: TRUESIGNAL50 (50% OFF)
+
+## Contact Information
+
+- **Email**: suporte@truesignal.com.br
+- **Website**: www.truesignal.com.br
+- **WhatsApp**: +55 16 99325-3866
 
 ## User Preferences
 

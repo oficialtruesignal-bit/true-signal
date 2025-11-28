@@ -73,7 +73,7 @@ function Footer() {
   return (
     <footer className="relative bg-black border-t border-[#33b864]/20 py-16 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-12">
+        <div className="grid md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
           <div>
             <h4 className="text-[#33b864] font-black text-2xl mb-4 tracking-[0.15em]" style={{ fontFamily: 'Sora, sans-serif' }}>
@@ -94,13 +94,25 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
-                  Como Funciona
+                <a href="https://www.truesignal.com.br" className="hover:text-[#33b864] transition-colors">
+                  www.truesignal.com.br
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          {/* Contact */}
+          <div>
+            <h5 className="text-white font-bold mb-4">Contato</h5>
+            <ul className="space-y-2 text-sm text-gray-400">
+              <li>
+                <a href="mailto:suporte@truesignal.com.br" className="hover:text-[#33b864] transition-colors">
+                  suporte@truesignal.com.br
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-[#33b864] transition-colors">
-                  Suporte
+                <a href="https://wa.me/5516993253866" className="hover:text-[#33b864] transition-colors">
+                  +55 16 99325-3866
                 </a>
               </li>
             </ul>
