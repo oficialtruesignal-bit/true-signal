@@ -1,35 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { Zap, Ticket, ShieldCheck, Copy } from 'lucide-react';
+import { Zap, TrendingUp, Users, Scale, CheckCircle2, XCircle, Scan, ChevronRight } from 'lucide-react';
 import { Logo } from '@/components/logo';
-
-// Demo bet cards for mockup - exact replica of real BetCard structure
-const demoBets = [
-  {
-    id: '1',
-    homeTeam: 'Man City',
-    awayTeam: 'Arsenal',
-    homeLogo: 'https://media.api-sports.io/football/teams/50.png',
-    awayLogo: 'https://media.api-sports.io/football/teams/42.png',
-    league: 'Premier League',
-    market: 'Ambas Marcam - Sim',
-    odd: 1.85,
-    status: 'green' as const,
-    time: '15:30',
-  },
-  {
-    id: '2',
-    homeTeam: 'Real Madrid',
-    awayTeam: 'Barcelona',
-    homeLogo: 'https://media.api-sports.io/football/teams/541.png',
-    awayLogo: 'https://media.api-sports.io/football/teams/529.png',
-    league: 'La Liga',
-    market: 'Over 2.5 Gols',
-    odd: 1.72,
-    status: 'pending' as const,
-    time: '16:00',
-  },
-];
 
 export function HeroShot() {
   return (
@@ -143,109 +115,181 @@ export function HeroShot() {
               {/* Screen */}
               <div className="w-full h-full bg-gradient-to-b from-[#0a0a0a] to-black rounded-[42px] overflow-hidden border border-[#33b864]/20">
                 {/* Notch */}
-                <div className="h-6 bg-black rounded-b-2xl mx-auto w-28 mb-2" />
+                <div className="h-6 bg-black rounded-b-2xl mx-auto w-28 mb-1" />
                 
-                {/* App Content - Exact Tips Page Replica */}
-                <div className="px-2.5 space-y-2 overflow-hidden">
+                {/* App Content - Central de Operações */}
+                <div className="px-2.5 space-y-1.5 overflow-hidden">
                   
-                  {/* Page Header - Ticket Icon + Title */}
-                  <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
-                      <Ticket className="w-3 h-3 text-[#33b864]" />
-                    </div>
-                    <span className="text-[10px] font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
-                      Sinais Premium
-                    </span>
+                  {/* Page Header */}
+                  <div>
+                    <h2 className="text-[10px] font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
+                      Central de Operações
+                    </h2>
+                    <p className="text-[5px] text-gray-500">Gestão de Performance em Unidades</p>
                   </div>
                   
-                  {/* Credibility Banner */}
-                  <div className="relative bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-lg p-2 overflow-hidden">
-                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#33b864]" />
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="flex items-center gap-1 mb-0.5">
-                          <span className="relative flex h-1 w-1">
-                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
-                            <span className="relative inline-flex rounded-full h-1 w-1 bg-[#33b864]"></span>
-                          </span>
-                          <span className="text-[#33b864] font-bold text-[5px] uppercase tracking-wider">Performance Histórica</span>
+                  {/* Top Stats Row - Gauge + Growth */}
+                  <div className="flex gap-1.5">
+                    {/* Circular Gauge */}
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5, delay: 0.8 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#33b864]/20 flex flex-col items-center justify-center"
+                    >
+                      <div className="relative w-12 h-12">
+                        <svg className="w-full h-full transform -rotate-90">
+                          <circle cx="24" cy="24" r="20" stroke="#1a1a1a" strokeWidth="4" fill="none" />
+                          <motion.circle 
+                            cx="24" cy="24" r="20" 
+                            stroke="#33b864" 
+                            strokeWidth="4" 
+                            fill="none"
+                            strokeLinecap="round"
+                            strokeDasharray="125.6"
+                            initial={{ strokeDashoffset: 125.6 }}
+                            animate={{ strokeDashoffset: 125.6 * (1 - 0.867) }}
+                            transition={{ duration: 1.5, delay: 1 }}
+                          />
+                        </svg>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-white font-bold text-[10px]">86.7%</span>
                         </div>
-                        <p className="text-gray-300 text-[6px]">
-                          Assertividade de <span className="text-white font-bold">87%</span> nos bilhetes
-                        </p>
                       </div>
-                      <div className="flex items-center gap-1 bg-[#33b864]/10 px-1.5 py-0.5 rounded-full border border-[#33b864]/20">
-                        <ShieldCheck className="w-2 h-2 text-[#33b864]" />
-                        <span className="text-[4px] font-bold text-[#33b864] uppercase">Expert</span>
+                      <span className="text-[5px] text-gray-500 mt-1">Média Novembro</span>
+                    </motion.div>
+                    
+                    {/* Growth Card */}
+                    <motion.div 
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 1 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#33b864]/20"
+                    >
+                      <div className="flex items-center gap-1 mb-1">
+                        <div className="w-0.5 h-3 bg-[#33b864] rounded-full" />
+                        <span className="text-[5px] text-gray-400 uppercase tracking-wider">Crescimento</span>
                       </div>
-                    </div>
+                      <span className="text-[#33b864] font-bold text-[14px]">+118.5%</span>
+                      <div className="mt-1 h-4 flex items-end gap-0.5">
+                        {[40, 60, 45, 80, 70, 90, 100].map((h, i) => (
+                          <motion.div 
+                            key={i}
+                            className="flex-1 bg-[#33b864]/30 rounded-sm"
+                            initial={{ height: 0 }}
+                            animate={{ height: `${h}%` }}
+                            transition={{ duration: 0.5, delay: 1.2 + i * 0.1 }}
+                          />
+                        ))}
+                      </div>
+                    </motion.div>
                   </div>
                   
-                  {/* Demo Bet Cards - Exact BetCard Replica */}
-                  <div className="space-y-2">
-                    {demoBets.map((bet, index) => (
-                      <motion.div
-                        key={bet.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.5, delay: 1 + index * 0.3 }}
-                        className="bg-[#0a0a0a] border border-[#33b864]/30 rounded-xl overflow-hidden"
-                      >
-                        {/* Card Header - League + Status */}
-                        <div className="bg-[#121212] px-2 py-1 flex justify-between items-center border-b border-white/5">
-                          <div className="flex items-center gap-1">
-                            <span className="text-[5px] font-medium text-[#33b864] uppercase tracking-wider">
-                              {bet.league}
-                            </span>
-                            <span className="text-gray-600 text-[4px]">•</span>
-                            <span className="text-[4px] text-gray-500">⏰ {bet.time}</span>
-                          </div>
-                          <div className={`px-1 py-0.5 rounded border text-[4px] font-bold uppercase ${
-                            bet.status === 'green' 
-                              ? 'bg-[#33b864]/5 text-[#33b864] border-[#33b864]' 
-                              : 'bg-[#33b864]/5 text-[#33b864] border-[#33b864]'
-                          }`}>
-                            {bet.status === 'green' ? 'GANHOU' : 'PENDENTE'}
-                          </div>
-                        </div>
-                        
-                        {/* Card Body - Teams */}
-                        <div className="p-2">
-                          {/* Teams Row */}
-                          <div className="flex items-center justify-between gap-1.5 mb-1.5">
-                            <div className="flex items-center gap-1 flex-1 min-w-0">
-                              <img src={bet.homeLogo} alt="" className="w-4 h-4 object-contain rounded-full bg-white/5" />
-                              <span className="text-[7px] text-white font-bold truncate">{bet.homeTeam}</span>
-                            </div>
-                            <div className="px-1 py-0.5 rounded bg-white/5 border border-white/10">
-                              <span className="text-gray-500 text-[5px] font-medium">vs</span>
-                            </div>
-                            <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
-                              <span className="text-[7px] text-white font-bold truncate text-right">{bet.awayTeam}</span>
-                              <img src={bet.awayLogo} alt="" className="w-4 h-4 object-contain rounded-full bg-white/5" />
-                            </div>
-                          </div>
-                          
-                          {/* Market + Odd */}
-                          <div className="flex items-center justify-between gap-1.5 bg-[#121212] rounded-md p-1.5 border border-white/5">
-                            <span className="text-gray-300 text-[5px] truncate flex-1">{bet.market}</span>
-                            <div className="border border-[#33b864]/40 rounded px-1 py-0.5 bg-[#33b864]/5 flex items-center gap-0.5">
-                              <span className="text-[#33b864] text-[4px] font-semibold">ODD</span>
-                              <span className="text-white text-[8px] font-bold">{bet.odd.toFixed(2)}</span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Card Footer - Copy Button */}
-                        <div className="px-2 pb-2">
-                          <div className="bg-[#33b864] rounded-md py-1 flex items-center justify-center gap-0.5">
-                            <Copy className="w-2 h-2 text-black" />
-                            <span className="text-black text-[5px] font-bold uppercase">Copiar Bilhete</span>
-                          </div>
-                        </div>
-                      </motion.div>
-                    ))}
+                  {/* Middle Stats Row */}
+                  <div className="flex gap-1.5">
+                    {/* ODD Média */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1.2 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#33b864]/20"
+                    >
+                      <div className="flex items-center gap-1 mb-1">
+                        <Scale className="w-2.5 h-2.5 text-[#33b864]" />
+                        <span className="text-[5px] text-gray-400 uppercase">Odd Média</span>
+                      </div>
+                      <span className="text-white font-bold text-[14px]">1.85</span>
+                      <p className="text-[4px] text-[#33b864]">▲ 20% acima</p>
+                    </motion.div>
+                    
+                    {/* Usuários Online */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1.3 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#33b864]/20"
+                    >
+                      <div className="flex items-center gap-1 mb-1">
+                        <Users className="w-2.5 h-2.5 text-[#33b864]" />
+                        <span className="text-[5px] text-gray-400 uppercase">Online</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-white font-bold text-[14px]">330</span>
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#33b864]"></span>
+                        </span>
+                      </div>
+                      <p className="text-[4px] text-gray-500">Latência: 12ms</p>
+                    </motion.div>
                   </div>
+                  
+                  {/* Bottom Stats Row - Greens/Reds */}
+                  <div className="flex gap-1.5">
+                    {/* Greens */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1.4 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#33b864]/20"
+                    >
+                      <div className="flex items-center gap-1 mb-1">
+                        <CheckCircle2 className="w-2.5 h-2.5 text-[#33b864]" />
+                        <span className="text-[5px] text-gray-400 uppercase">Greens</span>
+                      </div>
+                      <span className="text-[#33b864] font-bold text-[16px]">170</span>
+                      <p className="text-[4px] text-gray-500">no mês anterior</p>
+                    </motion.div>
+                    
+                    {/* Reds */}
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 1.5 }}
+                      className="flex-1 bg-[#121212] rounded-lg p-2 border border-[#ef4444]/20"
+                    >
+                      <div className="flex items-center gap-1 mb-1">
+                        <XCircle className="w-2.5 h-2.5 text-[#ef4444]" />
+                        <span className="text-[5px] text-gray-400 uppercase">Reds</span>
+                      </div>
+                      <span className="text-[#ef4444] font-bold text-[16px]">26</span>
+                      <p className="text-[4px] text-gray-500">Proteção Ativa</p>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Scanning Section */}
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 1.6 }}
+                    className="bg-[#121212] rounded-lg p-2 border border-[#33b864]/20"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1">
+                        <Scan className="w-2.5 h-2.5 text-[#33b864]" />
+                        <span className="text-[6px] text-white font-semibold uppercase tracking-wider">Scanning</span>
+                      </div>
+                      <span className="text-[4px] text-[#33b864]">LIVE</span>
+                    </div>
+                    <div className="space-y-1">
+                      {[
+                        'Avaliando mercado Mais de 1.5 gols...',
+                        'Varrendo partidas Bundesliga...',
+                        'Validação cruzada com especialistas...',
+                      ].map((text, i) => (
+                        <motion.div 
+                          key={i}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ duration: 0.3, delay: 1.8 + i * 0.2 }}
+                          className="flex items-center gap-1"
+                        >
+                          <ChevronRight className="w-2 h-2 text-[#33b864]" />
+                          <span className="text-[5px] text-gray-400 truncate">{text}</span>
+                        </motion.div>
+                      ))}
+                    </div>
+                  </motion.div>
                 </div>
               </div>
             </motion.div>
