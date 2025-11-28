@@ -130,6 +130,21 @@ export function OfferPack() {
           {/* Glow ring */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 to-[#33b864]/30 rounded-3xl blur-xl" />
           
+          {/* Black Friday Tag */}
+          <motion.div 
+            className="absolute -top-4 -right-4 md:-top-6 md:-right-6 z-20"
+            initial={{ opacity: 0, rotate: 15, scale: 0.5 }}
+            animate={isInView ? { opacity: 1, rotate: 12, scale: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <img 
+              src="/black-friday-tag.png" 
+              alt="Black Friday Sale" 
+              className="w-24 md:w-32 lg:w-36 drop-shadow-2xl"
+              style={{ filter: 'drop-shadow(0 0 20px rgba(0,0,0,0.8))' }}
+            />
+          </motion.div>
+          
           <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
             <div className="text-center">
               {/* Plan name */}
