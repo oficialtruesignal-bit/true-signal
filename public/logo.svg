@@ -1,0 +1,39 @@
+<svg width="400" height="120" viewBox="0 0 400 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="120" fill="#0a0a0a"/>
+  
+  <defs>
+    <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#33b864" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield -->
+  <g transform="translate(30, 15)">
+    <path 
+      d="M4 6 L4 55 Q4 75 35 88 Q66 75 66 55 L66 6 Q66 2 60 2 L10 2 Q4 2 4 6 Z" 
+      fill="none"
+      stroke="url(#shield-gradient)"
+      stroke-width="4"
+    />
+    
+    <!-- Pulse line -->
+    <path 
+      d="M12 45 L22 45 L28 32 L35 55 L42 40 L48 48 L58 48" 
+      stroke="#33b864" 
+      stroke-width="4" 
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    
+    <!-- Signal dot -->
+    <circle cx="58" cy="48" r="4" fill="#33b864"/>
+  </g>
+  
+  <!-- TRUE -->
+  <text x="115" y="72" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="500" fill="rgba(255,255,255,0.7)" letter-spacing="0.5">TRUE</text>
+  
+  <!-- SIGNAL -->
+  <text x="220" y="72" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="700" fill="white" letter-spacing="0.5">SIGNAL</text>
+</svg>
