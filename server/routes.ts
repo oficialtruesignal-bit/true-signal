@@ -280,30 +280,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/auth/login", async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ error: "Email and password required" });
-      }
-
-      console.log(`[AUTH] Login attempt for email: ${email}`);
-      const profile = await storage.verifyPassword(email, password);
-      
-      if (!profile) {
-        console.log(`[AUTH] Login failed for email: ${email}`);
-        return res.status(401).json({ error: "Credenciais inválidas" });
-      }
-
-      console.log(`[AUTH] Login successful for email: ${email}, role: ${profile.role}`);
-      return res.json({ profile });
-    } catch (error: any) {
-      console.error(`[AUTH] Login error:`, error);
-      return res.status(500).json({ error: error.message });
-    }
-  });
-
   app.get("/api/auth/profile/:id", async (req, res) => {
     try {
       const profile = await storage.getProfileById(req.params.id);
