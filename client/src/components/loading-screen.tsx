@@ -206,7 +206,7 @@ export function LoadingScreen() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <motion.span
-            className="font-black tracking-tight text-[#33b864] text-4xl"
+            className="font-extrabold tracking-[0.2em] text-white text-4xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
             animate={{
               textShadow: [
@@ -220,14 +220,8 @@ export function LoadingScreen() {
               repeat: Infinity,
             }}
           >
-            OCEAN
+            VANTAGE
           </motion.span>
-          <span
-            className="font-bold tracking-wider text-gray-400 text-sm"
-            style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '0.15em' }}
-          >
-            SIGNAL
-          </span>
         </motion.div>
 
         {/* Loading Dots */}

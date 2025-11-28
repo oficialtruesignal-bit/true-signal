@@ -76,8 +76,8 @@ function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <h4 className="text-[#33b864] font-black text-2xl mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-              Ocean Signal
+            <h4 className="text-[#33b864] font-black text-2xl mb-4 tracking-[0.15em]" style={{ fontFamily: 'Sora, sans-serif' }}>
+              VANTAGE
             </h4>
             <p className="text-gray-400 text-sm leading-relaxed">
               Inteligência artificial aplicada ao mercado esportivo.
@@ -170,7 +170,7 @@ function Footer() {
             {/* Legal Disclaimer */}
             <div className="text-center text-xs text-gray-600 max-w-4xl mx-auto mb-6 px-4">
               <p className="leading-relaxed">
-                <strong className="text-gray-500">AVISO LEGAL:</strong> Ocean Signal é uma plataforma de análises estatísticas esportivas. NÃO somos casa de apostas. 
+                <strong className="text-gray-500">AVISO LEGAL:</strong> VANTAGE é uma plataforma de análises estatísticas esportivas. NÃO somos casa de apostas. 
                 Todos os percentuais são baseados em dados históricos e NÃO garantem resultados futuros. 
                 Apostas esportivas envolvem risco de perda financeira. Proibido para menores de 18 anos.
               </p>
@@ -178,7 +178,7 @@ function Footer() {
             
             {/* Copyright */}
             <div className="text-center text-sm text-gray-500">
-              <p>© 2024 Ocean Signal. Todos os direitos reservados.</p>
+              <p>© 2024 VANTAGE. Todos os direitos reservados.</p>
             </div>
           </div>
         </div>

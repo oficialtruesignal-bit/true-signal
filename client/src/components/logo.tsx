@@ -1,59 +1,80 @@
 interface LogoProps {
   className?: string;
   showText?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'lg' | 'xl';
 }
 
 export function Logo({ className = "", showText = true, size = 'md' }: LogoProps) {
   const sizes = {
-    sm: { width: 32, height: 32, text: 'text-base' },
-    md: { width: 48, height: 48, text: 'text-xl' },
-    lg: { width: 64, height: 64, text: 'text-3xl' },
-  };
-
-  const { width, height, text } = sizes[size];
+    sm: { h: 'h-6', w: 'w-6', text: 'text-lg' },
+    md: { h: 'h-8', w: 'w-8', text: 'text-2xl' },
+    lg: { h: 'h-12', w: 'w-12', text: 'text-4xl' },
+    xl: { h: 'h-16', w: 'w-16', text: 'text-5xl' },
+  }[size];
 
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex items-center gap-3 ${className} select-none`}>
+      
+      {/* O SÍMBOLO "DIAMOND V-SHIELD" */}
       <svg 
-        width={width}
-        height={height}
+        className={`${sizes.h} ${sizes.w} text-[#33b864] flex-shrink-0`} 
         viewBox="0 0 100 100" 
         fill="none" 
-        xmlns="http://www.w3.org/2000/svg" 
-        className="flex-shrink-0"
+        xmlns="http://www.w3.org/2000/svg"
       >
         <defs>
-          <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="4" result="coloredBlur" />
+          <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#33b864" stopOpacity="1" />
+            <stop offset="100%" stopColor="#2a9d54" stopOpacity="0.8" />
+          </linearGradient>
+          <filter id="shield-glow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2" result="coloredBlur" />
             <feMerge>
               <feMergeNode in="coloredBlur" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>
         </defs>
-
+        
+        {/* Caminho externo (O Escudo/Diamante) */}
         <path 
-          d="M 10 60 L 35 60 Q 45 60 50 70 L 55 80 L 75 20" 
-          stroke="#33b864" 
-          strokeWidth="12" 
-          strokeLinecap="round" 
+          d="M50 5L85 25V75L50 95L15 75V25L50 5Z" 
+          stroke="url(#shield-gradient)" 
+          strokeWidth="6" 
           strokeLinejoin="round"
-          filter="url(#neon-glow)"
+          fill="none"
+          filter="url(#shield-glow)"
         />
         
-        <circle cx="85" cy="20" r="6" fill="#33b864" filter="url(#neon-glow)" />
+        {/* Faceta superior esquerda (volume 3D) */}
+        <path 
+          d="M50 5L15 25V40L50 20L85 40V25L50 5Z" 
+          fill="#33b864"
+          fillOpacity="0.15"
+        />
+        
+        {/* O V Interno (O "Core") */}
+        <path 
+          d="M30 38L50 68L70 38" 
+          stroke="currentColor" 
+          strokeWidth="7" 
+          strokeLinecap="round" 
+          strokeLinejoin="round"
+          filter="url(#shield-glow)"
+        />
+        
+        {/* O Ponto de Poder (topo) */}
+        <circle cx="50" cy="22" r="4" fill="currentColor" filter="url(#shield-glow)" />
       </svg>
 
+      {/* O NOME */}
       {showText && (
-        <div className="flex flex-col leading-none">
-          <span className={`font-black tracking-tight text-[#33b864] ${text}`} style={{ fontFamily: 'Sora, sans-serif' }}>
-            OCEAN
-          </span>
-          <span className={`font-bold tracking-wider text-gray-400 ${size === 'sm' ? 'text-[10px]' : size === 'md' ? 'text-xs' : 'text-sm'}`} style={{ fontFamily: 'Sora, sans-serif', letterSpacing: '0.15em' }}>
-            SIGNAL
-          </span>
-        </div>
+        <span 
+          className={`font-extrabold text-white tracking-[0.2em] ${sizes.text}`}
+          style={{ fontFamily: 'Sora, sans-serif' }}
+        >
+          VANTAGE
+        </span>
       )}
     </div>
   );

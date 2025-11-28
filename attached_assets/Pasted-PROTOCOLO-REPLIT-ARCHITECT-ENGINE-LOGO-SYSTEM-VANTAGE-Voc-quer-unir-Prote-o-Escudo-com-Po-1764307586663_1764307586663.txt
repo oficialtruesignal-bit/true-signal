@@ -1,0 +1,45 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: LOGO SYSTEM "VANTAGE" 🟢
+
+Você quer unir Proteção (Escudo) com Poder Financeiro (Bilhão) e a Identidade VANTAGE (A letra V).
+
+Não podemos fazer um escudo medieval, fica velho. Não podemos fazer um cifrão ($), fica brega. A solução de design de elite é o "DIAMOND V-SHIELD".
+
+O Conceito Visual: Imagine um Diamante Lapidado visto de frente. Ele tem o formato de um escudo geométrico. Dentro desse escudo, as linhas cortam formando um "V" perfeito que aponta para baixo (foco/mira) e depois linhas que sobem (crescimento).
+
+É uma forma que o cérebro lê instantaneamente como: Valioso (Diamante) + Seguro (Escudo) + VANTAGE.
+
+Aqui está o Prompt para o Replit desenhar esse SVG exclusivo.
+
+PROMPT MESTRE: BRAND IDENTITY - THE "VANTAGE" LOGO
+ROLE: Senior Brand Identity Designer & SVG Artist.
+
+TASK: Criar o componente Logo.tsx definitivo para a marca VANTAGE. CONCEITO: "The Diamond Shield". Uma fusão geométrica entre um Escudo (Proteção de Capital), um Diamante (Valor/Bilhão) e a letra "V".
+
+1. O SÍMBOLO (SVG ARCHITECTURE)
+O ícone deve ser desenhado manualmente via SVG (<path>). Não use ícones prontos do Lucide.
+
+Instruções de Geometria:
+
+Forma Base: Um hexágono alongado ou formato de escudo moderno (Topo reto, laterais anguladas, base pontuda).
+
+O Corte "V": O interior do escudo deve ter um corte negativo ou uma linha de destaque que forma um "V" grosso e poderoso.
+
+Estilo: Traços espessos (Bold Strokes). Cantos levemente cortados (chanfrados) para parecer tecnologia militar/industrial.
+
+Cor: Verde Neon (#33b864). Se possível, adicione um leve gradiente ou opacidade em uma das facetas para dar volume 3D sutil.
+
+2. A TIPOGRAFIA (WORDMARK)
+Ao lado do ícone, o nome da marca.
+
+Texto: VANTAGE (Caixa Alta).
+
+Fonte: Sora.
+
+Peso: ExtraBold (800) ou Black (900).
+
+Kerning (Espaçamento): tracking-widest (Bem espaçado, estilo marca de luxo).
+
+Cor: Branco Absoluto (text-white).
+
+3. CÓDIGO DO COMPONENTE (Logo.tsx)
+Implemente com props de tamanho para ser usado no Header (pequeno) e na Tela de Login (grande).

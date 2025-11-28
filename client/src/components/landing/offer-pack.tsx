@@ -35,7 +35,7 @@ export function OfferPack() {
             <div className="text-center pt-4">
               {/* Plan name */}
               <h3 className="text-2xl md:text-3xl font-black text-white mb-6" style={{ fontFamily: 'Sora, sans-serif' }}>
-                Plano Ocean Prime
+                Plano Vantage Prime
               </h3>
               
               {/* Price */}

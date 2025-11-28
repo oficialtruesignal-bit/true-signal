@@ -54,7 +54,7 @@ export function LockedScreen() {
             Você provou a precisão da nossa IA por 15 dias.
           </p>
           <p className="text-lg text-gray-400">
-            Agora é hora de desbloquear todo o poder do <span className="text-[#33b864] font-bold">Ocean Signal</span>.
+            Agora é hora de desbloquear todo o poder do <span className="text-[#33b864] font-bold">VANTAGE</span>.
           </p>
         </motion.div>
         
@@ -71,7 +71,7 @@ export function LockedScreen() {
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/20 border border-[#33b864]/40 rounded-full mb-4">
                 <Sparkles className="w-4 h-4 text-[#33b864]" />
-                <span className="text-sm text-[#33b864] font-bold uppercase tracking-wider">Ocean Prime</span>
+                <span className="text-sm text-[#33b864] font-bold uppercase tracking-wider">Vantage Prime</span>
               </div>
               
               <div className="flex items-baseline justify-center gap-2 mb-2">
@@ -109,7 +109,7 @@ export function LockedScreen() {
               data-testid="button-subscribe-premium"
             >
               <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-black py-5 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 text-lg touch-manipulation">
-                ASSINAR OCEAN PRIME - R$ 99,87/MÊS
+                ASSINAR VANTAGE PRIME - R$ 99,87/MÊS
               </button>
             </a>
             
@@ -122,8 +122,8 @@ export function LockedScreen() {
         {/* Footer note */}
         <p className="text-center text-sm text-gray-500">
           Tem dúvidas? Entre em contato com nosso suporte:{' '}
-          <a href="mailto:suporte@oceansignal.com" className="text-[#33b864] hover:underline">
-            suporte@oceansignal.com
+          <a href="mailto:suporte@vantage.com" className="text-[#33b864] hover:underline">
+            suporte@vantage.com
           </a>
         </p>
       </motion.div>
