@@ -81,8 +81,11 @@ function ProCouponTicket() {
           <p className="text-white font-bold text-base mb-1" style={{ fontFamily: 'Sora, sans-serif' }}>
             50% OFF
           </p>
-          <p className="text-gray-500 text-xs mb-3">
-            De R$ 99,87 por apenas <span className="text-[#33b864] font-bold">R$ 49,93</span>
+          <p className="text-gray-500 text-xs mb-1">
+            De R$ 99,87 por apenas
+          </p>
+          <p className="text-[#33b864] font-bold text-sm mb-3">
+            R$ 49,93
           </p>
 
           {/* Code box with copy */}
