@@ -39,8 +39,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
-        loadUserProfile(session.user.id);
+        loadUserProfile(session.user.id, false, session.user);
       } else {
+        // Check localStorage backup for offline access
+        const storedUser = localStorage.getItem('vantage_user');
+        if (storedUser) {
+          try {
+            const parsed = JSON.parse(storedUser);
+            if (parsed.id && parsed.email) {
+              console.log('🔄 [AUTH] Restoring user from localStorage backup');
+              loadUserProfile(parsed.id, false, { id: parsed.id, email: parsed.email, user_metadata: { first_name: parsed.firstName } });
+              return;
+            }
+          } catch (e) {
+            console.error('Error parsing stored user:', e);
+          }
+        }
         setIsLoading(false);
       }
     });
@@ -50,9 +64,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
-        loadUserProfile(session.user.id);
+        loadUserProfile(session.user.id, false, session.user);
       } else {
-        setUser(null);
+        // Don't clear user immediately if we have localStorage backup
+        const storedUser = localStorage.getItem('vantage_user');
+        if (!storedUser) {
+          setUser(null);
+        }
         setIsLoading(false);
       }
     });
@@ -60,28 +78,59 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const loadUserProfile = async (userId: string, forceReload = false) => {
+  const loadUserProfile = async (userId: string, forceReload = false, supabaseUserData?: { id: string; email?: string; user_metadata?: { first_name?: string } }) => {
     const startTime = Date.now();
     
     try {
       console.log('🔄 [AUTH DEBUG] Loading profile for userId:', userId);
       console.log('🔄 [AUTH DEBUG] Force reload:', forceReload);
       
-      const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+      // Use provided user data or try to fetch from Supabase
+      let userEmail = supabaseUserData?.email;
+      let userFirstName = supabaseUserData?.user_metadata?.first_name;
       
-      if (!supabaseUser) {
-        console.log('❌ [AUTH DEBUG] No Supabase user found');
-        setIsLoading(false);
-        return;
+      if (!userEmail) {
+        // Try to get from Supabase auth if not provided
+        const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+        userEmail = supabaseUser?.email;
+        userFirstName = supabaseUser?.user_metadata?.first_name;
+      }
+      
+      // If still no user data, try localStorage backup
+      if (!userEmail) {
+        console.log('⚠️ [AUTH DEBUG] No Supabase session, checking localStorage backup');
+        
+        const storedUser = localStorage.getItem('vantage_user');
+        if (storedUser) {
+          try {
+            const parsed = JSON.parse(storedUser);
+            if (parsed.id === userId) {
+              userEmail = parsed.email;
+              userFirstName = parsed.firstName;
+              console.log('✅ [AUTH DEBUG] Found user in localStorage backup:', userEmail);
+            }
+          } catch (e) {
+            console.error('Error parsing stored user:', e);
+          }
+        }
+        
+        // If still no user data, clear and stop
+        if (!userEmail) {
+          console.log('❌ [AUTH DEBUG] No user data found, clearing session');
+          localStorage.removeItem('vantage_user');
+          setUser(null);
+          setIsLoading(false);
+          return;
+        }
       }
 
       const response = await fetch('/api/profile/sync', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          id: supabaseUser.id,
-          email: supabaseUser.email,
-          firstName: supabaseUser.user_metadata?.first_name || supabaseUser.email?.split('@')[0],
+          id: userId,
+          email: userEmail,
+          firstName: userFirstName || userEmail?.split('@')[0],
         }),
       });
 
@@ -111,6 +160,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         console.log('✅ [AUTH DEBUG] Setting user state with role:', userData.role);
         console.log('👤 [AUTH DEBUG] Full user object:', userData);
+        
+        // Save user to localStorage for backup/recovery
+        localStorage.setItem('vantage_user', JSON.stringify(userData));
         
         setUser(userData);
       }
