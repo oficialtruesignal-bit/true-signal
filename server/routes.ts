@@ -956,6 +956,52 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // Admin: Manually activate premium access for a user
+  app.post("/api/admin/activate-premium", async (req, res) => {
+    try {
+      const { email, days } = req.body;
+      
+      // Validate inputs
+      if (!email || !days) {
+        return res.status(400).json({ error: "Email e dias são obrigatórios" });
+      }
+      
+      const numDays = parseInt(days);
+      if (isNaN(numDays) || numDays < 1 || numDays > 365) {
+        return res.status(400).json({ error: "Número de dias inválido (1-365)" });
+      }
+      
+      // Find user by email
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.status(404).json({ error: `Usuário não encontrado: ${email}` });
+      }
+      
+      // Calculate subscription period
+      const now = new Date();
+      const endsAt = new Date(now.getTime() + numDays * 24 * 60 * 60 * 1000);
+      
+      // Activate premium
+      await storage.updateUserSubscription(user.id, {
+        subscriptionStatus: 'active',
+        subscriptionActivatedAt: now,
+        subscriptionEndsAt: endsAt,
+      });
+      
+      console.log(`🎉 [Admin] Premium ativado manualmente para ${email} por ${numDays} dias`);
+      console.log(`📅 [Admin] Período: ${now.toISOString()} → ${endsAt.toISOString()}`);
+      
+      return res.json({ 
+        success: true,
+        message: `Premium ativado para ${email} por ${numDays} dias`,
+        endsAt: endsAt.toISOString(),
+      });
+    } catch (error: any) {
+      console.error("Error activating premium:", error);
+      return res.status(500).json({ error: "Erro ao ativar acesso premium" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

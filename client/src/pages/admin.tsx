@@ -6,19 +6,57 @@ import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenLine } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenLine, Crown, UserPlus, Loader2 } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
 import { toast } from "sonner";
+import axios from "axios";
 
 export default function Admin() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [premiumEmail, setPremiumEmail] = useState("");
+  const [premiumDays, setPremiumDays] = useState("30");
+  const [isActivatingPremium, setIsActivatingPremium] = useState(false);
   
   console.log('🔧 Admin Page Loaded - Version 3.0 - Premium Cards');
+
+  const handleActivatePremium = async () => {
+    if (!premiumEmail.trim()) {
+      toast.error("Digite o email do usuário");
+      return;
+    }
+    
+    const days = parseInt(premiumDays);
+    if (isNaN(days) || days < 1) {
+      toast.error("Digite um número válido de dias");
+      return;
+    }
+
+    setIsActivatingPremium(true);
+    try {
+      const response = await axios.post("/api/admin/activate-premium", {
+        email: premiumEmail.trim(),
+        days: days,
+      });
+      
+      if (response.data.success) {
+        toast.success(`Acesso Premium ativado para ${premiumEmail} por ${days} dias!`);
+        setPremiumEmail("");
+        setPremiumDays("30");
+      } else {
+        toast.error(response.data.error || "Erro ao ativar premium");
+      }
+    } catch (error: any) {
+      console.error("Error activating premium:", error);
+      toast.error(error.response?.data?.error || "Erro ao ativar acesso premium");
+    } finally {
+      setIsActivatingPremium(false);
+    }
+  };
 
   const copyTicket = (signal: Signal) => {
     const text = `🎯 VANTAGE
@@ -128,6 +166,61 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
+          {/* Premium Access Manager */}
+          <div className="bg-card border border-yellow-500/30 rounded-xl p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Crown className="w-5 h-5 text-yellow-500" />
+              <h3 className="font-bold text-white">Liberar Acesso Premium</h3>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm text-gray-400 block mb-1.5">Email do Usuário</label>
+                <input
+                  type="email"
+                  value={premiumEmail}
+                  onChange={(e) => setPremiumEmail(e.target.value)}
+                  placeholder="usuario@email.com"
+                  className="w-full bg-background border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-gray-500 focus:border-yellow-500/50 focus:outline-none transition-colors"
+                  data-testid="input-premium-email"
+                />
+              </div>
+              
+              <div>
+                <label className="text-sm text-gray-400 block mb-1.5">Dias de Acesso</label>
+                <input
+                  type="number"
+                  value={premiumDays}
+                  onChange={(e) => setPremiumDays(e.target.value)}
+                  min="1"
+                  max="365"
+                  placeholder="30"
+                  className="w-full bg-background border border-white/10 rounded-lg px-4 py-2.5 text-white placeholder:text-gray-500 focus:border-yellow-500/50 focus:outline-none transition-colors"
+                  data-testid="input-premium-days"
+                />
+              </div>
+              
+              <Button
+                onClick={handleActivatePremium}
+                disabled={isActivatingPremium || !premiumEmail.trim()}
+                className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-bold py-2.5"
+                data-testid="button-activate-premium"
+              >
+                {isActivatingPremium ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Ativando...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Ativar Premium
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+
           <div className="bg-card border border-primary/20 rounded-xl p-6">
             <Tabs defaultValue="manual" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-5 bg-background/50 p-1 h-11">
