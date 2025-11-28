@@ -46,16 +46,20 @@ export function HeroShot() {
             O resto é descartado. Sem gráficos complexos. Sem dúvida.
           </motion.p>
           
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="text-base md:text-lg text-gray-300 mt-4 mb-8 max-w-2xl leading-relaxed font-light"
+            className="mt-4 mb-8 max-w-2xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Você recebe o sinal pronto:{' '}
-            <span className="text-white font-bold">É Copiar, Colar e Lucrar.</span>
-          </motion.p>
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed font-light">
+              Você recebe o sinal pronto:
+            </p>
+            <p className="text-base md:text-lg text-white font-bold text-center lg:text-left mt-1">
+              É Copiar, Colar e Lucrar.
+            </p>
+          </motion.div>
           
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
