@@ -163,9 +163,10 @@ export default function TipsPage() {
       {!isLoading && !error && tips.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {tips.map((tip, index) => {
-            // Trial users see only the 1st tip clearly, 2nd and 3rd are blurred
-            // If there are 4+ tips, only blur indices 1 and 2 (2nd and 3rd tips)
-            const shouldBlur = !canSeeAllTips && index >= 1 && index <= 2;
+            // Usuários não-pagantes veem os 4 primeiros bilhetes grátis
+            // A partir do 5º bilhete (índice 4+), mostra blur + paywall
+            const FREE_TIPS_LIMIT = 4;
+            const shouldBlur = !canSeeAllTips && index >= FREE_TIPS_LIMIT;
             
             return (
               <div key={tip.id} className="relative" data-testid={`tip-container-${index}`}>

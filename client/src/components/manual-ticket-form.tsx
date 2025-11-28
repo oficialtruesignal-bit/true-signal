@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { footballService, FootballMatch } from "@/lib/football-service";
-import { Calendar, Clock, Trophy, Search, ChevronRight, Send, Loader2, Plus, Trash2 } from "lucide-react";
+import { Calendar, Clock, Trophy, Search, ChevronRight, Send, Loader2, Plus, Trash2, PenLine } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -31,11 +31,27 @@ interface ManualTicketFormProps {
   isSubmitting?: boolean;
 }
 
+interface ManualMatchData {
+  homeTeam: string;
+  awayTeam: string;
+  league: string;
+  matchTime: string;
+}
+
 export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormProps) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedMatch, setSelectedMatch] = useState<FootballMatch | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [betLink, setBetLink] = useState("");
+  
+  // Modo de entrada manual (quando não encontra na API)
+  const [isManualMode, setIsManualMode] = useState(false);
+  const [manualData, setManualData] = useState<ManualMatchData>({
+    homeTeam: "",
+    awayTeam: "",
+    league: "",
+    matchTime: "",
+  });
   
   // Múltiplas apostas
   const [legs, setLegs] = useState<BetLeg[]>([
@@ -81,9 +97,26 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
   };
 
   const handleSubmit = () => {
-    if (!selectedMatch) {
+    // Validar se tem jogo selecionado (API ou manual)
+    if (!selectedMatch && !isManualMode) {
       toast.error("Selecione um jogo primeiro");
       return;
+    }
+
+    // Validar dados manuais se estiver em modo manual
+    if (isManualMode) {
+      if (!manualData.homeTeam.trim() || !manualData.awayTeam.trim()) {
+        toast.error("Preencha os nomes dos times");
+        return;
+      }
+      if (!manualData.league.trim()) {
+        toast.error("Preencha o campeonato");
+        return;
+      }
+      if (!manualData.matchTime.trim()) {
+        toast.error("Preencha o horário do jogo");
+        return;
+      }
     }
 
     // Validar legs
@@ -98,32 +131,50 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
       }
     }
 
-    // Formatar horário
-    const matchDate = new Date(selectedMatch.fixture.date);
-    const day = matchDate.getDate().toString().padStart(2, '0');
-    const month = (matchDate.getMonth() + 1).toString().padStart(2, '0');
-    const hours = matchDate.getHours().toString().padStart(2, '0');
-    const minutes = matchDate.getMinutes().toString().padStart(2, '0');
-    const matchTime = `${day}/${month} às ${hours}:${minutes}`;
-
     // Combinar mercados se múltiplas apostas
     const marketText = legs.map(leg => leg.market.trim()).filter(m => m).join(' + ');
 
-    onSubmit({
-      homeTeam: selectedMatch.teams.home.name,
-      awayTeam: selectedMatch.teams.away.name,
-      league: selectedMatch.league.name,
-      matchTime: matchTime,
-      market: marketText,
-      odd: totalOdd,
-      betLink: betLink,
-      homeTeamLogo: selectedMatch.teams.home.logo,
-      awayTeamLogo: selectedMatch.teams.away.logo,
-      fixtureId: selectedMatch.fixture.id.toString(),
-    });
+    if (isManualMode) {
+      // Enviar dados manuais
+      onSubmit({
+        homeTeam: manualData.homeTeam.trim(),
+        awayTeam: manualData.awayTeam.trim(),
+        league: manualData.league.trim(),
+        matchTime: manualData.matchTime.trim(),
+        market: marketText,
+        odd: totalOdd,
+        betLink: betLink,
+      });
 
-    // Reset
-    setSelectedMatch(null);
+      // Reset
+      setIsManualMode(false);
+      setManualData({ homeTeam: "", awayTeam: "", league: "", matchTime: "" });
+    } else if (selectedMatch) {
+      // Formatar horário da API
+      const matchDate = new Date(selectedMatch.fixture.date);
+      const day = matchDate.getDate().toString().padStart(2, '0');
+      const month = (matchDate.getMonth() + 1).toString().padStart(2, '0');
+      const hours = matchDate.getHours().toString().padStart(2, '0');
+      const minutes = matchDate.getMinutes().toString().padStart(2, '0');
+      const matchTime = `${day}/${month} às ${hours}:${minutes}`;
+
+      onSubmit({
+        homeTeam: selectedMatch.teams.home.name,
+        awayTeam: selectedMatch.teams.away.name,
+        league: selectedMatch.league.name,
+        matchTime: matchTime,
+        market: marketText,
+        odd: totalOdd,
+        betLink: betLink,
+        homeTeamLogo: selectedMatch.teams.home.logo,
+        awayTeamLogo: selectedMatch.teams.away.logo,
+        fixtureId: selectedMatch.fixture.id.toString(),
+      });
+
+      // Reset
+      setSelectedMatch(null);
+    }
+    
     setLegs([{ id: crypto.randomUUID(), market: "", odd: "" }]);
     setBetLink("");
   };
@@ -167,14 +218,14 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
           </div>
 
           {/* Lista de Jogos */}
-          <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+          <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="w-6 h-6 text-primary animate-spin" />
                 <span className="ml-2 text-muted-foreground">Carregando jogos...</span>
               </div>
             ) : filteredFixtures.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-6 text-muted-foreground">
                 {searchQuery ? "Nenhum jogo encontrado" : "Nenhum jogo nesta data"}
               </div>
             ) : (
@@ -218,6 +269,193 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
                 </button>
               ))
             )}
+          </div>
+
+          {/* Botão para digitar manualmente */}
+          <div className="pt-3 border-t border-border/30">
+            <button
+              onClick={() => setIsManualMode(true)}
+              className="w-full p-3 bg-background/30 hover:bg-primary/5 border border-dashed border-border/50 hover:border-primary/30 rounded-lg transition-all flex items-center justify-center gap-2 text-muted-foreground hover:text-primary"
+              data-testid="button-manual-mode"
+            >
+              <PenLine className="w-4 h-4" />
+              <span className="text-sm">Não encontrou? Digite manualmente</span>
+            </button>
+          </div>
+        </>
+      ) : isManualMode ? (
+        /* Modo Manual - Digitar dados do jogo */
+        <>
+          <div className="space-y-4">
+            {/* Voltar */}
+            <button 
+              onClick={() => setIsManualMode(false)}
+              className="text-xs text-muted-foreground hover:text-white transition-colors flex items-center gap-1"
+              data-testid="button-exit-manual"
+            >
+              ← Voltar para busca
+            </button>
+            
+            {/* Título */}
+            <div className="flex items-center gap-2 text-primary">
+              <PenLine className="w-4 h-4" />
+              <span className="text-sm font-medium">Entrada Manual</span>
+            </div>
+
+            {/* Campeonato */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Campeonato</Label>
+              <Input
+                placeholder="Ex: Premier League"
+                value={manualData.league}
+                onChange={(e) => setManualData({...manualData, league: e.target.value})}
+                className="bg-background/50 border-border/50 text-sm"
+                data-testid="input-manual-league"
+              />
+            </div>
+
+            {/* Times */}
+            <div className="grid grid-cols-5 gap-2 items-end">
+              <div className="col-span-2 space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Time Casa</Label>
+                <Input
+                  placeholder="Ex: Arsenal"
+                  value={manualData.homeTeam}
+                  onChange={(e) => setManualData({...manualData, homeTeam: e.target.value})}
+                  className="bg-background/50 border-border/50 text-sm"
+                  data-testid="input-manual-home"
+                />
+              </div>
+              <div className="flex items-center justify-center pb-2">
+                <span className="text-primary font-bold text-sm">vs</span>
+              </div>
+              <div className="col-span-2 space-y-1.5">
+                <Label className="text-xs text-muted-foreground">Time Fora</Label>
+                <Input
+                  placeholder="Ex: Chelsea"
+                  value={manualData.awayTeam}
+                  onChange={(e) => setManualData({...manualData, awayTeam: e.target.value})}
+                  className="bg-background/50 border-border/50 text-sm"
+                  data-testid="input-manual-away"
+                />
+              </div>
+            </div>
+
+            {/* Horário */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">Data e Horário</Label>
+              <Input
+                placeholder="Ex: 28/11 às 16:00"
+                value={manualData.matchTime}
+                onChange={(e) => setManualData({...manualData, matchTime: e.target.value})}
+                className="bg-background/50 border-border/50 text-sm"
+                data-testid="input-manual-time"
+              />
+            </div>
+          </div>
+
+          {/* Apostas */}
+          <div className="space-y-3 pt-4 border-t border-border/30">
+            <div className="flex items-center justify-between">
+              <Label className="text-sm text-muted-foreground">Apostas</Label>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={addLeg}
+                className="h-7 px-2 text-xs text-primary hover:text-primary/80"
+                data-testid="button-add-leg-manual"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                Adicionar
+              </Button>
+            </div>
+            
+            {legs.map((leg, index) => (
+              <div key={leg.id} className="flex gap-2 items-start">
+                <div className="flex-1 space-y-2">
+                  <Input
+                    placeholder="Ex: Resultado Final - Vitória Casa"
+                    value={leg.market}
+                    onChange={(e) => updateLeg(leg.id, "market", e.target.value)}
+                    className="bg-background/50 border-border/50 text-sm"
+                    data-testid={`input-manual-market-${index}`}
+                  />
+                </div>
+                <div className="w-20">
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="1"
+                    placeholder="Odd"
+                    value={leg.odd}
+                    onChange={(e) => updateLeg(leg.id, "odd", e.target.value)}
+                    className="bg-background/50 border-border/50 text-sm text-center"
+                    data-testid={`input-manual-odd-${index}`}
+                  />
+                </div>
+                {legs.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeLeg(leg.id)}
+                    className="h-9 w-9 text-red-500 hover:text-red-400 hover:bg-red-500/10"
+                    data-testid={`button-remove-manual-leg-${index}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Link (opcional) */}
+          <div className="space-y-2">
+            <Label className="text-sm text-muted-foreground">Link do Bilhete (opcional)</Label>
+            <Input
+              placeholder="https://..."
+              value={betLink}
+              onChange={(e) => setBetLink(e.target.value)}
+              className="bg-background/50 border-border/50 text-sm"
+              data-testid="input-manual-bet-link"
+            />
+          </div>
+
+          {/* Resumo e Botão */}
+          <div className="bg-primary/10 border border-primary/30 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Odd Total</p>
+                <p className="text-2xl font-bold text-primary">{totalOdd.toFixed(2)}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-xs text-muted-foreground">Tipo</p>
+                <p className="text-sm font-semibold text-white">
+                  {legs.length === 1 ? "Simples" : `Múltipla (${legs.length})`}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className="w-full h-11 bg-primary hover:bg-primary/90 text-black font-bold gap-2"
+              data-testid="button-submit-manual"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Enviando...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Disparar Bilhete
+                </>
+              )}
+            </Button>
           </div>
         </>
       ) : (
