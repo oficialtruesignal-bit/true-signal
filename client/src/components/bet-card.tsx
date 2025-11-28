@@ -422,36 +422,39 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
     );
   }
 
-  // Layout tradicional (sem imagem)
+  // Layout tradicional (sem imagem) - REDESIGN PROFISSIONAL
   return (
     <div 
-      className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl p-5 shadow-lg shadow-[#33b864]/5 relative overflow-hidden group hover:border-[#33b864]/50 transition-all"
+      className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/5 relative group hover:border-[#33b864]/50 transition-all"
       data-testid={`bet-card-${signal.id}`}
     >
-      {/* --- 1. CABEÇALHO (LIGA • HORA + STATUS + EDITOR ADMIN) --- */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2 text-xs font-bold font-sora tracking-wide whitespace-nowrap">
-          <span className="text-[#33b864] uppercase truncate">{officialLeague}</span>
-          <span className="text-gray-500">•</span>
-          <span className="text-gray-400">{displayTime}</span>
+      {/* --- HEADER: Campeonato + Status + Admin --- */}
+      <div className="bg-[#121212] px-4 py-2.5 flex justify-between items-center border-b border-white/5">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="text-[10px] font-medium text-[#33b864] uppercase tracking-wider truncate">
+            {officialLeague}
+          </span>
+          <span className="text-gray-600 text-[10px]">•</span>
+          <span className="text-[10px] text-gray-500 whitespace-nowrap">
+            ⏰ {displayTime}
+          </span>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-2">
           <div className={cn(
-            "px-2 py-0.5 rounded-full border text-[9px] font-bold uppercase tracking-wide",
+            "px-2 py-0.5 rounded border text-[8px] font-bold uppercase tracking-wide shrink-0",
             statusBadge.className
           )}>
             {statusBadge.text}
           </div>
           
-          {/* Botão de edição (apenas para admin) */}
           {isAdmin && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <button 
-                  className="p-1.5 rounded-lg hover:bg-[#33b864]/10 transition-colors"
+                  className="p-1 rounded hover:bg-[#33b864]/10 transition-colors"
                   data-testid="edit-status-button"
                 >
-                  <Pencil className="w-3.5 h-3.5 text-[#33b864]" />
+                  <Pencil className="w-3 h-3 text-[#33b864]" />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30">
@@ -488,69 +491,67 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         </div>
       </div>
 
-      {/* --- 2. OS TIMES (HORIZONTAL E CENTRALIZADO) --- */}
-      <div className="flex items-center justify-center gap-4 mb-6">
-        {/* Time Casa */}
-        <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.homeTeam)}</span>
-        
-        {/* Escudo Casa */}
-        <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
-
-        {/* VS */}
-        <span className="text-gray-600 font-sora font-medium text-sm">vs</span>
-
-        {/* Escudo Fora */}
-        <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
-
-        {/* Time Fora */}
-        <span className="font-sora font-bold text-white text-xl md:text-2xl">{abbreviateTeamName(signal.awayTeam)}</span>
-      </div>
-
-      {/* --- 3. CONTAINER DE INFORMAÇÃO (CAIXA ESCURA) --- */}
-      <div className="bg-[#121212] rounded-xl p-4 border border-white/5 flex items-center justify-between mb-4">
-        
-        {/* Lado Esquerdo: Mercados com bullets */}
-        <div className="flex flex-col gap-1">
-          {hasMultipleLegs ? (
-            <span className="text-[#33b864] font-sora font-bold text-xs uppercase">
-              APOSTA COMBINADA
+      {/* --- BODY: Times + Mercado + Odd --- */}
+      <div className="p-4">
+        {/* Times em Layout Vertical Centralizado */}
+        <div className="flex items-center justify-between gap-3 mb-4">
+          {/* Time Casa */}
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
+            <span className="font-sora font-bold text-white text-sm md:text-base truncate">
+              {signal.homeTeam}
             </span>
-          ) : (
-            signal.market.split(' + ').map((market, idx) => (
-              <div key={idx} className="flex items-center gap-2">
-                <span className="w-1.5 h-1.5 rounded-full bg-gray-500" />
-                <span className="text-gray-300 font-sora text-xs">
-                  {market.trim()}
-                </span>
-              </div>
-            ))
-          )}
+          </div>
+
+          {/* VS Badge */}
+          <div className="shrink-0 px-2 py-1 rounded bg-white/5 border border-white/10">
+            <span className="text-gray-500 font-sora font-medium text-[10px]">vs</span>
+          </div>
+
+          {/* Time Fora */}
+          <div className="flex items-center gap-3 flex-1 min-w-0 justify-end">
+            <span className="font-sora font-bold text-white text-sm md:text-base truncate text-right">
+              {signal.awayTeam}
+            </span>
+            <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
+          </div>
         </div>
 
-        {/* Lado Direito: ODD */}
-        <div className="border border-[#33b864]/50 rounded-lg px-3 py-2 bg-[#33b864]/5">
-          <span className="text-[#33b864] font-sora text-sm font-bold mr-1">ODD</span>
-          <span className="text-white font-sora text-xl font-extrabold">{totalOdd.toFixed(2)}</span>
+        {/* Mercado + Odd em Linha */}
+        <div className="flex items-center justify-between gap-3 bg-[#121212] rounded-xl p-3 border border-white/5">
+          {/* Mercado */}
+          <div className="flex-1 min-w-0">
+            {hasMultipleLegs ? (
+              <span className="text-[#33b864] font-sora font-semibold text-xs uppercase">
+                APOSTA COMBINADA
+              </span>
+            ) : (
+              <span className="text-gray-300 font-sora text-xs leading-relaxed line-clamp-2">
+                {signal.market}
+              </span>
+            )}
+          </div>
+
+          {/* Odd Badge */}
+          <div className="shrink-0 border border-[#33b864]/40 rounded-lg px-3 py-1.5 bg-[#33b864]/5 flex items-center gap-1.5">
+            <span className="text-[#33b864] font-sora text-[10px] font-semibold uppercase">ODD</span>
+            <span className="text-white font-sora text-lg font-bold">{totalOdd.toFixed(2)}</span>
+          </div>
         </div>
       </div>
 
-      {/* --- 4. O BOTÃO DE AÇÃO (FULL WIDTH) --- */}
-      <button 
-        onClick={handleCopy}
-        data-testid={`button-copy-${signal.id}`}
-        className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.3)]"
-      >
-        <Copy className="w-5 h-5 text-black" />
-        <span className="text-black font-sora font-bold text-sm tracking-wide">
-          {isCopied ? "COPIADO" : "COPIAR BILHETE"}
-        </span>
-      </button>
-
-      {/* --- 5. RODAPÉ (METADADOS) --- */}
-      <div className="mt-3 flex items-center gap-3 px-1 text-[9px] text-gray-500 font-mono">
-        <span>#{signalId}</span>
-        <span>•</span>
-        <span>Criado: {createdDateTime}</span>
+      {/* --- FOOTER: Botão + Metadados --- */}
+      <div className="px-4 pb-4">
+        <button 
+          onClick={handleCopy}
+          data-testid={`button-copy-${signal.id}`}
+          className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-11 rounded-xl flex items-center justify-center gap-2 shadow-[0_4px_14px_rgba(51,184,100,0.25)]"
+        >
+          <Copy className="w-4 h-4 text-black" />
+          <span className="text-black font-sora font-bold text-sm tracking-wide">
+            {isCopied ? "COPIADO" : "COPIAR BILHETE"}
+          </span>
+        </button>
       </div>
 
       {/* Dialog de confirmação de delete */}
