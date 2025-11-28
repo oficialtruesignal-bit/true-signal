@@ -30,7 +30,7 @@ export function TechSolution() {
               prática
             </span>
           </h2>
-          <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto">
+          <p className="text-sm md:text-base lg:text-lg text-gray-400 max-w-2xl mx-auto whitespace-nowrap">
             Simples: nós analisamos, você recebe pronto no celular
           </p>
         </motion.div>
