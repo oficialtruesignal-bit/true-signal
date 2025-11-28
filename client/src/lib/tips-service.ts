@@ -1,6 +1,20 @@
 import { Signal } from "./mock-data";
 import axios from "axios";
 
+// SECURITY: Get admin credentials from localStorage (set during login)
+const getAdminCredentials = (): { email: string | null; userId: string | null } => {
+  try {
+    const userStr = localStorage.getItem('vantage_user');
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      return { email: user.email || null, userId: user.id || null };
+    }
+  } catch (e) {
+    console.error('Error getting admin credentials:', e);
+  }
+  return { email: null, userId: null };
+};
+
 export const tipsService = {
   getAll: async (): Promise<Signal[]> => {
     try {
@@ -31,8 +45,10 @@ export const tipsService = {
     }
   },
 
+  // SECURITY: Requires admin credentials for authorization
   create: async (tip: Omit<Signal, 'id' | 'timestamp'>): Promise<Signal> => {
     try {
+      const { email, userId } = getAdminCredentials();
       const response = await axios.post('/api/tips', {
         homeTeam: tip.homeTeam,
         awayTeam: tip.awayTeam,
@@ -41,12 +57,14 @@ export const tipsService = {
         matchTime: tip.matchTime || null,
         league: tip.league,
         market: tip.market,
-        odd: tip.odd.toString(), // Convert to string for Drizzle decimal schema
+        odd: tip.odd.toString(),
         status: tip.status || 'pending',
         betLink: tip.betLink || null,
         isLive: tip.isLive || false,
         fixtureId: tip.fixtureId || null,
         imageUrl: tip.imageUrl || null,
+        adminEmail: email, // SECURITY: Send admin email + userId
+        adminUserId: userId,
       });
       
       const data = response.data.tip;
@@ -72,17 +90,25 @@ export const tipsService = {
     }
   },
 
+  // SECURITY: Requires admin credentials for authorization
   updateStatus: async (id: string, status: Signal['status']): Promise<void> => {
     try {
-      await axios.patch(`/api/tips/${id}/status`, { status });
+      const { email, userId } = getAdminCredentials();
+      await axios.patch(`/api/tips/${id}/status`, { 
+        status,
+        adminEmail: email,
+        adminUserId: userId,
+      });
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao atualizar status');
     }
   },
 
+  // SECURITY: Requires admin credentials for authorization
   delete: async (id: string): Promise<void> => {
     try {
-      await axios.delete(`/api/tips/${id}`);
+      const { email, userId } = getAdminCredentials();
+      await axios.delete(`/api/tips/${id}?adminEmail=${encodeURIComponent(email || '')}&adminUserId=${encodeURIComponent(userId || '')}`);
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao deletar tip');
     }

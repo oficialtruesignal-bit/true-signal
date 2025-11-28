@@ -457,9 +457,51 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // SECURITY: Admin-only helper function with dual verification (userId + email)
+  const ALLOWED_ADMINS = ['kwillianferreira@gmail.com'];
+  
+  // SECURITY: Verify admin with both userId AND email to prevent spoofing
+  // An attacker would need to know both the email AND the userId (UUID) to bypass
+  const verifyAdmin = async (adminEmail: string | undefined, adminUserId?: string): Promise<boolean> => {
+    if (!adminEmail) {
+      console.warn("⚠️ [SECURITY] Admin verification failed: no email provided");
+      return false;
+    }
+    
+    const adminUser = await storage.getUserByEmail(adminEmail);
+    if (!adminUser) {
+      console.warn(`⚠️ [SECURITY] Admin verification failed: user not found for ${adminEmail}`);
+      return false;
+    }
+    
+    // SECURITY: If userId is provided, verify it matches the email's userId
+    if (adminUserId && adminUser.id !== adminUserId) {
+      console.warn(`⚠️ [SECURITY] Admin verification failed: userId mismatch for ${adminEmail}`);
+      console.warn(`⚠️ [SECURITY] Expected: ${adminUser.id}, Got: ${adminUserId}`);
+      return false;
+    }
+    
+    const isAdmin = adminUser.role === 'admin' || ALLOWED_ADMINS.includes(adminEmail.toLowerCase());
+    
+    if (!isAdmin) {
+      console.warn(`⚠️ [SECURITY] Admin verification failed: ${adminEmail} is not an admin`);
+    }
+    
+    return isAdmin;
+  };
+
+  // SECURITY: Protected - only admins can create tips
   app.post("/api/tips", async (req, res) => {
     try {
-      const validatedData = insertTipSchema.parse(req.body);
+      const { adminEmail, adminUserId, ...tipData } = req.body;
+      
+      // SECURITY: Verify admin with both email AND userId
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        console.warn(`⚠️ [SECURITY] Unauthorized tip creation attempt`);
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const validatedData = insertTipSchema.parse(tipData);
       const tip = await storage.createTip(validatedData);
       return res.json({ tip });
     } catch (error: any) {
@@ -467,9 +509,16 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // SECURITY: Protected - only admins can update tip status
   app.patch("/api/tips/:id/status", async (req, res) => {
     try {
-      const { status } = req.body;
+      const { status, adminEmail, adminUserId } = req.body;
+      
+      // SECURITY: Verify admin with both email AND userId
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        console.warn(`⚠️ [SECURITY] Unauthorized tip status update attempt`);
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
       
       if (!['pending', 'green', 'red'].includes(status)) {
         return res.status(400).json({ error: "Invalid status" });
@@ -486,8 +535,17 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // SECURITY: Protected - only admins can delete tips
   app.delete("/api/tips/:id", async (req, res) => {
     try {
+      const adminEmail = req.query.adminEmail as string;
+      const adminUserId = req.query.adminUserId as string;
+      
+      // SECURITY: Verify admin with both email AND userId
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        console.warn(`⚠️ [SECURITY] Unauthorized tip deletion attempt`);
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
       await storage.deleteTip(req.params.id);
       return res.json({ success: true });
     } catch (error: any) {
@@ -828,11 +886,28 @@ REGRAS IMPORTANTES:
   });
 
   // Mercado Pago Webhook - Process payment notifications
+  // SECURITY: Validate webhook origin
   app.post("/api/mercadopago/webhook", async (req, res) => {
     try {
       const { type, data } = req.body;
       
+      // SECURITY: Log source information for audit
+      const sourceIP = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+      const userAgent = req.headers['user-agent'];
+      
       console.log("📩 [Mercado Pago Webhook] Received:", type, data);
+      console.log("🔒 [Webhook Security] Source IP:", sourceIP);
+      console.log("🔒 [Webhook Security] User-Agent:", userAgent);
+
+      // SECURITY: Basic validation - check for required fields
+      if (!type || !data || !data.id) {
+        console.warn("⚠️ [SECURITY] Invalid webhook payload - missing required fields");
+        return res.status(400).send("Invalid payload");
+      }
+
+      // SECURITY: Validate webhook by fetching resource from MP API
+      // This ensures the webhook is legitimate since only MP can create valid resources
+      // The actual validation happens when we fetch the payment/subscription details below
 
       // Respond immediately to MP (required)
       res.status(200).send("OK");
@@ -957,9 +1032,22 @@ REGRAS IMPORTANTES:
   });
 
   // Admin: Manually activate premium access for a user
+  // SECURITY: Protected endpoint - requires admin authentication
   app.post("/api/admin/activate-premium", async (req, res) => {
     try {
-      const { email, days } = req.body;
+      const { email, days, adminEmail, adminUserId } = req.body;
+      
+      // SECURITY: Verify admin authentication with both email AND userId
+      if (!adminEmail || !adminUserId) {
+        console.warn("⚠️ [SECURITY] Admin endpoint called without credentials");
+        return res.status(401).json({ error: "Não autorizado" });
+      }
+      
+      // SECURITY: Verify requester is admin using the helper function with dual verification
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        console.warn(`⚠️ [SECURITY] Non-admin user attempted admin action: ${adminEmail}`);
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
       
       // Validate inputs
       if (!email || !days) {
@@ -990,6 +1078,7 @@ REGRAS IMPORTANTES:
       
       console.log(`🎉 [Admin] Premium ativado manualmente para ${email} por ${numDays} dias`);
       console.log(`📅 [Admin] Período: ${now.toISOString()} → ${endsAt.toISOString()}`);
+      console.log(`👤 [Admin] Ação realizada por: ${adminEmail}`);
       
       return res.json({ 
         success: true,

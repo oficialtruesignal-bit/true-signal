@@ -1,6 +1,8 @@
 import { type Server } from "node:http";
 
 import express, { type Express, type Request, Response, NextFunction } from "express";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
 import { registerRoutes } from "./routes";
 
 export function log(message: string, source = "express") {
@@ -15,6 +17,61 @@ export function log(message: string, source = "express") {
 }
 
 export const app = express();
+
+// Security Headers (helmet)
+const isProduction = process.env.NODE_ENV === 'production';
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://sdk.mercadopago.com", "https://http2.mlstatic.com", "blob:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://http2.mlstatic.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      imgSrc: ["'self'", "data:", "https:", "blob:"],
+      connectSrc: ["'self'", "https://api.mercadopago.com", "https://events.mercadopago.com", "https://api-sports.io", "https://v3.football.api-sports.io", "wss:", "ws:"],
+      frameSrc: ["'self'", "https://www.mercadopago.com.br", "https://sdk.mercadopago.com"],
+      objectSrc: ["'none'"],
+      workerSrc: ["'self'", "blob:"],
+      childSrc: ["'self'", "blob:"],
+      upgradeInsecureRequests: isProduction ? [] : null,
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+}));
+
+// Rate Limiting - General API
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // 500 requests per 15 minutes
+  message: { error: "Muitas requisições. Tente novamente em alguns minutos." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate Limiting - Stricter for auth/payment endpoints
+const strictLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 30, // 30 requests per 15 minutes
+  message: { error: "Muitas tentativas. Aguarde 15 minutos." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Rate Limiting - Admin endpoints
+const adminLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 50, // 50 requests per hour
+  message: { error: "Limite de requisições admin atingido." },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply rate limiters to specific routes
+app.use('/api/', generalLimiter);
+app.use('/api/auth/', strictLimiter);
+app.use('/api/mercadopago/', strictLimiter);
+app.use('/api/admin/', adminLimiter);
 
 declare module 'http' {
   interface IncomingMessage {

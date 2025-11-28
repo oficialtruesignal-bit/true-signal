@@ -36,11 +36,19 @@ export default function Admin() {
       return;
     }
 
+    // SECURITY: Verify admin is logged in
+    if (!user?.email || !user?.id) {
+      toast.error("Você precisa estar logado como admin");
+      return;
+    }
+
     setIsActivatingPremium(true);
     try {
       const response = await axios.post("/api/admin/activate-premium", {
         email: premiumEmail.trim(),
         days: days,
+        adminEmail: user.email, // SECURITY: Send admin email + userId for verification
+        adminUserId: user.id,
       });
       
       if (response.data.success) {

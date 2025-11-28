@@ -42,12 +42,44 @@ Preferred communication style: Simple, everyday language.
 - **Synchronization**: Achieved through React Query cache invalidation, Supabase Realtime subscriptions for `tips`, and `localStorage` for preferences.
 - **Legal Compliance**: Dedicated pages for Terms and Conditions, Privacy Policy (LGPD compliant), and Risk Disclaimer, integrated into the landing page footer.
 
+## Security Architecture
+
+### Headers de Segurança (Helmet)
+- **Content Security Policy (CSP)**: Restrito para scripts, estilos, imagens e conexões permitidas
+- **X-Frame-Options**: Proteção contra clickjacking
+- **X-Content-Type-Options**: Prevenção de MIME sniffing
+- **Strict-Transport-Security**: HSTS para conexões HTTPS
+
+### Rate Limiting (express-rate-limit)
+- **API Geral**: 500 requisições/15 minutos
+- **Auth/Pagamento**: 30 requisições/15 minutos (mais restritivo)
+- **Admin**: 50 requisições/hora
+
+### Autenticação e Autorização
+- **Endpoints Admin**: Verificação obrigatória de email admin + role
+- **Lista de Admins**: `kwillianferreira@gmail.com` + usuários com role='admin'
+- **Tips CRUD**: Apenas admins podem criar/editar/deletar
+- **Pagamentos**: Validação server-side de userId e email
+
+### Proteção de Pagamentos
+- **Preço fixo no servidor**: R$ 2,00 (não pode ser manipulado)
+- **Webhook validation**: Log de IP/User-Agent + verificação via API do MP
+- **Idempotency Key**: Previne pagamentos duplicados
+
+### Checkout Transparente
+- **PIX**: QR Code gerado diretamente no site com polling de status
+- **Cartão**: Tokenização via SDK Mercado Pago (dados sensíveis nunca passam pelo servidor)
+- **PUBLIC_KEY**: Usado apenas no frontend para tokenização
+- **ACCESS_TOKEN**: Usado apenas no backend (nunca exposto)
+
 ## External Dependencies
 
 - **API-Football v3 (api-sports.io)**: Primary data source for live match data, fixtures, and statistics.
 - **Supabase**: Backend-as-a-Service for authentication, Postgres database, and real-time features.
 - **Mercado Pago**: Payment gateway for subscription management, including plan creation, checkout, and webhook processing.
 - **OneSignal**: Push notification service for new betting tips.
+- **Helmet**: Security headers middleware.
+- **express-rate-limit**: Rate limiting middleware.
 - **Radix UI**: Headless UI primitives.
 - **Lucide React**: Icon library.
 - **Tailwind CSS v4**: Utility-first CSS framework.
