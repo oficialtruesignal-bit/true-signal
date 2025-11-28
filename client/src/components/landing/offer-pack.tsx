@@ -165,9 +165,6 @@ export function OfferPack() {
               <div className="mb-8">
                 <div className="flex items-center justify-center gap-3 mb-3">
                   <span className="text-gray-500 line-through text-xl">R$ 99,87</span>
-                  <span className="px-3 py-1 bg-red-500/20 text-red-400 text-sm font-bold rounded-full border border-red-500/30">
-                    -52%
-                  </span>
                 </div>
                 <div className="flex items-end justify-center gap-2">
                   <span className="text-5xl md:text-7xl font-black text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
