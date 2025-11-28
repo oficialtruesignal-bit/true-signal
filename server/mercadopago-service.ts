@@ -116,7 +116,7 @@ export class MercadoPagoService {
 
     const subscriptionData: CreateSubscriptionParams = {
       preapproval_plan_id: params.planId,
-      reason: 'Ocean Prime - Assinatura Mensal',
+      reason: 'Vantage Prime - Assinatura Mensal',
       external_reference: params.userId,
       payer_email: params.userEmail,
       back_url: process.env.REPLIT_DEV_DOMAIN 
@@ -207,8 +207,8 @@ export class MercadoPagoService {
   }
 
   /**
-   * Create a payment preference (one-time checkout)
-   * Useful for testing or one-time payments
+   * Create a payment preference with PIX and other payment methods
+   * Supports: PIX, Credit Card, Debit Card, Bank Slip
    */
   async createPreference(params: {
     title: string;
@@ -221,12 +221,17 @@ export class MercadoPagoService {
       throw new Error('Mercado Pago not configured');
     }
 
+    const baseUrl = process.env.REPLIT_DEV_DOMAIN 
+      ? `https://${process.env.REPLIT_DEV_DOMAIN}`
+      : 'http://localhost:5000';
+
     const preferenceData = {
       items: [
         {
           title: params.title,
           unit_price: params.amount,
           quantity: params.quantity,
+          currency_id: 'BRL',
         },
       ],
       payer: {
@@ -234,12 +239,18 @@ export class MercadoPagoService {
       },
       external_reference: params.userId,
       back_urls: {
-        success: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/checkout/success`,
-        failure: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/checkout/failure`,
-        pending: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/checkout/pending`,
+        success: `${baseUrl}/obrigado`,
+        failure: `${baseUrl}/checkout/failure`,
+        pending: `${baseUrl}/obrigado`,
       },
       auto_return: 'approved',
-      notification_url: `${process.env.REPLIT_DEV_DOMAIN || 'http://localhost:5000'}/api/mercadopago/webhook`,
+      notification_url: `${baseUrl}/api/mercadopago/webhook`,
+      payment_methods: {
+        excluded_payment_types: [],
+        installments: 1,
+        default_installments: 1,
+      },
+      statement_descriptor: 'VANTAGE PRIME',
     };
 
     try {
@@ -249,10 +260,51 @@ export class MercadoPagoService {
         { headers: this.headers }
       );
 
-      console.log('✅ Payment preference created:', response.data.id);
+      console.log('✅ Payment preference created with PIX enabled:', response.data.id);
       return response.data;
     } catch (error: any) {
       console.error('❌ Error creating preference:', error.response?.data || error.message);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a PIX payment directly (instant payment)
+   */
+  async createPixPayment(params: {
+    amount: number;
+    userId: string;
+    userEmail: string;
+    description: string;
+  }): Promise<any> {
+    if (!this.isConfigured()) {
+      throw new Error('Mercado Pago not configured');
+    }
+
+    const paymentData = {
+      transaction_amount: params.amount,
+      description: params.description,
+      payment_method_id: 'pix',
+      payer: {
+        email: params.userEmail,
+      },
+      external_reference: params.userId,
+      notification_url: process.env.REPLIT_DEV_DOMAIN 
+        ? `https://${process.env.REPLIT_DEV_DOMAIN}/api/mercadopago/webhook`
+        : 'http://localhost:5000/api/mercadopago/webhook',
+    };
+
+    try {
+      const response = await axios.post(
+        `${MP_API_BASE_URL}/v1/payments`,
+        paymentData,
+        { headers: this.headers }
+      );
+
+      console.log('✅ PIX payment created:', response.data.id);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Error creating PIX payment:', error.response?.data || error.message);
       throw error;
     }
   }

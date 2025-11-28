@@ -643,6 +643,35 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // Create PIX payment
+  app.post("/api/mercadopago/pix", async (req, res) => {
+    try {
+      const { userId, userEmail, amount } = req.body;
+      
+      if (!userId || !userEmail) {
+        return res.status(400).json({ error: "userId and userEmail are required" });
+      }
+
+      const payment = await mercadoPagoService.createPixPayment({
+        amount: amount || 2.00,
+        userId,
+        userEmail,
+        description: 'Vantage Prime - Acesso Mensal',
+      });
+
+      return res.json({ 
+        success: true,
+        payment,
+        qrCode: payment.point_of_interaction?.transaction_data?.qr_code,
+        qrCodeBase64: payment.point_of_interaction?.transaction_data?.qr_code_base64,
+        ticketUrl: payment.point_of_interaction?.transaction_data?.ticket_url,
+      });
+    } catch (error: any) {
+      console.error("Error creating PIX payment:", error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Mercado Pago Webhook - Process payment notifications
   app.post("/api/mercadopago/webhook", async (req, res) => {
     try {
@@ -711,10 +740,60 @@ REGRAS IMPORTANTES:
           console.log("⚠️ [Webhook] User subscription deactivated");
         }
       } else if (type === "payment") {
-        // Individual payment received (recurring payment)
+        // Individual payment received (PIX or recurring payment)
         const paymentId = data.id;
         console.log("💰 [Webhook] Payment received:", paymentId);
-        // TODO: Log payment, extend subscription end date
+        
+        try {
+          // Fetch payment details from Mercado Pago
+          const paymentResponse = await axios.get(
+            `https://api.mercadopago.com/v1/payments/${paymentId}`,
+            { headers: { 'Authorization': `Bearer ${process.env.MERCADOPAGO_ACCESS_TOKEN}` } }
+          );
+          
+          const payment = paymentResponse.data;
+          console.log("💰 [Webhook] Payment status:", payment.status);
+          console.log("💰 [Webhook] Payment method:", payment.payment_method_id);
+          console.log("💰 [Webhook] External reference:", payment.external_reference);
+          console.log("💰 [Webhook] Payer email:", payment.payer?.email);
+          
+          if (payment.status === 'approved') {
+            const userId = payment.external_reference;
+            
+            if (!userId) {
+              // SECURITY: Do NOT activate based on email alone
+              // This prevents malicious users from upgrading other accounts
+              console.warn("⚠️ [Webhook] Payment without external_reference - manual verification required");
+              console.warn("⚠️ [Webhook] Payment ID:", paymentId);
+              console.warn("⚠️ [Webhook] Payer email:", payment.payer?.email);
+              console.warn("⚠️ [Webhook] Amount:", payment.transaction_amount);
+              // Admin should manually verify and activate via database
+              return;
+            }
+            
+            // Verify user exists in our database before activating
+            const user = await storage.getProfileById(userId);
+            if (!user) {
+              console.error("❌ [Webhook] User not found in database:", userId);
+              console.error("❌ [Webhook] Payment ID:", paymentId);
+              return;
+            }
+            
+            const now = new Date();
+            const endsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+            
+            console.log("✅ [Webhook] Activating Vantage Prime via PIX for user:", userId);
+            console.log("✅ [Webhook] User email:", user.email);
+            await storage.updateUserSubscription(userId, {
+              subscriptionStatus: 'active',
+              subscriptionActivatedAt: now,
+              subscriptionEndsAt: endsAt,
+            });
+            console.log("✅ [Webhook] PIX payment processed successfully!");
+          }
+        } catch (paymentError: any) {
+          console.error("❌ [Webhook] Error fetching payment:", paymentError.message);
+        }
       }
     } catch (error: any) {
       console.error("❌ [Webhook] Error processing:", error.message);
