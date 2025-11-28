@@ -105,17 +105,33 @@ export default function SettingsPage() {
               </div>
             </div>
 
-            {/* Action Button */}
-            <Link href={isPremium ? "/assinatura" : "/checkout"}>
-              <Button
-                className="w-full bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
-                data-testid="button-view-plans"
-              >
-                <Sparkles className="w-4 h-4 mr-2" />
-                {isPremium ? 'Gerenciar assinatura' : 'Assinar Ocean Prime'}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
+            {/* Action Buttons */}
+            <div className="space-y-3">
+              {!isPremium && (
+                <Link href="/checkout">
+                  <Button
+                    className="w-full bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
+                    data-testid="button-subscribe"
+                  >
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Assinar Ocean Prime
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              )}
+              
+              <Link href="/assinatura">
+                <Button
+                  variant="outline"
+                  className="w-full border-white/20 hover:bg-white/5 text-white"
+                  data-testid="button-manage-subscription"
+                >
+                  <Crown className="w-4 h-4 mr-2" />
+                  {isPremium ? 'Gerenciar minha assinatura' : 'Ver detalhes da assinatura'}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
 
