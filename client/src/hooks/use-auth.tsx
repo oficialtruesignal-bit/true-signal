@@ -182,41 +182,87 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     const startTime = Date.now();
     
-    // Retry helper for network errors
-    const attemptLogin = async (retries = 3): Promise<{ data: any; error: any }> => {
-      for (let i = 0; i < retries; i++) {
-        try {
-          const result = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-          
-          // If no network error, return result
-          if (!result.error || result.error.name !== 'AuthRetryableFetchError') {
-            return result;
-          }
-          
-          // Wait before retry (exponential backoff)
-          if (i < retries - 1) {
-            console.log(`🔄 [AUTH] Retry attempt ${i + 2}/${retries}...`);
-            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
-          }
-        } catch (e: any) {
-          if (i === retries - 1) throw e;
-          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+    // Try server-side auth proxy first (more reliable)
+    const attemptServerLogin = async (): Promise<{ success: boolean; user?: any; profile?: any; error?: string }> => {
+      try {
+        console.log('🔐 [AUTH] Attempting server-side login...');
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          return { success: false, error: data.error || 'Login failed' };
         }
+        
+        console.log('✅ [AUTH] Server-side login successful');
+        return { success: true, user: data.user, profile: data.profile };
+      } catch (e: any) {
+        console.error('❌ [AUTH] Server login failed:', e);
+        return { success: false, error: e.message };
       }
-      // Return last attempt result
-      return await supabase.auth.signInWithPassword({ email, password });
+    };
+    
+    // Fallback to direct Supabase auth
+    const attemptDirectLogin = async (): Promise<{ success: boolean; user?: any; error?: string }> => {
+      try {
+        console.log('🔐 [AUTH] Attempting direct Supabase login...');
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        
+        if (error) {
+          return { success: false, error: error.message };
+        }
+        
+        console.log('✅ [AUTH] Direct Supabase login successful');
+        return { success: true, user: data.user };
+      } catch (e: any) {
+        console.error('❌ [AUTH] Direct login failed:', e);
+        return { success: false, error: e.message };
+      }
     };
     
     try {
-      const { data, error } = await attemptLogin();
+      // Try server proxy first
+      let result = await attemptServerLogin();
+      
+      // If server proxy fails, try direct Supabase
+      if (!result.success) {
+        console.log('⚠️ [AUTH] Server login failed, trying direct...');
+        result = await attemptDirectLogin();
+      }
+      
+      if (!result.success) {
+        throw new Error(result.error || 'Login failed');
+      }
 
-      if (error) throw error;
-
-      if (data.user) {
-        await loadUserProfile(data.user.id, false, data.user);
+      if (result.user) {
+        // If we got profile from server, use it directly
+        if (result.profile) {
+          const userData = {
+            id: result.profile.id,
+            email: result.profile.email,
+            firstName: result.profile.firstName,
+            role: result.profile.role as 'user' | 'admin',
+            subscriptionStatus: (result.profile.subscriptionStatus || 'trial') as 'trial' | 'active' | 'expired',
+            createdAt: result.profile.createdAt,
+            trialStartDate: result.profile.trialStartDate || null,
+            subscriptionActivatedAt: result.profile.subscriptionActivatedAt || null,
+            subscriptionEndsAt: result.profile.subscriptionEndsAt || null,
+            termsAcceptedAt: result.profile.termsAcceptedAt || null,
+            privacyAcceptedAt: result.profile.privacyAcceptedAt || null,
+            riskDisclaimerAcceptedAt: result.profile.riskDisclaimerAcceptedAt || null,
+          };
+          localStorage.setItem('vantage_user', JSON.stringify(userData));
+          setUser(userData);
+        } else {
+          await loadUserProfile(result.user.id, false, result.user);
+        }
         toast.success(`Bem-vindo de volta!`);
         setLocation("/app");
       }
@@ -226,7 +272,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Handle network errors gracefully
       if (error.message === 'Failed to fetch' || error.name === 'TypeError' || error.name === 'AuthRetryableFetchError') {
         toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
-      } else if (error.message?.includes('Invalid login credentials')) {
+      } else if (error.message?.includes('Invalid login credentials') || error.message?.includes('incorretos')) {
         toast.error("Email ou senha incorretos.");
       } else {
         toast.error(error.message || "Erro ao fazer login. Tente novamente.");

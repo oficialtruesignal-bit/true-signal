@@ -8,6 +8,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const SUPABASE_URL = process.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_ANON_KEY;
 
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
 
@@ -330,6 +332,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error(`[PROFILE SYNC] Error:`, error);
       return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Auth Proxy - Route auth requests through server to avoid client-side connection issues
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: "Email e senha são obrigatórios" });
+      }
+
+      if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+        console.error("[AUTH PROXY] Supabase credentials not configured");
+        return res.status(500).json({ error: "Serviço de autenticação não configurado" });
+      }
+
+      console.log(`[AUTH PROXY] Login attempt for ${email}`);
+      
+      // Make request to Supabase Auth API
+      const response = await axios.post(
+        `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+        { email, password },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+          },
+          timeout: 10000,
+        }
+      );
+
+      const { user, access_token, refresh_token } = response.data;
+      
+      if (!user) {
+        console.log(`[AUTH PROXY] Login failed for ${email}: No user returned`);
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+
+      console.log(`[AUTH PROXY] Login successful for ${email}`);
+      
+      // Also sync profile to our database
+      const profile = await storage.upsertProfileFromSupabase({
+        id: user.id,
+        email: user.email,
+        firstName: user.user_metadata?.first_name || email.split('@')[0],
+      });
+      
+      return res.json({
+        user: {
+          id: user.id,
+          email: user.email,
+          user_metadata: user.user_metadata,
+        },
+        access_token,
+        refresh_token,
+        profile,
+      });
+    } catch (error: any) {
+      console.error(`[AUTH PROXY] Login error:`, error.response?.data || error.message);
+      
+      if (error.response?.status === 400) {
+        return res.status(401).json({ error: "Email ou senha incorretos" });
+      }
+      
+      return res.status(500).json({ error: "Erro ao fazer login. Tente novamente." });
     }
   });
 
