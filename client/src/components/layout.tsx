@@ -220,7 +220,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Admin FAB (Floating Action Button) */}
       {(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') && (
-        <Link href="/admin/create">
+        <Link href="/admin">
           <button
             data-testid="fab-create-tip"
             className="fixed bottom-20 right-4 md:bottom-8 md:right-8 w-14 h-14 bg-primary hover:bg-primary/90 text-black rounded-full shadow-[0_0_30px_rgba(51,184,100,0.4)] hover:shadow-[0_0_40px_rgba(51,184,100,0.6)] flex items-center justify-center transition-all duration-300 hover:scale-110 active:scale-95 z-40 border-2 border-primary/50"
