@@ -1,10 +1,12 @@
 import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
+import { ManualTicketForm } from "@/components/manual-ticket-form";
 import { tipsService } from "@/lib/tips-service";
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenLine } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -126,17 +128,44 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
-          {/* AI Scanner - Criar Sinal */}
           <div className="bg-card border border-primary/20 rounded-xl p-6">
-            <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-              <ScanLine className="w-5 h-5 text-primary" />
-              Criar Novo Sinal
-            </h3>
-            <SignalForm 
-              onAdd={(data) => {
-                handleCreateTip(data);
-              }} 
-            />
+            <Tabs defaultValue="manual" className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-5 bg-background/50 p-1 h-11">
+                <TabsTrigger 
+                  value="manual" 
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black font-medium"
+                  data-testid="tab-manual"
+                >
+                  <PenLine className="w-4 h-4" />
+                  Manual
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="scanner" 
+                  className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black font-medium"
+                  data-testid="tab-scanner"
+                >
+                  <ScanLine className="w-4 h-4" />
+                  Scanner IA
+                </TabsTrigger>
+              </TabsList>
+              
+              {/* Criador Manual - Puxa da API */}
+              <TabsContent value="manual" className="mt-0">
+                <ManualTicketForm 
+                  onSubmit={handleCreateTip}
+                  isSubmitting={createMutation.isPending}
+                />
+              </TabsContent>
+              
+              {/* Scanner de Imagem com IA */}
+              <TabsContent value="scanner" className="mt-0">
+                <SignalForm 
+                  onAdd={(data) => {
+                    handleCreateTip(data);
+                  }} 
+                />
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
 
