@@ -37,11 +37,10 @@ export function TrialBanner() {
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link href={CHECKOUT_URL}>
               <button 
-                className="px-4 py-1 bg-black text-white font-bold rounded-full hover:bg-gray-800 transition-colors text-sm whitespace-nowrap flex items-center gap-1.5 shadow-md" 
+                className="px-3 py-1 bg-black text-white font-bold rounded hover:bg-gray-800 transition-colors text-sm whitespace-nowrap shadow-md" 
                 data-testid="button-trial-banner-subscribe"
               >
-                <Sparkles className="w-3.5 h-3.5" />
-                Assinar
+                Assinar Prime
               </button>
             </Link>
             
