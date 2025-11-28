@@ -182,11 +182,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(true);
     const startTime = Date.now();
     
+    // Retry helper for network errors
+    const attemptLogin = async (retries = 3): Promise<{ data: any; error: any }> => {
+      for (let i = 0; i < retries; i++) {
+        try {
+          const result = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
+          
+          // If no network error, return result
+          if (!result.error || result.error.name !== 'AuthRetryableFetchError') {
+            return result;
+          }
+          
+          // Wait before retry (exponential backoff)
+          if (i < retries - 1) {
+            console.log(`🔄 [AUTH] Retry attempt ${i + 2}/${retries}...`);
+            await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+          }
+        } catch (e: any) {
+          if (i === retries - 1) throw e;
+          await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
+        }
+      }
+      // Return last attempt result
+      return await supabase.auth.signInWithPassword({ email, password });
+    };
+    
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { data, error } = await attemptLogin();
 
       if (error) throw error;
 
@@ -199,7 +224,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error('🔐 [AUTH] Login error:', error);
       
       // Handle network errors gracefully
-      if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
+      if (error.message === 'Failed to fetch' || error.name === 'TypeError' || error.name === 'AuthRetryableFetchError') {
         toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
       } else if (error.message?.includes('Invalid login credentials')) {
         toast.error("Email ou senha incorretos.");
