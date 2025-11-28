@@ -191,12 +191,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
 
       if (data.user) {
-        await loadUserProfile(data.user.id);
+        await loadUserProfile(data.user.id, false, data.user);
         toast.success(`Bem-vindo de volta!`);
         setLocation("/app");
       }
     } catch (error: any) {
-      toast.error(error.message || "Credenciais inválidas");
+      console.error('🔐 [AUTH] Login error:', error);
+      
+      // Handle network errors gracefully
+      if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
+        toast.error("Erro de conexão. Verifique sua internet e tente novamente.");
+      } else if (error.message?.includes('Invalid login credentials')) {
+        toast.error("Email ou senha incorretos.");
+      } else {
+        toast.error(error.message || "Erro ao fazer login. Tente novamente.");
+      }
       throw error;
     } finally {
       // Ensure minimum 1 second loading screen
