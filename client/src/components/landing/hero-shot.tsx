@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Link } from 'wouter';
-import { Zap, Users, Target, Copy } from 'lucide-react';
+import { Zap, Ticket, ShieldCheck, Copy } from 'lucide-react';
 import { Logo } from '@/components/logo';
 
 // Demo bet cards for mockup - exact replica of real BetCard structure
@@ -145,24 +145,39 @@ export function HeroShot() {
                 {/* Notch */}
                 <div className="h-6 bg-black rounded-b-2xl mx-auto w-28 mb-2" />
                 
-                {/* App Content - Exact Dashboard Replica */}
+                {/* App Content - Exact Tips Page Replica */}
                 <div className="px-2.5 space-y-2 overflow-hidden">
-                  {/* Live Metrics Bar - Replica */}
-                  <div className="flex items-center justify-center gap-2 px-2 py-1.5 bg-[#121212]/80 border border-[#33b864]/20 rounded-full">
-                    <div className="flex items-center gap-1">
-                      <Users className="w-2.5 h-2.5 text-[#33b864]" />
-                      <div className="w-1 h-1 bg-[#33b864] rounded-full animate-pulse" />
-                      <span className="text-[7px] text-white font-bold">3.420</span>
+                  
+                  {/* Page Header - Ticket Icon + Title */}
+                  <div className="flex items-center gap-2">
+                    <div className="p-1.5 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
+                      <Ticket className="w-3 h-3 text-[#33b864]" />
                     </div>
-                    <div className="w-px h-3 bg-[#33b864]/20" />
-                    <div className="flex items-center gap-1">
-                      <Zap className="w-2.5 h-2.5 text-[#33b864]" />
-                      <span className="text-[7px] text-white font-bold">18.940+</span>
-                    </div>
-                    <div className="w-px h-3 bg-[#33b864]/20" />
-                    <div className="flex items-center gap-1">
-                      <Target className="w-2.5 h-2.5 text-[#33b864]" />
-                      <span className="text-[7px] text-[#33b864] font-bold">94.8%</span>
+                    <span className="text-[10px] font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
+                      Sinais Premium
+                    </span>
+                  </div>
+                  
+                  {/* Credibility Banner */}
+                  <div className="relative bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-lg p-2 overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#33b864]" />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center gap-1 mb-0.5">
+                          <span className="relative flex h-1 w-1">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
+                            <span className="relative inline-flex rounded-full h-1 w-1 bg-[#33b864]"></span>
+                          </span>
+                          <span className="text-[#33b864] font-bold text-[5px] uppercase tracking-wider">Performance Histórica</span>
+                        </div>
+                        <p className="text-gray-300 text-[6px]">
+                          Assertividade de <span className="text-white font-bold">87%</span> nos bilhetes
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1 bg-[#33b864]/10 px-1.5 py-0.5 rounded-full border border-[#33b864]/20">
+                        <ShieldCheck className="w-2 h-2 text-[#33b864]" />
+                        <span className="text-[4px] font-bold text-[#33b864] uppercase">Expert</span>
+                      </div>
                     </div>
                   </div>
                   
@@ -177,15 +192,15 @@ export function HeroShot() {
                         className="bg-[#0a0a0a] border border-[#33b864]/30 rounded-xl overflow-hidden"
                       >
                         {/* Card Header - League + Status */}
-                        <div className="bg-[#121212] px-2.5 py-1.5 flex justify-between items-center border-b border-white/5">
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[6px] font-medium text-[#33b864] uppercase tracking-wider">
+                        <div className="bg-[#121212] px-2 py-1 flex justify-between items-center border-b border-white/5">
+                          <div className="flex items-center gap-1">
+                            <span className="text-[5px] font-medium text-[#33b864] uppercase tracking-wider">
                               {bet.league}
                             </span>
-                            <span className="text-gray-600 text-[5px]">•</span>
-                            <span className="text-[5px] text-gray-500">⏰ {bet.time}</span>
+                            <span className="text-gray-600 text-[4px]">•</span>
+                            <span className="text-[4px] text-gray-500">⏰ {bet.time}</span>
                           </div>
-                          <div className={`px-1.5 py-0.5 rounded border text-[5px] font-bold uppercase ${
+                          <div className={`px-1 py-0.5 rounded border text-[4px] font-bold uppercase ${
                             bet.status === 'green' 
                               ? 'bg-[#33b864]/5 text-[#33b864] border-[#33b864]' 
                               : 'bg-[#33b864]/5 text-[#33b864] border-[#33b864]'
@@ -195,65 +210,42 @@ export function HeroShot() {
                         </div>
                         
                         {/* Card Body - Teams */}
-                        <div className="p-2.5">
+                        <div className="p-2">
                           {/* Teams Row */}
-                          <div className="flex items-center justify-between gap-2 mb-2">
-                            <div className="flex items-center gap-1.5 flex-1 min-w-0">
-                              <img src={bet.homeLogo} alt="" className="w-5 h-5 object-contain rounded-full bg-white/5" />
-                              <span className="text-[8px] text-white font-bold truncate">{bet.homeTeam}</span>
+                          <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                            <div className="flex items-center gap-1 flex-1 min-w-0">
+                              <img src={bet.homeLogo} alt="" className="w-4 h-4 object-contain rounded-full bg-white/5" />
+                              <span className="text-[7px] text-white font-bold truncate">{bet.homeTeam}</span>
                             </div>
-                            <div className="px-1.5 py-0.5 rounded bg-white/5 border border-white/10">
-                              <span className="text-gray-500 text-[6px] font-medium">vs</span>
+                            <div className="px-1 py-0.5 rounded bg-white/5 border border-white/10">
+                              <span className="text-gray-500 text-[5px] font-medium">vs</span>
                             </div>
-                            <div className="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
-                              <span className="text-[8px] text-white font-bold truncate text-right">{bet.awayTeam}</span>
-                              <img src={bet.awayLogo} alt="" className="w-5 h-5 object-contain rounded-full bg-white/5" />
+                            <div className="flex items-center gap-1 flex-1 min-w-0 justify-end">
+                              <span className="text-[7px] text-white font-bold truncate text-right">{bet.awayTeam}</span>
+                              <img src={bet.awayLogo} alt="" className="w-4 h-4 object-contain rounded-full bg-white/5" />
                             </div>
                           </div>
                           
                           {/* Market + Odd */}
-                          <div className="flex items-center justify-between gap-2 bg-[#121212] rounded-lg p-2 border border-white/5">
-                            <span className="text-gray-300 text-[6px] truncate flex-1">{bet.market}</span>
-                            <div className="border border-[#33b864]/40 rounded px-1.5 py-0.5 bg-[#33b864]/5 flex items-center gap-1">
-                              <span className="text-[#33b864] text-[5px] font-semibold">ODD</span>
-                              <span className="text-white text-[9px] font-bold">{bet.odd.toFixed(2)}</span>
+                          <div className="flex items-center justify-between gap-1.5 bg-[#121212] rounded-md p-1.5 border border-white/5">
+                            <span className="text-gray-300 text-[5px] truncate flex-1">{bet.market}</span>
+                            <div className="border border-[#33b864]/40 rounded px-1 py-0.5 bg-[#33b864]/5 flex items-center gap-0.5">
+                              <span className="text-[#33b864] text-[4px] font-semibold">ODD</span>
+                              <span className="text-white text-[8px] font-bold">{bet.odd.toFixed(2)}</span>
                             </div>
                           </div>
                         </div>
                         
                         {/* Card Footer - Copy Button */}
-                        <div className="px-2.5 pb-2.5">
-                          <div className="bg-[#33b864] rounded-lg py-1.5 flex items-center justify-center gap-1">
-                            <Copy className="w-2.5 h-2.5 text-black" />
-                            <span className="text-black text-[6px] font-bold uppercase">Copiar Bilhete</span>
+                        <div className="px-2 pb-2">
+                          <div className="bg-[#33b864] rounded-md py-1 flex items-center justify-center gap-0.5">
+                            <Copy className="w-2 h-2 text-black" />
+                            <span className="text-black text-[5px] font-bold uppercase">Copiar Bilhete</span>
                           </div>
                         </div>
                       </motion.div>
                     ))}
                   </div>
-                  
-                  {/* AI Scanner Mini */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 2 }}
-                    className="bg-[#0a0a0a] border border-[#33b864]/20 rounded-lg p-2"
-                  >
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <div className="w-1.5 h-1.5 bg-[#33b864] rounded-full animate-pulse" />
-                      <span className="text-[6px] font-bold text-[#33b864] uppercase">IA Analisando</span>
-                    </div>
-                    <div className="font-mono text-[5px] text-[#33b864]/60 space-y-0.5">
-                      <div>&gt; Scanning Premier League...</div>
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 2.5, duration: 0.3 }}
-                      >
-                        &gt; High confidence detected
-                      </motion.div>
-                    </div>
-                  </motion.div>
                 </div>
               </div>
             </motion.div>
