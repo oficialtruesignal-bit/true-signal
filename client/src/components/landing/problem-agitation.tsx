@@ -8,20 +8,20 @@ export function ProblemAgitation() {
   
   const painPoints = [
     { 
-      title: 'A Ilusão do Bingo', 
-      text: 'Você queima dinheiro em múltiplas impossíveis ("Bingos") vendidas por gurus que apagam os Reds e só mostram os Greens. Você é a liquidez deles.' 
+      title: 'Exposição à Variância Negativa', 
+      text: 'Operar múltiplas alongadas sem validação estatística não é investimento, é loteria. Você assume um risco desproporcional buscando retornos que a matemática do mercado não sustenta a longo prazo.' 
     },
     { 
-      title: 'O Custo do Tempo', 
-      text: 'Horas do seu dia jogadas no lixo analisando gráficos, achando que encontrou um padrão, só para ver o gol sair do outro lado aos 90min.' 
+      title: 'Ineficiência Operacional', 
+      text: 'Você está competindo manualmente contra supercomputadores. Passar horas analisando dados dispersos gera fadiga mental e erros de julgamento. O tempo gasto na análise não se paga no retorno.' 
     },
     { 
-      title: 'O Descontrole', 
-      text: 'Tentando recuperar o prejuízo na emoção. A cada aposta impulsiva, você cava um buraco mais fundo na sua banca.' 
+      title: 'Trading Emocional (Viés Psicológico)', 
+      text: 'Sem um sistema validado, suas decisões são reféns do "feeling". A tentativa impulsiva de recuperar perdas (Revenge Trading) é a causa técnica nº 1 da quebra de bancas no mundo.' 
     },
     { 
-      title: 'O Resultado', 
-      text: 'Ansiedade, frustração e a sensação de que "quase" ganhou. Mas o saldo continua zero.' 
+      title: 'Erosão de Capital', 
+      text: 'A falta de gestão de risco profissional transforma o mercado em um passivo. O resultado é a estagnação: ganhos pequenos devolvidos em perdas grandes. Um modelo matematicamente insustentável.' 
     },
   ];
 
@@ -72,15 +72,15 @@ export function ProblemAgitation() {
                 </div>
                 <div>
                   <h3 className="text-lg md:text-xl font-bold text-red-400" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    O Caminho Padrão
+                    O Ciclo da Operação Amadora
                   </h3>
-                  <p className="text-xs md:text-sm text-red-400/60">(98% das Pessoas)</p>
+                  <p className="text-xs md:text-sm text-red-400/60">(98% do Mercado)</p>
                 </div>
               </div>
               
               {/* Headline */}
               <p className="text-base md:text-lg text-red-300 font-semibold mb-6 border-l-2 border-red-500/50 pl-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-                "Você financia a casa e os gurus."
+                Por que a conta nunca fecha no final do mês.
               </p>
               
               {/* Pain Points */}
@@ -95,8 +95,8 @@ export function ProblemAgitation() {
                   >
                     <XCircle className="w-5 h-5 text-red-500/70 flex-shrink-0 mt-0.5" />
                     <div>
-                      <span className="text-red-400 font-semibold text-sm">{item.title}:</span>
-                      <p className="text-gray-400 text-sm leading-relaxed">{item.text}</p>
+                      <span className="text-red-400 font-bold text-sm" style={{ fontFamily: 'Sora, sans-serif' }}>{item.title}:</span>
+                      <p className="text-gray-400 text-sm leading-relaxed font-light" style={{ fontFamily: 'Sora, sans-serif' }}>{item.text}</p>
                     </div>
                   </motion.div>
                 ))}
