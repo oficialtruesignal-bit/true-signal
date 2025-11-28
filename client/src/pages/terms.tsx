@@ -28,14 +28,14 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">1. Aceitação dos Termos</h2>
             <p>
-              Ao acessar e usar a plataforma <span className="text-[#33b864] font-semibold">Ocean Signal</span>, você concorda com estes Termos e Condições de Uso. Se você não concordar, não utilize nossos serviços.
+              Ao acessar e usar a plataforma <span className="text-[#33b864] font-semibold">VANTAGE</span>, você concorda com estes Termos e Condições de Uso. Se você não concordar, não utilize nossos serviços.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">2. Descrição do Serviço</h2>
             <p>
-              O Ocean Signal fornece <strong className="text-white">análises esportivas estatísticas</strong> baseadas em inteligência artificial através de um dashboard online. Nossos serviços incluem:
+              A VANTAGE fornece <strong className="text-white">análises esportivas estatísticas</strong> baseadas em inteligência artificial através de um dashboard online. Nossos serviços incluem:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Bilhetes de apostas esportivas com análises probabilísticas;</li>
@@ -59,7 +59,7 @@ export default function TermsPage() {
             </ul>
             <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-6 mt-4">
               <p className="text-[#33b864] font-semibold">
-                Após os 15 dias, o acesso total requer assinatura do plano Ocean Prime (R$ 99,87/mês).
+                Após os 15 dias, o acesso total requer assinatura do plano Vantage Prime (R$ 99,87/mês).
               </p>
             </div>
           </section>
@@ -67,7 +67,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">4. Assinatura e Pagamento</h2>
             <p>
-              A assinatura <strong className="text-white">Ocean Prime</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
+              A assinatura <strong className="text-white">Vantage Prime</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Cobrança mensal recorrente de <strong className="text-white">R$ 99,87</strong>;</li>
@@ -112,7 +112,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">7. Limitação de Responsabilidade</h2>
             <p>
-              O Ocean Signal fornece informações estatísticas, mas <strong className="text-white">não garante lucros</strong>. Não nos responsabilizamos por:
+              A VANTAGE fornece informações estatísticas, mas <strong className="text-white">não garante lucros</strong>. Não nos responsabilizamos por:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Perdas financeiras decorrentes de apostas;</li>
@@ -125,7 +125,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">8. Propriedade Intelectual</h2>
             <p>
-              Todos os algoritmos, design, marca e conteúdo do Ocean Signal são <strong className="text-white">propriedade exclusiva</strong> da empresa. É proibida qualquer reprodução sem autorização prévia.
+              Todos os algoritmos, design, marca e conteúdo da VANTAGE são <strong className="text-white">propriedade exclusiva</strong> da empresa. É proibida qualquer reprodução sem autorização prévia.
             </p>
           </section>
 
@@ -148,7 +148,7 @@ export default function TermsPage() {
               Última atualização: 26 de novembro de 2024
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Ao usar o Ocean Signal, você declara ter lido e aceito integralmente estes Termos e Condições.
+              Ao usar a VANTAGE, você declara ter lido e aceito integralmente estes Termos e Condições.
             </p>
           </section>
         </div>

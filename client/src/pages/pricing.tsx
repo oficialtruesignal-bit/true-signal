@@ -150,7 +150,7 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* Ocean Prime Card */}
+          {/* Vantage Prime Card */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}

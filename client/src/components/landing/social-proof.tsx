@@ -59,7 +59,7 @@ export function SocialProof() {
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-black text-white mb-3" style={{ fontFamily: 'Sora, sans-serif' }}>
             Usuários{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#2ea558]">
-              Ocean Signal
+              VANTAGE
             </span>
           </h2>
           <p className="text-sm md:text-base text-gray-400 mb-3">

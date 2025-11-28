@@ -21,14 +21,14 @@ export default function Admin() {
   console.log('🔧 Admin Page Loaded - Version 3.0 - Premium Cards');
 
   const copyTicket = (signal: Signal) => {
-    const text = `🎯 OCEAN SIGNAL
+    const text = `🎯 VANTAGE
 
 ⚽ ${signal.homeTeam} vs ${signal.awayTeam}
 📊 ${signal.market}
 💰 ODD: ${signal.odd.toFixed(2)}
 ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
 
-📱 @oceansignal`;
+📱 @vantage`;
     
     navigator.clipboard.writeText(text);
     setCopiedId(signal.id);

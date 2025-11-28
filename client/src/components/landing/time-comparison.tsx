@@ -31,7 +31,7 @@ export function TimeComparison() {
           <div className="absolute -inset-4 bg-[#33b864]/10 blur-xl rounded-full opacity-50 pointer-events-none"></div>
           
           <div className="flex items-center gap-2 mb-2 text-[#33b864]">
-            <span className="font-bold text-xs uppercase tracking-wider" style={{ fontFamily: 'Sora, sans-serif' }}>Com Ocean Signal</span>
+            <span className="font-bold text-xs uppercase tracking-wider" style={{ fontFamily: 'Sora, sans-serif' }}>Com VANTAGE</span>
             <Zap className="w-5 h-5 fill-current" />
           </div>
           <span className="text-3xl md:text-5xl font-black text-white drop-shadow-[0_0_10px_rgba(51,184,100,0.5)]" style={{ fontFamily: 'Sora, sans-serif' }}>

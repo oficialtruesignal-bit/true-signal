@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from './use-auth';
 
-const STORAGE_KEY = 'ocean_signal_viewed_tips';
+const STORAGE_KEY = 'vantage_viewed_tips';
 
 interface ViewedTips {
   [userId: string]: string[]; // userId -> array of viewed tip IDs

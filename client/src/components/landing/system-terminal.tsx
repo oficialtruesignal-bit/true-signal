@@ -19,7 +19,7 @@ export function SystemTerminal() {
     <div className="bg-black/80 border border-[#33b864]/30 rounded-2xl p-6 font-mono text-sm backdrop-blur-xl">
       <div className="flex items-center gap-2 mb-4 pb-3 border-b border-gray-800">
         <div className="w-3 h-3 rounded-full bg-[#33b864] animate-pulse" />
-        <span className="text-[#33b864] font-bold">OCEAN SIGNAL SYSTEM STATUS</span>
+        <span className="text-[#33b864] font-bold">VANTAGE SYSTEM STATUS</span>
       </div>
       
       <div className="space-y-3">

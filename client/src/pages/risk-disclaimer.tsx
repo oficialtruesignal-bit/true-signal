@@ -28,7 +28,7 @@ export default function RiskDisclaimerPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">1. Natureza do Serviço</h2>
             <p>
-              O <span className="text-[#33b864] font-semibold">Ocean Signal</span> é uma plataforma estritamente <strong className="text-white">informativa e estatística</strong>. NÃO somos uma casa de apostas. Não recebemos depósitos, não custodiamos valores financeiros e não pagamos prêmios.
+              A <span className="text-[#33b864] font-semibold">VANTAGE</span> é uma plataforma estritamente <strong className="text-white">informativa e estatística</strong>. NÃO somos uma casa de apostas. Não recebemos depósitos, não custodiamos valores financeiros e não pagamos prêmios.
             </p>
             <p className="mt-4">
               Nossa função é fornecer análises esportivas baseadas em inteligência artificial e estatísticas avançadas para fins educacionais e informativos.
@@ -53,7 +53,7 @@ export default function RiskDisclaimerPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">3. Isenção de Responsabilidade</h2>
             <p>
-              O usuário é <strong className="text-white">totalmente responsável</strong> por suas decisões financeiras. O Ocean Signal não se responsabiliza por:
+              O usuário é <strong className="text-white">totalmente responsável</strong> por suas decisões financeiras. A VANTAGE não se responsabiliza por:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Perdas financeiras decorrentes do uso de nossas informações;</li>
@@ -79,7 +79,7 @@ export default function RiskDisclaimerPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">5. Proibição para Menores de Idade</h2>
             <p>
-              O Ocean Signal é destinado exclusivamente a <strong className="text-white">maiores de 18 anos</strong>. Apostas esportivas por menores de idade são ilegais e estritamente proibidas.
+              A VANTAGE é destinada exclusivamente a <strong className="text-white">maiores de 18 anos</strong>. Apostas esportivas por menores de idade são ilegais e estritamente proibidas.
             </p>
             <div className="flex items-center gap-4 mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
               <div className="text-6xl">🔞</div>
@@ -90,7 +90,7 @@ export default function RiskDisclaimerPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">6. Conformidade Legal</h2>
             <p>
-              É responsabilidade do usuário verificar se as apostas esportivas são legais em sua jurisdição. O Ocean Signal não encoraja atividades ilegais e não se responsabiliza pelo uso indevido da plataforma.
+              É responsabilidade do usuário verificar se as apostas esportivas são legais em sua jurisdição. A VANTAGE não encoraja atividades ilegais e não se responsabiliza pelo uso indevido da plataforma.
             </p>
           </section>
 
@@ -99,7 +99,7 @@ export default function RiskDisclaimerPage() {
               Última atualização: 26 de novembro de 2024
             </p>
             <p className="text-sm text-gray-500 mt-2">
-              Ao usar o Ocean Signal, você declara ter lido, compreendido e aceito todos os riscos descritos neste documento.
+              Ao usar a VANTAGE, você declara ter lido, compreendido e aceito todos os riscos descritos neste documento.
             </p>
           </section>
         </div>

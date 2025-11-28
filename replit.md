@@ -1,8 +1,15 @@
-# Ocean Signal - Sports Betting Intelligence Platform
+# VANTAGE - Sports Betting Intelligence Platform
 
 ## Overview
 
-Ocean Signal is an AI-powered sports betting intelligence platform that delivers curated betting tips and live match data. It features a public landing page, a protected subscriber dashboard, and an admin panel for managing tips. The platform integrates with the API-Football service for real-time sports data to provide accurate predictions and analysis globally. The business model is freemium, offering a 15-day trial followed by a premium subscription (`Ocean Prime`) for full access, with robust access control and a paywall system.
+VANTAGE is an AI-powered sports betting intelligence platform that delivers curated betting tips and live match data. It features a public landing page, a protected subscriber dashboard, and an admin panel for managing tips. The platform integrates with the API-Football service for real-time sports data to provide accurate predictions and analysis globally. The business model is freemium, offering a 15-day trial followed by a premium subscription (`Vantage Prime`) for full access, with robust access control and a paywall system.
+
+## Brand Identity
+
+- **Logo**: Diamond V-Shield design
+- **Typography**: Sora font (weight 800) for brand name, tracking-wide lettering
+- **Color**: Primary green accent `#33b864`
+- **Style**: Dark cyberpunk aesthetic with neon accents
 
 ## User Preferences
 
@@ -31,7 +38,7 @@ Preferred communication style: Simple, everyday language.
 - **BetCard Design**: "Vault Card" design with prominent odds, multi-leg support, dynamic vertical timeline, and copy functionality.
 - **Dashboard Optimization**: Focus on premium signal feed, core HUD metrics (Assertiveness, Online Now, Total Signals), and a simplified AI Scanner.
 - **Admin Panel**: Enables real fixture selection via date picker, integrates with API-Football, and automates push notifications for new tips.
-- **Subscription System**: Freemium model with a 15-day trial, `Ocean Prime` subscription, and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
+- **Subscription System**: Freemium model with a 15-day trial, `Vantage Prime` subscription (R$ 99,87/mês), and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
 - **Synchronization**: Achieved through React Query cache invalidation, Supabase Realtime subscriptions for `tips`, and `localStorage` for preferences.
 - **Legal Compliance**: Dedicated pages for Terms and Conditions, Privacy Policy (LGPD compliant), and Risk Disclaimer, integrated into the landing page footer.
 
