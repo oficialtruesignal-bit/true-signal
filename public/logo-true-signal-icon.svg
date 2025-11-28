@@ -1,0 +1,33 @@
+<svg width="200" height="240" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="240" fill="#0a0a0a"/>
+  
+  <defs>
+    <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#33b864" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Shield centered -->
+  <g transform="translate(20, 20)">
+    <path 
+      d="M10 15 L10 140 Q10 190 80 220 Q150 190 150 140 L150 15 Q150 5 135 5 L25 5 Q10 5 10 15 Z" 
+      fill="none"
+      stroke="url(#shield-gradient)"
+      stroke-width="8"
+    />
+    
+    <!-- Pulse line -->
+    <path 
+      d="M30 115 L50 115 L65 80 L80 140 L95 100 L110 120 L130 120" 
+      stroke="#33b864" 
+      stroke-width="8" 
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    
+    <!-- Signal dot -->
+    <circle cx="130" cy="120" r="8" fill="#33b864"/>
+  </g>
+</svg>
