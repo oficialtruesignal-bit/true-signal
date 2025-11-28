@@ -129,7 +129,7 @@ export default function PrivacyPage() {
             </ul>
             <div className="bg-blue-950/20 border border-blue-500/30 rounded-xl p-6 mt-4">
               <p className="text-blue-300 font-semibold mb-2">Para exercer seus direitos, entre em contato:</p>
-              <p className="text-gray-300">E-mail: <a href="mailto:privacidade@vantage.com" className="text-[#33b864] underline hover:text-[#2ea558]">privacidade@vantage.com</a></p>
+              <p className="text-gray-300">E-mail: <a href="mailto:privacidade@truesignal.com" className="text-[#33b864] underline hover:text-[#2ea558]">privacidade@truesignal.com</a></p>
               <p className="text-gray-300">Prazo de resposta: <strong className="text-white">15 dias úteis</strong></p>
             </div>
           </section>
@@ -176,7 +176,7 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-bold text-white mb-4">12. Encarregado de Dados (DPO)</h2>
             <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
               <p className="text-gray-300 mb-2"><strong className="text-white">Encarregado:</strong> [Nome do DPO]</p>
-              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:dpo@vantage.com" className="text-[#33b864] underline">dpo@vantage.com</a></p>
+              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:dpo@truesignal.com" className="text-[#33b864] underline">dpo@truesignal.com</a></p>
               <p className="text-gray-300"><strong className="text-white">Telefone:</strong> +55 (11) 0000-0000</p>
             </div>
           </section>

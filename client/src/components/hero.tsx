@@ -12,7 +12,7 @@ export function Hero() {
       
       <div className="absolute inset-0 p-8 flex flex-col justify-center">
         <span className="inline-block px-3 py-1 rounded-full bg-primary/10 border border-primary/30 text-primary text-xs font-bold uppercase tracking-wider mb-4 w-fit animate-in slide-in-from-left-4 fade-in duration-700 shadow-[0_0_10px_rgba(51,184,100,0.2)]">
-          VANTAGE Intelligence
+          TRUE SIGNAL Intelligence
         </span>
         <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground dark:text-white mb-2 max-w-lg animate-in slide-in-from-left-4 fade-in duration-700 delay-100">
           Domine as <br/>

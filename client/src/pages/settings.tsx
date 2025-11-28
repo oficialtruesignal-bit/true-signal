@@ -64,7 +64,7 @@ export default function SettingsPage() {
                   {isPremium ? (
                     <>
                       <Crown className="w-5 h-5 text-[#33b864]" />
-                      <span className="font-bold text-white">Vantage Prime</span>
+                      <span className="font-bold text-white">True Signal Pro</span>
                     </>
                   ) : (
                     <>
@@ -98,7 +98,7 @@ export default function SettingsPage() {
                     <p>⚠️ Apenas 1 sinal por dia</p>
                     <p>⚠️ Recursos limitados</p>
                     <p className="text-yellow-500 font-semibold mt-2">
-                      Assine o Vantage Prime para acesso completo!
+                      Assine o True Signal Pro para acesso completo!
                     </p>
                   </>
                 )}
@@ -114,7 +114,7 @@ export default function SettingsPage() {
                     data-testid="button-subscribe"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Assinar Vantage Prime
+                    Assinar True Signal Pro
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>

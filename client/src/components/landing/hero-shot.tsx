@@ -29,7 +29,8 @@ export function HeroShot() {
             className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tighter leading-tight lg:max-w-xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Terceirize sua análise. Pare de lutar contra o mercado sozinho.
+            Em um mar de ruído, siga o{' '}
+            <span className="text-[#33b864]">Sinal Verdadeiro</span>.
           </motion.h1>
           
           <motion.p
@@ -39,9 +40,9 @@ export function HeroShot() {
             className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Chega de perder horas filtrando jogos em aplicativos. Nosso ecossistema une{' '}
-            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos juntos com a Inteligência Artificial</span>{' '}
-            para processar o mercado em segundos e te trazer as melhores probabilidades de acerto.
+            Enquanto outros perdem horas filtrando informações falsas, nosso ecossistema une{' '}
+            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos com Inteligência Artificial</span>{' '}
+            para encontrar a verdade no mercado e te entregar sinais validados com precisão.
           </motion.p>
           
           <motion.p

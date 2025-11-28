@@ -62,7 +62,7 @@ export class MercadoPagoService {
   }
 
   /**
-   * Create a subscription plan for Vantage Prime
+   * Create a subscription plan for True Signal Pro
    * BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF) with 15-day trial
    */
   async createSubscriptionPlan(): Promise<any> {
@@ -71,7 +71,7 @@ export class MercadoPagoService {
     }
 
     const planData: CreateSubscriptionPlanParams = {
-      reason: 'Vantage Prime - Assinatura Mensal (BLACK FRIDAY)',
+      reason: 'True Signal Pro - Assinatura Mensal (BLACK FRIDAY)',
       auto_recurring: {
         frequency: 1,
         frequency_type: 'months',
@@ -117,7 +117,7 @@ export class MercadoPagoService {
 
     const subscriptionData: CreateSubscriptionParams = {
       preapproval_plan_id: params.planId,
-      reason: 'Vantage Prime - Assinatura Mensal',
+      reason: 'True Signal Pro - Assinatura Mensal',
       external_reference: params.userId,
       payer_email: params.userEmail,
       back_url: process.env.REPLIT_DEV_DOMAIN 
@@ -231,7 +231,7 @@ export class MercadoPagoService {
         {
           id: 'vantage-prime-monthly',
           title: params.title,
-          description: 'Acesso mensal à plataforma Vantage Prime com sinais de apostas esportivas',
+          description: 'Acesso mensal à plataforma True Signal Pro com sinais de apostas esportivas',
           category_id: 'services',
           unit_price: params.amount,
           quantity: params.quantity,
@@ -396,7 +396,7 @@ export class MercadoPagoService {
       payment_method_id: params.paymentMethodId,
       transaction_amount: params.transactionAmount,
       installments: params.installments,
-      description: 'Vantage Prime - Assinatura Mensal',
+      description: 'True Signal Pro - Assinatura Mensal',
       payer: {
         email: params.payer.email,
         identification: params.payer.identification,

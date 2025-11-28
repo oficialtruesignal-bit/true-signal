@@ -67,7 +67,7 @@ export default function Admin() {
   };
 
   const copyTicket = (signal: Signal) => {
-    const text = `🎯 VANTAGE
+    const text = `🎯 TRUE SIGNAL
 
 ⚽ ${signal.homeTeam} vs ${signal.awayTeam}
 📊 ${signal.market}

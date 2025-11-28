@@ -54,7 +54,7 @@ export function LockedScreen() {
             Você provou a precisão da nossa IA por 15 dias.
           </p>
           <p className="text-lg text-gray-400">
-            Agora é hora de desbloquear todo o poder do <span className="text-[#33b864] font-bold">VANTAGE</span>.
+            Agora é hora de desbloquear todo o poder do <span className="text-[#33b864] font-bold">TRUE SIGNAL</span>.
           </p>
         </motion.div>
         
@@ -71,7 +71,7 @@ export function LockedScreen() {
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 rounded-full mb-4 animate-pulse">
                 <Sparkles className="w-4 h-4 text-red-400" />
-                <span className="text-sm text-red-400 font-black uppercase tracking-wider">BLACK FRIDAY - 52% OFF</span>
+                <span className="text-sm text-red-400 font-black uppercase tracking-wider">TRUE SIGNAL PRO</span>
               </div>
               
               <div className="flex items-center justify-center gap-3 mb-2">
@@ -114,7 +114,7 @@ export function LockedScreen() {
               data-testid="button-subscribe-premium"
             >
               <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-black py-5 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 text-lg touch-manipulation">
-                ASSINAR VANTAGE PRIME - R$ 47,90/MÊS
+                ASSINAR TRUE SIGNAL PRO - R$ 47,90/MÊS
               </button>
             </a>
             
@@ -127,8 +127,8 @@ export function LockedScreen() {
         {/* Footer note */}
         <p className="text-center text-sm text-gray-500">
           Tem dúvidas? Entre em contato com nosso suporte:{' '}
-          <a href="mailto:suporte@vantage.com" className="text-[#33b864] hover:underline">
-            suporte@vantage.com
+          <a href="mailto:suporte@truesignal.com" className="text-[#33b864] hover:underline">
+            suporte@truesignal.com
           </a>
         </p>
       </motion.div>

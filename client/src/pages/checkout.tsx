@@ -242,7 +242,7 @@ export default function CheckoutPage() {
             <Check className="w-10 h-10 text-[#33b864]" />
           </div>
           <h1 className="text-3xl font-sora font-bold text-white mb-4">
-            Você já é Vantage Prime!
+            Você já é True Signal Pro!
           </h1>
           <p className="text-gray-300 mb-8">
             Aproveite todos os benefícios da sua assinatura premium.
@@ -324,7 +324,7 @@ export default function CheckoutPage() {
                 <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                Acesso por 30 dias ao Vantage Prime
+                Acesso por 30 dias ao True Signal Pro
               </p>
             </div>
 
@@ -426,7 +426,7 @@ export default function CheckoutPage() {
                     <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Acesso por 30 dias ao Vantage Prime
+                    Acesso por 30 dias ao True Signal Pro
                   </p>
                 </div>
               </>
@@ -466,7 +466,7 @@ export default function CheckoutPage() {
             <span className="text-sm font-bold text-[#33b864]">CHECKOUT SEGURO</span>
           </div>
           <h1 className="text-3xl font-sora font-bold text-white mb-4">
-            Finalize sua assinatura Vantage Prime
+            Finalize sua assinatura True Signal Pro
           </h1>
           <p className="text-xl text-gray-300">
             {daysRemaining > 0 
@@ -631,7 +631,7 @@ export default function CheckoutPage() {
               <div className="pt-6 border-t border-white/10">
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Vantage Prime (mensal)</span>
+                    <span className="text-gray-400">True Signal Pro (mensal)</span>
                     <div className="text-right">
                       <span className="text-gray-500 line-through text-xs mr-2">R$ 99,87</span>
                       <span className="text-[#33b864]">R$ 47,90</span>
@@ -732,7 +732,7 @@ export default function CheckoutPage() {
               <Users className="w-6 h-6 text-[#33b864]" />
             </div>
             <h3 className="font-bold text-white mb-2">+2.500 Assinantes</h3>
-            <p className="text-sm text-gray-400">Confiam na VANTAGE</p>
+            <p className="text-sm text-gray-400">Confiam na TRUE SIGNAL</p>
           </div>
         </div>
 
@@ -813,7 +813,7 @@ export default function CheckoutPage() {
         {/* Footer Legal Info */}
         <div className="text-center mt-12 pt-8 border-t border-white/10">
           <p className="text-xs text-gray-500 mb-2">
-            VANTAGE - CNPJ: 00.000.000/0001-00
+            TRUE SIGNAL - CNPJ: 00.000.000/0001-00
           </p>
           <p className="text-xs text-gray-500">
             Ao finalizar o pagamento, você concorda com nossos{" "}

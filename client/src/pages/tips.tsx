@@ -184,7 +184,7 @@ export default function TipsPage() {
                         <LockKeyhole className="w-8 h-8 text-[#33b864]" />
                       </div>
                       <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
-                        Exclusivo Vantage Prime
+                        Exclusivo True Signal Pro
                       </h3>
                       <p className="text-gray-300 text-sm mb-4">
                         Desbloqueie todos os sinais e maximize seus lucros

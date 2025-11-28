@@ -755,7 +755,7 @@ REGRAS IMPORTANTES:
       }
 
       const preference = await mercadoPagoService.createPreference({
-        title: title || 'Vantage Prime - Acesso Mensal',
+        title: title || 'True Signal Pro - Acesso Mensal',
         amount: amount || 47.90,
         quantity: quantity || 1,
         userId,
@@ -802,7 +802,7 @@ REGRAS IMPORTANTES:
         amount: VANTAGE_PRIME_PRICE,
         userId,
         userEmail: user.email, // Use verified email from database
-        description: 'Vantage Prime - Acesso Mensal',
+        description: 'True Signal Pro - Acesso Mensal',
         firstName: firstName || 'Usuario',
         lastName: lastName || 'Vantage',
         document,
@@ -992,11 +992,11 @@ REGRAS IMPORTANTES:
         const status = subscription.status;
 
         if (status === "authorized") {
-          // Subscription is active - upgrade user to Vantage Prime (30 days)
+          // Subscription is active - upgrade user to True Signal Pro (30 days)
           const now = new Date();
           const endsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30 days
           
-          console.log("✅ [Webhook] Activating Vantage Prime for user:", userId);
+          console.log("✅ [Webhook] Activating True Signal Pro for user:", userId);
           console.log("📅 [Webhook] Subscription period:", now.toISOString(), "→", endsAt.toISOString());
           
           await storage.updateUserSubscription(userId, {
@@ -1005,7 +1005,7 @@ REGRAS IMPORTANTES:
             subscriptionActivatedAt: now,
             subscriptionEndsAt: endsAt,
           });
-          console.log("✅ [Webhook] User upgraded to Vantage Prime successfully (30 days)");
+          console.log("✅ [Webhook] User upgraded to True Signal Pro successfully (30 days)");
         } else if (status === "cancelled" || status === "paused") {
           // Subscription cancelled/paused - downgrade user
           console.log("⚠️ [Webhook] Deactivating subscription for user:", userId);
@@ -1058,7 +1058,7 @@ REGRAS IMPORTANTES:
             const now = new Date();
             const endsAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
             
-            console.log("✅ [Webhook] Activating Vantage Prime via PIX for user:", userId);
+            console.log("✅ [Webhook] Activating True Signal Pro via PIX for user:", userId);
             console.log("✅ [Webhook] User email:", user.email);
             await storage.updateUserSubscription(userId, {
               subscriptionStatus: 'active',

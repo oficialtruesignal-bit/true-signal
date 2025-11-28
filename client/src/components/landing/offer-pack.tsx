@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 function ProCouponTicket() {
   const [copied, setCopied] = useState(false);
-  const code = "VANTAGE10";
+  const code = "TRUESIGNAL10";
   
   const handleCopy = () => {
     navigator.clipboard.writeText(code);
@@ -146,7 +146,7 @@ export function OfferPack() {
             <div className="text-center pt-4">
               {/* Plan name */}
               <h3 className="text-2xl md:text-3xl font-black text-white mb-6" style={{ fontFamily: 'Sora, sans-serif' }}>
-                Plano Vantage Prime
+                Plano True Signal Pro
               </h3>
               
               {/* Price */}
