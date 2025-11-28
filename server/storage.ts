@@ -73,27 +73,37 @@ export class DatabaseStorage implements IStorage {
       return existing;
     }
 
-    const now = new Date();
-    const trialStartDate = now;
+    try {
+      const now = new Date();
+      const trialStartDate = now;
 
-    const [profile] = await db
-      .insert(profiles)
-      .values({
-        id: data.id,
-        email: data.email,
-        passwordHash: '',
-        firstName: data.firstName || data.email.split('@')[0],
-        role: 'user',
-        subscriptionStatus: 'trial',
-        trialStartDate: trialStartDate,
-        termsAcceptedAt: now,
-        privacyAcceptedAt: now,
-        riskDisclaimerAcceptedAt: now,
-      })
-      .returning();
-    
-    console.log(`[STORAGE] Created new profile for Supabase user: ${data.email} with trial starting ${trialStartDate.toISOString()}`);
-    return profile;
+      const [profile] = await db
+        .insert(profiles)
+        .values({
+          id: data.id,
+          email: data.email,
+          passwordHash: '',
+          firstName: data.firstName || data.email.split('@')[0],
+          role: 'user',
+          subscriptionStatus: 'trial',
+          trialStartDate: trialStartDate,
+          termsAcceptedAt: now,
+          privacyAcceptedAt: now,
+          riskDisclaimerAcceptedAt: now,
+        })
+        .returning();
+      
+      console.log(`[STORAGE] Created new profile for Supabase user: ${data.email} with trial starting ${trialStartDate.toISOString()}`);
+      return profile;
+    } catch (error: any) {
+      if (error.code === '23505') {
+        const existingAfterError = await this.getProfileById(data.id);
+        if (existingAfterError) {
+          return existingAfterError;
+        }
+      }
+      throw error;
+    }
   }
 
   async verifyPassword(email: string, password: string): Promise<Profile | null> {
