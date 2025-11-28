@@ -189,8 +189,8 @@ export function OfferPack() {
                     className="w-full md:w-auto px-12 py-5 bg-[#33b864] text-black font-black text-xl rounded-2xl hover:bg-[#2ea558] transition-colors flex items-center justify-center gap-3"
                     data-testid="button-offer-cta"
                   >
-                    <Zap className="w-6 h-6" />
-                    QUERO ACESSO PRO
+                    <Zap className="w-6 h-6 flex-shrink-0" />
+                    <span className="whitespace-nowrap">QUERO ACESSO PRO</span>
                   </motion.button>
                 </Link>
               </div>
