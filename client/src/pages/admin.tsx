@@ -416,9 +416,9 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                             )}
                           </Button>
                           <Button 
-                            size="icon" 
+                            size="sm" 
                             variant="outline" 
-                            className="h-8 w-8 border-white/20 hover:border-red-500 hover:text-red-500 hover:bg-red-500/10"
+                            className="h-8 px-3 border-red-500/50 text-red-400 hover:bg-red-500/20 hover:border-red-500"
                             onClick={() => {
                               if (confirm(`Deletar o sinal ${signal.homeTeam} vs ${signal.awayTeam}?`)) {
                                 deleteMutation.mutate(signal.id);
@@ -426,7 +426,8 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                             }}
                             data-testid={`button-delete-${signal.id}`}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4 mr-1" />
+                            Deletar
                           </Button>
                         </div>
                       </div>
