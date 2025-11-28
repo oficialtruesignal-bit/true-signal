@@ -180,8 +180,12 @@ export default function PricingPage() {
               </div>
 
               <div className="mb-8">
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="text-xl text-gray-500 line-through">R$ 99,87</span>
+                  <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded animate-pulse">BLACK FRIDAY -52%</span>
+                </div>
                 <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-[#33b864]">R$ 2,00</span>
+                  <span className="text-5xl font-black text-[#33b864]">R$ 47,90</span>
                   <span className="text-gray-400">/mês</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-2">Cancele quando quiser, sem multas</p>

@@ -756,7 +756,7 @@ REGRAS IMPORTANTES:
 
       const preference = await mercadoPagoService.createPreference({
         title: title || 'Vantage Prime - Acesso Mensal',
-        amount: amount || 2.00,
+        amount: amount || 47.90,
         quantity: quantity || 1,
         userId,
         userEmail,
@@ -795,7 +795,8 @@ REGRAS IMPORTANTES:
       }
 
       // Fixed price - server-side controlled (prevent price manipulation)
-      const VANTAGE_PRIME_PRICE = 2.00;
+      // BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF)
+      const VANTAGE_PRIME_PRICE = 47.90;
 
       const payment = await mercadoPagoService.createPixPayment({
         amount: VANTAGE_PRIME_PRICE,
@@ -884,7 +885,8 @@ REGRAS IMPORTANTES:
       }
 
       // Fixed price - server-side controlled (prevent price manipulation)
-      const VANTAGE_PRIME_PRICE = 2.00;
+      // BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF)
+      const VANTAGE_PRIME_PRICE = 47.90;
 
       const payment = await mercadoPagoService.createCardPayment({
         token,

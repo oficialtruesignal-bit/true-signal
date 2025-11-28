@@ -62,7 +62,8 @@ export class MercadoPagoService {
   }
 
   /**
-   * Create a subscription plan for Vantage Prime (R$ 2,00/month with 15-day trial)
+   * Create a subscription plan for Vantage Prime
+   * BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF) with 15-day trial
    */
   async createSubscriptionPlan(): Promise<any> {
     if (!this.isConfigured()) {
@@ -70,11 +71,11 @@ export class MercadoPagoService {
     }
 
     const planData: CreateSubscriptionPlanParams = {
-      reason: 'Vantage Prime - Assinatura Mensal',
+      reason: 'Vantage Prime - Assinatura Mensal (BLACK FRIDAY)',
       auto_recurring: {
         frequency: 1,
         frequency_type: 'months',
-        transaction_amount: 2.00,
+        transaction_amount: 47.90,
         currency_id: 'BRL',
         free_trial: {
           frequency: 15,

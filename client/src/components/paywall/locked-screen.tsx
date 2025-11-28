@@ -69,13 +69,18 @@ export function LockedScreen() {
           
           <div className="relative bg-gradient-to-br from-black via-[#0a0a0a] to-black border-2 border-[#33b864] rounded-3xl p-8">
             <div className="text-center mb-6">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/20 border border-[#33b864]/40 rounded-full mb-4">
-                <Sparkles className="w-4 h-4 text-[#33b864]" />
-                <span className="text-sm text-[#33b864] font-bold uppercase tracking-wider">Vantage Prime</span>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 rounded-full mb-4 animate-pulse">
+                <Sparkles className="w-4 h-4 text-red-400" />
+                <span className="text-sm text-red-400 font-black uppercase tracking-wider">BLACK FRIDAY - 52% OFF</span>
+              </div>
+              
+              <div className="flex items-center justify-center gap-3 mb-2">
+                <span className="text-xl text-gray-500 line-through">R$ 99,87</span>
+                <span className="px-2 py-1 bg-red-500/20 text-red-400 text-xs font-bold rounded">-52%</span>
               </div>
               
               <div className="flex items-baseline justify-center gap-2 mb-2">
-                <span className="text-5xl md:text-6xl font-black text-white font-mono">R$ 2,00</span>
+                <span className="text-5xl md:text-6xl font-black text-[#33b864] font-mono">R$ 47,90</span>
                 <span className="text-gray-400 text-lg">/mês</span>
               </div>
               
@@ -109,7 +114,7 @@ export function LockedScreen() {
               data-testid="button-subscribe-premium"
             >
               <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-black py-5 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 text-lg touch-manipulation">
-                ASSINAR VANTAGE PRIME - R$ 2,00/MÊS
+                ASSINAR VANTAGE PRIME - R$ 47,90/MÊS
               </button>
             </a>
             

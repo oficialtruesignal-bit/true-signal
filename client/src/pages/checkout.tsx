@@ -145,7 +145,7 @@ export default function CheckoutPage() {
         token: formData.token,
         issuerId: formData.issuer_id,
         paymentMethodId: formData.payment_method_id,
-        transactionAmount: 2.00,
+        transactionAmount: 47.90,
         installments: formData.installments || 1,
         userId: user.id,
         userEmail: user.email,
@@ -200,7 +200,7 @@ export default function CheckoutPage() {
         const response = await axios.post("/api/mercadopago/pix", {
           userId: user.id,
           userEmail: data.email,
-          amount: 2.00,
+          amount: 47.90,
           firstName: data.fullName.split(' ')[0],
           lastName: data.fullName.split(' ').slice(1).join(' ') || 'Usuario',
           document: data.document.replace(/\D/g, ''),
@@ -290,7 +290,7 @@ export default function CheckoutPage() {
                 {/* Mercado Pago Card Payment Brick */}
                 <div className="mb-6">
                   <CardPayment
-                    initialization={{ amount: 2.00 }}
+                    initialization={{ amount: 47.90 }}
                     onSubmit={onCardPaymentSubmit}
                     onReady={onCardPaymentReady}
                     onError={onCardPaymentError}
@@ -321,7 +321,7 @@ export default function CheckoutPage() {
             <div className="mt-6 pt-6 border-t border-white/10">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Valor:</span>
-                <span className="text-2xl font-bold text-white">R$ 2,00</span>
+                <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
               </div>
               <p className="text-xs text-gray-500 mt-2">
                 Acesso por 30 dias ao Vantage Prime
@@ -423,7 +423,7 @@ export default function CheckoutPage() {
                 <div className="mt-6 pt-6 border-t border-white/10">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400">Valor:</span>
-                    <span className="text-2xl font-bold text-white">R$ 2,00</span>
+                    <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
                     Acesso por 30 dias ao Vantage Prime
@@ -523,12 +523,12 @@ export default function CheckoutPage() {
                 {paymentMethod === 'card' ? (
                   <p className="text-blue-300">
                     <CreditCard className="w-4 h-4 inline mr-2" />
-                    Cobrança automática mensal de R$ 2,00. Cancele quando quiser.
+                    Cobrança automática mensal de R$ 47,90. Cancele quando quiser.
                   </p>
                 ) : (
                   <p className="text-green-300">
                     <QrCode className="w-4 h-4 inline mr-2" />
-                    Pagamento único de R$ 2,00 via PIX. Acesso por 30 dias.
+                    Pagamento único de R$ 47,90 via PIX. Acesso por 30 dias.
                   </p>
                 )}
               </div>
@@ -632,15 +632,22 @@ export default function CheckoutPage() {
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Vantage Prime (mensal)</span>
-                    <span className="text-white">R$ 2,00</span>
+                    <div className="text-right">
+                      <span className="text-gray-500 line-through text-xs mr-2">R$ 99,87</span>
+                      <span className="text-[#33b864]">R$ 47,90</span>
+                    </div>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Taxa de processamento</span>
                     <span className="text-[#33b864]">R$ 0,00</span>
                   </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-400">Black Friday</span>
+                    <span className="text-red-400 font-bold">-52% OFF</span>
+                  </div>
                   <div className="flex justify-between pt-3 border-t border-white/10">
                     <span className="font-bold text-white">Total</span>
-                    <span className="font-bold text-xl text-white">R$ 2,00</span>
+                    <span className="font-bold text-xl text-[#33b864]">R$ 47,90</span>
                   </div>
                 </div>
               </div>
@@ -797,7 +804,7 @@ export default function CheckoutPage() {
                 Como funciona a cobrança?
               </h4>
               <p className="text-sm text-gray-400">
-                A cobrança é mensal e recorrente de R$ 2,00. Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
+                A cobrança é mensal e recorrente de R$ 47,90 (preço Black Friday, de R$ 99,87). Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
               </p>
             </div>
           </div>

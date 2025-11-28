@@ -24,12 +24,16 @@ export function OfferPack() {
           <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 to-[#33b864]/30 rounded-3xl blur-xl" />
           
           <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/40 rounded-3xl p-8 md:p-12 lg:p-16 backdrop-blur-xl">
-            {/* Top badge */}
+            {/* Top badge - Black Friday */}
             <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-              <div className="flex items-center gap-2 px-4 py-2 bg-[#33b864] text-black font-bold text-sm rounded-full shadow-lg shadow-[#33b864]/50">
+              <motion.div 
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-[#ff0000] to-[#ff4444] text-white font-black text-sm rounded-full shadow-lg shadow-red-500/50 border border-white/20"
+              >
                 <Sparkles className="w-4 h-4" />
-                OFERTA ESPECIAL
-              </div>
+                BLACK FRIDAY - 52% OFF
+              </motion.div>
             </div>
             
             <div className="text-center pt-4">
@@ -40,10 +44,15 @@ export function OfferPack() {
               
               {/* Price */}
               <div className="mb-8">
-                <div className="text-gray-500 line-through text-lg mb-2">De R$ 2.847/mês</div>
+                <div className="flex items-center justify-center gap-3 mb-3">
+                  <span className="text-gray-500 line-through text-xl">R$ 99,87</span>
+                  <span className="px-3 py-1 bg-red-500/20 text-red-400 text-sm font-bold rounded-full border border-red-500/30">
+                    -52%
+                  </span>
+                </div>
                 <div className="flex items-end justify-center gap-2">
                   <span className="text-5xl md:text-7xl font-black text-[#33b864]" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    R$ 2,00
+                    R$ 47,90
                   </span>
                   <span className="text-gray-400 text-xl pb-3">/mês</span>
                 </div>
