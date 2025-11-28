@@ -9,6 +9,7 @@ export interface IStorage {
   getProfileByEmail(email: string): Promise<Profile | undefined>;
   getUserByEmail(email: string): Promise<Profile | undefined>; // Alias for getProfileByEmail
   createProfile(profile: Omit<InsertProfile, 'passwordHash'> & { password: string }): Promise<Profile>;
+  upsertProfileFromSupabase(data: { id: string; email: string; firstName?: string }): Promise<Profile>;
   verifyPassword(email: string, password: string): Promise<Profile | null>;
   updateUserSubscription(userId: string, subscriptionData: {
     subscriptionStatus: 'trial' | 'active' | 'expired';
@@ -62,6 +63,36 @@ export class DatabaseStorage implements IStorage {
         riskDisclaimerAcceptedAt: now,
       })
       .returning();
+    return profile;
+  }
+
+  async upsertProfileFromSupabase(data: { id: string; email: string; firstName?: string }): Promise<Profile> {
+    const existing = await this.getProfileById(data.id);
+    
+    if (existing) {
+      return existing;
+    }
+
+    const now = new Date();
+    const trialStartDate = now;
+
+    const [profile] = await db
+      .insert(profiles)
+      .values({
+        id: data.id,
+        email: data.email,
+        passwordHash: '',
+        firstName: data.firstName || data.email.split('@')[0],
+        role: 'user',
+        subscriptionStatus: 'trial',
+        trialStartDate: trialStartDate,
+        termsAcceptedAt: now,
+        privacyAcceptedAt: now,
+        riskDisclaimerAcceptedAt: now,
+      })
+      .returning();
+    
+    console.log(`[STORAGE] Created new profile for Supabase user: ${data.email} with trial starting ${trialStartDate.toISOString()}`);
     return profile;
   }
 

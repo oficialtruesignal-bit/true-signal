@@ -67,36 +67,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.log('🔄 [AUTH DEBUG] Loading profile for userId:', userId);
       console.log('🔄 [AUTH DEBUG] Force reload:', forceReload);
       
-      // Force fresh data by adding timestamp or using maybeSingle instead of single
-      const query = supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId);
+      const { data: { user: supabaseUser } } = await supabase.auth.getUser();
       
-      // Disable caching for admin checks
-      const { data, error } = forceReload 
-        ? await query.maybeSingle()
-        : await query.single();
+      if (!supabaseUser) {
+        console.log('❌ [AUTH DEBUG] No Supabase user found');
+        setIsLoading(false);
+        return;
+      }
 
-      console.log('📊 [AUTH DEBUG] Profile data from database:', data);
-      console.log('❌ [AUTH DEBUG] Profile error:', error);
+      const response = await fetch('/api/profile/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          firstName: supabaseUser.user_metadata?.first_name || supabaseUser.email?.split('@')[0],
+        }),
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error('Failed to sync profile');
+      }
+
+      const { profile: data } = await response.json();
+
+      console.log('📊 [AUTH DEBUG] Profile data from backend:', data);
 
       if (data) {
         const userData = {
           id: data.id,
           email: data.email,
-          firstName: data.first_name,
+          firstName: data.firstName,
           role: data.role as 'user' | 'admin',
-          subscriptionStatus: data.subscription_status as 'trial' | 'active' | 'expired',
-          createdAt: data.created_at,
-          trialStartDate: data.trial_start_date || null,
-          subscriptionActivatedAt: data.subscription_activated_at || null,
-          subscriptionEndsAt: data.subscription_ends_at || null,
-          termsAcceptedAt: data.terms_accepted_at || null,
-          privacyAcceptedAt: data.privacy_accepted_at || null,
-          riskDisclaimerAcceptedAt: data.risk_disclaimer_accepted_at || null,
+          subscriptionStatus: (data.subscriptionStatus || 'trial') as 'trial' | 'active' | 'expired',
+          createdAt: data.createdAt,
+          trialStartDate: data.trialStartDate || null,
+          subscriptionActivatedAt: data.subscriptionActivatedAt || null,
+          subscriptionEndsAt: data.subscriptionEndsAt || null,
+          termsAcceptedAt: data.termsAcceptedAt || null,
+          privacyAcceptedAt: data.privacyAcceptedAt || null,
+          riskDisclaimerAcceptedAt: data.riskDisclaimerAcceptedAt || null,
         };
         
         console.log('✅ [AUTH DEBUG] Setting user state with role:', userData.role);
@@ -107,7 +117,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error('💥 [AUTH DEBUG] Error loading profile:', error);
     } finally {
-      // Ensure minimum 1 second loading screen
       const elapsed = Date.now() - startTime;
       const minDelay = 1000;
       if (elapsed < minDelay) {

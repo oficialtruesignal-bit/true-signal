@@ -314,6 +314,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/profile/sync", async (req, res) => {
+    try {
+      const { id, email, firstName } = req.body;
+      
+      if (!id || !email) {
+        return res.status(400).json({ error: "id and email are required" });
+      }
+
+      console.log(`[PROFILE SYNC] Syncing profile for ${email} (${id})`);
+      const profile = await storage.upsertProfileFromSupabase({ id, email, firstName });
+      console.log(`[PROFILE SYNC] Profile synced: ${profile.email}, status: ${profile.subscriptionStatus}`);
+      
+      return res.json({ profile });
+    } catch (error: any) {
+      console.error(`[PROFILE SYNC] Error:`, error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Tips Routes
   app.get("/api/tips", async (req, res) => {
     try {
