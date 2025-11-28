@@ -106,11 +106,11 @@ export default function SettingsPage() {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
+            <div className="space-y-4 pt-2">
               {!isPremium && (
                 <Link href="/checkout">
                   <Button
-                    className="w-full bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
+                    className="w-full h-12 bg-gradient-to-r from-[#33b864] to-[#2ea558] hover:from-[#2ea558] hover:to-[#33b864] text-black font-bold shadow-xl shadow-[#33b864]/50"
                     data-testid="button-subscribe"
                   >
                     <Sparkles className="w-4 h-4 mr-2" />
@@ -120,10 +120,10 @@ export default function SettingsPage() {
                 </Link>
               )}
               
-              <Link href="/assinatura">
+              <Link href="/assinatura" className="block mt-4">
                 <Button
                   variant="outline"
-                  className="w-full border-white/20 hover:bg-white/5 text-white"
+                  className="w-full h-12 border-white/20 hover:bg-white/5 text-white"
                   data-testid="button-manage-subscription"
                 >
                   <Crown className="w-4 h-4 mr-2" />
