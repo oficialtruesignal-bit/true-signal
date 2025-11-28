@@ -18,16 +18,16 @@ export function LoadingScreen() {
 
       {/* Animated Logo */}
       <div className="relative z-10 flex flex-col items-center gap-8">
-        {/* Hexagonal Radar Badge - Animated */}
+        {/* Signal Monolith Logo - Animated */}
         <motion.svg
-          width={120}
+          width={100}
           height={120}
-          viewBox="0 0 64 64"
+          viewBox="0 0 40 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ 
-            scale: [0.8, 1, 0.8],
+            scale: [0.9, 1, 0.9],
             opacity: [0.8, 1, 0.8],
           }}
           transition={{
@@ -37,182 +37,78 @@ export function LoadingScreen() {
           }}
         >
           <defs>
-            {/* Animated Glow Filter */}
-            <filter id="loadingGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
-            
-            {/* Gradient */}
-            <linearGradient id="oceanGradientLoading" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#33b864" stopOpacity="1" />
-              <stop offset="100%" stopColor="#2ea558" stopOpacity="1" />
+            <linearGradient id="loading-monolith-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4ade80" />
+              <stop offset="100%" stopColor="#33b864" />
             </linearGradient>
+            <filter id="loading-monolith-glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
           
-          {/* Background Hexagon */}
-          <motion.path
-            d="M32 4 L54 16 L54 40 L32 52 L10 40 L10 16 Z"
-            fill="rgba(10, 10, 10, 0.9)"
-            stroke="#33b864"
-            strokeWidth="1.5"
-            initial={{ strokeOpacity: 0.3 }}
-            animate={{ strokeOpacity: [0.3, 0.8, 0.3] }}
+          {/* Shield monolith shape */}
+          <motion.path 
+            d="M4 6 L4 32 Q4 40 20 46 Q36 40 36 32 L36 6 Q36 2 32 2 L8 2 Q4 2 4 6 Z" 
+            fill="none"
+            stroke="url(#loading-monolith-gradient)"
+            strokeWidth="2.5"
+            filter="url(#loading-monolith-glow)"
+            animate={{ strokeOpacity: [0.6, 1, 0.6] }}
             transition={{ duration: 2, repeat: Infinity }}
           />
           
-          {/* Inner Hexagon */}
-          <motion.path
-            d="M32 10 L48 20 L48 36 L32 46 L16 36 L16 20 Z"
-            fill="none"
-            stroke="url(#oceanGradientLoading)"
-            strokeWidth="1.5"
-            initial={{ opacity: 0.5 }}
-            animate={{ opacity: [0.5, 1, 0.5] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-          />
-          
-          {/* Radar Waves - Pulsing */}
-          <motion.circle
-            cx="32"
-            cy="28"
-            r="4"
-            fill="none"
-            stroke="#33b864"
-            strokeWidth="1.5"
-            filter="url(#loadingGlow)"
-            initial={{ opacity: 0 }}
-            animate={{ 
-              r: [4, 12, 4],
-              opacity: [0.8, 0, 0.8],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeOut",
-            }}
-          />
-          <motion.circle
-            cx="32"
-            cy="28"
-            r="8"
-            fill="none"
-            stroke="#33b864"
-            strokeWidth="1"
-            initial={{ opacity: 0 }}
-            animate={{ 
-              r: [8, 16, 8],
-              opacity: [0.4, 0, 0.4],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeOut",
-              delay: 0.3,
-            }}
-          />
-          <motion.circle
-            cx="32"
-            cy="28"
-            r="12"
-            fill="none"
-            stroke="#33b864"
-            strokeWidth="0.5"
-            initial={{ opacity: 0 }}
-            animate={{ 
-              r: [12, 20, 12],
-              opacity: [0.2, 0, 0.2],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeOut",
-              delay: 0.6,
-            }}
-          />
-          
-          {/* Center Signal Dot - Pulsing */}
-          <motion.circle
-            cx="32"
-            cy="28"
-            r="2"
-            fill="#33b864"
-            filter="url(#loadingGlow)"
-            animate={{
-              scale: [1, 1.5, 1],
-            }}
-            transition={{
-              duration: 1,
-              repeat: Infinity,
-            }}
-          />
-          
-          {/* Signal Wave Line */}
-          <motion.path
-            d="M 20 38 Q 26 34, 32 28 T 44 20"
-            stroke="#33b864"
-            strokeWidth="2"
+          {/* Precision pulse/signal line cutting through */}
+          <motion.path 
+            d="M8 24 L14 24 L17 18 L20 30 L23 22 L26 26 L32 26" 
+            stroke="#33b864" 
+            strokeWidth="2.5" 
             strokeLinecap="round"
+            strokeLinejoin="round"
             fill="none"
-            filter="url(#loadingGlow)"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ 
-              pathLength: [0, 1, 0],
-              opacity: [0, 1, 0],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: [0, 1, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           />
           
-          {/* Corner Accents - Blinking */}
-          <motion.line
-            x1="12" y1="18" x2="16" y2="20"
-            stroke="#33b864"
-            strokeWidth="1"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0 }}
-          />
-          <motion.line
-            x1="52" y1="18" x2="48" y2="20"
-            stroke="#33b864"
-            strokeWidth="1"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0.3 }}
-          />
-          <motion.line
-            x1="12" y1="38" x2="16" y2="36"
-            stroke="#33b864"
-            strokeWidth="1"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0.6 }}
-          />
-          <motion.line
-            x1="52" y1="38" x2="48" y2="36"
-            stroke="#33b864"
-            strokeWidth="1"
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 1.5, repeat: Infinity, delay: 0.9 }}
+          {/* Active signal dot */}
+          <motion.circle 
+            cx="32" 
+            cy="26" 
+            r="3" 
+            fill="#33b864"
+            animate={{ 
+              opacity: [0, 1, 0],
+              scale: [0.5, 1.2, 0.5]
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
           />
         </motion.svg>
 
         {/* Brand Text */}
         <motion.div
-          className="flex flex-col items-center leading-none gap-1"
+          className="flex items-baseline gap-2"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <motion.span
-            className="font-extrabold tracking-[0.2em] text-white text-4xl"
-            style={{ fontFamily: 'Sora, sans-serif' }}
+            className="font-semibold tracking-tight text-white/70 text-3xl"
+            style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
+          >
+            TRUE
+          </motion.span>
+          <motion.span
+            className="font-bold tracking-tight text-white text-3xl"
+            style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
             animate={{
               textShadow: [
-                '0 0 10px rgba(51, 184, 100, 0.5)',
-                '0 0 20px rgba(51, 184, 100, 0.8)',
-                '0 0 10px rgba(51, 184, 100, 0.5)',
+                '0 0 10px rgba(51, 184, 100, 0.3)',
+                '0 0 20px rgba(51, 184, 100, 0.6)',
+                '0 0 10px rgba(51, 184, 100, 0.3)',
               ],
             }}
             transition={{
@@ -220,7 +116,7 @@ export function LoadingScreen() {
               repeat: Infinity,
             }}
           >
-            TRUE SIGNAL
+            SIGNAL
           </motion.span>
         </motion.div>
 
