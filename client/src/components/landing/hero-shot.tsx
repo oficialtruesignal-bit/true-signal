@@ -26,11 +26,12 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-6 tracking-tighter leading-tight lg:max-w-xl"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tighter leading-tight lg:max-w-xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Em um mar de ruído, siga o{' '}
-            <span className="text-[#33b864]">Sinal Verdadeiro</span>.
+            A fusão definitiva usada por operadores no mundo todo:{' '}
+            <span className="text-[#33b864]">Potência de IA</span> com a validação de{' '}
+            <span className="text-[#33b864]">20 Traders Especialistas</span>.
           </motion.h1>
           
           <motion.p
@@ -40,9 +41,9 @@ export function HeroShot() {
             className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Enquanto outros perdem horas filtrando informações falsas, nosso ecossistema une{' '}
-            <span className="text-[#33b864] font-bold">+ de 20 traders esportivos com Inteligência Artificial</span>{' '}
-            para encontrar a verdade no mercado e te entregar sinais validados com precisão.
+            Nós filtramos o mercado e entregamos apenas oportunidades com{' '}
+            <span className="text-[#33b864] font-bold">assertividade mínima de 80%</span>.{' '}
+            O resto é descartado. Sem gráficos complexos. Sem dúvida.
           </motion.p>
           
           <motion.p
@@ -52,8 +53,8 @@ export function HeroShot() {
             className="text-base md:text-lg text-gray-300 mt-4 mb-8 max-w-2xl leading-relaxed font-light"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Nós fazemos o trabalho pesado. Você recebe a decisão pronta, validada e com até{' '}
-            <span className="text-white font-bold">87% de assertividade</span> técnica.
+            Você recebe o sinal pronto:{' '}
+            <span className="text-white font-bold">É Copiar, Colar e Lucrar.</span>
           </motion.p>
           
           <motion.div
