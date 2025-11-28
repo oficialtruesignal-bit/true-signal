@@ -1,16 +1,16 @@
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { Shield, CheckCircle2 } from 'lucide-react';
+import { Shield, CheckCircle2, Sparkles } from 'lucide-react';
 
 export function GuaranteeSeal() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   
-  const guarantees = [
-    '15 dias para testar sem compromisso',
-    'Reembolso 100% automático',
-    'Sem perguntas, sem burocracia',
-    'O risco é todo nosso',
+  const benefits = [
+    '15 dias de acesso gratuito',
+    'Todas as funcionalidades liberadas',
+    'Sem cartão de crédito',
+    'Cancele quando quiser',
   ];
   
   return (
@@ -23,9 +23,9 @@ export function GuaranteeSeal() {
           className="relative"
         >
           {/* Glow effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#33b864]/30 via-yellow-500/20 to-[#33b864]/30 rounded-full blur-3xl opacity-60" />
+          <div className="absolute inset-0 bg-[#33b864]/20 rounded-full blur-3xl opacity-60" />
           
-          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-yellow-500/10 border-2 border-[#33b864]/30 rounded-3xl p-12 backdrop-blur-xl">
+          <div className="relative bg-gradient-to-br from-[#33b864]/10 via-black to-[#33b864]/5 border-2 border-[#33b864]/30 rounded-3xl p-12 backdrop-blur-xl">
             {/* Shield Icon */}
             <motion.div
               initial={{ scale: 0, rotate: -180 }}
@@ -34,9 +34,9 @@ export function GuaranteeSeal() {
               className="flex justify-center mb-8"
             >
               <div className="relative">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#33b864] to-yellow-500 rounded-full blur-2xl opacity-50" />
-                <div className="relative w-32 h-32 rounded-full bg-gradient-to-br from-[#33b864] to-yellow-500 flex items-center justify-center shadow-2xl">
-                  <Shield className="w-16 h-16 text-black" />
+                <div className="absolute inset-0 bg-[#33b864] rounded-full blur-2xl opacity-50" />
+                <div className="relative w-28 h-28 rounded-full bg-gradient-to-br from-[#33b864] to-[#2ea558] flex items-center justify-center shadow-2xl">
+                  <Sparkles className="w-14 h-14 text-black" />
                 </div>
               </div>
             </motion.div>
@@ -49,19 +49,19 @@ export function GuaranteeSeal() {
               className="text-center mb-8"
             >
               <h2 className="text-3xl md:text-3xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-                Garantia{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-yellow-500">
-                  Risco Zero
+                Teste{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#4ade80]">
+                  Grátis por 15 Dias
                 </span>
               </h2>
               <p className="text-xl text-gray-300">
-                Teste a Plataforma por 15 Dias. Não Gostou? Devolvemos Tudo.
+                Experimente a plataforma completa sem pagar nada
               </p>
             </motion.div>
             
-            {/* Guarantees List */}
+            {/* Benefits List */}
             <div className="grid md:grid-cols-2 gap-4 mb-8">
-              {guarantees.map((guarantee, i) => (
+              {benefits.map((benefit, i) => (
                 <motion.div
                   key={i}
                   initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
@@ -72,7 +72,7 @@ export function GuaranteeSeal() {
                   <div className="w-6 h-6 rounded-full bg-[#33b864]/20 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
                   </div>
-                  <span className="text-gray-200 font-medium">{guarantee}</span>
+                  <span className="text-gray-200 font-medium">{benefit}</span>
                 </motion.div>
               ))}
             </div>
@@ -82,15 +82,14 @@ export function GuaranteeSeal() {
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
               transition={{ delay: 0.9 }}
-              className="text-center p-6 bg-gradient-to-r from-[#33b864]/10 to-yellow-500/10 border border-[#33b864]/30 rounded-2xl"
+              className="text-center p-6 bg-gradient-to-r from-[#33b864]/10 to-[#33b864]/5 border border-[#33b864]/30 rounded-2xl"
             >
               <p className="text-lg text-gray-300 leading-relaxed">
-                Se você <span className="text-white font-bold">não ficar satisfeito</span> com a plataforma por qualquer motivo,
-                basta solicitar o reembolso dentro de 15 dias.{' '}
-                <span className="text-[#33b864] font-bold">100% do seu dinheiro de volta</span>. Sem perguntas.
+                Durante os <span className="text-white font-bold">15 dias de teste</span>, você terá acesso completo a todos os sinais e funcionalidades.
+                Se gostar, assine o plano <span className="text-[#33b864] font-bold">True Signal Pro</span> por apenas R$ 47,90/mês.
               </p>
-              <p className="text-xs text-gray-500 mt-4 italic">
-                *Garantia refere-se ao valor da assinatura, não a resultados de apostas. Apostas envolvem risco de perda.
+              <p className="text-sm text-gray-400 mt-4">
+                Sem compromisso. Cancele quando quiser.
               </p>
             </motion.div>
             
@@ -99,11 +98,11 @@ export function GuaranteeSeal() {
               initial={{ opacity: 0, scale: 0 }}
               animate={isInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ delay: 1.1, type: 'spring' }}
-              className="absolute -top-6 -right-6 w-32 h-32 rounded-full bg-gradient-to-br from-yellow-500 to-[#33b864] flex items-center justify-center shadow-2xl border-4 border-black transform rotate-12"
+              className="absolute -top-6 -right-6 w-28 h-28 rounded-full bg-gradient-to-br from-[#33b864] to-[#2ea558] flex items-center justify-center shadow-2xl border-4 border-black transform rotate-12"
             >
               <div className="text-center">
-                <div className="text-2xl font-black text-black">15 DIAS</div>
-                <div className="text-xs text-black font-bold">GARANTIA</div>
+                <div className="text-xl font-black text-black">GRÁTIS</div>
+                <div className="text-xs text-black font-bold">15 DIAS</div>
               </div>
             </motion.div>
           </div>
