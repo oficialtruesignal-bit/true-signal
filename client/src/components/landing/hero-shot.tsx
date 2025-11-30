@@ -26,38 +26,30 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 tracking-tighter leading-tight lg:max-w-xl"
+            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-8 tracking-tight leading-[1.1] lg:max-w-xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            A fusão definitiva usada por operadores no mundo todo:{' '}
-            <span className="text-[#33b864]">Potência de IA</span> com a validação de{' '}
-            <span className="text-[#33b864]">20 Traders Especialistas</span>.
+            Silencie o Ruído.<br />
+            Execute a Verdade.
           </motion.h1>
-          
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-base md:text-lg text-gray-300 mt-6 max-w-2xl leading-relaxed font-light"
-            style={{ fontFamily: 'Sora, sans-serif' }}
-          >
-            Nós filtramos o mercado e entregamos apenas oportunidades com{' '}
-            <span className="text-[#33b864] font-bold">assertividade mínima de 80%</span>.{' '}
-            O resto é descartado. Sem gráficos complexos. Sem dúvida.
-          </motion.p>
           
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-4 mb-8 max-w-2xl"
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="max-w-2xl mb-8 space-y-4"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            <p className="text-base md:text-lg text-gray-300 leading-relaxed font-light">
-              Você recebe o sinal pronto:
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+              O <span className="text-white font-bold">True Signal</span> não entrega palpites. Entrega decisões validadas por{' '}
+              <span className="text-[#33b864] font-bold">IA Militar + 20 Traders de Elite</span>.
             </p>
-            <p className="text-base md:text-lg text-white font-bold text-center lg:text-left mt-1">
-              É Copiar, Colar e Lucrar.
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+              Se a assertividade matemática não for{' '}
+              <span className="text-[#33b864] font-bold">superior a 80%</span>, o sinal é descartado. O que chega no seu celular é a oportunidade pronta.
+            </p>
+            <p className="text-base md:text-lg text-white font-bold">
+              Sem gráficos. Sem dúvida. É Copiar, Colar e Lucrar.
             </p>
           </motion.div>
           
