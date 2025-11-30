@@ -500,33 +500,58 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         </div>
       </div>
 
-      {/* --- BODY: Linhas do bilhete --- */}
-      <div className="p-4 space-y-3">
-        {/* Cada linha do mercado separada */}
-        {signal.market.split('\n').filter(line => line.trim()).map((line, idx) => (
-          <div key={idx} className="flex items-start gap-2">
-            <span className="text-white font-medium text-sm leading-relaxed">
-              {line.trim()}
-            </span>
+      {/* --- BODY: Linhas do bilhete com timeline --- */}
+      <div className="p-4">
+        {/* Timeline vertical com bolinhas */}
+        <div className="relative pl-6">
+          {/* Linha vertical conectora */}
+          <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gray-700"></div>
+          
+          {/* Cada linha do mercado */}
+          <div className="space-y-4">
+            {signal.market.split('\n').filter(line => line.trim()).map((line, idx, arr) => (
+              <div key={idx} className="relative flex items-start">
+                {/* Bolinha */}
+                <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-gray-600 flex items-center justify-center">
+                  <div className="w-1.5 h-1.5 rounded-full bg-gray-500"></div>
+                </div>
+                {/* Texto da linha */}
+                <span className="text-white font-medium text-sm leading-relaxed">
+                  {line.trim()}
+                </span>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
 
-        {/* Times com logos */}
-        <div className="space-y-2 pt-3 mt-2 border-t border-white/10">
+        {/* Times com logos pequenos */}
+        <div className="flex items-center gap-4 pt-4 mt-4 border-t border-white/10">
           {/* Time Casa */}
-          <div className="flex items-center gap-3">
-            <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
-            <span className="text-white font-medium text-sm">
-              {signal.homeTeam}
-            </span>
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+              {homeTeamLogo ? (
+                <img src={homeTeamLogo} alt={signal.homeTeam} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                  {signal.homeTeam.charAt(0)}
+                </div>
+              )}
+            </div>
+            <span className="text-white text-sm font-medium">{signal.homeTeam}</span>
           </div>
 
           {/* Time Fora */}
-          <div className="flex items-center gap-3">
-            <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
-            <span className="text-white font-medium text-sm">
-              {signal.awayTeam}
-            </span>
+          <div className="flex items-center gap-2 flex-1 justify-end">
+            <span className="text-white text-sm font-medium">{signal.awayTeam}</span>
+            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+              {awayTeamLogo ? (
+                <img src={awayTeamLogo} alt={signal.awayTeam} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                  {signal.awayTeam.charAt(0)}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
