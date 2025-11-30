@@ -54,9 +54,6 @@ export function HeroShot() {
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
               Transformamos horas de estudo difícil em um sinal simples no seu celular.
             </p>
-            <p className="text-base md:text-lg text-white font-bold">
-              Nós fazemos o trabalho chato. Você só copia e cola.
-            </p>
           </motion.div>
           
           <motion.div
