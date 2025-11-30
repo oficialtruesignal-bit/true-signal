@@ -12,7 +12,6 @@ import { ptBR } from "date-fns/locale";
 interface BetLeg {
   id: string;
   market: string;
-  odd: string;
 }
 
 interface ManualTicketFormProps {
@@ -53,10 +52,13 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     matchTime: "",
   });
   
-  // Múltiplas apostas
+  // Múltiplas linhas do bilhete
   const [legs, setLegs] = useState<BetLeg[]>([
-    { id: crypto.randomUUID(), market: "", odd: "" }
+    { id: crypto.randomUUID(), market: "" }
   ]);
+  
+  // Odd total única
+  const [totalOdd, setTotalOdd] = useState("");
 
   // Buscar jogos da API
   const { data: fixtures = [], isLoading } = useQuery({
@@ -75,14 +77,8 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     );
   });
 
-  // Calcular odd total
-  const totalOdd = legs.reduce((acc, leg) => {
-    const odd = parseFloat(leg.odd) || 1;
-    return acc * odd;
-  }, 1);
-
   const addLeg = () => {
-    setLegs([...legs, { id: crypto.randomUUID(), market: "", odd: "" }]);
+    setLegs([...legs, { id: crypto.randomUUID(), market: "" }]);
   };
 
   const removeLeg = (id: string) => {
@@ -122,17 +118,20 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     // Validar legs
     for (const leg of legs) {
       if (!leg.market.trim()) {
-        toast.error("Preencha o mercado em todas as apostas");
-        return;
-      }
-      if (!leg.odd || parseFloat(leg.odd) <= 0) {
-        toast.error("Preencha a odd corretamente");
+        toast.error("Preencha todas as linhas do bilhete");
         return;
       }
     }
+    
+    // Validar odd total
+    if (!totalOdd || parseFloat(totalOdd) <= 0) {
+      toast.error("Preencha a odd total do bilhete");
+      return;
+    }
 
-    // Combinar mercados se múltiplas apostas
-    const marketText = legs.map(leg => leg.market.trim()).filter(m => m).join(' + ');
+    // Combinar mercados com quebra de linha
+    const marketText = legs.map(leg => leg.market.trim()).filter(m => m).join('\n');
+    const oddValue = parseFloat(totalOdd);
 
     if (isManualMode) {
       // Enviar dados manuais
@@ -142,7 +141,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         league: manualData.league.trim(),
         matchTime: manualData.matchTime.trim(),
         market: marketText,
-        odd: totalOdd,
+        odd: oddValue,
         betLink: betLink,
       });
 
@@ -164,7 +163,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         league: selectedMatch.league.name,
         matchTime: matchTime,
         market: marketText,
-        odd: totalOdd,
+        odd: oddValue,
         betLink: betLink,
         homeTeamLogo: selectedMatch.teams.home.logo,
         awayTeamLogo: selectedMatch.teams.away.logo,
@@ -175,7 +174,8 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
       setSelectedMatch(null);
     }
     
-    setLegs([{ id: crypto.randomUUID(), market: "", odd: "" }]);
+    setLegs([{ id: crypto.randomUUID(), market: "" }]);
+    setTotalOdd("");
     setBetLink("");
   };
 
@@ -373,25 +373,13 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
             
             {legs.map((leg, index) => (
               <div key={leg.id} className="flex gap-2 items-start">
-                <div className="flex-1 space-y-2">
+                <div className="flex-1">
                   <Input
                     placeholder="Ex: Resultado Final - Vitória Casa"
                     value={leg.market}
                     onChange={(e) => updateLeg(leg.id, "market", e.target.value)}
                     className="bg-background/50 border-border/50 text-sm"
                     data-testid={`input-manual-market-${index}`}
-                  />
-                </div>
-                <div className="w-20">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="1"
-                    placeholder="Odd"
-                    value={leg.odd}
-                    onChange={(e) => updateLeg(leg.id, "odd", e.target.value)}
-                    className="bg-background/50 border-border/50 text-sm text-center"
-                    data-testid={`input-manual-odd-${index}`}
                   />
                 </div>
                 {legs.length > 1 && (
@@ -408,6 +396,21 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
                 )}
               </div>
             ))}
+            
+            {/* Odd Total */}
+            <div className="pt-3 border-t border-border/20">
+              <Label className="text-sm text-muted-foreground mb-2 block">Odd Total do Bilhete</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="1"
+                placeholder="Ex: 2.50"
+                value={totalOdd}
+                onChange={(e) => setTotalOdd(e.target.value)}
+                className="bg-background/50 border-border/50 text-sm w-32"
+                data-testid="input-manual-total-odd"
+              />
+            </div>
           </div>
 
           {/* Link (opcional) */}
@@ -427,7 +430,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-muted-foreground">Odd Total</p>
-                <p className="text-2xl font-bold text-primary">{totalOdd.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-primary">{totalOdd || "--"}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Tipo</p>
@@ -520,25 +523,13 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
             
             {legs.map((leg, index) => (
               <div key={leg.id} className="flex gap-2 items-start">
-                <div className="flex-1 space-y-2">
+                <div className="flex-1">
                   <Input
                     placeholder="Ex: Resultado Final - Vitória Casa"
                     value={leg.market}
                     onChange={(e) => updateLeg(leg.id, "market", e.target.value)}
                     className="bg-background/50 border-border/50 text-sm"
                     data-testid={`input-market-${index}`}
-                  />
-                </div>
-                <div className="w-20">
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="1"
-                    placeholder="Odd"
-                    value={leg.odd}
-                    onChange={(e) => updateLeg(leg.id, "odd", e.target.value)}
-                    className="bg-background/50 border-border/50 text-sm text-center"
-                    data-testid={`input-odd-${index}`}
                   />
                 </div>
                 {legs.length > 1 && (
@@ -555,6 +546,21 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
                 )}
               </div>
             ))}
+            
+            {/* Odd Total */}
+            <div className="pt-3 border-t border-border/20">
+              <Label className="text-sm text-muted-foreground mb-2 block">Odd Total do Bilhete</Label>
+              <Input
+                type="number"
+                step="0.01"
+                min="1"
+                placeholder="Ex: 2.50"
+                value={totalOdd}
+                onChange={(e) => setTotalOdd(e.target.value)}
+                className="bg-background/50 border-border/50 text-sm w-32"
+                data-testid="input-total-odd"
+              />
+            </div>
           </div>
 
           {/* Link (opcional) */}
@@ -574,7 +580,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
             <div className="flex items-center justify-between mb-4">
               <div>
                 <p className="text-xs text-muted-foreground">Odd Total</p>
-                <p className="text-2xl font-bold text-primary">{totalOdd.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-primary">{totalOdd || "--"}</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Tipo</p>
