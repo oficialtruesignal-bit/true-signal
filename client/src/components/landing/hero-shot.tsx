@@ -26,7 +26,7 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-8 tracking-tight leading-[1.15] lg:max-w-xl"
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-6 md:mb-8 tracking-tight leading-[1.2] lg:max-w-xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
             Chega de "Achismo".<br />
@@ -37,22 +37,22 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-2xl mb-8 space-y-4"
+            className="max-w-2xl mb-6 md:mb-8 space-y-3 md:space-y-4"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed">
               Você não precisa mais quebrar a cabeça analisando.
             </p>
-            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Temos <span className="text-[#33b864] font-bold">20 Especialistas (7+ anos de mercado)</span> trabalhando lado a lado com nossa{' '}
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed">
+              Temos <span className="text-[#33b864] font-bold">20 Especialistas</span> (7+ anos) trabalhando com nossa{' '}
               <span className="text-[#33b864] font-bold">IA Esportiva</span>.
             </p>
-            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              A IA lê os dados, nós filtramos os riscos e entregamos apenas as melhores oportunidades{' '}
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed">
+              A IA lê os dados, nós filtramos os riscos e entregamos as melhores oportunidades{' '}
               <span className="text-[#33b864] font-bold">(assertividade acima de 83%)</span>.
             </p>
-            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              São horas de análises, após isso te enviamos uma notificação em seu celular para você copiar e colar a entrada.
+            <p className="text-sm sm:text-base md:text-lg text-gray-300 leading-relaxed">
+              São horas de análises. Depois, você recebe uma notificação para copiar e colar.
             </p>
           </motion.div>
           
@@ -64,7 +64,7 @@ export function HeroShot() {
           >
             <Link href="/auth">
               <motion.button
-                className="group relative px-8 md:px-10 py-5 md:py-6 bg-[#33b864] text-black font-black text-base md:text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
+                className="group relative px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-[#33b864] text-black font-black text-sm sm:text-base md:text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
                 data-testid="button-access-ai"
                 animate={{
                   scale: [1, 1.05, 1],
@@ -91,9 +91,9 @@ export function HeroShot() {
                     ease: 'linear',
                   }}
                 />
-                <span className="relative z-10 flex items-center gap-2 whitespace-nowrap" style={{ fontFamily: 'Sora, sans-serif' }}>
-                  <Zap className="w-5 h-5" />
-                  QUERO RECEBER OS SINAIS
+                <span className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap" style={{ fontFamily: 'Sora, sans-serif' }}>
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5" />
+                  RECEBER OS SINAIS
                 </span>
               </motion.button>
             </Link>
