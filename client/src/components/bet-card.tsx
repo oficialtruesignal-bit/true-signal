@@ -494,9 +494,8 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
             </DropdownMenu>
           )}
         </div>
-        <div className="flex items-center gap-3">
-          <span className="text-[#33b864] font-semibold text-xs italic">CRIAR</span>
-          <span className="text-white font-bold text-xs">APOSTA</span>
+        <div className="flex items-center gap-2">
+          <span className="text-gray-400 text-xs">ODD DO BILHETE</span>
           <span className="text-white font-bold text-xl">{totalOdd.toFixed(2)}</span>
         </div>
       </div>
