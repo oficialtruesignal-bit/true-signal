@@ -42,8 +42,8 @@ export function HeroShot() {
           >
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
               Você não precisa analisar. Nós temos uma infraestrutura com{' '}
-              <span className="text-[#33b864] font-bold">20 Especialistas (5+ anos de mercado)</span>{' '}
-              operando lado a lado com <span className="text-[#33b864] font-bold">IA Preditiva</span>.
+              <span className="text-[#33b864] font-bold">20 Especialistas</span> a mais de 7 anos no mercado operando junto nossa{' '}
+              <span className="text-[#33b864] font-bold">IA esportiva</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
               Processamos milhares de dados, filtramos o risco e entregamos apenas oportunidades com{' '}
