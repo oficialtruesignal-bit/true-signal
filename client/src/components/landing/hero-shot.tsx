@@ -91,9 +91,9 @@ export function HeroShot() {
                     ease: 'linear',
                   }}
                 />
-                <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
+                <span className="relative z-10 flex items-center gap-2 whitespace-nowrap" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-5 h-5" />
-                  QUERO RECEBER AS NOTIFICAÇÕES
+                  QUERO RECEBER OS SINAIS
                 </span>
               </motion.button>
             </Link>
