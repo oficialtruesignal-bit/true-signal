@@ -261,7 +261,7 @@ export function OfferPack() {
           </h4>
           
           <p className="text-gray-400 text-base leading-relaxed max-w-lg mx-auto mb-8">
-            Você tem <span className="text-[#33b864] font-bold">5 DIAS</span> de teste. Se não lucrar, se não gostar ou mudar de ideia, devolvemos cada centavo. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
+            Você tem <span className="text-[#33b864] font-bold">5 DIAS</span> de teste. Se não gostar ou mudar de ideia, devolvemos 100% do valor do plano. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
           </p>
           
           {/* Guarantee badges - 2x2 grid with more spacing */}
