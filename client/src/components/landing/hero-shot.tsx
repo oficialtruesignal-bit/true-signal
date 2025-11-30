@@ -26,11 +26,11 @@ export function HeroShot() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-white mb-8 tracking-tight leading-[1.1] lg:max-w-xl"
+            className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-white mb-8 tracking-tight leading-[1.15] lg:max-w-xl"
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
-            Silencie o Ruído.<br />
-            Execute a Verdade.
+            Chega de "Achismo".<br />
+            O mercado pune quem tenta adivinhar.
           </motion.h1>
           
           <motion.div
@@ -41,15 +41,19 @@ export function HeroShot() {
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              O <span className="text-white font-bold">True Signal</span> não entrega palpites. Entrega decisões validadas por{' '}
-              <span className="text-[#33b864] font-bold">IA Militar + 20 Traders de Elite</span>.
+              Você não precisa analisar. Nós temos uma infraestrutura com{' '}
+              <span className="text-[#33b864] font-bold">20 Especialistas (5+ anos de mercado)</span>{' '}
+              operando lado a lado com <span className="text-[#33b864] font-bold">IA Preditiva</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Se a assertividade matemática não for{' '}
-              <span className="text-[#33b864] font-bold">superior a 80%</span>, o sinal é descartado. O que chega no seu celular é a oportunidade pronta.
+              Processamos milhares de dados, filtramos o risco e entregamos apenas oportunidades com{' '}
+              <span className="text-[#33b864] font-bold">assertividade superior a 85%</span>.
+            </p>
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+              Horas de análise técnica condensadas em uma notificação no seu celular.
             </p>
             <p className="text-base md:text-lg text-white font-bold">
-              Sem gráficos. Sem dúvida. É Copiar, Colar e Lucrar.
+              O trabalho duro é nosso. O lucro é seu.
             </p>
           </motion.div>
           
@@ -90,7 +94,7 @@ export function HeroShot() {
                 />
                 <span className="relative z-10 flex items-center gap-3" style={{ fontFamily: 'Sora, sans-serif' }}>
                   <Zap className="w-5 h-5" />
-                  FAZER TESTE GRÁTIS
+                  QUERO RECEBER AS NOTIFICAÇÕES
                 </span>
               </motion.button>
             </Link>
