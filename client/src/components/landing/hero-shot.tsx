@@ -46,14 +46,14 @@ export function HeroShot() {
               <span className="text-[#33b864] font-bold">IA esportiva</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Processamos milhares de dados, filtramos o risco e entregamos apenas oportunidades com{' '}
-              <span className="text-[#33b864] font-bold">assertividade superior a 85%</span>.
+              Ela processa milhares de dados e linhas dos jogos, nós filtramos os riscos e entregamos apenas oportunidades com{' '}
+              <span className="text-[#33b864] font-bold">assertividade superior a 83%</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Horas de análise técnica condensadas em uma notificação no seu celular.
+              São horas de análises técnicas para te entregar as melhores entradas.
             </p>
             <p className="text-base md:text-lg text-white font-bold">
-              O trabalho duro é nosso. O lucro é seu.
+              Você paga pra isso, para nós trabalharmos para você.
             </p>
           </motion.div>
           
