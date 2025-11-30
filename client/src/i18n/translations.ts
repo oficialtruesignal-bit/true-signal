@@ -29,7 +29,7 @@ export const translations = {
       cta: "Liberar Acesso Profissional",
     },
     tips: {
-      title: "Bilhetes Prontos",
+      title: "Bilhetes Analisados",
       subtitle: "Análises curadas por 20 especialistas + IA com precisão de 97%",
       noTips: "Nenhum bilhete disponível no momento.",
       newSignals: "Novos bilhetes serão publicados em breve.",
