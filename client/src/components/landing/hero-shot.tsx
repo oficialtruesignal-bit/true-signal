@@ -52,7 +52,7 @@ export function HeroShot() {
               <span className="text-[#33b864] font-bold">(assertividade acima de 83%)</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Transformamos horas de estudo difícil em um sinal simples no seu celular.
+              São horas de análises, após isso te enviamos uma notificação em seu celular para você copiar e colar a entrada.
             </p>
           </motion.div>
           
