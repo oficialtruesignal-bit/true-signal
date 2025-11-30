@@ -784,7 +784,7 @@ export default function CheckoutPage() {
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <TrendingUp className="w-6 h-6 text-[#33b864]" />
             </div>
-            <h3 className="font-bold text-white mb-2">87% de Assertividade</h3>
+            <h3 className="font-bold text-white mb-2">83% de Assertividade</h3>
             <p className="text-sm text-gray-400">Taxa comprovada pelos nossos usuários</p>
           </div>
           <div className="bg-card border border-white/10 rounded-xl p-6 text-center">

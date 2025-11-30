@@ -125,7 +125,7 @@ export default function TipsPage() {
               <span className="text-[#33b864] font-bold text-xs uppercase tracking-wider">{t.tips.performanceLabel}</span>
             </div>
             <p className="text-gray-300 text-sm font-inter">
-              {t.tips.performanceText} <span className="text-white font-bold font-sora">87%</span> {t.tips.performanceTickets}
+              {t.tips.performanceText} <span className="text-white font-bold font-sora">83%</span> {t.tips.performanceTickets}
             </p>
           </div>
 

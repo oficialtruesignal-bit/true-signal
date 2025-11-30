@@ -7,7 +7,7 @@ const results = [
   'ROI MENSAL: 102%',
   'GREEN BARCELONA ✅',
   '+R$ 15.420 ESTA SEMANA',
-  'ASSERTIVIDADE: 91.9%',
+  'ASSERTIVIDADE: 83%',
   'GREEN REAL MADRID ✅',
 ];
 
