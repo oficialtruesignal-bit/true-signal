@@ -41,19 +41,21 @@ export function HeroShot() {
             style={{ fontFamily: 'Sora, sans-serif' }}
           >
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Você não precisa analisar. Nós temos uma infraestrutura com{' '}
-              <span className="text-[#33b864] font-bold">20 Especialistas</span> a mais de 7 anos no mercado operando junto nossa{' '}
-              <span className="text-[#33b864] font-bold">IA esportiva</span>.
+              Você não precisa mais quebrar a cabeça analisando.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              Ela processa milhares de dados e linhas dos jogos, nós filtramos os riscos e entregamos apenas oportunidades com{' '}
-              <span className="text-[#33b864] font-bold">assertividade superior a 83%</span>.
+              Temos <span className="text-[#33b864] font-bold">20 Especialistas (7+ anos de mercado)</span> trabalhando lado a lado com nossa{' '}
+              <span className="text-[#33b864] font-bold">IA Esportiva</span>.
             </p>
             <p className="text-base md:text-lg text-gray-300 leading-relaxed">
-              São horas de análises técnicas para te entregar as melhores entradas.
+              A IA lê os dados, nós filtramos os riscos e entregamos apenas as melhores oportunidades{' '}
+              <span className="text-[#33b864] font-bold">(assertividade acima de 83%)</span>.
+            </p>
+            <p className="text-base md:text-lg text-gray-300 leading-relaxed">
+              Transformamos horas de estudo difícil em um sinal simples no seu celular.
             </p>
             <p className="text-base md:text-lg text-white font-bold">
-              Você paga pra isso, para nós trabalharmos para você.
+              Nós fazemos o trabalho chato. Você só copia e cola.
             </p>
           </motion.div>
           
