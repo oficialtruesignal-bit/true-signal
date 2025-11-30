@@ -560,6 +560,22 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
             </div>
           </div>
         </div>
+        
+        {/* Data e Hora do Jogo */}
+        {officialMatchTime && (
+          <div className="text-center mt-3 pt-3 border-t border-white/5">
+            <span className="text-gray-400 text-xs">
+              {(() => {
+                const date = new Date(officialMatchTime);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month} às ${hours}:${minutes}`;
+              })()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* --- FOOTER: Botão de Ação --- */}
