@@ -449,52 +449,54 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
       className="w-full bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg relative group"
       data-testid={`bet-card-${signal.id}`}
     >
-      {/* --- HEADER: CRIAR APOSTA + ODD TOTAL --- */}
+      {/* --- HEADER: ODD TOTAL + Controles Admin --- */}
       <div className="px-4 py-3 flex justify-between items-center border-b border-white/10">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-gray-500">{dateOnly} às {timeOnly}</span>
           {isAdmin && (
-            <div className="flex items-center gap-1">
-              {/* Botão Deletar */}
-              <button 
-                onClick={() => setShowDeleteDialog(true)}
-                className="p-1 rounded hover:bg-red-500/10 transition-colors"
-                data-testid="delete-signal-button-header"
-              >
-                <Trash2 className="w-3 h-3 text-red-500" />
-              </button>
-              {/* Menu de Status */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button 
-                    className="p-1 rounded hover:bg-[#33b864]/10 transition-colors"
-                    data-testid="edit-status-button"
-                  >
-                    <Pencil className="w-3 h-3 text-[#33b864]" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30">
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange('pending')}
-                    className="text-[#33b864] cursor-pointer hover:bg-[#33b864]/10"
-                  >
-                    ⏳ PENDENTE
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange('green')}
-                    className="text-green-500 cursor-pointer hover:bg-green-500/10"
-                  >
-                    ✅ GANHOU
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => handleStatusChange('red')}
-                    className="text-red-500 cursor-pointer hover:bg-red-500/10"
-                  >
-                    ❌ PERDIDA
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
+            <>
+              <span className="text-[10px] text-gray-500">{dateOnly} às {timeOnly}</span>
+              <div className="flex items-center gap-1">
+                {/* Botão Deletar */}
+                <button 
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="p-1 rounded hover:bg-red-500/10 transition-colors"
+                  data-testid="delete-signal-button-header"
+                >
+                  <Trash2 className="w-3 h-3 text-red-500" />
+                </button>
+                {/* Menu de Status */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button 
+                      className="p-1 rounded hover:bg-[#33b864]/10 transition-colors"
+                      data-testid="edit-status-button"
+                    >
+                      <Pencil className="w-3 h-3 text-[#33b864]" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30">
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('pending')}
+                      className="text-[#33b864] cursor-pointer hover:bg-[#33b864]/10"
+                    >
+                      ⏳ PENDENTE
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('green')}
+                      className="text-green-500 cursor-pointer hover:bg-green-500/10"
+                    >
+                      ✅ GANHOU
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('red')}
+                      className="text-red-500 cursor-pointer hover:bg-red-500/10"
+                    >
+                      ❌ PERDIDA
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -561,9 +563,10 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           </div>
         </div>
         
-        {/* Data e Hora do Jogo */}
-        {officialMatchTime && (
-          <div className="text-center mt-3 pt-3 border-t border-white/5">
+        {/* Campeonato + Data e Hora do Jogo */}
+        <div className="text-center mt-3 pt-3 border-t border-white/5">
+          <div className="text-[#33b864] text-xs font-medium mb-1">{officialLeague}</div>
+          {officialMatchTime && (
             <span className="text-gray-400 text-xs">
               {(() => {
                 const date = new Date(officialMatchTime);
@@ -574,8 +577,8 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
                 return `${day}/${month} às ${hours}:${minutes}`;
               })()}
             </span>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* --- FOOTER: Botão de Ação --- */}
