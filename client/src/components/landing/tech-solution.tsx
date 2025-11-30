@@ -2,7 +2,6 @@ import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
 import { Zap, Globe, Users, Smartphone } from 'lucide-react';
 import { ProfitSimulator } from './profit-simulator';
-import { TimeComparison } from './time-comparison';
 
 export function TechSolution() {
   const ref = useRef(null);
@@ -167,14 +166,6 @@ export function TechSolution() {
             </div>
           </motion.div>
           
-          {/* Time Comparison - Before vs After */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <TimeComparison />
-          </motion.div>
         </div>
       </div>
     </section>
