@@ -501,38 +501,33 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         </div>
       </div>
 
-      {/* --- BODY: Mercado com detalhes --- */}
-      <div className="p-4 space-y-4">
-        {/* Mercado Principal */}
-        <div className="space-y-1">
-          <p className="text-white font-semibold text-sm">
-            {signal.market}
-          </p>
-          <p className="text-gray-500 text-xs">
-            {officialLeague}
-          </p>
-        </div>
+      {/* --- BODY: Linhas do bilhete --- */}
+      <div className="p-4 space-y-3">
+        {/* Cada linha do mercado separada */}
+        {signal.market.split('\n').filter(line => line.trim()).map((line, idx) => (
+          <div key={idx} className="flex items-start gap-2">
+            <span className="text-white font-medium text-sm leading-relaxed">
+              {line.trim()}
+            </span>
+          </div>
+        ))}
 
-        {/* Times com logos e placar */}
-        <div className="space-y-2 pt-2 border-t border-white/5">
+        {/* Times com logos */}
+        <div className="space-y-2 pt-3 mt-2 border-t border-white/10">
           {/* Time Casa */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
-              <span className="text-white font-medium text-sm">
-                {signal.homeTeam}
-              </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <TeamShield teamName={signal.homeTeam} logoUrl={homeTeamLogo || undefined} />
+            <span className="text-white font-medium text-sm">
+              {signal.homeTeam}
+            </span>
           </div>
 
           {/* Time Fora */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
-              <span className="text-white font-medium text-sm">
-                {signal.awayTeam}
-              </span>
-            </div>
+          <div className="flex items-center gap-3">
+            <TeamShield teamName={signal.awayTeam} logoUrl={awayTeamLogo || undefined} />
+            <span className="text-white font-medium text-sm">
+              {signal.awayTeam}
+            </span>
           </div>
         </div>
       </div>

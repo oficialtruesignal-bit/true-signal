@@ -134,11 +134,11 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
         if (data.bets && data.bets.length > 0) {
           const firstBet = data.bets[0];
           
-          // Combina todos os mercados com " + "
+          // Combina todos os mercados com quebra de linha
           const allMarkets = data.bets
             .map(bet => bet.market)
             .filter(Boolean)
-            .join(' + ');
+            .join('\n');
           
           form.setValue('league', firstBet.league || '');
           form.setValue('homeTeam', firstBet.home_team || '');
@@ -377,14 +377,16 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
               name="market"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-white text-xs">Mercado</FormLabel>
+                  <FormLabel className="text-white text-xs">Linhas do Bilhete (uma por linha)</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="Ex: Over 2.5 Gols, Ambas Marcam" 
+                    <textarea 
+                      placeholder={`Ex:\nInternacional - Mais de 6.5 Chutes\nVasco - Mais de 8.5 Chutes\nAmbos os times receberem cartão\nMenos de 14 escanteios`}
                       {...field} 
-                      className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
+                      rows={5}
+                      className="w-full bg-black/40 border border-primary/20 text-white focus-visible:ring-primary text-sm rounded-md px-3 py-2 resize-none placeholder:text-gray-500" 
                     />
                   </FormControl>
+                  <p className="text-[10px] text-gray-500 mt-1">Cada linha será exibida separadamente no bilhete</p>
                   <FormMessage />
                 </FormItem>
               )}
