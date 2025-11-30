@@ -48,10 +48,10 @@ export function LockedScreen() {
           className="text-center mb-8"
         >
           <h1 className="text-4xl md:text-5xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Seu Período de Degustação Acabou
+            Seu Período de Teste Acabou
           </h1>
           <p className="text-xl text-gray-300 mb-2">
-            Você provou a precisão da nossa IA por 15 dias.
+            Você testou a precisão da nossa IA por 5 dias.
           </p>
           <p className="text-lg text-gray-400">
             Agora é hora de desbloquear todo o poder do <span className="text-[#33b864] font-bold">TRUE SIGNAL</span>.

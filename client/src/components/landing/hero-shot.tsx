@@ -99,7 +99,7 @@ export function HeroShot() {
               </motion.button>
             </Link>
             <p className="text-sm text-gray-500 font-light" style={{ fontFamily: 'Sora, sans-serif' }}>
-              Acesso imediato. 15 dias de degustação gratuita.
+              Acesso imediato. 5 dias grátis para testar.
             </p>
           </motion.div>
         </div>

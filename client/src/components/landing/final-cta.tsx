@@ -83,7 +83,7 @@ export function FinalCTA() {
         >
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
-            <span>15 dias grátis</span>
+            <span>5 dias grátis</span>
           </div>
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 text-[#33b864]" />

@@ -12,7 +12,7 @@ export default function PricingPage() {
   const [, setLocation] = useLocation();
 
   const trialFeatures = [
-    { text: 'Acesso por 15 dias', included: true },
+    { text: 'Acesso por 5 dias', included: true },
     { text: 'Apenas 1 sinal por dia', included: true, highlight: true },
     { text: 'Recursos limitados', included: true },
   ];
@@ -62,7 +62,7 @@ export default function PricingPage() {
           </h1>
           
           <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
-            Comece com 15 dias gratuitos e descubra o poder da inteligência artificial aplicada às apostas esportivas
+            Comece com 5 dias gratuitos e descubra o poder da inteligência artificial aplicada às apostas esportivas
           </p>
 
           {isTrial && (
@@ -114,7 +114,7 @@ export default function PricingPage() {
               <div className="mb-8">
                 <div className="flex items-baseline gap-2">
                   <span className="text-5xl font-black text-white">R$ 0</span>
-                  <span className="text-gray-400">/15 dias</span>
+                  <span className="text-gray-400">/5 dias</span>
                 </div>
                 <p className="text-sm text-gray-500 mt-2">Sem cartão de crédito necessário</p>
               </div>
@@ -222,7 +222,7 @@ export default function PricingPage() {
               )}
 
               <p className="text-xs text-center text-gray-500 mt-4">
-                Garantia de reembolso de 15 dias
+                Garantia de reembolso de 5 dias
               </p>
             </div>
           </motion.div>
@@ -242,7 +242,7 @@ export default function PricingPage() {
               <div>
                 <p className="text-sm font-semibold text-[#33b864] mb-1">O que acontece após o período gratuito?</p>
                 <p className="text-sm text-gray-400">
-                  Após 15 dias, seu acesso será bloqueado. Você pode assinar o True Signal Pro a qualquer momento para continuar.
+                  Após 5 dias, seu acesso será bloqueado. Você pode assinar o True Signal Pro a qualquer momento para continuar.
                 </p>
               </div>
               <div>
@@ -254,7 +254,7 @@ export default function PricingPage() {
               <div>
                 <p className="text-sm font-semibold text-[#33b864] mb-1">Como funciona a garantia de reembolso?</p>
                 <p className="text-sm text-gray-400">
-                  Se não ficar satisfeito com a plataforma nos primeiros 15 dias, devolvemos 100% do seu investimento.
+                  Se não ficar satisfeito com a plataforma nos primeiros 5 dias, devolvemos 100% do seu investimento.
                 </p>
               </div>
             </div>

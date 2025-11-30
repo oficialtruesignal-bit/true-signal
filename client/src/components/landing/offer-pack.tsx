@@ -261,12 +261,12 @@ export function OfferPack() {
           </h4>
           
           <p className="text-gray-400 text-base leading-relaxed max-w-lg mx-auto mb-8">
-            Você tem <span className="text-[#33b864] font-bold">15 DIAS</span> de teste. Se não lucrar, se não gostar ou mudar de ideia, devolvemos cada centavo. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
+            Você tem <span className="text-[#33b864] font-bold">5 DIAS</span> de teste. Se não lucrar, se não gostar ou mudar de ideia, devolvemos cada centavo. <span className="text-white font-semibold">Sem perguntas. Sem burocracia.</span>
           </p>
           
           {/* Guarantee badges - 2x2 grid with more spacing */}
           <div className="grid grid-cols-2 gap-4 max-w-md mx-auto">
-            {['15 dias de teste', 'Reembolso total', 'Sem perguntas', 'Risco zero'].map((text, i) => (
+            {['5 dias de teste', 'Reembolso total', 'Sem perguntas', 'Risco zero'].map((text, i) => (
               <div key={i} className="flex items-center justify-center gap-2 py-3">
                 <CheckCircle2 className="w-5 h-5 text-[#33b864]" />
                 <span className="text-sm text-gray-300">{text}</span>

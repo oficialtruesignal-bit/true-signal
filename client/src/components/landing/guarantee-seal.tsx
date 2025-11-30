@@ -7,7 +7,7 @@ export function GuaranteeSeal() {
   const isInView = useInView(ref, { once: true });
   
   const benefits = [
-    '15 dias de acesso gratuito',
+    '5 dias de acesso gratuito',
     'Todas as funcionalidades liberadas',
     'Sem cartão de crédito',
     'Cancele quando quiser',
@@ -51,7 +51,7 @@ export function GuaranteeSeal() {
               <h2 className="text-3xl md:text-3xl font-black text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
                 Teste{' '}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#33b864] to-[#4ade80]">
-                  Grátis por 15 Dias
+                  Grátis por 5 Dias
                 </span>
               </h2>
               <p className="text-xl text-gray-300">
@@ -85,7 +85,7 @@ export function GuaranteeSeal() {
               className="text-center p-6 bg-gradient-to-r from-[#33b864]/10 to-[#33b864]/5 border border-[#33b864]/30 rounded-2xl"
             >
               <p className="text-lg text-gray-300 leading-relaxed">
-                Durante os <span className="text-white font-bold">15 dias de teste</span>, você terá acesso completo a todos os sinais e funcionalidades.
+                Durante os <span className="text-white font-bold">5 dias de teste</span>, você terá acesso completo a todos os sinais e funcionalidades.
                 Se gostar, assine o plano <span className="text-[#33b864] font-bold">True Signal Pro</span> por apenas R$ 47,90/mês.
               </p>
               <p className="text-sm text-gray-400 mt-4">
@@ -102,7 +102,7 @@ export function GuaranteeSeal() {
             >
               <div className="text-center">
                 <div className="text-xl font-black text-black">GRÁTIS</div>
-                <div className="text-xs text-black font-bold">15 DIAS</div>
+                <div className="text-xs text-black font-bold">5 DIAS</div>
               </div>
             </motion.div>
           </div>
