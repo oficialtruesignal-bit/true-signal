@@ -528,7 +528,7 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
         </div>
 
         {/* Times com logos pequenos */}
-        <div className="flex items-center gap-4 pt-4 mt-4 border-t border-white/10">
+        <div className="flex items-center pt-4 mt-4 border-t border-white/10">
           {/* Time Casa */}
           <div className="flex items-center gap-2 flex-1">
             <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
@@ -542,6 +542,9 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
             </div>
             <span className="text-white text-sm font-medium">{signal.homeTeam}</span>
           </div>
+
+          {/* X central */}
+          <span className="text-gray-500 font-bold text-sm px-3">X</span>
 
           {/* Time Fora */}
           <div className="flex items-center gap-2 flex-1 justify-end">
