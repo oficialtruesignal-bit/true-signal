@@ -2,6 +2,7 @@ import axios from 'axios';
 import { db } from './db';
 import { teamMatchStats, aiTickets, aiAnalysisCache } from '@shared/schema';
 import { eq, and, gte, desc, sql } from 'drizzle-orm';
+import { validateComboLegs } from './combo-utils';
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 const API_BASE_URL = 'https://v3.football.api-sports.io';
@@ -1006,6 +1007,218 @@ class AIPredictionEngine {
       .from(aiTickets)
       .where(eq(aiTickets.status, 'draft'))
       .orderBy(desc(aiTickets.confidence));
+  }
+
+  /**
+   * Gera bilhetes combinados (combos) com odd mínima de 1.50
+   * Agrupa previsões de alta confiança em combos de 2-3 seleções
+   */
+  async generateComboPredictions(predictions: Array<{
+    fixtureId: string;
+    league: string;
+    homeTeam: string;
+    awayTeam: string;
+    homeTeamLogo: string;
+    awayTeamLogo: string;
+    matchTime: Date;
+    market: string;
+    predictedOutcome: string;
+    suggestedOdd: number;
+    confidence: number;
+    probability: number;
+    rationale: string[];
+    homeStats: any;
+    awayStats: any;
+  }>): Promise<number> {
+    const MIN_TOTAL_ODD = 1.50;
+    const MIN_INDIVIDUAL_ODD = 1.15; // Ignorar odds muito baixas
+    const MAX_LEGS = 3;
+    
+    // Filtrar previsões válidas (confiança >= 75%, odd >= 1.15)
+    const validPredictions = predictions.filter(p => 
+      p.confidence >= 75 && 
+      p.suggestedOdd >= MIN_INDIVIDUAL_ODD
+    );
+    
+    console.log(`[AI Combos] ${validPredictions.length} previsões válidas de ${predictions.length} total`);
+    
+    if (validPredictions.length === 0) return 0;
+    
+    // Ordenar por confiança (maior primeiro)
+    validPredictions.sort((a, b) => b.confidence - a.confidence);
+    
+    let combosCreated = 0;
+    const usedPredictions = new Set<string>();
+    
+    // Estratégia 1: Combos do mesmo jogo (diferentes mercados)
+    const byFixture = new Map<string, typeof validPredictions>();
+    for (const pred of validPredictions) {
+      const key = pred.fixtureId;
+      if (!byFixture.has(key)) byFixture.set(key, []);
+      byFixture.get(key)!.push(pred);
+    }
+    
+    for (const [fixtureId, fixturePreds] of byFixture) {
+      if (fixturePreds.length >= 2) {
+        // Pegar 2-3 mercados do mesmo jogo
+        const legsForCombo = fixturePreds.slice(0, MAX_LEGS);
+        const totalOdd = legsForCombo.reduce((acc, p) => acc * p.suggestedOdd, 1);
+        
+        if (totalOdd >= MIN_TOTAL_ODD) {
+          // Criar legs com market e outcome separados corretamente
+          const legs = legsForCombo.map(p => ({
+            homeTeam: p.homeTeam,
+            awayTeam: p.awayTeam,
+            homeTeamLogo: p.homeTeamLogo,
+            awayTeamLogo: p.awayTeamLogo,
+            league: p.league,
+            fixtureId: p.fixtureId,
+            market: p.market, // Nome do mercado (Over 1.5, BTTS, etc)
+            outcome: p.predictedOutcome, // Resultado predito (Sim, Não, etc)
+            odd: p.suggestedOdd,
+            time: new Date(p.matchTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          }));
+          
+          // Validar combo usando função centralizada
+          const validation = validateComboLegs(legs);
+          if (!validation.valid) {
+            console.warn(`[AI Combos] Combo inválido: ${validation.error}`);
+            continue;
+          }
+          
+          // Calcular confiança média
+          const avgConfidence = legsForCombo.reduce((acc, p) => acc + p.confidence, 0) / legsForCombo.length;
+          const avgProbability = legsForCombo.reduce((acc, p) => acc + p.probability, 0) / legsForCombo.length;
+          
+          // Formatar descrição do combo
+          const comboDescription = legs.map(l => `${l.market}`).join(' + ');
+          
+          // Criar combo - IMPORTANTE: suggestedOdd = totalOdd para combos
+          await db.insert(aiTickets).values({
+            fixtureId: legsForCombo[0].fixtureId,
+            league: 'Múltipla',
+            homeTeam: legsForCombo[0].homeTeam,
+            awayTeam: legsForCombo[0].awayTeam,
+            homeTeamId: legsForCombo[0].fixtureId.split('_')[0] || '0',
+            awayTeamId: legsForCombo[0].fixtureId.split('_')[1] || '0',
+            homeTeamLogo: legsForCombo[0].homeTeamLogo,
+            awayTeamLogo: legsForCombo[0].awayTeamLogo,
+            matchTime: new Date(legsForCombo[0].matchTime),
+            market: `Combo ${legs.length} Seleções`,
+            predictedOutcome: comboDescription,
+            suggestedOdd: String(totalOdd.toFixed(2)), // TOTAL ODD, não individual
+            suggestedStake: '1.0',
+            isCombo: true,
+            legs: JSON.stringify(legs),
+            totalOdd: String(totalOdd.toFixed(2)),
+            confidence: String(avgConfidence.toFixed(0)),
+            probability: String(avgProbability.toFixed(0)),
+            expectedValue: String(((avgProbability / 100) * totalOdd - 1) * 100),
+            analysisRationale: JSON.stringify(legsForCombo.flatMap(p => p.rationale)),
+            homeTeamStats: JSON.stringify(legsForCombo[0].homeStats),
+            awayTeamStats: JSON.stringify(legsForCombo[0].awayStats),
+            formScore: String(avgConfidence),
+            status: 'draft'
+          });
+          
+          legsForCombo.forEach(p => usedPredictions.add(`${p.fixtureId}_${p.market}`));
+          combosCreated++;
+          console.log(`[AI Combos] Criado combo ${legs.length} legs (odd ${totalOdd.toFixed(2)}): ${legsForCombo[0].homeTeam} vs ${legsForCombo[0].awayTeam}`);
+        }
+      }
+    }
+    
+    // Estratégia 2: Combos de jogos diferentes (mesma liga ou tier similar)
+    const remainingPreds = validPredictions.filter(p => 
+      !usedPredictions.has(`${p.fixtureId}_${p.market}`)
+    );
+    
+    // Agrupar por data/horário similar (±2 horas)
+    for (let i = 0; i < remainingPreds.length; i++) {
+      const pred1 = remainingPreds[i];
+      if (usedPredictions.has(`${pred1.fixtureId}_${pred1.market}`)) continue;
+      
+      const candidates: typeof remainingPreds = [pred1];
+      
+      for (let j = i + 1; j < remainingPreds.length && candidates.length < MAX_LEGS; j++) {
+        const pred2 = remainingPreds[j];
+        if (usedPredictions.has(`${pred2.fixtureId}_${pred2.market}`)) continue;
+        if (pred2.fixtureId === pred1.fixtureId) continue; // Diferentes jogos
+        
+        // Verificar horário similar (±3 horas)
+        const timeDiff = Math.abs(new Date(pred2.matchTime).getTime() - new Date(pred1.matchTime).getTime());
+        if (timeDiff <= 3 * 60 * 60 * 1000) {
+          candidates.push(pred2);
+        }
+      }
+      
+      if (candidates.length >= 2) {
+        const totalOdd = candidates.reduce((acc, p) => acc * p.suggestedOdd, 1);
+        
+        if (totalOdd >= MIN_TOTAL_ODD) {
+          // Criar legs com market e outcome separados corretamente
+          const legs = candidates.map(p => ({
+            homeTeam: p.homeTeam,
+            awayTeam: p.awayTeam,
+            homeTeamLogo: p.homeTeamLogo,
+            awayTeamLogo: p.awayTeamLogo,
+            league: p.league,
+            fixtureId: p.fixtureId,
+            market: p.market, // Nome do mercado
+            outcome: p.predictedOutcome, // Resultado predito
+            odd: p.suggestedOdd,
+            time: new Date(p.matchTime).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+          }));
+          
+          // Validar combo usando função centralizada
+          const validation = validateComboLegs(legs);
+          if (!validation.valid) {
+            console.warn(`[AI Combos] Combo multi-jogo inválido: ${validation.error}`);
+            continue;
+          }
+          
+          const avgConfidence = candidates.reduce((acc, p) => acc + p.confidence, 0) / candidates.length;
+          const avgProbability = candidates.reduce((acc, p) => acc + p.probability, 0) / candidates.length;
+          
+          // Formatar descrição do combo
+          const comboDescription = legs.map(l => `${l.homeTeam.substring(0,3).toUpperCase()} ${l.market}`).join(' + ');
+          
+          await db.insert(aiTickets).values({
+            fixtureId: candidates[0].fixtureId,
+            league: 'Múltipla',
+            homeTeam: candidates[0].homeTeam,
+            awayTeam: candidates[0].awayTeam,
+            homeTeamId: candidates[0].fixtureId.split('_')[0] || '0',
+            awayTeamId: candidates[0].fixtureId.split('_')[1] || '0',
+            homeTeamLogo: candidates[0].homeTeamLogo,
+            awayTeamLogo: candidates[0].awayTeamLogo,
+            matchTime: new Date(candidates[0].matchTime),
+            market: `Múltipla ${legs.length} Jogos`,
+            predictedOutcome: comboDescription,
+            suggestedOdd: String(totalOdd.toFixed(2)), // TOTAL ODD, não individual
+            suggestedStake: '1.0',
+            isCombo: true,
+            legs: JSON.stringify(legs),
+            totalOdd: String(totalOdd.toFixed(2)),
+            confidence: String(avgConfidence.toFixed(0)),
+            probability: String(avgProbability.toFixed(0)),
+            expectedValue: String(((avgProbability / 100) * totalOdd - 1) * 100),
+            analysisRationale: JSON.stringify(candidates.flatMap(p => p.rationale)),
+            homeTeamStats: JSON.stringify(candidates[0].homeStats),
+            awayTeamStats: JSON.stringify(candidates[0].awayStats),
+            formScore: String(avgConfidence),
+            status: 'draft'
+          });
+          
+          candidates.forEach(p => usedPredictions.add(`${p.fixtureId}_${p.market}`));
+          combosCreated++;
+          console.log(`[AI Combos] Criado múltipla ${legs.length} jogos (odd ${totalOdd.toFixed(2)})`);
+        }
+      }
+    }
+    
+    console.log(`[AI Combos] Total de ${combosCreated} combos criados`);
+    return combosCreated;
   }
 
   async approveTicket(ticketId: string, reviewerId: string, notes?: string): Promise<void> {

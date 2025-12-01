@@ -90,11 +90,35 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [hasFetchedFromAPI, setHasFetchedFromAPI] = useState(false);
-  const hasMultipleLegs = signal.legs && signal.legs.length > 1;
+  
+  // Use backend-normalized legs (already parsed as array)
+  const parsedLegs = (() => {
+    if (!signal.legs) return [];
+    if (Array.isArray(signal.legs)) return signal.legs;
+    // Fallback parsing for legacy data
+    if (typeof signal.legs === 'string') {
+      try {
+        const parsed = JSON.parse(signal.legs);
+        return Array.isArray(parsed) ? parsed : [];
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
+  
+  const hasMultipleLegs = parsedLegs.length > 1;
   const tipIsFavorited = isFavorite(signal.id);
 
+  // Use explicit isCombo field from backend (with fallback detection for legacy data)
+  const isComboTip = signal.isCombo ?? hasMultipleLegs;
+  
   // Busca dados oficiais da API-Football se houver fixtureId e não houver logos salvos
+  // Não buscar para combos (fixtureId null ou detectado como combo)
   useEffect(() => {
+    // Combos não têm fixture único - não buscar
+    if (isComboTip) return;
+    
     // Se já temos logos salvos no banco, não precisa buscar da API
     const hasLogosInDB = signal.homeTeamLogo && signal.awayTeamLogo;
     if (hasLogosInDB || hasFetchedFromAPI || !signal.fixtureId) return;
@@ -129,11 +153,14 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
     };
 
     fetchFixtureData();
-  }, [signal.fixtureId, signal.homeTeamLogo, signal.awayTeamLogo, hasFetchedFromAPI]);
+  }, [signal.fixtureId, signal.homeTeamLogo, signal.awayTeamLogo, hasFetchedFromAPI, isComboTip]);
   
-  const totalOdd = signal.legs && signal.legs.length > 0
-    ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)
-    : signal.odd;
+  // Use explicit totalOdd from backend or calculate from legs
+  const totalOdd = signal.totalOdd 
+    ? parseFloat(String(signal.totalOdd))
+    : (parsedLegs.length > 0
+        ? parsedLegs.reduce((acc, leg) => acc * (leg.odd || 1), 1)
+        : parseFloat(String(signal.odd)));
 
   // Mantém o estado local sincronizado com o status do banco de dados
   useEffect(() => {
@@ -199,7 +226,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
     let betText: string;
     if (hasMultipleLegs) {
       betText = `${signal.league}\nODD TOTAL: ${totalOdd.toFixed(2)}\n\n` + 
-        signal.legs!.map(leg => `${leg.homeTeam} x ${leg.awayTeam} - ${leg.market} ODD ${leg.odd.toFixed(2)}`).join('\n');
+        parsedLegs.map(leg => `${leg.homeTeam} x ${leg.awayTeam} - ${leg.market} ODD ${(leg.odd || 1).toFixed(2)}`).join('\n');
     } else {
       betText = `${signal.homeTeam} x ${signal.awayTeam} - ${signal.market} ODD ${totalOdd.toFixed(2)}`;
     }
@@ -281,8 +308,8 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   });
 
   // Data + Horário para o cabeçalho (ex: "27/11 às 18:07")
-  const displayTime = hasMultipleLegs && signal.legs?.[0]?.time 
-    ? signal.legs[0].time 
+  const displayTime = hasMultipleLegs && parsedLegs[0]?.time 
+    ? parsedLegs[0].time 
     : `${dateOnly} às ${timeOnly}`;
 
   // Data/hora de criação do bilhete (horário de Brasília)

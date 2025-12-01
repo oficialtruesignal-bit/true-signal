@@ -21,6 +21,19 @@ import {
   CheckCircle2
 } from "lucide-react";
 
+interface BetLeg {
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo?: string;
+  awayTeamLogo?: string;
+  league: string;
+  fixtureId?: string;
+  market: string;
+  outcome?: string;
+  odd: number;
+  time: string;
+}
+
 interface AiDraft {
   id: string;
   fixtureId: string;
@@ -43,6 +56,9 @@ interface AiDraft {
   h2hScore: string | null;
   status: string;
   createdAt: string;
+  isCombo?: boolean;
+  legs?: string;
+  totalOdd?: string;
 }
 
 interface AiStats {
@@ -324,67 +340,159 @@ export function AiDraftsPanel() {
               const isExpanded = expandedDraft === draft.id;
               const isSelected = selectedDrafts.has(draft.id);
               const rationale = draft.analysisRationale ? JSON.parse(draft.analysisRationale) : [];
+              const isCombo = draft.isCombo;
+              
+              // Safe parsing of legs with fallback
+              let legs: BetLeg[] = [];
+              try {
+                if (draft.legs && typeof draft.legs === 'string') {
+                  legs = JSON.parse(draft.legs);
+                } else if (Array.isArray(draft.legs)) {
+                  legs = draft.legs;
+                }
+              } catch (e) {
+                console.warn('[AI Drafts] Failed to parse legs:', e);
+                legs = [];
+              }
+              
+              const displayOdd = isCombo && draft.totalOdd ? parseFloat(draft.totalOdd) : parseFloat(draft.suggestedOdd);
 
               return (
                 <div 
                   key={draft.id}
-                  className={`p-4 transition-all ${isSelected ? 'bg-primary/10' : 'hover:bg-white/5'}`}
+                  className={`p-4 transition-all ${isSelected ? 'bg-primary/10' : 'hover:bg-white/5'} ${isCombo ? 'border-l-4 border-l-primary' : ''}`}
                 >
-                  {/* Main Row */}
-                  <div className="flex items-center gap-4">
-                    {/* Selection Checkbox */}
-                    <button
-                      onClick={() => toggleDraftSelection(draft.id)}
-                      className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
-                        isSelected 
-                          ? 'bg-primary border-primary' 
-                          : 'border-white/20 hover:border-primary/50'
-                      }`}
-                      data-testid={`checkbox-draft-${draft.id}`}
-                    >
-                      {isSelected && <Check className="w-4 h-4 text-black" />}
-                    </button>
-
-                    {/* Team Logos */}
-                    <div className="flex items-center gap-1">
-                      {draft.homeTeamLogo && (
-                        <img src={draft.homeTeamLogo} alt="" className="w-8 h-8" />
-                      )}
-                      <span className="text-gray-500 text-xs">vs</span>
-                      {draft.awayTeamLogo && (
-                        <img src={draft.awayTeamLogo} alt="" className="w-8 h-8" />
-                      )}
+                  {/* Combo Header */}
+                  {isCombo && (
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-primary/20">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      <span className="text-xs font-bold text-primary uppercase tracking-wide">
+                        Combo {legs.length} Seleções
+                      </span>
+                      <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                        Odd Total: {displayOdd.toFixed(2)}
+                      </span>
                     </div>
+                  )}
 
-                    {/* Match Info */}
-                    <div className="flex-1 min-w-0">
-                      <p className="font-bold text-white truncate">
-                        {draft.homeTeam} vs {draft.awayTeam}
-                      </p>
-                      <p className="text-xs text-gray-400">{draft.league}</p>
+                  {/* Combo Legs List */}
+                  {isCombo && legs.length > 0 ? (
+                    <div className="space-y-3 mb-4">
+                      {legs.map((leg, idx) => (
+                        <div key={idx} className="flex items-center gap-3 bg-background/50 rounded-lg p-3">
+                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
+                            <span className="text-xs font-bold text-primary">{idx + 1}</span>
+                          </div>
+                          {/* Team Logos */}
+                          <div className="flex items-center gap-1">
+                            {leg.homeTeamLogo && (
+                              <img src={leg.homeTeamLogo} alt="" className="w-6 h-6" />
+                            )}
+                            <span className="text-gray-500 text-[10px]">vs</span>
+                            {leg.awayTeamLogo && (
+                              <img src={leg.awayTeamLogo} alt="" className="w-6 h-6" />
+                            )}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-semibold text-white">
+                              {leg.homeTeam} vs {leg.awayTeam}
+                            </p>
+                            <p className="text-xs text-gray-400">{leg.league} • {leg.time}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm font-bold text-primary">{leg.market}</p>
+                            {leg.outcome && <p className="text-xs text-gray-300">{leg.outcome}</p>}
+                            <p className="text-xs text-gray-400">Odd {leg.odd.toFixed(2)}</p>
+                          </div>
+                        </div>
+                      ))}
                     </div>
+                  ) : (
+                    /* Single Bet Row */
+                    <div className="flex items-center gap-4">
+                      {/* Selection Checkbox */}
+                      <button
+                        onClick={() => toggleDraftSelection(draft.id)}
+                        className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
+                          isSelected 
+                            ? 'bg-primary border-primary' 
+                            : 'border-white/20 hover:border-primary/50'
+                        }`}
+                        data-testid={`checkbox-draft-${draft.id}`}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-black" />}
+                      </button>
 
-                    {/* Market */}
-                    <div className="text-center">
-                      <p className="text-sm font-semibold text-primary">{draft.market}</p>
-                      <p className="text-xs text-gray-400">{draft.predictedOutcome}</p>
+                      {/* Team Logos */}
+                      <div className="flex items-center gap-1">
+                        {draft.homeTeamLogo && (
+                          <img src={draft.homeTeamLogo} alt="" className="w-8 h-8" />
+                        )}
+                        <span className="text-gray-500 text-xs">vs</span>
+                        {draft.awayTeamLogo && (
+                          <img src={draft.awayTeamLogo} alt="" className="w-8 h-8" />
+                        )}
+                      </div>
+
+                      {/* Match Info */}
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-white truncate">
+                          {draft.homeTeam} vs {draft.awayTeam}
+                        </p>
+                        <p className="text-xs text-gray-400">{draft.league}</p>
+                      </div>
+
+                      {/* Market */}
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-primary">{draft.market}</p>
+                        <p className="text-xs text-gray-400">{draft.predictedOutcome}</p>
+                      </div>
+
+                      {/* Confidence */}
+                      <div className={`px-3 py-1.5 rounded-lg ${getConfidenceColor(confidence)}`}>
+                        <p className="text-sm font-bold">{confidence.toFixed(0)}%</p>
+                      </div>
+
+                      {/* Suggested Odd */}
+                      <div className="text-center">
+                        <p className="text-lg font-bold text-white">{displayOdd.toFixed(2)}</p>
+                        <p className="text-[10px] text-gray-500">ODD</p>
+                      </div>
+
+                      {/* Match Time */}
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <Clock className="w-3 h-3" />
+                        {formatMatchTime(draft.matchTime)}
+                      </div>
                     </div>
+                  )}
 
-                    {/* Confidence */}
-                    <div className={`px-3 py-1.5 rounded-lg ${getConfidenceColor(confidence)}`}>
-                      <p className="text-sm font-bold">{confidence.toFixed(0)}%</p>
-                    </div>
-
-                    {/* Suggested Odd */}
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-white">{parseFloat(draft.suggestedOdd).toFixed(2)}</p>
-                      <p className="text-[10px] text-gray-500">ODD</p>
-                    </div>
-
-                    {/* Match Time */}
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <Clock className="w-3 h-3" />
-                      {formatMatchTime(draft.matchTime)}
+                  {/* Actions Row for Combos */}
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
+                    <div className="flex items-center gap-3">
+                      {/* Selection Checkbox */}
+                      <button
+                        onClick={() => toggleDraftSelection(draft.id)}
+                        className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-all ${
+                          isSelected 
+                            ? 'bg-primary border-primary' 
+                            : 'border-white/20 hover:border-primary/50'
+                        }`}
+                        data-testid={`checkbox-draft-${draft.id}`}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-black" />}
+                      </button>
+                      
+                      {/* Confidence */}
+                      <div className={`px-3 py-1.5 rounded-lg ${getConfidenceColor(confidence)}`}>
+                        <p className="text-sm font-bold">{confidence.toFixed(0)}%</p>
+                      </div>
+                      
+                      {/* Match Time */}
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <Clock className="w-3 h-3" />
+                        {formatMatchTime(draft.matchTime)}
+                      </div>
                     </div>
 
                     {/* Actions */}

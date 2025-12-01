@@ -68,11 +68,15 @@ export const tips = pgTable("tips", {
   matchTime: text("match_time"),
   market: text("market").notNull(),
   odd: decimal("odd", { precision: 5, scale: 2 }).notNull(),
-  stake: decimal("stake", { precision: 3, scale: 1 }).notNull().default("1.0"), // Peso da tip em unidades (0.5, 1, 1.5, 2, etc)
+  stake: decimal("stake", { precision: 3, scale: 1 }).notNull().default("1.0"),
   status: text("status", { enum: ["pending", "green", "red"] }).notNull().default("pending"),
   betLink: text("bet_link"),
   imageUrl: text("image_url"),
   isLive: boolean("is_live").notNull().default(false),
+  // Combo bet fields
+  isCombo: boolean("is_combo").notNull().default(false),
+  totalOdd: decimal("total_odd", { precision: 6, scale: 2 }),
+  legs: text("legs"), // JSON array of BetLeg for combo bets
   createdBy: uuid("created_by").references(() => profiles.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -176,6 +180,11 @@ export const aiTickets = pgTable("ai_tickets", {
   predictedOutcome: text("predicted_outcome").notNull(),
   suggestedOdd: decimal("suggested_odd", { precision: 5, scale: 2 }).notNull(),
   suggestedStake: decimal("suggested_stake", { precision: 3, scale: 1 }).notNull().default("1.0"),
+  
+  // Combo Support - multiple legs for combined bets
+  isCombo: boolean("is_combo").notNull().default(false),
+  legs: text("legs"), // JSON array of BetLeg objects
+  totalOdd: decimal("total_odd", { precision: 6, scale: 2 }), // Combined odd (product of all leg odds)
   
   // AI Analysis
   confidence: decimal("confidence", { precision: 5, scale: 2 }).notNull(), // 0-100%

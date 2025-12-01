@@ -7,6 +7,7 @@ import { mercadoPagoService } from "./mercadopago-service";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { aiPredictionEngine } from "./ai-prediction-engine";
 import { db } from "./db";
+import { deriveComboMetadata, parseLegs, normalizeTipForResponse } from "./combo-utils";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -510,7 +511,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/tips", async (req, res) => {
     try {
       const allTips = await storage.getAllTips();
-      return res.json({ tips: allTips });
+      
+      // Normalize tips data using shared utility
+      const normalizedTips = allTips.map(normalizeTipForResponse);
+      
+      return res.json({ tips: normalizedTips });
     } catch (error: any) {
       return res.status(500).json({ error: error.message });
     }
@@ -1335,20 +1340,48 @@ REGRAS IMPORTANTES:
         minute: '2-digit'
       });
       
-      const newTip = await storage.createTip({
-        fixtureId: draft.fixtureId,
-        league: draft.league,
-        homeTeam: draft.homeTeam,
-        awayTeam: draft.awayTeam,
-        homeTeamLogo: draft.homeTeamLogo,
-        awayTeamLogo: draft.awayTeamLogo,
-        matchTime: formattedTime,
-        market: `${draft.market}: ${draft.predictedOutcome}`,
-        odd: adjustedOdd || draft.suggestedOdd,
-        stake: adjustedStake || draft.suggestedStake,
-        status: 'pending',
-        isLive: false,
-      });
+      // Handle combo (multiple legs) vs single bet
+      const isCombo = draft.isCombo;
+      const legsArray = parseLegs(draft.legs);
+      
+      let tipData: any;
+      
+      if (isCombo && legsArray && legsArray.length > 0) {
+        // Use centralized combo metadata derivation
+        const comboData = deriveComboMetadata(legsArray, formattedTime);
+        if (comboData) {
+          tipData = {
+            ...comboData,
+            odd: adjustedOdd || comboData.odd,
+            stake: adjustedStake || draft.suggestedStake,
+            status: 'pending',
+            isLive: false,
+          };
+        } else {
+          return res.status(400).json({ error: "Combo inválido: legs vazios ou malformados" });
+        }
+      } else {
+        // Single bet
+        tipData = {
+          fixtureId: draft.fixtureId,
+          league: draft.league,
+          homeTeam: draft.homeTeam,
+          awayTeam: draft.awayTeam,
+          homeTeamLogo: draft.homeTeamLogo,
+          awayTeamLogo: draft.awayTeamLogo,
+          matchTime: formattedTime,
+          market: `${draft.market}: ${draft.predictedOutcome}`,
+          odd: adjustedOdd || draft.suggestedOdd,
+          stake: adjustedStake || draft.suggestedStake,
+          status: 'pending',
+          isLive: false,
+          isCombo: false,
+          totalOdd: null,
+          legs: null,
+        };
+      }
+      
+      const newTip = await storage.createTip(tipData);
       
       // Update the draft status
       await aiPredictionEngine.approveTicket(id, adminUserId, notes);
@@ -1416,20 +1449,48 @@ REGRAS IMPORTANTES:
           minute: '2-digit'
         });
         
-        await storage.createTip({
-          fixtureId: draft.fixtureId,
-          league: draft.league,
-          homeTeam: draft.homeTeam,
-          awayTeam: draft.awayTeam,
-          homeTeamLogo: draft.homeTeamLogo,
-          awayTeamLogo: draft.awayTeamLogo,
-          matchTime: formattedTime,
-          market: `${draft.market}: ${draft.predictedOutcome}`,
-          odd: draft.suggestedOdd,
-          stake: draft.suggestedStake,
-          status: 'pending',
-          isLive: false,
-        });
+        // Handle combo (multiple legs) vs single bet
+        const isCombo = draft.isCombo;
+        const legsArray = parseLegs(draft.legs);
+        
+        let tipData: any;
+        
+        if (isCombo && legsArray && legsArray.length > 0) {
+          // Use centralized combo metadata derivation
+          const comboData = deriveComboMetadata(legsArray, formattedTime);
+          if (comboData) {
+            tipData = {
+              ...comboData,
+              stake: draft.suggestedStake,
+              status: 'pending',
+              isLive: false,
+            };
+          } else {
+            console.warn(`[Bulk Approve] Skipping invalid combo draft ${id}`);
+            continue;
+          }
+        } else {
+          // Single bet
+          tipData = {
+            fixtureId: draft.fixtureId,
+            league: draft.league,
+            homeTeam: draft.homeTeam,
+            awayTeam: draft.awayTeam,
+            homeTeamLogo: draft.homeTeamLogo,
+            awayTeamLogo: draft.awayTeamLogo,
+            matchTime: formattedTime,
+            market: `${draft.market}: ${draft.predictedOutcome}`,
+            odd: draft.suggestedOdd,
+            stake: draft.suggestedStake,
+            status: 'pending',
+            isLive: false,
+            isCombo: false,
+            totalOdd: null,
+            legs: null,
+          };
+        }
+        
+        await storage.createTip(tipData);
         
         await aiPredictionEngine.approveTicket(id, adminUserId, 'Bulk approved');
         approvedCount++;
