@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Wallet, RefreshCw, Shield, TrendingUp, BookOpen } from "lucide-react";
+import { Wallet, RefreshCw, Shield, TrendingUp, BookOpen, Ticket, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BankrollSetupModal } from "@/components/bankroll-setup-modal";
 import { toast } from "sonner";
@@ -246,19 +246,38 @@ export default function GestaoPage() {
               </div>
             </motion.div>
 
-            {/* Reconfigure Button */}
+            {/* Access Tips Button */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
             >
+              <Link href="/tips">
+                <Button
+                  className="w-full h-14 bg-[#33b864] hover:bg-[#289a54] text-black font-bold"
+                  data-testid="button-access-tips"
+                >
+                  <Ticket className="w-5 h-5 mr-2" />
+                  Acessar Bilhetes Disponíveis
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Reconfigure Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="mt-3"
+            >
               <Button
                 onClick={() => setShowSetupModal(true)}
                 variant="outline"
-                className="w-full h-14 border-white/20 text-white hover:bg-white/5"
+                className="w-full h-12 border-white/10 text-gray-400 hover:bg-white/5 text-sm"
                 data-testid="button-reconfigure-bankroll"
               >
-                <RefreshCw className="w-5 h-5 mr-2" />
+                <RefreshCw className="w-4 h-4 mr-2" />
                 Recalcular Banca / Novo Aporte
               </Button>
             </motion.div>
