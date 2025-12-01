@@ -11,7 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
 import { useOnboarding } from "@/hooks/use-onboarding";
-import { OnboardingTour, WelcomeModal } from "./onboarding-tour";
+import { WelcomeModal } from "./onboarding-tour";
+import { SpotlightTour } from "./spotlight-tour";
 import { useContentProtection } from "@/hooks/use-content-protection";
 import { PWAInstallPrompt } from "./pwa-install-prompt";
 
@@ -25,30 +26,31 @@ export function Layout({ children }: { children: React.ReactNode }) {
   
   // Onboarding tour
   const {
+    showWelcome: onboardingShowWelcome,
     showTour,
     currentStep,
     totalSteps,
     currentStepData,
     isLoading: onboardingLoading,
+    startTour,
     nextStep,
     prevStep,
     skipTour,
     completeTour,
-    setShowTour,
+    setShowWelcome: setOnboardingShowWelcome,
   } = useOnboarding();
 
-  // Show welcome modal only once when tour should start
+  // Sync welcome modal state
   useEffect(() => {
-    if (showTour && currentStep === 0 && !onboardingLoading && !hasShownWelcome) {
+    if (onboardingShowWelcome && !hasShownWelcome) {
       setShowWelcome(true);
       setHasShownWelcome(true);
-      setShowTour(false);
     }
-  }, [showTour, currentStep, onboardingLoading, hasShownWelcome]);
+  }, [onboardingShowWelcome, hasShownWelcome]);
 
   const handleStartTour = () => {
     setShowWelcome(false);
-    setShowTour(true);
+    startTour();
   };
 
   const handleSkipWelcome = () => {
@@ -231,7 +233,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Logo size="sm" showText={true} />
         <div className="flex items-center gap-1">
            <span className="text-sm font-bold text-foreground">{t.nav.hello} {user?.firstName?.split(' ')[0] || user?.firstName}</span>
-           <Link href="/settings" className="p-2 text-muted-foreground hover:text-primary transition-colors">
+           <Link href="/settings" data-tour="settings-icon" className="p-2 text-muted-foreground hover:text-primary transition-colors">
             <Settings className="w-5 h-5" />
           </Link>
            <button onClick={logout} className="p-2 text-muted-foreground hover:text-red-400 transition-colors">
@@ -247,36 +249,40 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
       {/* Mobile Bottom Nav - 5 Icons */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 h-[72px] bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-around px-2 safe-area-pb">
-        {mobileNavItems.map((item) => (
-          <Link 
-            key={item.path} 
-            href={item.path}
-            data-testid={`nav-${item.label.toLowerCase()}`}
-            className={cn(
-              "flex flex-col items-center justify-center h-full gap-1.5 transition-all relative flex-1",
-              location === item.path ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <div className="relative">
-              <item.icon
-                className={cn(
-                  "w-7 h-7 transition-all",
-                  location === item.path ? "scale-110 drop-shadow-[0_0_12px_rgba(51,184,100,0.8)]" : ""
-                )}
-                strokeWidth={location === item.path ? 2.5 : 2}
-              />
-              {item.path === "/tips" && unreadCount > 0 && (
-                <div className="absolute -top-1.5 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
-                  {unreadCount > 9 ? '9+' : unreadCount}
-                </div>
+        {mobileNavItems.map((item, index) => {
+          const tourIds = ['home-icon', 'tips-icon', 'live-icon', 'pregame-icon', 'gestao-icon'];
+          return (
+            <Link 
+              key={item.path} 
+              href={item.path}
+              data-testid={`nav-${item.label.toLowerCase()}`}
+              data-tour={tourIds[index]}
+              className={cn(
+                "flex flex-col items-center justify-center h-full gap-1.5 transition-all relative flex-1",
+                location === item.path ? "text-primary" : "text-muted-foreground"
               )}
-            </div>
-            <span className={cn(
-              "text-[11px] font-medium transition-all text-center whitespace-nowrap",
-              location === item.path ? "font-bold" : ""
-            )}>{item.label}</span>
-          </Link>
-        ))}
+            >
+              <div className="relative">
+                <item.icon
+                  className={cn(
+                    "w-7 h-7 transition-all",
+                    location === item.path ? "scale-110 drop-shadow-[0_0_12px_rgba(51,184,100,0.8)]" : ""
+                  )}
+                  strokeWidth={location === item.path ? 2.5 : 2}
+                />
+                {item.path === "/tips" && unreadCount > 0 && (
+                  <div className="absolute -top-1.5 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </div>
+                )}
+              </div>
+              <span className={cn(
+                "text-[11px] font-medium transition-all text-center whitespace-nowrap",
+                location === item.path ? "font-bold" : ""
+              )}>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
       {/* Admin FAB (Floating Action Button) */}
@@ -299,11 +305,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         onSkip={handleSkipWelcome}
       />
       
-      <OnboardingTour
-        showTour={showTour}
+      <SpotlightTour
+        isOpen={showTour}
         currentStep={currentStep}
         totalSteps={totalSteps}
-        currentStepData={currentStepData}
+        stepData={currentStepData}
         onNext={nextStep}
         onPrev={prevStep}
         onSkip={skipTour}

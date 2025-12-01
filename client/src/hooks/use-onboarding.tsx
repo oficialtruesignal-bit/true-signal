@@ -1,61 +1,78 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "./use-auth";
+import { useLocation } from "wouter";
 
 export interface TourStep {
   id: string;
   title: string;
   description: string;
   icon: string;
+  selector: string;
   route?: string;
+  placement?: "top" | "bottom" | "left" | "right";
 }
 
 const TOUR_STEPS: TourStep[] = [
   {
-    id: "home",
+    id: "welcome",
     title: "Painel Principal",
-    description: "Seu centro de comando! Veja a taxa de acerto, sinais online e as métricas mais importantes.",
+    description: "Este é seu centro de comando! Aqui você vê todos os sinais e métricas importantes.",
     icon: "🏠",
-    route: "/app"
+    selector: "[data-tour='home-icon']",
+    route: "/app",
+    placement: "top"
   },
   {
     id: "tips",
     title: "Sinais Premium",
-    description: "Aqui ficam os bilhetes analisados pela nossa equipe. Com valor de entrada baseado na sua gestão de banca.",
+    description: "Toque aqui para ver os bilhetes analisados pela nossa equipe com odds e valor de entrada.",
     icon: "🎫",
-    route: "/tips"
+    selector: "[data-tour='tips-icon']",
+    route: "/app",
+    placement: "top"
   },
   {
     id: "live",
     title: "Jogos Ao Vivo",
-    description: "Acompanhe partidas em tempo real com estatísticas detalhadas e atualizações instantâneas.",
+    description: "Acompanhe partidas em tempo real com estatísticas e placares atualizados.",
     icon: "⚽",
-    route: "/live"
+    selector: "[data-tour='live-icon']",
+    route: "/app",
+    placement: "top"
   },
   {
     id: "pregame",
     title: "Pré-Jogo",
-    description: "Analise as próximas partidas antes do apito inicial. Ideal para planejar suas entradas.",
+    description: "Analise as próximas partidas antes do início. Ideal para planejar suas entradas.",
     icon: "📅",
-    route: "/pregame"
+    selector: "[data-tour='pregame-icon']",
+    route: "/app",
+    placement: "top"
   },
   {
     id: "gestao",
     title: "Gestão de Banca",
-    description: "Configure seu capital e perfil de risco. Receba valores exatos de entrada em cada bilhete.",
+    description: "Configure seu capital e perfil de risco para receber valores exatos de entrada.",
     icon: "💰",
-    route: "/gestao"
+    selector: "[data-tour='gestao-icon']",
+    route: "/app",
+    placement: "top"
   },
   {
     id: "settings",
     title: "Configurações",
-    description: "Personalize o app, altere idioma, gerencie notificações e sua assinatura.",
+    description: "Toque no ícone de engrenagem para acessar configurações, idioma e sua assinatura.",
     icon: "⚙️",
-    route: "/settings"
+    selector: "[data-tour='settings-icon']",
+    route: "/app",
+    placement: "bottom"
   }
 ];
 
 export function useOnboarding() {
   const { user } = useAuth();
+  const [, navigate] = useLocation();
+  const [showWelcome, setShowWelcome] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [hasChecked, setHasChecked] = useState(false);
@@ -71,7 +88,7 @@ export function useOnboarding() {
         if (response.ok) {
           const data = await response.json();
           if (!data.hasCompletedTour) {
-            setShowTour(true);
+            setShowWelcome(true);
           }
         }
       } catch (error) {
@@ -86,25 +103,41 @@ export function useOnboarding() {
   }, [user?.id, hasChecked]);
 
   const startTour = useCallback(() => {
+    setShowWelcome(false);
     setCurrentStep(0);
-    setShowTour(true);
-  }, []);
+    const firstStep = TOUR_STEPS[0];
+    if (firstStep.route) {
+      navigate(firstStep.route);
+    }
+    setTimeout(() => {
+      setShowTour(true);
+    }, 300);
+  }, [navigate]);
 
   const nextStep = useCallback(() => {
     if (currentStep < TOUR_STEPS.length - 1) {
+      const nextStepData = TOUR_STEPS[currentStep + 1];
+      if (nextStepData.route) {
+        navigate(nextStepData.route);
+      }
       setCurrentStep(prev => prev + 1);
     } else {
       completeTour();
     }
-  }, [currentStep]);
+  }, [currentStep, navigate]);
 
   const prevStep = useCallback(() => {
     if (currentStep > 0) {
+      const prevStepData = TOUR_STEPS[currentStep - 1];
+      if (prevStepData.route) {
+        navigate(prevStepData.route);
+      }
       setCurrentStep(prev => prev - 1);
     }
-  }, [currentStep]);
+  }, [currentStep, navigate]);
 
   const skipTour = useCallback(async () => {
+    setShowWelcome(false);
     setShowTour(false);
     if (user?.id) {
       try {
@@ -135,6 +168,7 @@ export function useOnboarding() {
   }, [user?.id]);
 
   return {
+    showWelcome,
     showTour,
     currentStep,
     totalSteps: TOUR_STEPS.length,
@@ -147,5 +181,6 @@ export function useOnboarding() {
     skipTour,
     completeTour,
     setShowTour,
+    setShowWelcome,
   };
 }
