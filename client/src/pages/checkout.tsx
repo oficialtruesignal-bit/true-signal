@@ -13,22 +13,42 @@ import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { analytics, fbPixel, ga4 } from "@/lib/analytics";
 import { Logo } from "@/components/logo";
 
-// Memoized CardPayment wrapper to prevent re-renders
-const MemoizedCardPayment = memo(function MemoizedCardPayment({
-  onSubmit,
-  onReady,
-  onError,
+// Isolated CardPayment component using refs to prevent re-renders
+const CardPaymentWrapper = memo(function CardPaymentWrapper({
+  onPaymentSubmit,
+  onPaymentError,
 }: {
-  onSubmit: (formData: any) => Promise<void>;
-  onReady: () => void;
-  onError: (error: any) => void;
+  onPaymentSubmit: (formData: any) => Promise<void>;
+  onPaymentError: (error: any) => void;
 }) {
+  const readyRef = React.useRef(false);
+  const submitRef = React.useRef(onPaymentSubmit);
+  const errorRef = React.useRef(onPaymentError);
+  
+  // Update refs on prop changes without causing re-render
+  React.useEffect(() => {
+    submitRef.current = onPaymentSubmit;
+    errorRef.current = onPaymentError;
+  }, [onPaymentSubmit, onPaymentError]);
+
+  const handleReady = React.useCallback(() => {
+    if (!readyRef.current) {
+      console.log('Card payment form ready');
+      readyRef.current = true;
+    }
+  }, []);
+
+  const handleSubmit = React.useCallback(async (formData: any) => {
+    return submitRef.current(formData);
+  }, []);
+
+  const handleError = React.useCallback((error: any) => {
+    errorRef.current(error);
+  }, []);
+
   return (
     <CardPayment
       initialization={{ amount: 47.90 }}
-      onSubmit={onSubmit}
-      onReady={onReady}
-      onError={onError}
       customization={{
         paymentMethods: {
           maxInstallments: 1,
@@ -39,9 +59,12 @@ const MemoizedCardPayment = memo(function MemoizedCardPayment({
           },
         },
       }}
+      onSubmit={handleSubmit}
+      onReady={handleReady}
+      onError={handleError}
     />
   );
-});
+}, () => true); // Always return true to prevent re-renders
 
 type PaymentMethod = 'card' | 'pix';
 type CardPaymentStatus = 'idle' | 'processing' | 'success' | 'error';
@@ -328,10 +351,9 @@ export default function CheckoutPage() {
               <>
                 {/* Mercado Pago Card Payment Brick */}
                 <div className="mb-6">
-                  <MemoizedCardPayment
-                    onSubmit={onCardPaymentSubmit}
-                    onReady={onCardPaymentReady}
-                    onError={onCardPaymentError}
+                  <CardPaymentWrapper
+                    onPaymentSubmit={onCardPaymentSubmit}
+                    onPaymentError={onCardPaymentError}
                   />
                 </div>
 
@@ -571,22 +593,9 @@ export default function CheckoutPage() {
                 <div className="pt-4">
                   <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
                   <div className="bg-white/5 border border-white/10 rounded-xl p-4 min-h-[300px]">
-                    <CardPayment
-                      key="card-payment-form"
-                      initialization={{ amount: 47.90 }}
-                      onSubmit={onCardPaymentSubmit}
-                      onReady={onCardPaymentReady}
-                      onError={onCardPaymentError}
-                      customization={{
-                        paymentMethods: {
-                          maxInstallments: 1,
-                        },
-                        visual: {
-                          style: {
-                            theme: 'dark',
-                          },
-                        },
-                      }}
+                    <CardPaymentWrapper
+                      onPaymentSubmit={onCardPaymentSubmit}
+                      onPaymentError={onCardPaymentError}
                     />
                   </div>
                   {cardPaymentStatus === 'processing' && (
