@@ -377,6 +377,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Bankroll Management Routes
+  app.get("/api/profile/:id/bankroll", async (req, res) => {
+    try {
+      const profile = await storage.getProfileById(req.params.id);
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+      return res.json({
+        bankrollInitial: profile.bankrollInitial,
+        riskProfile: profile.riskProfile,
+        unitValue: profile.unitValue,
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/profile/:id/bankroll", async (req, res) => {
+    try {
+      const { bankrollInitial, riskProfile, unitValue } = req.body;
+      
+      if (!bankrollInitial || !riskProfile || !unitValue) {
+        return res.status(400).json({ error: "Todos os campos são obrigatórios" });
+      }
+
+      const profile = await storage.updateProfileBankroll(req.params.id, {
+        bankrollInitial: bankrollInitial.toString(),
+        riskProfile,
+        unitValue: unitValue.toString(),
+      });
+
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+
+      return res.json({ success: true, profile });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Tips Routes
   app.get("/api/tips", async (req, res) => {
     try {

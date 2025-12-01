@@ -1,0 +1,79 @@
+PROMPT MESTRE: BANKROLL MANAGEMENT SYSTEM (MANDATORY ONBOARDING & INTEGRATION)
+ROLE: Senior Fintech Product Architect.
+
+TASK: Desenvolver o Ecossistema de Gestão de Banca do True Signal. OBJETIVO: Criar um fluxo obrigatório onde o usuário define seu capital inicial e risco. Com base nisso, o sistema calcula a "Unidade" e exibe o valor exato a ser apostado em cada bilhete.
+
+1. BANCO DE DADOS (PERFIL FINANCEIRO)
+Atualize a tabela profiles no Supabase para armazenar a estratégia do usuário.
+
+bankroll_initial (Numeric): O valor que ele digitou.
+
+risk_profile (Text): 'conservador' (1%), 'moderado' (2%), 'agressivo' (3-5%).
+
+unit_value (Numeric): O valor calculado da unidade (Ex: R$ 10,00).
+
+2. O "WIZARD" DE CONFIGURAÇÃO (OBRIGATÓRIO)
+Crie um componente BankrollSetupModal.tsx.
+
+Gatilho: Ao clicar na aba "Gestão" (ou ao entrar no app pela primeira vez), verifique se unit_value é nulo. Se for, abra este modal em tela cheia (impossível de fechar sem preencher).
+
+Passo 1: O Aporte
+
+Título: "Definição de Capital Operacional"
+
+Input: "Qual o valor total disponível para suas operações hoje?" (Ex: R$ 1.000,00).
+
+Copy: "Não use dinheiro destinado a contas essenciais. Operamos com capital de risco."
+
+Passo 2: O Perfil de Risco (Educacional)
+
+Título: "Escolha sua Exposição ao Risco"
+
+Cards Selecionáveis (Com explicação didática):
+
+🛡️ Conservador (1/100): "Divide seu capital em 100 partes. Blindagem máxima contra sequências ruins."
+
+⚖️ Moderado (1/50) [RECOMENDADO]: "Divide em 50 partes. O equilíbrio ideal entre crescimento e segurança para nossa assertividade de 87%."
+
+🚀 Agressivo (1/30): "Divide em 30 partes. Crescimento acelerado, mas com maior volatilidade."
+
+Passo 3: A Confirmação
+
+Mostre o cálculo: "Sua Unidade Padrão será: R$ [VALOR]".
+
+Botão: "CONFIRMAR ESTRATÉGIA".
+
+3. INTEGRAÇÃO NO BILHETE (SIGNAL CARD UPDATE)
+Atualize o SignalCard.tsx para conversar com a gestão.
+
+Novo Dado do Admin: No formulário de criar tip, o Admin define o Peso da Tip (Stake).
+
+Padrão: 1 Unidade. (Mas pode ser 0.5u ou 2u).
+
+Visualização no Usuário:
+
+Dentro do Card do Bilhete, adicione uma barra/badge de "Gestão Inteligente":
+
+Texto: "Entrada Recomendada: [X] Unidades (R$ [Valor Calculado])".
+
+Exemplo: Se a unidade do cara é R$ 20 e o Admin mandou uma tip de 1.5u, o card mostra: "Entrada: R$ 30,00 (1.5u)".
+
+4. A PÁGINA DE GESTÃO (/gestao)
+Após configurado, esta aba mostra um painel educativo.
+
+Gráfico de Pizza: Mostrando "Capital Livre" vs "Capital em Jogo".
+
+Texto Fixo (A Regra de Ouro):
+
+"Sua banca é sua empresa. Sua unidade é seu estoque. Nunca fuja da gestão sugerida nos bilhetes. A matemática vence no longo prazo."
+
+Botão de Ajuste: "Recalcular Banca/Aporte" (caso ele coloque mais dinheiro).
+
+5. DETALHES TÉCNICOS
+Use Intl.NumberFormat para formatar moeda (BRL) corretamente.
+
+Salve as preferências no Supabase para persistir entre sessões (Mobile/Desktop).
+
+No Mobile, o Modal deve ocupar 100% da tela para foco total.
+
+COMANDO: Implemente este sistema financeiro. O usuário não deve ter que fazer conta de cabeça. O app diz: "Você tem 1000? Então coloque 20 neste jogo." Simples, profissional e seguro.

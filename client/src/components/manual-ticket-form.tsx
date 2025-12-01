@@ -22,6 +22,7 @@ interface ManualTicketFormProps {
     matchTime: string;
     market: string;
     odd: number;
+    stake: number;
     betLink: string;
     homeTeamLogo?: string;
     awayTeamLogo?: string;
@@ -59,6 +60,9 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
   
   // Odd total única
   const [totalOdd, setTotalOdd] = useState("");
+  
+  // Stake (peso da tip em unidades)
+  const [stake, setStake] = useState("1.0");
 
   // Buscar jogos da API
   const { data: fixtures = [], isLoading } = useQuery({
@@ -133,6 +137,8 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     const marketText = legs.map(leg => leg.market.trim()).filter(m => m).join('\n');
     const oddValue = parseFloat(totalOdd);
 
+    const stakeValue = parseFloat(stake) || 1.0;
+
     if (isManualMode) {
       // Enviar dados manuais
       onSubmit({
@@ -142,6 +148,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         matchTime: manualData.matchTime.trim(),
         market: marketText,
         odd: oddValue,
+        stake: stakeValue,
         betLink: betLink,
       });
 
@@ -164,6 +171,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         matchTime: matchTime,
         market: marketText,
         odd: oddValue,
+        stake: stakeValue,
         betLink: betLink,
         homeTeamLogo: selectedMatch.teams.home.logo,
         awayTeamLogo: selectedMatch.teams.away.logo,
@@ -176,6 +184,7 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     
     setLegs([{ id: crypto.randomUUID(), market: "" }]);
     setTotalOdd("");
+    setStake("1.0");
     setBetLink("");
   };
 
@@ -397,19 +406,35 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
               </div>
             ))}
             
-            {/* Odd Total */}
-            <div className="pt-3 border-t border-border/20">
-              <Label className="text-sm text-muted-foreground mb-2 block">Odd Total do Bilhete</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="1"
-                placeholder="Ex: 2.50"
-                value={totalOdd}
-                onChange={(e) => setTotalOdd(e.target.value)}
-                className="bg-background/50 border-border/50 text-sm w-32"
-                data-testid="input-manual-total-odd"
-              />
+            {/* Odd Total e Stake */}
+            <div className="pt-3 border-t border-border/20 flex gap-4">
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2 block">Odd Total</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  placeholder="Ex: 2.50"
+                  value={totalOdd}
+                  onChange={(e) => setTotalOdd(e.target.value)}
+                  className="bg-background/50 border-border/50 text-sm w-28"
+                  data-testid="input-manual-total-odd"
+                />
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2 block">Stake (unidades)</Label>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  max="10"
+                  placeholder="1.0"
+                  value={stake}
+                  onChange={(e) => setStake(e.target.value)}
+                  className="bg-background/50 border-border/50 text-sm w-28"
+                  data-testid="input-manual-stake"
+                />
+              </div>
             </div>
           </div>
 
@@ -431,6 +456,10 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
               <div>
                 <p className="text-xs text-muted-foreground">Odd Total</p>
                 <p className="text-2xl font-bold text-primary">{totalOdd || "--"}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Stake</p>
+                <p className="text-lg font-bold text-white">{stake}u</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Tipo</p>
@@ -547,19 +576,35 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
               </div>
             ))}
             
-            {/* Odd Total */}
-            <div className="pt-3 border-t border-border/20">
-              <Label className="text-sm text-muted-foreground mb-2 block">Odd Total do Bilhete</Label>
-              <Input
-                type="number"
-                step="0.01"
-                min="1"
-                placeholder="Ex: 2.50"
-                value={totalOdd}
-                onChange={(e) => setTotalOdd(e.target.value)}
-                className="bg-background/50 border-border/50 text-sm w-32"
-                data-testid="input-total-odd"
-              />
+            {/* Odd Total e Stake */}
+            <div className="pt-3 border-t border-border/20 flex gap-4">
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2 block">Odd Total</Label>
+                <Input
+                  type="number"
+                  step="0.01"
+                  min="1"
+                  placeholder="Ex: 2.50"
+                  value={totalOdd}
+                  onChange={(e) => setTotalOdd(e.target.value)}
+                  className="bg-background/50 border-border/50 text-sm w-28"
+                  data-testid="input-total-odd"
+                />
+              </div>
+              <div>
+                <Label className="text-sm text-muted-foreground mb-2 block">Stake (unidades)</Label>
+                <Input
+                  type="number"
+                  step="0.5"
+                  min="0.5"
+                  max="10"
+                  placeholder="1.0"
+                  value={stake}
+                  onChange={(e) => setStake(e.target.value)}
+                  className="bg-background/50 border-border/50 text-sm w-28"
+                  data-testid="input-stake"
+                />
+              </div>
             </div>
           </div>
 
@@ -581,6 +626,10 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
               <div>
                 <p className="text-xs text-muted-foreground">Odd Total</p>
                 <p className="text-2xl font-bold text-primary">{totalOdd || "--"}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Stake</p>
+                <p className="text-lg font-bold text-white">{stake}u</p>
               </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Tipo</p>

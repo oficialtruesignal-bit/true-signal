@@ -12,13 +12,17 @@ export const profiles = pgTable("profiles", {
   role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
   subscriptionStatus: text("subscription_status", { enum: ["trial", "active", "expired"] }).notNull().default("trial"),
   trialStartDate: timestamp("trial_start_date").notNull().defaultNow(),
-  mercadopagoSubscriptionId: text("mercadopago_subscription_id"), // Mercado Pago subscription ID
-  mercadopagoCustomerId: text("mercadopago_customer_id"), // Mercado Pago customer ID
-  subscriptionActivatedAt: timestamp("subscription_activated_at"), // When subscription was activated
-  subscriptionEndsAt: timestamp("subscription_ends_at"), // When subscription will end
+  mercadopagoSubscriptionId: text("mercadopago_subscription_id"),
+  mercadopagoCustomerId: text("mercadopago_customer_id"),
+  subscriptionActivatedAt: timestamp("subscription_activated_at"),
+  subscriptionEndsAt: timestamp("subscription_ends_at"),
   termsAcceptedAt: timestamp("terms_accepted_at"),
   privacyAcceptedAt: timestamp("privacy_accepted_at"),
   riskDisclaimerAcceptedAt: timestamp("risk_disclaimer_accepted_at"),
+  // Bankroll Management Fields
+  bankrollInitial: decimal("bankroll_initial", { precision: 12, scale: 2 }),
+  riskProfile: text("risk_profile", { enum: ["conservador", "moderado", "agressivo"] }),
+  unitValue: decimal("unit_value", { precision: 10, scale: 2 }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -36,18 +40,19 @@ export type Profile = typeof profiles.$inferSelect;
 // Tips table - Betting signals/tips
 export const tips = pgTable("tips", {
   id: uuid("id").primaryKey().defaultRandom(),
-  fixtureId: text("fixture_id"), // ID from external Football API
+  fixtureId: text("fixture_id"),
   league: text("league").notNull(),
   homeTeam: text("home_team").notNull(),
   awayTeam: text("away_team").notNull(),
-  homeTeamLogo: text("home_team_logo"), // URL of home team logo
-  awayTeamLogo: text("away_team_logo"), // URL of away team logo
-  matchTime: text("match_time"), // Match kickoff time extracted from betting slip
+  homeTeamLogo: text("home_team_logo"),
+  awayTeamLogo: text("away_team_logo"),
+  matchTime: text("match_time"),
   market: text("market").notNull(),
   odd: decimal("odd", { precision: 5, scale: 2 }).notNull(),
+  stake: decimal("stake", { precision: 3, scale: 1 }).notNull().default("1.0"), // Peso da tip em unidades (0.5, 1, 1.5, 2, etc)
   status: text("status", { enum: ["pending", "green", "red"] }).notNull().default("pending"),
   betLink: text("bet_link"),
-  imageUrl: text("image_url"), // URL of uploaded bet slip image
+  imageUrl: text("image_url"),
   isLive: boolean("is_live").notNull().default(false),
   createdBy: uuid("created_by").references(() => profiles.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),

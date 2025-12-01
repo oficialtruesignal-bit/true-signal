@@ -22,6 +22,11 @@ export interface IStorage {
     privacyAcceptedAt?: Date;
     riskDisclaimerAcceptedAt?: Date;
   }): Promise<Profile | undefined>;
+  updateProfileBankroll(userId: string, bankrollData: {
+    bankrollInitial: string;
+    riskProfile: string;
+    unitValue: string;
+  }): Promise<Profile | undefined>;
 
   // Tips methods
   getAllTips(): Promise<Tip[]>;
@@ -167,6 +172,27 @@ export class DatabaseStorage implements IStorage {
     const [updatedProfile] = await db
       .update(profiles)
       .set(acceptanceData)
+      .where(eq(profiles.id, userId))
+      .returning();
+
+    return updatedProfile;
+  }
+
+  async updateProfileBankroll(
+    userId: string,
+    bankrollData: {
+      bankrollInitial: string;
+      riskProfile: string;
+      unitValue: string;
+    }
+  ): Promise<Profile | undefined> {
+    const [updatedProfile] = await db
+      .update(profiles)
+      .set({
+        bankrollInitial: bankrollData.bankrollInitial,
+        riskProfile: bankrollData.riskProfile as 'conservador' | 'moderado' | 'agressivo',
+        unitValue: bankrollData.unitValue,
+      })
       .where(eq(profiles.id, userId))
       .returning();
 

@@ -24,6 +24,7 @@ export interface Signal {
   matchTime?: string; // Match kickoff time extracted from betting slip
   market: string;
   odd: number;
+  stake?: number; // Weight of the tip in units (0.5, 1, 1.5, 2, etc) - default 1.0
   status: "pending" | "green" | "red";
   timestamp: string;
   isHot?: boolean;
