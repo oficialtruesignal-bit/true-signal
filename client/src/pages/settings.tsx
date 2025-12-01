@@ -31,11 +31,10 @@ export default function SettingsPage() {
         body: JSON.stringify({ completed: false }),
       });
       if (response.ok) {
-        toast.success("Tour resetado!");
-        setTimeout(() => {
-          navigate('/app');
-          window.location.reload();
-        }, 500);
+        toast.success("Tour resetado! Iniciando...");
+        localStorage.removeItem('onboarding_checked');
+        navigate('/app?tour=reset');
+        window.location.href = '/app';
       }
     } catch {
       toast.error("Erro ao resetar tour");
