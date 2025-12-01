@@ -692,149 +692,107 @@ export function AiDraftsPanel() {
                     {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 
-                  {/* Expanded Details - Entenda o Motivo da Entrada */}
+                  {/* Expanded Details - Explicação do Analista */}
                   {isExpanded && (
-                    <div className="mt-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
-                      {/* Section 1: Dados Obtidos */}
-                      <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl p-4">
-                        <h4 className="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4" />
-                          📊 Dados Obtidos pela IA
-                        </h4>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                          <div className="bg-background/50 rounded-lg p-3 text-center">
-                            <p className="text-xs text-gray-500 mb-1">Forma dos Times</p>
-                            <p className="text-lg font-bold text-white">
-                              {draft.formScore ? `${parseFloat(draft.formScore).toFixed(0)}%` : '-'}
-                            </p>
-                          </div>
-                          <div className="bg-background/50 rounded-lg p-3 text-center">
-                            <p className="text-xs text-gray-500 mb-1">Tendência de Gols</p>
-                            <p className="text-lg font-bold text-white">
-                              {draft.goalTrendScore ? `${parseFloat(draft.goalTrendScore).toFixed(0)}%` : '-'}
-                            </p>
-                          </div>
-                          <div className="bg-background/50 rounded-lg p-3 text-center">
-                            <p className="text-xs text-gray-500 mb-1">Histórico H2H</p>
-                            <p className="text-lg font-bold text-white">
-                              {draft.h2hScore ? `${parseFloat(draft.h2hScore).toFixed(0)}%` : '-'}
-                            </p>
-                          </div>
-                          <div className="bg-background/50 rounded-lg p-3 text-center">
-                            <p className="text-xs text-gray-500 mb-1">Probabilidade</p>
-                            <p className="text-lg font-bold text-primary">
-                              {parseFloat(draft.probability).toFixed(1)}%
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-xs text-gray-500 mt-3 italic">
-                          * Baseado nos últimos 10 jogos de cada time + confrontos diretos
-                        </p>
-                      </div>
-
-                      {/* Section 2: Lógica da Entrada */}
-                      <div className="bg-gradient-to-br from-primary/10 to-green-500/5 border border-primary/20 rounded-xl p-4">
-                        <h4 className="text-sm font-bold text-primary mb-3 flex items-center gap-2">
-                          <Brain className="w-4 h-4" />
-                          🧠 Lógica da Entrada
-                        </h4>
-                        <div className="space-y-2">
-                          {rationale.length > 0 ? (
-                            rationale.map((reason: string, index: number) => (
-                              <div key={index} className="flex items-start gap-3 bg-background/30 rounded-lg p-3">
-                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                                  <span className="text-xs font-bold text-primary">{index + 1}</span>
-                                </div>
-                                <p className="text-sm text-gray-300 leading-relaxed">{reason}</p>
+                    <div className="mt-4 animate-in slide-in-from-top-2 duration-200">
+                      <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 border border-white/10 rounded-xl p-5 relative">
+                        {/* Aspas decorativas */}
+                        <div className="absolute top-3 left-4 text-4xl text-primary/30 font-serif">"</div>
+                        
+                        {/* Texto da análise */}
+                        <div className="pl-8 pr-4 space-y-3">
+                          <p className="text-gray-200 leading-relaxed text-sm">
+                            {(() => {
+                              const formScore = draft.formScore ? parseFloat(draft.formScore) : 0;
+                              const goalTrend = draft.goalTrendScore ? parseFloat(draft.goalTrendScore) : 0;
+                              const h2hScore = draft.h2hScore ? parseFloat(draft.h2hScore) : 0;
+                              const prob = parseFloat(draft.probability);
+                              const ev = draft.expectedValue ? parseFloat(draft.expectedValue) : 0;
+                              
+                              let analysis = `Analisando o confronto entre ${draft.homeTeam} e ${draft.awayTeam}, `;
+                              
+                              if (formScore > 70) {
+                                analysis += `percebi que ambos os times estão em boa fase recente (${formScore.toFixed(0)}% de aproveitamento). `;
+                              } else if (formScore > 50) {
+                                analysis += `notei uma fase irregular dos times (${formScore.toFixed(0)}% de aproveitamento). `;
+                              } else {
+                                analysis += `os times não estão em sua melhor forma ultimamente. `;
+                              }
+                              
+                              if (draft.market?.includes('Over') || draft.market?.includes('Gols')) {
+                                if (goalTrend > 70) {
+                                  analysis += `O histórico de gols é muito favorável — nos últimos jogos, a tendência de gols está em ${goalTrend.toFixed(0)}%, o que reforça a entrada em ${draft.market}. `;
+                                } else {
+                                  analysis += `A tendência de gols está em ${goalTrend.toFixed(0)}%, mas outros fatores compensam. `;
+                                }
+                              }
+                              
+                              if (draft.market?.includes('BTTS') || draft.market?.includes('Ambas')) {
+                                analysis += `Olhando os últimos confrontos, ambas as equipes têm mostrado capacidade ofensiva consistente. `;
+                              }
+                              
+                              if (draft.market?.includes('Escanteio') || draft.market?.includes('Corner')) {
+                                analysis += `O padrão de escanteios desses times nos últimos jogos sustenta essa entrada. `;
+                              }
+                              
+                              if (draft.market?.includes('Cartão') || draft.market?.includes('Card')) {
+                                analysis += `O histórico de cartões e o estilo de jogo das equipes indicam potencial para essa entrada. `;
+                              }
+                              
+                              if (h2hScore > 60) {
+                                analysis += `O confronto direto também é um fator positivo — no histórico H2H (${h2hScore.toFixed(0)}%), esse padrão se repetiu. `;
+                              }
+                              
+                              analysis += `Com base em tudo isso, a probabilidade calculada ficou em ${prob.toFixed(0)}%, `;
+                              analysis += `o que me dá ${confidence.toFixed(0)}% de confiança nessa entrada.`;
+                              
+                              if (ev > 0) {
+                                analysis += ` Além disso, o valor esperado é positivo (+${ev.toFixed(1)}%), indicando vantagem matemática a longo prazo.`;
+                              }
+                              
+                              return analysis;
+                            })()}
+                          </p>
+                          
+                          {/* Dados estatísticos em linha */}
+                          {rationale.length > 0 && (
+                            <div className="pt-3 mt-3 border-t border-white/10">
+                              <p className="text-xs text-gray-500 mb-2">Dados utilizados:</p>
+                              <div className="flex flex-wrap gap-2">
+                                {rationale.slice(0, 4).map((reason: string, index: number) => (
+                                  <span key={index} className="text-xs bg-white/5 text-gray-400 px-2 py-1 rounded">
+                                    {reason}
+                                  </span>
+                                ))}
                               </div>
-                            ))
-                          ) : (
-                            <p className="text-sm text-gray-400 italic">
-                              Análise baseada em modelo estatístico Poisson + tendências históricas
-                            </p>
+                            </div>
                           )}
                         </div>
-                      </div>
-
-                      {/* Section 3: Motivo da Porcentagem */}
-                      <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl p-4">
-                        <h4 className="text-sm font-bold text-purple-400 mb-3 flex items-center gap-2">
-                          <Target className="w-4 h-4" />
-                          🎯 Motivo da Confiança de {confidence.toFixed(0)}%
-                        </h4>
-                        <div className="space-y-3">
-                          <div className="flex items-center gap-3">
-                            <div className="flex-1 bg-background/30 rounded-full h-2">
-                              <div 
-                                className="bg-gradient-to-r from-primary to-green-400 h-2 rounded-full transition-all"
-                                style={{ width: `${Math.min(confidence, 100)}%` }}
-                              />
-                            </div>
-                            <span className={`text-sm font-bold ${confidence >= 85 ? 'text-green-400' : confidence >= 75 ? 'text-yellow-400' : 'text-orange-400'}`}>
-                              {confidence >= 85 ? 'Alta' : confidence >= 75 ? 'Média' : 'Moderada'}
-                            </span>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div className="bg-background/30 rounded-lg p-3">
-                              <p className="text-gray-400 mb-1">Cálculo baseado em:</p>
-                              <ul className="text-gray-300 space-y-1">
-                                <li className="flex items-center gap-2">
-                                  <span className="text-primary">•</span>
-                                  Modelo Poisson de probabilidade
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  <span className="text-primary">•</span>
-                                  Estatísticas dos últimos 10 jogos
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  <span className="text-primary">•</span>
-                                  Histórico de confrontos diretos
-                                </li>
-                              </ul>
-                            </div>
-                            <div className="bg-background/30 rounded-lg p-3">
-                              <p className="text-gray-400 mb-1">Validação:</p>
-                              <ul className="text-gray-300 space-y-1">
-                                <li className="flex items-center gap-2">
-                                  <span className="text-green-400">✓</span>
-                                  Odd mínima de 1.45 atingida
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  <span className="text-green-400">✓</span>
-                                  Confiança acima de 85%
-                                </li>
-                                <li className="flex items-center gap-2">
-                                  <span className={parseFloat(draft.expectedValue || '0') > 0 ? 'text-green-400' : 'text-yellow-400'}>
-                                    {parseFloat(draft.expectedValue || '0') > 0 ? '✓' : '⚠'}
-                                  </span>
-                                  EV: {draft.expectedValue ? `${parseFloat(draft.expectedValue) > 0 ? '+' : ''}${parseFloat(draft.expectedValue).toFixed(1)}%` : 'N/A'}
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Expected Value Summary */}
-                      {draft.expectedValue && parseFloat(draft.expectedValue) > 0 && (
-                        <div className="bg-gradient-to-r from-green-500/20 to-primary/20 border border-green-500/30 rounded-xl p-4 flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                              <TrendingUp className="w-5 h-5 text-green-400" />
+                        
+                        {/* Aspas de fechamento */}
+                        <div className="absolute bottom-3 right-4 text-4xl text-primary/30 font-serif">"</div>
+                        
+                        {/* Assinatura */}
+                        <div className="mt-4 pt-3 border-t border-white/10 flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+                              <Brain className="w-4 h-4 text-primary" />
                             </div>
                             <div>
-                              <p className="text-sm text-gray-400">Valor Esperado Positivo</p>
-                              <p className="text-lg font-bold text-green-400">
-                                +{parseFloat(draft.expectedValue).toFixed(1)}% EV
-                              </p>
+                              <p className="text-xs font-semibold text-white">TRUE SIGNAL IA</p>
+                              <p className="text-[10px] text-gray-500">Análise automatizada</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="text-xs text-gray-500">Esta entrada tem</p>
-                            <p className="text-sm font-semibold text-green-400">vantagem matemática</p>
+                            <p className={`text-sm font-bold ${confidence >= 85 ? 'text-green-400' : confidence >= 75 ? 'text-yellow-400' : 'text-orange-400'}`}>
+                              {confidence.toFixed(0)}% confiança
+                            </p>
+                            {draft.expectedValue && parseFloat(draft.expectedValue) > 0 && (
+                              <p className="text-xs text-green-400">+{parseFloat(draft.expectedValue).toFixed(1)}% EV</p>
+                            )}
                           </div>
                         </div>
-                      )}
+                      </div>
                     </div>
                   )}
                 </div>
