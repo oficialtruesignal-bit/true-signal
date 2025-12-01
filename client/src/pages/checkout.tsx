@@ -592,7 +592,7 @@ export default function CheckoutPage() {
               {paymentMethod === 'card' && mpReady && (
                 <div className="pt-4">
                   <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 min-h-[300px]">
+                  <div className="min-h-[300px] [&_.mp-sdk-container]:!max-w-full [&_form]:!max-w-full [&_.mp-card-payment-container]:!max-w-full [&_input]:!w-full [&_select]:!w-full [&_.mp-form-input]:!w-full">
                     <CardPaymentWrapper
                       onPaymentSubmit={onCardPaymentSubmit}
                       onPaymentError={onCardPaymentError}

@@ -333,4 +333,32 @@ body {
   .animate-scan-in {
     animation: scan-in 0.3s ease-out;
   }
+
+  /* Mercado Pago SDK - Full Width Styles */
+  #cardPaymentBrick_container,
+  .mp-sdk-container,
+  .mp-card-payment-container {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  #cardPaymentBrick_container form,
+  .mp-sdk-container form {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+  
+  #cardPaymentBrick_container input,
+  #cardPaymentBrick_container select,
+  .mp-sdk-container input,
+  .mp-sdk-container select {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  
+  #cardPaymentBrick_container .sc-fWIEvA,
+  .mp-sdk-container .sc-fWIEvA {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
 }
