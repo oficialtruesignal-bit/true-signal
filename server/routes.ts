@@ -1467,6 +1467,123 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // =====================================================
+  // LIVE PRESSURE MONITOR ENDPOINTS
+  // =====================================================
+
+  // Get hot matches (sorted by pressure)
+  app.get("/api/live/pressure", async (req, res) => {
+    try {
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      const limit = parseInt(req.query.limit as string) || 20;
+      const hotMatches = await livePressureMonitor.getHotMatches(limit);
+      
+      return res.json({
+        success: true,
+        matches: hotMatches,
+        status: livePressureMonitor.getStatus(),
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error fetching hot matches:", error);
+      return res.status(500).json({ error: "Erro ao buscar jogos quentes" });
+    }
+  });
+
+  // Get pressure history for a specific match
+  app.get("/api/live/pressure/:fixtureId", async (req, res) => {
+    try {
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      const { fixtureId } = req.params;
+      const limit = parseInt(req.query.limit as string) || 50;
+      const history = await livePressureMonitor.getMatchPressureHistory(fixtureId, limit);
+      
+      return res.json({
+        success: true,
+        fixtureId,
+        history,
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error fetching pressure history:", error);
+      return res.status(500).json({ error: "Erro ao buscar histórico de pressão" });
+    }
+  });
+
+  // Get recent alerts
+  app.get("/api/live/alerts", async (req, res) => {
+    try {
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      const limit = parseInt(req.query.limit as string) || 20;
+      const alerts = await livePressureMonitor.getRecentAlerts(limit);
+      
+      return res.json({
+        success: true,
+        alerts,
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error fetching alerts:", error);
+      return res.status(500).json({ error: "Erro ao buscar alertas" });
+    }
+  });
+
+  // Start/Stop live monitor (admin only)
+  app.post("/api/live/monitor/start", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId, intervalMs } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      await livePressureMonitor.start(intervalMs || 45000);
+      
+      return res.json({
+        success: true,
+        message: "Monitor de pressão ao vivo iniciado!",
+        status: livePressureMonitor.getStatus(),
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error starting:", error);
+      return res.status(500).json({ error: "Erro ao iniciar monitor" });
+    }
+  });
+
+  app.post("/api/live/monitor/stop", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      livePressureMonitor.stop();
+      
+      return res.json({
+        success: true,
+        message: "Monitor de pressão ao vivo parado.",
+        status: livePressureMonitor.getStatus(),
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error stopping:", error);
+      return res.status(500).json({ error: "Erro ao parar monitor" });
+    }
+  });
+
+  // Get monitor status
+  app.get("/api/live/monitor/status", async (req, res) => {
+    try {
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      return res.json({
+        success: true,
+        status: livePressureMonitor.getStatus(),
+      });
+    } catch (error: any) {
+      console.error("[Live Monitor] Error getting status:", error);
+      return res.status(500).json({ error: "Erro ao buscar status" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

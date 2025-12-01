@@ -238,3 +238,142 @@ export const insertAiAnalysisCacheSchema = createInsertSchema(aiAnalysisCache).o
 
 export type InsertAiAnalysisCache = z.infer<typeof insertAiAnalysisCacheSchema>;
 export type AiAnalysisCache = typeof aiAnalysisCache.$inferSelect;
+
+// =====================================================
+// LIVE PRESSURE MONITOR TABLES
+// =====================================================
+
+// Live Pressure Snapshots - Rolling window of live match pressure data
+export const livePressureSnapshots = pgTable("live_pressure_snapshots", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fixtureId: text("fixture_id").notNull(),
+  
+  // Match info
+  league: text("league").notNull(),
+  leagueId: text("league_id"),
+  homeTeam: text("home_team").notNull(),
+  awayTeam: text("away_team").notNull(),
+  homeTeamLogo: text("home_team_logo"),
+  awayTeamLogo: text("away_team_logo"),
+  
+  // Current match state
+  matchMinute: decimal("match_minute", { precision: 3, scale: 0 }).notNull().default("0"),
+  homeScore: decimal("home_score", { precision: 2, scale: 0 }).notNull().default("0"),
+  awayScore: decimal("away_score", { precision: 2, scale: 0 }).notNull().default("0"),
+  matchStatus: text("match_status").notNull(), // 1H, 2H, HT, FT, etc
+  
+  // Live statistics (current totals)
+  homePossession: decimal("home_possession", { precision: 5, scale: 2 }).notNull().default("50"),
+  awayPossession: decimal("away_possession", { precision: 5, scale: 2 }).notNull().default("50"),
+  homeShotsTotal: decimal("home_shots_total", { precision: 3, scale: 0 }).notNull().default("0"),
+  awayShotsTotal: decimal("away_shots_total", { precision: 3, scale: 0 }).notNull().default("0"),
+  homeShotsOnTarget: decimal("home_shots_on_target", { precision: 3, scale: 0 }).notNull().default("0"),
+  awayShotsOnTarget: decimal("away_shots_on_target", { precision: 3, scale: 0 }).notNull().default("0"),
+  homeCorners: decimal("home_corners", { precision: 3, scale: 0 }).notNull().default("0"),
+  awayCorners: decimal("away_corners", { precision: 3, scale: 0 }).notNull().default("0"),
+  homeDangerousAttacks: decimal("home_dangerous_attacks", { precision: 3, scale: 0 }).notNull().default("0"),
+  awayDangerousAttacks: decimal("away_dangerous_attacks", { precision: 3, scale: 0 }).notNull().default("0"),
+  homeAttacks: decimal("home_attacks", { precision: 3, scale: 0 }).notNull().default("0"),
+  awayAttacks: decimal("away_attacks", { precision: 3, scale: 0 }).notNull().default("0"),
+  
+  // Calculated pressure metrics
+  homePressureIndex: decimal("home_pressure_index", { precision: 5, scale: 2 }).notNull().default("0"),
+  awayPressureIndex: decimal("away_pressure_index", { precision: 5, scale: 2 }).notNull().default("0"),
+  homeGoalProbability: decimal("home_goal_probability", { precision: 5, scale: 2 }).notNull().default("0"),
+  awayGoalProbability: decimal("away_goal_probability", { precision: 5, scale: 2 }).notNull().default("0"),
+  
+  // Pressure trends (delta from last snapshot)
+  homePressureDelta: decimal("home_pressure_delta", { precision: 5, scale: 2 }).notNull().default("0"),
+  awayPressureDelta: decimal("away_pressure_delta", { precision: 5, scale: 2 }).notNull().default("0"),
+  
+  // Alert status
+  alertTriggered: boolean("alert_triggered").notNull().default(false),
+  alertType: text("alert_type"), // "home_pressure", "away_pressure", "imminent_goal"
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertLivePressureSnapshotSchema = createInsertSchema(livePressureSnapshots).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertLivePressureSnapshot = z.infer<typeof insertLivePressureSnapshotSchema>;
+export type LivePressureSnapshot = typeof livePressureSnapshots.$inferSelect;
+
+// Live Alerts - History of alerts sent for live matches
+export const liveAlerts = pgTable("live_alerts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  fixtureId: text("fixture_id").notNull(),
+  snapshotId: uuid("snapshot_id").references(() => livePressureSnapshots.id),
+  
+  // Alert details
+  alertType: text("alert_type", { 
+    enum: ["home_pressure", "away_pressure", "imminent_goal", "goal_scored", "pressure_surge"] 
+  }).notNull(),
+  teamSide: text("team_side", { enum: ["home", "away"] }).notNull(),
+  pressureIndex: decimal("pressure_index", { precision: 5, scale: 2 }).notNull(),
+  goalProbability: decimal("goal_probability", { precision: 5, scale: 2 }).notNull(),
+  
+  // Message sent
+  alertTitle: text("alert_title").notNull(),
+  alertMessage: text("alert_message").notNull(),
+  
+  // Match context at alert time
+  matchMinute: decimal("match_minute", { precision: 3, scale: 0 }).notNull(),
+  currentScore: text("current_score").notNull(), // "1-0"
+  
+  // Notification tracking
+  notificationSent: boolean("notification_sent").notNull().default(false),
+  notificationId: text("notification_id"), // OneSignal notification ID
+  
+  // Outcome tracking (did goal happen within 5 min?)
+  goalScoredWithin5Min: boolean("goal_scored_within_5_min"),
+  actualOutcome: text("actual_outcome"), // "goal_home", "goal_away", "no_goal"
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertLiveAlertSchema = createInsertSchema(liveAlerts).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertLiveAlert = z.infer<typeof insertLiveAlertSchema>;
+export type LiveAlert = typeof liveAlerts.$inferSelect;
+
+// Live Monitor Settings - Configurable thresholds per user/admin
+export const liveMonitorSettings = pgTable("live_monitor_settings", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").references(() => profiles.id),
+  
+  // Global or user-specific
+  isGlobal: boolean("is_global").notNull().default(false),
+  
+  // Pressure thresholds
+  pressureAlertThreshold: decimal("pressure_alert_threshold", { precision: 5, scale: 2 }).notNull().default("70"), // Alert when pressure > 70%
+  pressureSurgeThreshold: decimal("pressure_surge_threshold", { precision: 5, scale: 2 }).notNull().default("25"), // Alert on +25% surge
+  sustainedPressureIntervals: decimal("sustained_pressure_intervals", { precision: 2, scale: 0 }).notNull().default("2"), // Require 2 consecutive intervals
+  
+  // Goal probability thresholds
+  goalProbabilityAlertThreshold: decimal("goal_probability_alert_threshold", { precision: 5, scale: 2 }).notNull().default("75"),
+  
+  // Notification preferences
+  enablePushNotifications: boolean("enable_push_notifications").notNull().default(true),
+  enableSoundAlerts: boolean("enable_sound_alerts").notNull().default(true),
+  
+  // Leagues to monitor (JSON array of league IDs, null = all)
+  monitoredLeagues: text("monitored_leagues"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertLiveMonitorSettingsSchema = createInsertSchema(liveMonitorSettings).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertLiveMonitorSettings = z.infer<typeof insertLiveMonitorSettingsSchema>;
+export type LiveMonitorSettings = typeof liveMonitorSettings.$inferSelect;
