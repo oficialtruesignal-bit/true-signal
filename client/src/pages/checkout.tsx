@@ -581,7 +581,7 @@ export default function CheckoutPage() {
             <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
               {daysRemaining > 0 
                 ? `Restam apenas ${daysRemaining} dias do seu período de teste. Garanta seu acesso ilimitado!`
-                : "Junte-se a mais de 2.500 traders lucrativos e receba sinais exclusivos todos os dias"
+                : "Junte-se a mais de 12.000 traders lucrativos do mundo inteiro e receba sinais exclusivos todos os dias"
               }
             </p>
             
@@ -595,7 +595,7 @@ export default function CheckoutPage() {
                     </div>
                   ))}
                 </div>
-                <span className="text-sm text-gray-400">+2.500 assinantes ativos</span>
+                <span className="text-sm text-gray-400">+12.000 assinantes no mundo</span>
               </div>
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -700,7 +700,7 @@ export default function CheckoutPage() {
                   <div className="text-xs text-gray-500">Assertividade</div>
                 </div>
                 <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
-                  <div className="text-2xl font-bold text-[#33b864]">2.5K+</div>
+                  <div className="text-2xl font-bold text-[#33b864]">12K+</div>
                   <div className="text-xs text-gray-500">Assinantes</div>
                 </div>
                 <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
@@ -1047,8 +1047,8 @@ export default function CheckoutPage() {
             <div className="w-12 h-12 bg-[#33b864]/10 rounded-full flex items-center justify-center mx-auto mb-3">
               <Users className="w-6 h-6 text-[#33b864]" />
             </div>
-            <h3 className="font-bold text-white mb-2">+2.500 Assinantes</h3>
-            <p className="text-sm text-gray-400">Confiam na TRUE SIGNAL</p>
+            <h3 className="font-bold text-white mb-2">+12.000 Assinantes</h3>
+            <p className="text-sm text-gray-400">Do mundo todo confiam na TRUE SIGNAL</p>
           </div>
         </div>
 
