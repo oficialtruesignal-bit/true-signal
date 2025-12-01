@@ -677,7 +677,7 @@ export default function CheckoutPage() {
         </div>
       </div>
 
-      <div className="pt-20 pb-8">
+      <div className="pt-28 pb-8">
         <div className="max-w-7xl mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-10">
