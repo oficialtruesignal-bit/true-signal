@@ -885,7 +885,35 @@ export default function CheckoutPage() {
               {/* Card Payment Form - Mercado Pago */}
               {paymentMethod === 'card' && mpReady && (
                 <div className="pt-4">
-                  <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
+                  <h3 className="font-sora font-bold text-white mb-3">Dados do Cartão</h3>
+                  <div className="flex items-center gap-3 mb-4">
+                    {/* Mastercard */}
+                    <div className="w-12 h-8 bg-white rounded flex items-center justify-center">
+                      <svg viewBox="0 0 48 32" className="w-10 h-6">
+                        <circle cx="17" cy="16" r="10" fill="#EB001B"/>
+                        <circle cx="31" cy="16" r="10" fill="#F79E1B"/>
+                        <path d="M24 8.5c2.5 2 4 5 4 7.5s-1.5 5.5-4 7.5c-2.5-2-4-5-4-7.5s1.5-5.5 4-7.5z" fill="#FF5F00"/>
+                      </svg>
+                    </div>
+                    {/* Visa */}
+                    <div className="w-12 h-8 bg-white rounded flex items-center justify-center">
+                      <svg viewBox="0 0 48 16" className="w-10 h-4">
+                        <path d="M19.5 1L16 15h-3.5L16 1h3.5zM32 1l-3.2 14h-3.3l1.9-8.5c.1-.4 0-.7-.3-.9-.8-.5-2-1-3.2-1.2l.1-.4h5.3c.7 0 1.3.5 1.4 1.2l1.3 6.8L35 1h3zm8.5 9.6c0-3.9-5.4-4.1-5.4-5.8 0-.5.5-1.1 1.6-1.2.6 0 2.1.1 3.8.9l.7-3.1C39.6 1.1 38 .7 36.2.7c-3.5 0-6 1.9-6 4.5 0 2 1.8 3.1 3.1 3.7 1.4.7 1.9 1.1 1.9 1.7 0 .9-1.1 1.3-2.2 1.4-1.8 0-2.9-.5-3.7-.9l-.7 3.2c.8.4 2.4.7 4 .7 3.7 0 6.1-1.8 6.1-4.7zM14.5 1L8 15H4.3L1.1 3.5C.9 2.7.8 2.4.1 2 0 1.9-.1 1.8-.1 1.7l.1-.7h5.5c.7 0 1.4.5 1.5 1.3l1.4 7.3L12 1h2.5z" fill="#1A1F71"/>
+                      </svg>
+                    </div>
+                    {/* Elo */}
+                    <div className="w-12 h-8 bg-black rounded flex items-center justify-center">
+                      <span className="text-yellow-400 font-bold text-sm">elo</span>
+                    </div>
+                    {/* American Express */}
+                    <div className="w-12 h-8 bg-[#006FCF] rounded flex items-center justify-center">
+                      <span className="text-white font-bold text-[8px] leading-tight text-center">AMERICAN<br/>EXPRESS</span>
+                    </div>
+                    {/* Hipercard */}
+                    <div className="w-12 h-8 bg-[#B3131B] rounded flex items-center justify-center">
+                      <span className="text-white font-bold text-[7px]">HIPERCARD</span>
+                    </div>
+                  </div>
                   <div className="min-h-[300px] [&_.mp-sdk-container]:!max-w-full [&_form]:!max-w-full [&_.mp-card-payment-container]:!max-w-full [&_input]:!w-full [&_select]:!w-full [&_.mp-form-input]:!w-full">
                     <CardPaymentWrapper
                       onPaymentSubmit={onCardPaymentSubmit}
