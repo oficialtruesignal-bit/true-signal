@@ -12,6 +12,7 @@ export default function GestaoPage() {
   const { user, isLoading } = useAuth();
   const [, navigate] = useLocation();
   const [showSetupModal, setShowSetupModal] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(true);
   const [bankrollData, setBankrollData] = useState<{
     bankrollInitial: number | null;
     riskProfile: string | null;
@@ -34,6 +35,7 @@ export default function GestaoPage() {
   }, [user, isLoading]);
 
   const fetchBankrollData = async () => {
+    setIsLoadingData(true);
     try {
       const response = await fetch(`/api/profile/${user?.id}/bankroll`);
       if (response.ok) {
@@ -50,6 +52,8 @@ export default function GestaoPage() {
       }
     } catch (error) {
       console.error("Erro ao buscar dados de bankroll:", error);
+    } finally {
+      setIsLoadingData(false);
     }
   };
 
@@ -105,7 +109,7 @@ export default function GestaoPage() {
     { name: "Em Jogo", value: 15, color: "#f97316" },
   ];
 
-  if (isLoading) {
+  if (isLoading || isLoadingData) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-2 border-[#33b864] border-t-transparent rounded-full" />
