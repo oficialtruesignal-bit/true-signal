@@ -174,21 +174,28 @@ export function Layout({ children }: { children: React.ReactNode }) {
               key={item.path} 
               href={item.path}
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border border-transparent relative",
+                "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border relative",
                 location === item.path
-                  ? "bg-primary/10 text-primary border-primary/20 shadow-[0_0_15px_rgba(51,184,100,0.1)]"
-                  : "text-muted-foreground hover:text-primary dark:hover:text-white hover:bg-primary/5 dark:hover:bg-white/5"
+                  ? "bg-primary/15 text-primary border-primary/30 shadow-[0_0_20px_rgba(51,184,100,0.15)]"
+                  : "text-gray-400 border-white/5 hover:text-primary hover:bg-primary/10 hover:border-primary/20"
               )}
             >
-              <div className="relative">
+              <div className={cn(
+                "relative p-2 rounded-lg transition-all",
+                location === item.path 
+                  ? "bg-primary/20 shadow-[0_0_12px_rgba(51,184,100,0.4)]" 
+                  : "bg-white/5 group-hover:bg-primary/15"
+              )}>
                 <item.icon
                   className={cn(
-                    "w-5 h-5 transition-colors",
-                    location === item.path ? "text-primary" : "text-muted-foreground group-hover:text-primary dark:group-hover:text-white"
+                    "w-5 h-5 transition-all",
+                    location === item.path 
+                      ? "text-primary drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" 
+                      : "text-gray-400 group-hover:text-primary"
                   )}
                 />
                 {item.path === "/tips" && unreadCount > 0 && (
-                  <div className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center animate-pulse">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </div>
                 )}
