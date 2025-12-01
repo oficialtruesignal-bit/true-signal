@@ -1,5 +1,5 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users, Pencil, Trash2 } from "lucide-react";
+import { Copy, Users, Pencil, Trash2, Share2, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
@@ -8,6 +8,7 @@ import axios from "axios";
 import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
+import { useFavorites } from "@/hooks/use-favorites";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -79,6 +80,7 @@ function abbreviateTeamName(teamName: string): string {
 export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { isFavorite, toggleFavorite, isPending: isFavoritesPending } = useFavorites();
   const isAdmin = user?.role === 'admin';
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
@@ -89,6 +91,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [hasFetchedFromAPI, setHasFetchedFromAPI] = useState(false);
   const hasMultipleLegs = signal.legs && signal.legs.length > 1;
+  const tipIsFavorited = isFavorite(signal.id);
 
   // Busca dados oficiais da API-Football se houver fixtureId e não houver logos salvos
   useEffect(() => {
@@ -450,9 +453,26 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
       className="w-full bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg relative group"
       data-testid={`bet-card-${signal.id}`}
     >
-      {/* --- HEADER: ODD TOTAL + Controles Admin --- */}
+      {/* --- HEADER: ODD TOTAL + Controles Admin + Favorito --- */}
       <div className="px-4 py-3 flex justify-between items-center border-b border-white/10">
         <div className="flex items-center gap-2">
+          {/* Botão de Favoritar */}
+          <button
+            onClick={() => toggleFavorite(signal.id)}
+            disabled={isFavoritesPending}
+            className={cn(
+              "p-1.5 rounded-lg transition-all",
+              tipIsFavorited 
+                ? "bg-red-500/20 text-red-500" 
+                : "bg-white/5 text-gray-500 hover:text-red-400 hover:bg-red-500/10"
+            )}
+            data-testid={`button-favorite-${signal.id}`}
+          >
+            <Heart 
+              className={cn("w-4 h-4", tipIsFavorited && "fill-current")} 
+            />
+          </button>
+          
           {isAdmin && (
             <>
               <span className="text-[10px] text-gray-500">{dateOnly} às {timeOnly}</span>
@@ -617,15 +637,68 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
             </span>
           </div>
         ) : (
-          <button 
-            onClick={handleCopy}
-            data-testid={`button-copy-${signal.id}`}
-            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2"
-          >
-            <span className="text-black font-bold text-sm tracking-wide">
-              {isCopied ? "✓ COPIADO" : "COPIAR BILHETE"}
-            </span>
-          </button>
+          <div className="flex gap-2">
+            <button 
+              onClick={handleCopy}
+              data-testid={`button-copy-${signal.id}`}
+              className="flex-1 bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2"
+            >
+              <span className="text-black font-bold text-sm tracking-wide">
+                {isCopied ? "✓ COPIADO" : "COPIAR BILHETE"}
+              </span>
+            </button>
+            {/* Share Button with Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  data-testid={`button-share-${signal.id}`}
+                  className="w-12 h-12 bg-white/10 hover:bg-white/20 active:scale-[0.98] transition-all rounded-xl flex items-center justify-center"
+                >
+                  <Share2 className="w-5 h-5 text-white" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30 min-w-[160px]">
+                <DropdownMenuItem
+                  onClick={() => {
+                    const text = `🎯 *TRUE SIGNAL*\n\n⚽ ${signal.homeTeam} vs ${signal.awayTeam}\n📊 ${signal.market}\n💰 Odd: ${totalOdd.toFixed(2)}\n\n✨ Acesse: truesignal.com.br`;
+                    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="cursor-pointer hover:bg-white/10"
+                >
+                  <span className="text-xl mr-2">💬</span>
+                  <span className="text-white">WhatsApp</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const text = `🎯 TRUE SIGNAL\n\n⚽ ${signal.homeTeam} vs ${signal.awayTeam}\n📊 ${signal.market}\n💰 Odd: ${totalOdd.toFixed(2)}\n\n✨ Acesse: truesignal.com.br`;
+                    const url = `https://t.me/share/url?url=${encodeURIComponent('https://truesignal.com.br')}&text=${encodeURIComponent(text)}`;
+                    window.open(url, '_blank');
+                  }}
+                  className="cursor-pointer hover:bg-white/10"
+                >
+                  <span className="text-xl mr-2">✈️</span>
+                  <span className="text-white">Telegram</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-white/10" />
+                <DropdownMenuItem
+                  onClick={() => {
+                    const text = `🎯 TRUE SIGNAL - ${signal.homeTeam} vs ${signal.awayTeam}\n${signal.market} @ ${totalOdd.toFixed(2)}`;
+                    navigator.clipboard.writeText(text);
+                    toast({
+                      title: "Texto copiado!",
+                      description: "Cole onde quiser compartilhar",
+                      className: "bg-primary/10 border-primary/20 text-primary",
+                    });
+                  }}
+                  className="cursor-pointer hover:bg-white/10"
+                >
+                  <Copy className="w-4 h-4 mr-2 text-gray-400" />
+                  <span className="text-white">Copiar Texto</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         )}
       </div>
 

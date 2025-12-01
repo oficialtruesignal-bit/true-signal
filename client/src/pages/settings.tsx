@@ -1,18 +1,45 @@
 import { Layout } from "@/components/layout";
-import { Settings as SettingsIcon, Globe, Lock, MessageCircle, Crown, Clock, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
+import { Settings as SettingsIcon, Globe, Lock, MessageCircle, Crown, Clock, Sparkles, ArrowRight, ArrowLeft, Sun, Moon, Monitor, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useLanguage } from "@/hooks/use-language";
 import { Language } from "@/i18n/translations";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { Link, useLocation } from "wouter";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
   const { isTrial, isPremium, daysRemaining } = useAccessControl();
   const [, navigate] = useLocation();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { user } = useAuth();
+  const [isResettingTour, setIsResettingTour] = useState(false);
+
+  const handleResetTour = async () => {
+    if (!user) return;
+    setIsResettingTour(true);
+    try {
+      const response = await fetch(`/api/profiles/${user.id}/onboarding`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hasCompletedTour: false }),
+      });
+      if (response.ok) {
+        toast.success("Tour resetado! Recarregue a página para ver.");
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    } catch {
+      toast.error("Erro ao resetar tour");
+    } finally {
+      setIsResettingTour(false);
+    }
+  };
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -146,6 +173,56 @@ export default function SettingsPage() {
           </div>
         </div>
 
+        {/* Theme Selector */}
+        <div className="bg-card border border-primary/10 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            {resolvedTheme === 'dark' ? (
+              <Moon className="w-5 h-5 text-primary" />
+            ) : (
+              <Sun className="w-5 h-5 text-primary" />
+            )}
+            <h3 className="font-bold text-white">Tema</h3>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <button
+              onClick={() => setTheme('light')}
+              data-testid="theme-light"
+              className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
+                theme === 'light'
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+              }`}
+            >
+              <Sun className="w-6 h-6" />
+              <span className="text-xs font-medium">Claro</span>
+            </button>
+            <button
+              onClick={() => setTheme('dark')}
+              data-testid="theme-dark"
+              className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
+                theme === 'dark'
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+              }`}
+            >
+              <Moon className="w-6 h-6" />
+              <span className="text-xs font-medium">Escuro</span>
+            </button>
+            <button
+              onClick={() => setTheme('system')}
+              data-testid="theme-system"
+              className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
+                theme === 'system'
+                  ? 'bg-primary/20 border-primary text-primary'
+                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+              }`}
+            >
+              <Monitor className="w-6 h-6" />
+              <span className="text-xs font-medium">Sistema</span>
+            </button>
+          </div>
+        </div>
+
         {/* Language Selector */}
         <div className="bg-card border border-primary/10 rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
@@ -221,6 +298,27 @@ export default function SettingsPage() {
             className="w-full border-primary/30 hover:bg-primary/10"
           >
             {t.settings.contactSupport}
+          </Button>
+        </div>
+
+        {/* Tour Reset */}
+        <div className="bg-card border border-primary/10 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <RotateCcw className="w-5 h-5 text-primary" />
+            <h3 className="font-bold text-white">Tutorial</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Ver novamente o tour de boas-vindas do aplicativo.
+          </p>
+          <Button
+            onClick={handleResetTour}
+            disabled={isResettingTour}
+            data-testid="button-reset-tour"
+            variant="outline"
+            className="w-full border-primary/30 hover:bg-primary/10"
+          >
+            <RotateCcw className={`w-4 h-4 mr-2 ${isResettingTour ? 'animate-spin' : ''}`} />
+            {isResettingTour ? 'Resetando...' : 'Reiniciar tour'}
           </Button>
         </div>
       </div>
