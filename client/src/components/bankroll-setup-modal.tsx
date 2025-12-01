@@ -281,30 +281,42 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                   <p className="text-center text-xs text-gray-500 mt-2">Mínimo: R$ 50,00</p>
                 </div>
 
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Como funciona</p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Entenda o passo a passo</p>
                 
                 <div className="space-y-3 mb-4">
                   <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">1</div>
+                    <div className="w-8 h-8 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">1</div>
                     <div>
-                      <p className="text-white text-sm font-medium">Você informa seu capital</p>
-                      <p className="text-gray-400 text-xs">O valor que você tem disponível para apostar</p>
+                      <p className="text-white text-sm font-medium mb-1">Informe quanto você tem para apostar</p>
+                      <p className="text-gray-400 text-xs leading-relaxed">
+                        Digite acima o valor total que você separou exclusivamente para apostas. 
+                        Por exemplo: se você tem R$ 500 disponíveis, coloque R$ 500. 
+                        <span className="text-gray-300"> Esse é seu "capital de operação".</span>
+                      </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">2</div>
+                    <div className="w-8 h-8 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">2</div>
                     <div>
-                      <p className="text-white text-sm font-medium">Calculamos sua unidade (stake)</p>
-                      <p className="text-gray-400 text-xs">Dividimos seu capital para proteger sua banca</p>
+                      <p className="text-white text-sm font-medium mb-1">Nós calculamos o valor de cada aposta</p>
+                      <p className="text-gray-400 text-xs leading-relaxed">
+                        Com base no seu capital, dividimos em partes iguais para você nunca arriscar demais. 
+                        <span className="text-gray-300"> Por exemplo: R$ 500 dividido em 50 partes = R$ 10 por aposta.</span> 
+                        Assim você protege sua banca de perdas grandes.
+                      </p>
                     </div>
                   </div>
                   
                   <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
-                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">3</div>
+                    <div className="w-8 h-8 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">3</div>
                     <div>
-                      <p className="text-white text-sm font-medium">Você vê o valor exato em cada bilhete</p>
-                      <p className="text-gray-400 text-xs">Ex: "Stake 1 = R$ 20,00" — é só apostar esse valor!</p>
+                      <p className="text-white text-sm font-medium mb-1">Você vê exatamente quanto apostar</p>
+                      <p className="text-gray-400 text-xs leading-relaxed">
+                        Em cada bilhete que enviarmos, você verá algo como: <span className="text-[#33b864] font-medium">"1 Stake = R$ 10,00"</span>. 
+                        <span className="text-gray-300"> Basta ir na casa de apostas e colocar exatamente esse valor.</span> 
+                        Sem precisar fazer contas!
+                      </p>
                     </div>
                   </div>
                 </div>
