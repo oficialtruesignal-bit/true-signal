@@ -1629,6 +1629,60 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // ==================== MULTI-BOT API ENDPOINTS ====================
+  
+  // Get bot configurations
+  app.get("/api/live/bots", async (req, res) => {
+    try {
+      const { getBotConfigs } = await import("./live-pressure-monitor");
+      return res.json({
+        success: true,
+        bots: getBotConfigs(),
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting bots:", error);
+      return res.status(500).json({ error: "Erro ao buscar bots" });
+    }
+  });
+
+  // Toggle bot enabled/disabled
+  app.post("/api/live/bots/:botId/toggle", async (req, res) => {
+    try {
+      const { botId } = req.params;
+      const { adminEmail, adminUserId, enabled } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const { toggleBot } = await import("./live-pressure-monitor");
+      const result = toggleBot(botId, enabled);
+      
+      return res.json({
+        success: true,
+        message: `Bot ${botId} ${enabled ? 'ativado' : 'desativado'}`,
+        bot: result,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error toggling bot:", error);
+      return res.status(500).json({ error: "Erro ao alterar bot" });
+    }
+  });
+
+  // Get bot statistics
+  app.get("/api/live/bots/stats", async (req, res) => {
+    try {
+      const { getBotStats } = await import("./live-pressure-monitor");
+      return res.json({
+        success: true,
+        stats: getBotStats(),
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting bot stats:", error);
+      return res.status(500).json({ error: "Erro ao buscar estatísticas" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

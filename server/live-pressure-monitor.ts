@@ -99,6 +99,312 @@ const CONFIDENCE_TIERS = {
   WATCH: { min: 75, label: 'WATCH', emoji: '👁️' },
 };
 
+// ==================== MULTI-BOT SYSTEM ====================
+
+interface FavoritismProfile {
+  teamId: number;
+  teamName: string;
+  isHome: boolean;
+  favoritismScore: number;        // 0-100: quanto esse time é favorito
+  formScore: number;              // 0-100: forma recente (últimos 5 jogos)
+  strengthScore: number;          // 0-100: força ofensiva/defensiva
+  tablePositionDelta: number;     // Diferença de posição na tabela (-20 a +20)
+  impliedOdds: number;            // Probabilidade implícita das odds (0-100)
+  homeAdvantage: number;          // Bonus/penalty por jogar casa/fora
+}
+
+interface BotSignal {
+  botId: string;
+  botName: string;
+  fixtureId: string;
+  teamSide: 'home' | 'away';
+  confidence: number;
+  favoritismScore: number;
+  pressureIndex: number;
+  goalProbability: number;
+  suggestedMarket: string;
+  reasoning: string;
+}
+
+interface BotStrategy {
+  id: string;
+  name: string;
+  enabled: boolean;
+  evaluate: (
+    fixture: LiveFixture,
+    homeStats: LiveStatistics,
+    awayStats: LiveStatistics,
+    homePressure: PressureCalculation,
+    awayPressure: PressureCalculation,
+    homeProfile: FavoritismProfile,
+    awayProfile: FavoritismProfile,
+    matchMinute: number
+  ) => BotSignal | null;
+}
+
+// Thresholds específicos por bot
+const BOT_THRESHOLDS = {
+  home_favorite: {
+    minPressure: 72,
+    minFavoritism: 75,
+    minGoalProb: 70,
+    minPossessionDelta: 8,
+  },
+  away_dominant: {
+    minPressure: 68,
+    minFavoritism: 80,
+    minGoalProb: 65,
+    minXGDelta: 0.5,
+  },
+  market_favorite: {
+    minPressure: 65,
+    minFavoritism: 85,
+    minGoalProb: 68,
+    minImpliedOdds: 60,
+  },
+  pressure_surge: {
+    minPressure: 60,
+    minSurge: 20,
+    minGoalProb: 72,
+    maxTimeWindow: 5, // minutos
+  },
+};
+
+// Calcular perfil de favoritismo baseado em dados disponíveis
+function calculateFavoritismProfile(
+  teamId: number,
+  teamName: string,
+  isHome: boolean,
+  stats: LiveStatistics,
+  opponentStats: LiveStatistics
+): FavoritismProfile {
+  // Calcular forma baseada em estatísticas do jogo atual
+  const shotsRatio = stats.shotsOnTarget / Math.max(1, stats.shotsOnTarget + opponentStats.shotsOnTarget);
+  const possessionAdvantage = stats.possession - 50;
+  const attackDominance = stats.dangerousAttacks / Math.max(1, stats.dangerousAttacks + opponentStats.dangerousAttacks);
+  
+  // Form score (0-100) baseado no desempenho atual
+  const formScore = Math.min(100, Math.max(0,
+    (shotsRatio * 40) + 
+    (possessionAdvantage * 0.8 + 50) * 0.3 + 
+    (attackDominance * 100 * 0.3)
+  ));
+  
+  // Strength score baseado em métricas ofensivas
+  const offensiveStrength = Math.min(100, (stats.shotsOnTarget * 8) + (stats.dangerousAttacks * 0.8));
+  const defensiveStrength = Math.min(100, 100 - (opponentStats.shotsOnTarget * 8));
+  const strengthScore = (offensiveStrength * 0.6) + (defensiveStrength * 0.4);
+  
+  // Home advantage: +15 para casa, -10 para visitante
+  const homeAdvantage = isHome ? 15 : -10;
+  
+  // Favoritismo final
+  const favoritismScore = Math.min(100, Math.max(0,
+    (formScore * 0.4) + 
+    (strengthScore * 0.4) + 
+    homeAdvantage + 20
+  ));
+  
+  return {
+    teamId,
+    teamName,
+    isHome,
+    favoritismScore,
+    formScore,
+    strengthScore,
+    tablePositionDelta: 0, // Seria preenchido com dados da tabela real
+    impliedOdds: 50, // Seria preenchido com odds reais
+    homeAdvantage,
+  };
+}
+
+// Estratégia: Bot Fator Casa Favorito
+const homeFavoriteBot: BotStrategy = {
+  id: 'home_favorite',
+  name: 'Fator Casa Favorito',
+  enabled: true,
+  evaluate: (fixture, homeStats, awayStats, homePressure, awayPressure, homeProfile, awayProfile, matchMinute) => {
+    const thresholds = BOT_THRESHOLDS.home_favorite;
+    
+    // Verificar se time da casa é favorito e está dominando
+    if (homeProfile.favoritismScore < thresholds.minFavoritism) return null;
+    if (homePressure.pressureIndex < thresholds.minPressure) return null;
+    if (homePressure.goalProbability < thresholds.minGoalProb) return null;
+    
+    const possessionDelta = homeStats.possession - awayStats.possession;
+    if (possessionDelta < thresholds.minPossessionDelta) return null;
+    
+    // Calcular confiança
+    const confidence = Math.min(95, 
+      (homeProfile.favoritismScore * 0.3) +
+      (homePressure.pressureIndex * 0.4) +
+      (homePressure.goalProbability * 0.3)
+    );
+    
+    if (confidence < 75) return null;
+    
+    return {
+      botId: 'home_favorite',
+      botName: 'Fator Casa Favorito',
+      fixtureId: fixture.fixture.id.toString(),
+      teamSide: 'home',
+      confidence,
+      favoritismScore: homeProfile.favoritismScore,
+      pressureIndex: homePressure.pressureIndex,
+      goalProbability: homePressure.goalProbability,
+      suggestedMarket: `Próximo Gol: ${fixture.teams.home.name}`,
+      reasoning: `Casa favorita (${homeProfile.favoritismScore.toFixed(0)}%) dominando com ${homeStats.possession}% posse e pressão ${homePressure.pressureIndex.toFixed(0)}%`,
+    };
+  },
+};
+
+// Estratégia: Bot Visitante Superior
+const awayDominantBot: BotStrategy = {
+  id: 'away_dominant',
+  name: 'Visitante Superior',
+  enabled: true,
+  evaluate: (fixture, homeStats, awayStats, homePressure, awayPressure, homeProfile, awayProfile, matchMinute) => {
+    const thresholds = BOT_THRESHOLDS.away_dominant;
+    
+    // Verificar se visitante é muito superior
+    if (awayProfile.favoritismScore < thresholds.minFavoritism) return null;
+    if (awayPressure.pressureIndex < thresholds.minPressure) return null;
+    if (awayPressure.goalProbability < thresholds.minGoalProb) return null;
+    
+    // Visitante precisa ter grande vantagem de xG
+    const awayXG = awayStats.shotsOnTarget * 0.35 + (awayStats.shotsTotal - awayStats.shotsOnTarget) * 0.08;
+    const homeXG = homeStats.shotsOnTarget * 0.35 + (homeStats.shotsTotal - homeStats.shotsOnTarget) * 0.08;
+    const xGDelta = awayXG - homeXG;
+    
+    if (xGDelta < thresholds.minXGDelta) return null;
+    
+    // Calcular confiança
+    const confidence = Math.min(95, 
+      (awayProfile.favoritismScore * 0.25) +
+      (awayPressure.pressureIndex * 0.35) +
+      (awayPressure.goalProbability * 0.25) +
+      (Math.min(20, xGDelta * 10) * 0.15)
+    );
+    
+    if (confidence < 75) return null;
+    
+    return {
+      botId: 'away_dominant',
+      botName: 'Visitante Superior',
+      fixtureId: fixture.fixture.id.toString(),
+      teamSide: 'away',
+      confidence,
+      favoritismScore: awayProfile.favoritismScore,
+      pressureIndex: awayPressure.pressureIndex,
+      goalProbability: awayPressure.goalProbability,
+      suggestedMarket: `Próximo Gol: ${fixture.teams.away.name}`,
+      reasoning: `Visitante dominante com xG +${xGDelta.toFixed(2)} e ${awayStats.shotsOnTarget} chutes no gol`,
+    };
+  },
+};
+
+// Estratégia: Bot Favorito do Mercado
+const marketFavoriteBot: BotStrategy = {
+  id: 'market_favorite',
+  name: 'Favorito do Mercado',
+  enabled: true,
+  evaluate: (fixture, homeStats, awayStats, homePressure, awayPressure, homeProfile, awayProfile, matchMinute) => {
+    const thresholds = BOT_THRESHOLDS.market_favorite;
+    
+    // Determinar qual time é o grande favorito
+    const isBigHomeFavorite = homeProfile.favoritismScore >= thresholds.minFavoritism;
+    const isBigAwayFavorite = awayProfile.favoritismScore >= thresholds.minFavoritism;
+    
+    if (!isBigHomeFavorite && !isBigAwayFavorite) return null;
+    
+    const favoriteProfile = isBigHomeFavorite ? homeProfile : awayProfile;
+    const favoritePressure = isBigHomeFavorite ? homePressure : awayPressure;
+    const favoriteTeam = isBigHomeFavorite ? fixture.teams.home : fixture.teams.away;
+    const teamSide: 'home' | 'away' = isBigHomeFavorite ? 'home' : 'away';
+    
+    if (favoritePressure.pressureIndex < thresholds.minPressure) return null;
+    if (favoritePressure.goalProbability < thresholds.minGoalProb) return null;
+    
+    // Calcular confiança
+    const confidence = Math.min(95, 
+      (favoriteProfile.favoritismScore * 0.35) +
+      (favoritePressure.pressureIndex * 0.35) +
+      (favoritePressure.goalProbability * 0.30)
+    );
+    
+    if (confidence < 78) return null;
+    
+    return {
+      botId: 'market_favorite',
+      botName: 'Favorito do Mercado',
+      fixtureId: fixture.fixture.id.toString(),
+      teamSide,
+      confidence,
+      favoritismScore: favoriteProfile.favoritismScore,
+      pressureIndex: favoritePressure.pressureIndex,
+      goalProbability: favoritePressure.goalProbability,
+      suggestedMarket: `${favoriteTeam.name} Vence ou Empata`,
+      reasoning: `Grande favorito (${favoriteProfile.favoritismScore.toFixed(0)}%) com pressão alta e probabilidade de gol ${favoritePressure.goalProbability.toFixed(0)}%`,
+    };
+  },
+};
+
+// Estratégia: Bot Explosão de Pressão
+const pressureSurgeBot: BotStrategy = {
+  id: 'pressure_surge',
+  name: 'Explosão de Pressão',
+  enabled: true,
+  evaluate: (fixture, homeStats, awayStats, homePressure, awayPressure, homeProfile, awayProfile, matchMinute) => {
+    const thresholds = BOT_THRESHOLDS.pressure_surge;
+    
+    // Verificar surge de pressão (delta alto)
+    const homeSurge = homePressure.pressureDelta >= thresholds.minSurge;
+    const awaySurge = awayPressure.pressureDelta >= thresholds.minSurge;
+    
+    if (!homeSurge && !awaySurge) return null;
+    
+    const surgingPressure = homeSurge ? homePressure : awayPressure;
+    const surgingTeam = homeSurge ? fixture.teams.home : fixture.teams.away;
+    const teamSide: 'home' | 'away' = homeSurge ? 'home' : 'away';
+    const surgingProfile = homeSurge ? homeProfile : awayProfile;
+    
+    if (surgingPressure.pressureIndex < thresholds.minPressure) return null;
+    if (surgingPressure.goalProbability < thresholds.minGoalProb) return null;
+    
+    // Calcular confiança baseada no surge
+    const surgeBonus = Math.min(15, (surgingPressure.pressureDelta - thresholds.minSurge) * 1.5);
+    const confidence = Math.min(95, 
+      (surgingPressure.pressureIndex * 0.35) +
+      (surgingPressure.goalProbability * 0.35) +
+      surgeBonus +
+      (surgingProfile.favoritismScore * 0.15)
+    );
+    
+    if (confidence < 75) return null;
+    
+    return {
+      botId: 'pressure_surge',
+      botName: 'Explosão de Pressão',
+      fixtureId: fixture.fixture.id.toString(),
+      teamSide,
+      confidence,
+      favoritismScore: surgingProfile.favoritismScore,
+      pressureIndex: surgingPressure.pressureIndex,
+      goalProbability: surgingPressure.goalProbability,
+      suggestedMarket: `Próximo Gol em 5min`,
+      reasoning: `Surge de +${surgingPressure.pressureDelta.toFixed(0)}% em pressão! ${surgingTeam.name} atacando intensamente`,
+    };
+  },
+};
+
+// Array de todos os bots
+const ALL_BOT_STRATEGIES: BotStrategy[] = [
+  homeFavoriteBot,
+  awayDominantBot,
+  marketFavoriteBot,
+  pressureSurgeBot,
+];
+
 // Ligas prioritárias com alta liquidez e dados confiáveis
 const MAJOR_LEAGUES = [
   // Tier 1 - Top 5 Europa
@@ -445,14 +751,16 @@ class LivePressureMonitorService {
 
     const [insertedSnapshot] = await db.insert(livePressureSnapshots).values(snapshot).returning();
 
-    await this.checkAndTriggerAlerts(insertedSnapshot, fixture, homePressure, awayPressure);
+    await this.checkAndTriggerAlerts(insertedSnapshot, fixture, homePressure, awayPressure, homeStats, awayStats);
   }
 
   private async checkAndTriggerAlerts(
     snapshot: any,
     fixture: LiveFixture,
     homePressure: PressureCalculation,
-    awayPressure: PressureCalculation
+    awayPressure: PressureCalculation,
+    homeStats: LiveStatistics,
+    awayStats: LiveStatistics
   ) {
     const fixtureId = fixture.fixture.id.toString();
     const matchMinute = fixture.fixture.status.elapsed || 0;
@@ -480,7 +788,59 @@ class LivePressureMonitorService {
       return;
     }
 
-    // Lógica de alerta baseada em HT/FT
+    // Calcular perfis de favoritismo para os bots
+    const homeProfile = calculateFavoritismProfile(
+      fixture.teams.home.id,
+      fixture.teams.home.name,
+      true,
+      homeStats,
+      awayStats
+    );
+    const awayProfile = calculateFavoritismProfile(
+      fixture.teams.away.id,
+      fixture.teams.away.name,
+      false,
+      awayStats,
+      homeStats
+    );
+
+    // ==================== MULTI-BOT ORCHESTRATOR ====================
+    // Executar todos os bots em paralelo
+    const botSignals: BotSignal[] = [];
+    
+    for (const bot of ALL_BOT_STRATEGIES) {
+      if (!bot.enabled) continue;
+      
+      try {
+        const signal = bot.evaluate(
+          fixture,
+          homeStats,
+          awayStats,
+          homePressure,
+          awayPressure,
+          homeProfile,
+          awayProfile,
+          matchMinute
+        );
+        
+        if (signal) {
+          botSignals.push(signal);
+          console.log(`[BOT ${bot.id.toUpperCase()}] Signal: ${signal.reasoning} (${signal.confidence.toFixed(0)}%)`);
+        }
+      } catch (err) {
+        console.error(`[BOT ${bot.id}] Error:`, err);
+      }
+    }
+
+    // Criar alerta para o melhor sinal (maior confiança)
+    if (botSignals.length > 0) {
+      const bestSignal = botSignals.reduce((a, b) => a.confidence > b.confidence ? a : b);
+      
+      await this.createBotAlert(snapshot, fixture, bestSignal, isFirstHalf);
+      return; // Bot já criou alerta
+    }
+
+    // Fallback: Lógica de alerta padrão baseada em HT/FT
     const shouldAlertHome = this.evaluateAlertCondition(homePressure, thresholds, isFirstHalf);
     const shouldAlertAway = this.evaluateAlertCondition(awayPressure, thresholds, isFirstHalf);
 
@@ -493,6 +853,49 @@ class LivePressureMonitorService {
       const confidence = this.calculateConfidenceTier(awayPressure, thresholds);
       await this.createAlert(snapshot, fixture, 'away', awayPressure, confidence, isFirstHalf);
     }
+  }
+
+  private async createBotAlert(
+    snapshot: any,
+    fixture: LiveFixture,
+    signal: BotSignal,
+    isFirstHalf: boolean
+  ) {
+    const matchMinute = fixture.fixture.status.elapsed || 0;
+    const score = `${fixture.goals.home || 0}-${fixture.goals.away || 0}`;
+    const team = signal.teamSide === 'home' ? fixture.teams.home : fixture.teams.away;
+    
+    // Determinar tier de confiança
+    const tier = signal.confidence >= 85 ? CONFIDENCE_TIERS.PRIME :
+                 signal.confidence >= 80 ? CONFIDENCE_TIERS.CORE :
+                 CONFIDENCE_TIERS.WATCH;
+    
+    const halfLabel = isFirstHalf ? '1T' : '2T';
+    
+    const alert: InsertLiveAlert = {
+      fixtureId: signal.fixtureId,
+      snapshotId: snapshot.id,
+      alertType: 'imminent_goal',
+      teamSide: signal.teamSide,
+      pressureIndex: signal.pressureIndex.toString(),
+      goalProbability: signal.goalProbability.toString(),
+      alertTitle: `${tier.emoji} [${signal.botName}] ${team.name}`,
+      alertMessage: `[${halfLabel} ${matchMinute}'] ${signal.reasoning}\n\n💰 Mercado: ${signal.suggestedMarket}\n📊 Confiança: ${signal.confidence.toFixed(0)}% | Pressão: ${signal.pressureIndex.toFixed(0)}%`,
+      matchMinute: matchMinute.toString(),
+      currentScore: score,
+      notificationSent: false,
+    };
+
+    await db.insert(liveAlerts).values(alert);
+    
+    // Registrar estatísticas do bot
+    const state = botState.get(signal.botId);
+    if (state) {
+      state.alertCount++;
+      botState.set(signal.botId, state);
+    }
+    
+    console.log(`[MULTI-BOT ALERT] ${signal.botName}: ${team.name} (${signal.confidence.toFixed(0)}% conf)`);
   }
 
   private evaluateAlertCondition(
@@ -700,3 +1103,84 @@ class LivePressureMonitorService {
 }
 
 export const livePressureMonitor = new LivePressureMonitorService();
+
+// ==================== MULTI-BOT API FUNCTIONS ====================
+
+// In-memory bot state (could be persisted to DB if needed)
+const botState: Map<string, { enabled: boolean; alertCount: number; successCount: number }> = new Map([
+  ['home_favorite', { enabled: true, alertCount: 0, successCount: 0 }],
+  ['away_dominant', { enabled: true, alertCount: 0, successCount: 0 }],
+  ['market_favorite', { enabled: true, alertCount: 0, successCount: 0 }],
+  ['pressure_surge', { enabled: true, alertCount: 0, successCount: 0 }],
+]);
+
+export function getBotConfigs() {
+  return ALL_BOT_STRATEGIES.map(bot => {
+    const state = botState.get(bot.id) || { enabled: true, alertCount: 0, successCount: 0 };
+    return {
+      id: bot.id,
+      name: bot.name,
+      enabled: state.enabled,
+      alertCount: state.alertCount,
+      successRate: state.alertCount > 0 
+        ? Math.round((state.successCount / state.alertCount) * 100) 
+        : 0,
+      thresholds: BOT_THRESHOLDS[bot.id as keyof typeof BOT_THRESHOLDS] || {},
+    };
+  });
+}
+
+export function toggleBot(botId: string, enabled: boolean) {
+  const bot = ALL_BOT_STRATEGIES.find(b => b.id === botId);
+  if (!bot) {
+    throw new Error(`Bot ${botId} not found`);
+  }
+  
+  // Update in-memory state
+  const state = botState.get(botId) || { enabled: true, alertCount: 0, successCount: 0 };
+  state.enabled = enabled;
+  botState.set(botId, state);
+  
+  // Update the bot strategy
+  bot.enabled = enabled;
+  
+  console.log(`[MULTI-BOT] Bot ${botId} ${enabled ? 'enabled' : 'disabled'}`);
+  
+  return {
+    id: bot.id,
+    name: bot.name,
+    enabled: state.enabled,
+    alertCount: state.alertCount,
+  };
+}
+
+export function getBotStats() {
+  const stats: Record<string, any> = {};
+  
+  for (const bot of ALL_BOT_STRATEGIES) {
+    const state = botState.get(bot.id) || { enabled: true, alertCount: 0, successCount: 0 };
+    stats[bot.id] = {
+      name: bot.name,
+      enabled: state.enabled,
+      alertCount: state.alertCount,
+      successCount: state.successCount,
+      successRate: state.alertCount > 0 
+        ? Math.round((state.successCount / state.alertCount) * 100) 
+        : 0,
+    };
+  }
+  
+  return stats;
+}
+
+// Increment bot alert count (called when bot generates an alert)
+export function incrementBotAlert(botId: string, isSuccess: boolean = false) {
+  const state = botState.get(botId);
+  if (state) {
+    state.alertCount++;
+    if (isSuccess) {
+      state.successCount++;
+    }
+    botState.set(botId, state);
+  }
+}
