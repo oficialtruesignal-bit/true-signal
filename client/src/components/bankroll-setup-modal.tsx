@@ -95,14 +95,13 @@ function ProfileExampleModal({
         exit={{ scale: 0.9, opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
         className={cn(
-          "w-full max-w-md bg-gradient-to-br rounded-2xl p-6 border-2",
-          profile.color,
+          "w-full max-w-md bg-black rounded-2xl p-6 border-2",
           profile.borderColor
         )}
       >
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className={cn("p-2 rounded-xl bg-black/30", profile.iconColor)}>
+            <div className={cn("p-2.5 rounded-xl bg-white/5", profile.iconColor)}>
               <profile.icon className="w-5 h-5" />
             </div>
             <h3 className="font-bold text-white text-lg">{profile.name}</h3>
@@ -115,12 +114,12 @@ function ProfileExampleModal({
           </button>
         </div>
 
-        <div className="bg-black/40 rounded-xl p-4 mb-4">
-          <p className="text-sm text-gray-300 mb-3">
+        <div className="bg-white/5 rounded-xl p-4 mb-4">
+          <p className="text-sm text-gray-300 mb-4">
             <strong className="text-white">Exemplo prático:</strong> Se você depositar{" "}
             <span className={profile.iconColor}>R$ {profile.example.capital},00</span>, 
             sua unidade será de{" "}
-            <span className={profile.iconColor}>
+            <span className={cn("font-bold", profile.iconColor)}>
               R$ {profile.example.unit.toFixed(2).replace(".", ",")}
             </span>
           </p>
@@ -129,17 +128,16 @@ function ProfileExampleModal({
             {profile.example.stakes.map((s, i) => (
               <div 
                 key={i}
-                className="flex items-center justify-between bg-black/30 rounded-lg p-3"
+                className="grid grid-cols-[1fr_auto_auto] items-center gap-3 bg-black/40 rounded-lg px-4 py-3"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-gray-400">Se o bilhete indicar</span>
-                  <span className={cn("font-bold", profile.iconColor)}>
-                    {s.stake} stake{s.stake !== 1 ? 's' : ''}
-                  </span>
+                <span className="text-sm text-gray-400">Se o bilhete indicar</span>
+                <div className={cn("text-center min-w-[60px]", profile.iconColor)}>
+                  <span className="text-lg font-bold">{s.stake}</span>
+                  <span className="text-xs block -mt-1">stake{s.stake !== 1 ? 's' : ''}</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <span className="text-sm text-gray-400">aposte</span>
-                  <span className="font-bold text-white">
+                <div className="text-right min-w-[80px]">
+                  <span className="text-xs text-gray-500 block">aposte</span>
+                  <span className="text-lg font-bold text-white">
                     R$ {s.value.toFixed(2).replace(".", ",")}
                   </span>
                 </div>
