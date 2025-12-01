@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, Rocket, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOnboarding } from "@/hooks/use-onboarding";
+import { Logo } from "@/components/logo";
 
 interface OnboardingTourProps {
   showTour: boolean;
@@ -197,15 +198,22 @@ export function WelcomeModal({
               </motion.div>
 
               {/* Title */}
-              <motion.h1
+              <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl font-bold text-white mb-2"
-                style={{ fontFamily: "Sora, sans-serif" }}
+                className="mb-2"
               >
-                Bem-vindo ao True Signal!
-              </motion.h1>
+                <h1 
+                  className="text-2xl font-bold text-white mb-3"
+                  style={{ fontFamily: "Sora, sans-serif" }}
+                >
+                  Bem-Vindo ao
+                </h1>
+                <div className="flex justify-center">
+                  <Logo size="xl" />
+                </div>
+              </motion.div>
 
               {/* Subtitle */}
               <motion.p
