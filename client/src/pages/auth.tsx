@@ -38,7 +38,9 @@ const registerSchema = z.object({
 });
 
 export default function AuthPage() {
-  const [isLogin, setIsLogin] = useState(true);
+  const searchParams = new URLSearchParams(window.location.search);
+  const mode = searchParams.get('mode');
+  const [isLogin, setIsLogin] = useState(mode !== 'register');
   const { login, register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [resetEmail, setResetEmail] = useState("");

@@ -90,8 +90,8 @@ function Footer() {
             <h5 className="text-white font-bold mb-4">Acesso Rápido</h5>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <Link href="/auth" className="hover:text-[#33b864] transition-colors">
-                  Acessar Plataforma
+                <Link href="/auth?mode=register" className="hover:text-[#33b864] transition-colors">
+                  Criar Conta Grátis
                 </Link>
               </li>
               <li>

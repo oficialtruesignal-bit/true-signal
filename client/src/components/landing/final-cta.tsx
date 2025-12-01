@@ -43,7 +43,7 @@ export function FinalCTA() {
           transition={{ delay: 0.2, type: 'spring' }}
           className="mb-8"
         >
-          <Link href="/auth">
+          <Link href="/auth?mode=register">
             <motion.button
               className="group relative px-10 py-5 bg-[#33b864] text-black font-black text-lg md:text-xl rounded-2xl overflow-hidden shadow-xl shadow-[#33b864]/40 hover:shadow-[#33b864]/70 transition-all duration-300 hover:scale-105"
               data-testid="button-final-cta"

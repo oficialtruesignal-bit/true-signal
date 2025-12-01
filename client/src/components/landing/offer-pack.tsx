@@ -211,7 +211,7 @@ export function OfferPack() {
               
               {/* CTA Button - Pulsing */}
               <div className="flex justify-center">
-                <Link href="/auth">
+                <Link href="/auth?mode=register">
                   <motion.button
                     animate={{ 
                       boxShadow: [

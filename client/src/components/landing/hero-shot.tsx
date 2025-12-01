@@ -62,7 +62,7 @@ export function HeroShot() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-col items-center lg:items-start gap-4"
           >
-            <Link href="/auth">
+            <Link href="/auth?mode=register">
               <motion.button
                 className="group relative px-8 md:px-10 py-5 md:py-6 bg-[#33b864] text-black font-black text-base md:text-lg rounded-2xl overflow-hidden shadow-2xl shadow-[#33b864]/60 hover:shadow-[#33b864]/80 transition-all duration-300 hover:scale-105 touch-manipulation"
                 data-testid="button-access-ai"
