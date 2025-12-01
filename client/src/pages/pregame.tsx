@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQueries } from "@tanstack/react-query";
-import { Calendar, AlertCircle, Clock, Search, X, ChevronRight } from "lucide-react";
+import { Calendar, AlertCircle, Clock, Search, X, ChevronRight, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format, addDays, isAfter, addMinutes, isSameDay } from "date-fns";
 import { ptBR, enUS, es, fr, it, zhCN } from "date-fns/locale";
@@ -103,6 +103,16 @@ export default function PreGamePage() {
 
   return (
     <Layout>
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        data-testid="button-back"
+      >
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm">Voltar</span>
+      </button>
+
       <div className="mb-8">
         <div className="flex items-center justify-between gap-3 mb-2">
           <div className="flex items-center gap-3">

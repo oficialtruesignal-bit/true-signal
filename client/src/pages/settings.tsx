@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { Settings as SettingsIcon, Globe, Lock, MessageCircle, Crown, Clock, Sparkles, ArrowRight } from "lucide-react";
+import { Settings as SettingsIcon, Globe, Lock, MessageCircle, Crown, Clock, Sparkles, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -7,11 +7,12 @@ import { toast } from "sonner";
 import { useLanguage } from "@/hooks/use-language";
 import { Language } from "@/i18n/translations";
 import { useAccessControl } from "@/hooks/use-access-control";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function SettingsPage() {
   const { language, setLanguage, t } = useLanguage();
   const { isTrial, isPremium, daysRemaining } = useAccessControl();
+  const [, navigate] = useLocation();
 
   const languages = [
     { code: 'pt', name: 'Português', flag: '🇧🇷' },
@@ -38,6 +39,16 @@ export default function SettingsPage() {
 
   return (
     <Layout>
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        data-testid="button-back"
+      >
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm">Voltar</span>
+      </button>
+
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">

@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles } from "lucide-react";
+import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect } from "react";
 import { supabase } from "@/lib/supabase";
@@ -96,6 +96,16 @@ export default function TipsPage() {
 
   return (
     <Layout>
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        data-testid="button-back"
+      >
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm">Voltar</span>
+      </button>
+
       {/* Header de Autoridade */}
       <div className="w-full mb-6">
         

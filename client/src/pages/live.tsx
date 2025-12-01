@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout";
 import { footballService, FootballMatch } from "@/lib/football-service";
 import { useQuery } from "@tanstack/react-query";
-import { Play, AlertCircle, TrendingUp, Search, X } from "lucide-react";
+import { Play, AlertCircle, TrendingUp, Search, X, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { useState, useMemo } from "react";
@@ -45,6 +45,16 @@ export default function LivePage() {
 
   return (
     <Layout>
+      {/* Back Button */}
+      <button
+        onClick={() => window.history.back()}
+        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        data-testid="button-back"
+      >
+        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm">Voltar</span>
+      </button>
+
       <div className="mb-8">
         <div className="flex items-center justify-between gap-3 mb-2">
           <div className="flex items-center gap-3">

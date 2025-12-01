@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLocation, Link } from "wouter";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Wallet, RefreshCw, Shield, TrendingUp, BookOpen, Ticket, ArrowRight } from "lucide-react";
+import { Wallet, RefreshCw, Shield, TrendingUp, BookOpen, Ticket, ArrowRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BankrollSetupModal } from "@/components/bankroll-setup-modal";
 import { toast } from "sonner";
@@ -121,6 +121,18 @@ export default function GestaoPage() {
       />
 
       <div className="max-w-lg mx-auto px-4 py-6">
+        {/* Back Button */}
+        <motion.button
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          onClick={() => window.history.back()}
+          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+          data-testid="button-back"
+        >
+          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="text-sm">Voltar</span>
+        </motion.button>
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
