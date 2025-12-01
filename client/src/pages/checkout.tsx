@@ -508,198 +508,263 @@ export default function CheckoutPage() {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4">
-        {/* Top Security Bar */}
-        <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border border-[#33b864]/30 rounded-xl p-3 mb-8">
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs md:text-sm">
-            <div className="flex items-center gap-2 text-[#33b864]">
-              <Lock className="w-4 h-4" />
-              <span>Pagamento 100% Seguro</span>
+      {/* Floating Security Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-lg border-b border-[#33b864]/30">
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex flex-wrap items-center justify-center gap-3 md:gap-6 text-xs">
+            <div className="flex items-center gap-1.5 text-[#33b864]">
+              <Lock className="w-3.5 h-3.5" />
+              <span>Checkout Seguro</span>
             </div>
-            <div className="flex items-center gap-2 text-[#33b864]">
-              <Shield className="w-4 h-4" />
-              <span>Criptografia SSL 256-bit</span>
+            <div className="hidden md:flex items-center gap-1.5 text-[#33b864]">
+              <Shield className="w-3.5 h-3.5" />
+              <span>SSL 256-bit</span>
             </div>
-            <div className="flex items-center gap-2 text-[#33b864]">
-              <CheckCircle2 className="w-4 h-4" />
-              <span>Garantia de 7 Dias</span>
+            <div className="flex items-center gap-1.5 text-[#33b864]">
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              <span>7 Dias de Garantia</span>
             </div>
-            <div className="flex items-center gap-2 text-white">
+            <div className="flex items-center gap-1.5 text-white/80">
               <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>{onlineUsers} pessoas comprando agora</span>
+              <span>{onlineUsers} comprando agora</span>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Logo */}
-        <div className="flex justify-center mb-6">
-          <Logo size="lg" />
-        </div>
-
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-full border border-red-500/30 mb-4 animate-pulse">
-            <Clock className="w-4 h-4 text-red-400" />
-            <span className="text-sm font-bold text-red-400">OFERTA BLACK FRIDAY - 52% OFF</span>
-          </div>
-          <h1 className="text-2xl md:text-3xl font-sora font-bold text-white mb-3">
-            Finalize sua assinatura True Signal Pro
-          </h1>
-          <p className="text-gray-300 max-w-xl mx-auto">
-            {daysRemaining > 0 
-              ? `Restam ${daysRemaining} dias de teste. Complete o pagamento para garantir acesso ilimitado!`
-              : "Junte-se a mais de 2.500 assinantes lucrativos!"
-            }
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-5 gap-8">
-          {/* Left Column - Order Summary */}
-          <div className="lg:col-span-2 order-2 lg:order-1">
-            {/* What You Get */}
-            <div className="bg-gradient-to-br from-card to-card/80 border border-white/10 rounded-2xl p-6 mb-6">
-              <h3 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
-                <Gift className="w-5 h-5 text-[#33b864]" />
-                O que está incluso
-              </h3>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 bg-[#33b864]/10 rounded-xl border border-[#33b864]/20">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-white">Sinais diários de 20+ traders profissionais</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-gray-300">Notificações push em tempo real</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-gray-300">Gestão de banca inteligente</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-gray-300">Estatísticas e análises em tempo real</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-gray-300">Suporte prioritário via WhatsApp</span>
-                </div>
-                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
-                  <span className="text-sm text-gray-300">Cancele quando quiser, sem taxas</span>
-                </div>
-              </div>
+      <div className="pt-12 pb-8">
+        <div className="max-w-7xl mx-auto px-4">
+          {/* Hero Section */}
+          <div className="text-center mb-10">
+            <div className="flex justify-center mb-6">
+              <Logo size="lg" />
             </div>
-
-            {/* Guarantee */}
-            <div className="bg-gradient-to-r from-[#33b864]/10 to-emerald-500/10 border border-[#33b864]/30 rounded-2xl p-6 mb-6">
-              <div className="flex items-start gap-4">
-                <div className="w-16 h-16 bg-[#33b864]/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Shield className="w-8 h-8 text-[#33b864]" />
-                </div>
-                <div>
-                  <h4 className="font-bold text-white mb-1">Garantia de 7 Dias</h4>
-                  <p className="text-sm text-gray-400">
-                    Se não ficar 100% satisfeito nos primeiros 7 dias, devolvemos seu dinheiro integralmente. Sem perguntas, sem burocracia.
-                  </p>
-                </div>
+            
+            {/* Urgency Banner */}
+            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-full border border-red-500/40 mb-5">
+              <div className="flex items-center gap-1.5">
+                <Zap className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm font-bold text-white">BLACK FRIDAY</span>
               </div>
+              <div className="h-4 w-px bg-white/20"></div>
+              <span className="text-sm font-bold text-red-400 animate-pulse">52% OFF - ÚLTIMAS VAGAS</span>
             </div>
-
-            {/* Testimonial */}
-            <div className="bg-card border border-white/10 rounded-2xl p-6 mb-6">
-              <div className="flex gap-1 mb-3">
+            
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-sora font-bold text-white mb-4 leading-tight">
+              Acesse os <span className="text-[#33b864]">Sinais Premium</span>
+              <br className="hidden md:block" /> Agora Mesmo
+            </h1>
+            <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
+              {daysRemaining > 0 
+                ? `Restam apenas ${daysRemaining} dias do seu período de teste. Garanta seu acesso ilimitado!`
+                : "Junte-se a mais de 2.500 traders lucrativos e receba sinais exclusivos todos os dias"
+              }
+            </p>
+            
+            {/* Social Proof Quick Stats */}
+            <div className="flex flex-wrap items-center justify-center gap-6 mb-8">
+              <div className="flex items-center gap-2">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4].map((i) => (
+                    <div key={i} className="w-8 h-8 rounded-full bg-gradient-to-br from-[#33b864] to-emerald-600 border-2 border-black flex items-center justify-center">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  ))}
+                </div>
+                <span className="text-sm text-gray-400">+2.500 assinantes ativos</span>
+              </div>
+              <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
                 ))}
-              </div>
-              <p className="text-sm text-gray-300 mb-4 italic">
-                "Em 3 meses consegui lucro consistente seguindo os sinais. A plataforma é incrível e o suporte responde em minutos. Vale muito mais que o valor cobrado!"
-              </p>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#33b864]/20 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-[#33b864]" />
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-white">Carlos Mendes</p>
-                  <p className="text-xs text-gray-500">Assinante há 4 meses</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-[#33b864]">83%</div>
-                <div className="text-xs text-gray-400">Assertividade</div>
-              </div>
-              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-[#33b864]">2.5K+</div>
-                <div className="text-xs text-gray-400">Assinantes</div>
-              </div>
-              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
-                <div className="text-2xl font-bold text-[#33b864]">7+</div>
-                <div className="text-xs text-gray-400">Anos exp.</div>
+                <span className="text-sm text-gray-400 ml-1">4.9/5 (847 avaliações)</span>
               </div>
             </div>
           </div>
 
-          {/* Right Column - Payment Form */}
-          <div className="lg:col-span-3 order-1 lg:order-2">
-          {/* Checkout Form */}
-          <div className="space-y-6">
-            <form onSubmit={handleSubmit(onSubmit)} className="bg-card border border-white/10 rounded-xl p-8 space-y-6">
-              <h3 className="font-sora font-bold text-white mb-4">Escolha a forma de pagamento</h3>
+          <div className="grid lg:grid-cols-12 gap-8 items-start">
+            {/* Left Column - Benefits & Trust */}
+            <div className="lg:col-span-5 order-2 lg:order-1 space-y-6">
               
-              {/* Payment Method Selection */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('card')}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
-                    paymentMethod === 'card'
-                      ? 'border-[#33b864] bg-[#33b864]/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
-                  }`}
-                  data-testid="button-payment-card"
-                >
-                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-medium ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-300'}`}>
-                    Cartão
-                  </span>
-                  <span className="text-xs text-gray-500">Recorrente</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setPaymentMethod('pix')}
-                  className={`p-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-2 ${
-                    paymentMethod === 'pix'
-                      ? 'border-[#33b864] bg-[#33b864]/10'
-                      : 'border-white/10 bg-white/5 hover:border-white/20'
-                  }`}
-                  data-testid="button-payment-pix"
-                >
-                  <QrCode className={`w-6 h-6 ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-400'}`} />
-                  <span className={`text-sm font-medium ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-300'}`}>
-                    PIX
-                  </span>
-                  <span className="text-xs text-gray-500">Pagamento único</span>
-                </button>
+              {/* Price Card */}
+              <div className="bg-gradient-to-br from-[#33b864]/20 to-emerald-600/10 border-2 border-[#33b864]/50 rounded-3xl p-6 relative overflow-hidden">
+                <div className="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-4 py-1.5 rounded-bl-xl">
+                  -52% OFF
+                </div>
+                <div className="text-center">
+                  <p className="text-gray-400 text-sm mb-1">De <span className="line-through">R$ 99,87</span>/mês</p>
+                  <div className="flex items-baseline justify-center gap-1 mb-2">
+                    <span className="text-lg text-gray-400">R$</span>
+                    <span className="text-5xl font-bold text-white">47</span>
+                    <span className="text-2xl font-bold text-white">,90</span>
+                    <span className="text-gray-400">/mês</span>
+                  </div>
+                  <p className="text-[#33b864] text-sm font-medium">Economize R$ 51,97 por mês!</p>
+                </div>
               </div>
 
-              {/* Payment Method Info */}
-              <div className={`p-3 rounded-lg text-sm ${paymentMethod === 'card' ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-green-500/10 border border-green-500/20'}`}>
-                {paymentMethod === 'card' ? (
-                  <p className="text-blue-300">
-                    <CreditCard className="w-4 h-4 inline mr-2" />
-                    Cobrança automática mensal de R$ 47,90. Cancele quando quiser.
-                  </p>
-                ) : (
-                  <p className="text-green-300">
-                    <QrCode className="w-4 h-4 inline mr-2" />
-                    Pagamento único de R$ 47,90 via PIX. Acesso por 30 dias.
-                  </p>
-                )}
+              {/* What You Get */}
+              <div className="bg-card/50 backdrop-blur border border-white/10 rounded-2xl p-6">
+                <h3 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-[#33b864]" />
+                  Tudo que você recebe:
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    { icon: TrendingUp, text: "Sinais diários de 20+ traders experts", highlight: true },
+                    { icon: Zap, text: "Notificações push instantâneas" },
+                    { icon: Shield, text: "Gestão de banca profissional" },
+                    { icon: TrendingUp, text: "83% de taxa de assertividade" },
+                    { icon: Users, text: "Comunidade exclusiva de traders" },
+                    { icon: Gift, text: "Suporte VIP via WhatsApp" },
+                  ].map((item, i) => (
+                    <div key={i} className={`flex items-center gap-3 p-3 rounded-xl ${item.highlight ? 'bg-[#33b864]/10 border border-[#33b864]/30' : 'bg-white/5'}`}>
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${item.highlight ? 'bg-[#33b864]/20' : 'bg-white/10'}`}>
+                        <item.icon className={`w-4 h-4 ${item.highlight ? 'text-[#33b864]' : 'text-gray-400'}`} />
+                      </div>
+                      <span className={`text-sm ${item.highlight ? 'text-white font-medium' : 'text-gray-300'}`}>{item.text}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
+
+              {/* Money Back Guarantee */}
+              <div className="bg-gradient-to-r from-emerald-500/10 via-[#33b864]/10 to-emerald-500/10 border border-[#33b864]/40 rounded-2xl p-5">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
+                    <div className="w-16 h-16 bg-[#33b864]/20 rounded-full flex items-center justify-center">
+                      <Shield className="w-8 h-8 text-[#33b864]" />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#33b864] rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-black" />
+                    </div>
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-white text-lg">Garantia de 7 Dias</h4>
+                    <p className="text-sm text-gray-400">
+                      100% do seu dinheiro de volta se não ficar satisfeito. Zero risco!
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Testimonial Card */}
+              <div className="bg-card border border-white/10 rounded-2xl p-5">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
+                    CM
+                  </div>
+                  <div>
+                    <p className="font-medium text-white">Carlos Mendes</p>
+                    <div className="flex items-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                      ))}
+                      <span className="text-xs text-gray-500 ml-1">Verificado</span>
+                    </div>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-300 italic leading-relaxed">
+                  "Em 3 meses consegui lucro consistente seguindo os sinais. O suporte responde em minutos e a plataforma é sensacional. Melhor investimento que fiz!"
+                </p>
+              </div>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-[#33b864]">83%</div>
+                  <div className="text-xs text-gray-500">Assertividade</div>
+                </div>
+                <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-[#33b864]">2.5K+</div>
+                  <div className="text-xs text-gray-500">Assinantes</div>
+                </div>
+                <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-[#33b864]">7+</div>
+                  <div className="text-xs text-gray-500">Anos exp.</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Payment Form */}
+            <div className="lg:col-span-7 order-1 lg:order-2">
+              <div className="bg-gradient-to-b from-card to-card/80 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl shadow-black/50">
+                {/* Form Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="font-sora font-bold text-xl text-white">Finalizar Compra</h2>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    <Lock className="w-4 h-4 text-[#33b864]" />
+                    <span>Ambiente Seguro</span>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                  {/* Payment Method Selection */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-3">Forma de Pagamento</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('card')}
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-2 ${
+                          paymentMethod === 'card'
+                            ? 'border-[#33b864] bg-[#33b864]/10 shadow-lg shadow-[#33b864]/20'
+                            : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                        }`}
+                        data-testid="button-payment-card"
+                      >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${paymentMethod === 'card' ? 'bg-[#33b864]/20' : 'bg-white/10'}`}>
+                          <CreditCard className={`w-5 h-5 ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-400'}`} />
+                        </div>
+                        <span className={`text-sm font-medium ${paymentMethod === 'card' ? 'text-[#33b864]' : 'text-gray-300'}`}>
+                          Cartão de Crédito
+                        </span>
+                        <span className="text-xs text-gray-500">Cobrança mensal</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaymentMethod('pix')}
+                        className={`p-4 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-2 ${
+                          paymentMethod === 'pix'
+                            ? 'border-[#33b864] bg-[#33b864]/10 shadow-lg shadow-[#33b864]/20'
+                            : 'border-white/10 bg-white/5 hover:border-white/30 hover:bg-white/10'
+                        }`}
+                        data-testid="button-payment-pix"
+                      >
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${paymentMethod === 'pix' ? 'bg-[#33b864]/20' : 'bg-white/10'}`}>
+                          <QrCode className={`w-5 h-5 ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-400'}`} />
+                        </div>
+                        <span className={`text-sm font-medium ${paymentMethod === 'pix' ? 'text-[#33b864]' : 'text-gray-300'}`}>
+                          PIX
+                        </span>
+                        <span className="text-xs text-gray-500">Pagamento único</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Payment Info Badge */}
+                  <div className={`p-4 rounded-xl text-sm flex items-center gap-3 ${paymentMethod === 'card' ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-[#33b864]/10 border border-[#33b864]/20'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${paymentMethod === 'card' ? 'bg-blue-500/20' : 'bg-[#33b864]/20'}`}>
+                      {paymentMethod === 'card' ? (
+                        <CreditCard className="w-5 h-5 text-blue-400" />
+                      ) : (
+                        <Zap className="w-5 h-5 text-[#33b864]" />
+                      )}
+                    </div>
+                    <div>
+                      {paymentMethod === 'card' ? (
+                        <>
+                          <p className="text-white font-medium">Assinatura Recorrente</p>
+                          <p className="text-blue-300 text-xs">R$ 47,90/mês - Cancele quando quiser</p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-white font-medium">Pagamento Instantâneo</p>
+                          <p className="text-[#33b864] text-xs">R$ 47,90 - Acesso por 30 dias</p>
+                        </>
+                      )}
+                    </div>
+                  </div>
 
               {/* Card Payment Form - Mercado Pago */}
               {paymentMethod === 'card' && mpReady && (
@@ -1046,6 +1111,7 @@ export default function CheckoutPage() {
             <a href="/terms" className="text-[#33b864] hover:underline">Termos de Uso</a> e{" "}
             <a href="/privacy" className="text-[#33b864] hover:underline">Política de Privacidade</a>
           </p>
+        </div>
         </div>
       </div>
     </Layout>
