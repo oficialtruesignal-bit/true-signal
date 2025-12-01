@@ -29,6 +29,7 @@ import {
 interface BetCardProps {
   signal: Signal;
   onDelete?: () => void;
+  unitValue?: number | null;
 }
 
 // TeamShield Component with Official Logos (40px)
@@ -75,7 +76,7 @@ function abbreviateTeamName(teamName: string): string {
   return cleaned.substring(0, 11) + '.';
 }
 
-export function BetCard({ signal, onDelete }: BetCardProps) {
+export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const isAdmin = user?.role === 'admin';
@@ -580,11 +581,19 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           )}
         </div>
         
-        {/* Entrada Recomendada - Sempre mostra */}
+        {/* Entrada Recomendada - Mostra stake e valor em reais se configurado */}
         <div className="mt-3 pt-3 border-t border-white/5 text-center">
-          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
+          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
             <span className="text-gray-400 text-xs">Entrada:</span>
             <span className="text-[#33b864] font-bold text-sm">{(signal.stake || 1).toFixed(1)}u</span>
+            {unitValue && unitValue > 0 && (
+              <>
+                <span className="text-gray-500">=</span>
+                <span className="text-white font-bold text-sm">
+                  R$ {((signal.stake || 1) * unitValue).toFixed(2).replace('.', ',')}
+                </span>
+              </>
+            )}
           </span>
         </div>
       </div>

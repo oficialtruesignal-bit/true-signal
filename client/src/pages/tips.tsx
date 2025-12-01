@@ -3,13 +3,14 @@ import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles, ArrowLeft } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 import { BetCard } from "@/components/bet-card";
 import { useLanguage } from "@/hooks/use-language";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
+import { useAuth } from "@/hooks/use-auth";
 
 const CHECKOUT_URL = '/checkout';
 
@@ -17,6 +18,27 @@ export default function TipsPage() {
   const queryClient = useQueryClient();
   const { t } = useLanguage();
   const { canSeeAllTips } = useAccessControl();
+  const { user } = useAuth();
+  const [unitValue, setUnitValue] = useState<number | null>(null);
+
+  // Fetch user's bankroll unit value
+  useEffect(() => {
+    const fetchBankroll = async () => {
+      if (!user?.id) return;
+      try {
+        const response = await fetch(`/api/profile/${user.id}/bankroll`);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.unitValue) {
+            setUnitValue(parseFloat(data.unitValue));
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao buscar bankroll:", error);
+      }
+    };
+    fetchBankroll();
+  }, [user?.id]);
   
   const { data: tips = [], isLoading, error } = useQuery({
     queryKey: ['tips'],
@@ -187,6 +209,7 @@ export default function TipsPage() {
                   <BetCard 
                     signal={tip}
                     onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
+                    unitValue={unitValue}
                   />
                 </div>
                 
