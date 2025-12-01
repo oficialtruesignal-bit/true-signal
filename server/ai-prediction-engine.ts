@@ -1058,15 +1058,15 @@ class AIPredictionEngine {
       byFixture.get(key)!.push(pred);
     }
     
-    for (const [fixtureId, fixturePreds] of byFixture) {
+    for (const [fixtureId, fixturePreds] of Array.from(byFixture.entries())) {
       if (fixturePreds.length >= 2) {
         // Pegar 2-3 mercados do mesmo jogo
         const legsForCombo = fixturePreds.slice(0, MAX_LEGS);
-        const totalOdd = legsForCombo.reduce((acc, p) => acc * p.suggestedOdd, 1);
+        const totalOdd = legsForCombo.reduce((acc: number, p: any) => acc * p.suggestedOdd, 1);
         
         if (totalOdd >= MIN_TOTAL_ODD) {
           // Criar legs com market e outcome separados corretamente
-          const legs = legsForCombo.map(p => ({
+          const legs = legsForCombo.map((p: any) => ({
             homeTeam: p.homeTeam,
             awayTeam: p.awayTeam,
             homeTeamLogo: p.homeTeamLogo,
@@ -1087,11 +1087,11 @@ class AIPredictionEngine {
           }
           
           // Calcular confiança média
-          const avgConfidence = legsForCombo.reduce((acc, p) => acc + p.confidence, 0) / legsForCombo.length;
-          const avgProbability = legsForCombo.reduce((acc, p) => acc + p.probability, 0) / legsForCombo.length;
+          const avgConfidence = legsForCombo.reduce((acc: number, p: any) => acc + p.confidence, 0) / legsForCombo.length;
+          const avgProbability = legsForCombo.reduce((acc: number, p: any) => acc + p.probability, 0) / legsForCombo.length;
           
           // Formatar descrição do combo
-          const comboDescription = legs.map(l => `${l.market}`).join(' + ');
+          const comboDescription = legs.map((l: any) => `${l.market}`).join(' + ');
           
           // Criar combo - IMPORTANTE: suggestedOdd = totalOdd para combos
           await db.insert(aiTickets).values({
@@ -1114,14 +1114,14 @@ class AIPredictionEngine {
             confidence: String(avgConfidence.toFixed(0)),
             probability: String(avgProbability.toFixed(0)),
             expectedValue: String(((avgProbability / 100) * totalOdd - 1) * 100),
-            analysisRationale: JSON.stringify(legsForCombo.flatMap(p => p.rationale)),
+            analysisRationale: JSON.stringify(legsForCombo.flatMap((p: any) => p.rationale)),
             homeTeamStats: JSON.stringify(legsForCombo[0].homeStats),
             awayTeamStats: JSON.stringify(legsForCombo[0].awayStats),
             formScore: String(avgConfidence),
             status: 'draft'
           });
           
-          legsForCombo.forEach(p => usedPredictions.add(`${p.fixtureId}_${p.market}`));
+          legsForCombo.forEach((p: any) => usedPredictions.add(`${p.fixtureId}_${p.market}`));
           combosCreated++;
           console.log(`[AI Combos] Criado combo ${legs.length} legs (odd ${totalOdd.toFixed(2)}): ${legsForCombo[0].homeTeam} vs ${legsForCombo[0].awayTeam}`);
         }
@@ -1153,11 +1153,11 @@ class AIPredictionEngine {
       }
       
       if (candidates.length >= 2) {
-        const totalOdd = candidates.reduce((acc, p) => acc * p.suggestedOdd, 1);
+        const totalOdd = candidates.reduce((acc: number, p: any) => acc * p.suggestedOdd, 1);
         
         if (totalOdd >= MIN_TOTAL_ODD) {
           // Criar legs com market e outcome separados corretamente
-          const legs = candidates.map(p => ({
+          const legs = candidates.map((p: any) => ({
             homeTeam: p.homeTeam,
             awayTeam: p.awayTeam,
             homeTeamLogo: p.homeTeamLogo,
@@ -1177,11 +1177,11 @@ class AIPredictionEngine {
             continue;
           }
           
-          const avgConfidence = candidates.reduce((acc, p) => acc + p.confidence, 0) / candidates.length;
-          const avgProbability = candidates.reduce((acc, p) => acc + p.probability, 0) / candidates.length;
+          const avgConfidence = candidates.reduce((acc: number, p: any) => acc + p.confidence, 0) / candidates.length;
+          const avgProbability = candidates.reduce((acc: number, p: any) => acc + p.probability, 0) / candidates.length;
           
           // Formatar descrição do combo
-          const comboDescription = legs.map(l => `${l.homeTeam.substring(0,3).toUpperCase()} ${l.market}`).join(' + ');
+          const comboDescription = legs.map((l: any) => `${l.homeTeam.substring(0,3).toUpperCase()} ${l.market}`).join(' + ');
           
           await db.insert(aiTickets).values({
             fixtureId: candidates[0].fixtureId,
@@ -1203,14 +1203,14 @@ class AIPredictionEngine {
             confidence: String(avgConfidence.toFixed(0)),
             probability: String(avgProbability.toFixed(0)),
             expectedValue: String(((avgProbability / 100) * totalOdd - 1) * 100),
-            analysisRationale: JSON.stringify(candidates.flatMap(p => p.rationale)),
+            analysisRationale: JSON.stringify(candidates.flatMap((p: any) => p.rationale)),
             homeTeamStats: JSON.stringify(candidates[0].homeStats),
             awayTeamStats: JSON.stringify(candidates[0].awayStats),
             formScore: String(avgConfidence),
             status: 'draft'
           });
           
-          candidates.forEach(p => usedPredictions.add(`${p.fixtureId}_${p.market}`));
+          candidates.forEach((p: any) => usedPredictions.add(`${p.fixtureId}_${p.market}`));
           combosCreated++;
           console.log(`[AI Combos] Criado múltipla ${legs.length} jogos (odd ${totalOdd.toFixed(2)})`);
         }
