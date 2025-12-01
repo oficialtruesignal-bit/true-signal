@@ -135,25 +135,10 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
     ? signal.legs.reduce((acc, leg) => acc * leg.odd, 1)
     : signal.odd;
 
-  // Simula atualização automática de status após o jogo
+  // Mantém o estado local sincronizado com o status do banco de dados
   useEffect(() => {
-    if (signal.status !== "pending") return;
-    
-    // Verifica se já passou o horário do jogo
-    const matchDate = new Date(new Date(signal.timestamp).getTime() + 2 * 60 * 60 * 1000);
-    const now = new Date();
-    
-    // Se o jogo já passou (mais de 2 horas desde a criação)
-    if (now > matchDate) {
-      const timer = setTimeout(() => {
-        // 70% de chance de ser verde (win)
-        const isWin = Math.random() < 0.7;
-        setCurrentStatus(isWin ? "green" : "red");
-      }, 3000); // Atualiza após 3 segundos
-      
-      return () => clearTimeout(timer);
-    }
-  }, [signal.status, signal.timestamp]);
+    setCurrentStatus(signal.status);
+  }, [signal.status]);
   
   const handleStatusChange = async (newStatus: Signal["status"]) => {
     const previousStatus = currentStatus;
