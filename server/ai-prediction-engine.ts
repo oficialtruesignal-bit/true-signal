@@ -979,9 +979,11 @@ class AIPredictionEngine {
       
       console.log(`[AI Engine] Analyzing ${filteredFixtures.length} major league fixtures`);
       
+      // FILET MIGNON: Limitar a 15 jogos de alta qualidade
+      const MAX_FIXTURES = 15;
       let totalPredictions = 0;
       
-      for (const fixture of filteredFixtures.slice(0, 20)) {
+      for (const fixture of filteredFixtures.slice(0, MAX_FIXTURES)) {
         try {
           const predictions = await this.analyzeFixture(fixture);
           totalPredictions += predictions.length;
@@ -1031,12 +1033,13 @@ class AIPredictionEngine {
     awayStats: any;
   }>): Promise<number> {
     const MIN_TOTAL_ODD = 1.50;
-    const MIN_INDIVIDUAL_ODD = 1.15; // Ignorar odds muito baixas
+    const MIN_INDIVIDUAL_ODD = 1.45; // Filtrar apenas odds premium (filet mignon)
+    const MIN_CONFIDENCE = 85; // Apenas alta confiança (85%+)
     const MAX_LEGS = 3;
     
-    // Filtrar previsões válidas (confiança >= 75%, odd >= 1.15)
+    // Filtrar previsões PREMIUM (confiança >= 85%, odd >= 1.45) - FILET MIGNON ONLY
     const validPredictions = predictions.filter(p => 
-      p.confidence >= 75 && 
+      p.confidence >= MIN_CONFIDENCE && 
       p.suggestedOdd >= MIN_INDIVIDUAL_ODD
     );
     

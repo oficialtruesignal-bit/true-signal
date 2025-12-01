@@ -1512,14 +1512,42 @@ REGRAS IMPORTANTES:
     try {
       const drafts = await aiPredictionEngine.getDraftTickets();
       
+      const normalizeText = (text: string): string => {
+        return (text || '').toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+      };
+      
+      const marketNorm = (d: any) => normalizeText(d.market);
+      
       return res.json({
         pendingDrafts: drafts.length,
-        highConfidence: drafts.filter((d: any) => parseFloat(d.confidence) >= 80).length,
+        highConfidence: drafts.filter((d: any) => parseFloat(d.confidence) >= 85).length,
         markets: {
-          over25: drafts.filter((d: any) => d.market.includes('Over 2.5')).length,
-          under25: drafts.filter((d: any) => d.market.includes('Under 2.5')).length,
-          btts: drafts.filter((d: any) => d.market.includes('Ambas')).length,
-          result: drafts.filter((d: any) => d.market.includes('Resultado')).length,
+          over25: drafts.filter((d: any) => 
+            marketNorm(d).includes('over 2.5') || 
+            marketNorm(d).includes('over 1.5') || 
+            marketNorm(d).includes('gols')
+          ).length,
+          under25: drafts.filter((d: any) => marketNorm(d).includes('under 2.5')).length,
+          btts: drafts.filter((d: any) => 
+            marketNorm(d).includes('ambas') || 
+            marketNorm(d).includes('btts')
+          ).length,
+          result: drafts.filter((d: any) => marketNorm(d).includes('resultado')).length,
+          corners: drafts.filter((d: any) => 
+            marketNorm(d).includes('corner') || 
+            marketNorm(d).includes('escanteio')
+          ).length,
+          cards: drafts.filter((d: any) => 
+            marketNorm(d).includes('card') || 
+            marketNorm(d).includes('cartao') ||
+            marketNorm(d).includes('cartoes')
+          ).length,
+          shots: drafts.filter((d: any) => 
+            marketNorm(d).includes('shot') || 
+            marketNorm(d).includes('chute')
+          ).length,
         }
       });
     } catch (error: any) {

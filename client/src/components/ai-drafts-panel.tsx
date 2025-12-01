@@ -69,8 +69,13 @@ interface AiStats {
     under25: number;
     btts: number;
     result: number;
+    corners: number;
+    cards: number;
+    shots: number;
   };
 }
+
+type MarketFilter = 'all' | 'over25' | 'btts' | 'highConfidence' | 'corners' | 'cards' | 'shots';
 
 export function AiDraftsPanel() {
   const queryClient = useQueryClient();
@@ -79,6 +84,7 @@ export function AiDraftsPanel() {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
   const [selectedDrafts, setSelectedDrafts] = useState<Set<string>>(new Set());
+  const [activeFilter, setActiveFilter] = useState<MarketFilter>('all');
 
   const { data: drafts = [], isLoading: loadingDrafts, refetch: refetchDrafts } = useQuery<AiDraft[]>({
     queryKey: ['ai-drafts'],
@@ -195,7 +201,7 @@ export function AiDraftsPanel() {
 
   const selectAllHighConfidence = () => {
     const highConfidenceIds = drafts
-      .filter(d => parseFloat(d.confidence) >= 80)
+      .filter(d => parseFloat(d.confidence) >= 85)
       .map(d => d.id);
     setSelectedDrafts(new Set(highConfidenceIds));
   };
@@ -205,6 +211,40 @@ export function AiDraftsPanel() {
     if (confidence >= 75) return 'text-yellow-400 bg-yellow-500/20';
     return 'text-orange-400 bg-orange-500/20';
   };
+
+  const normalizeText = (text: string): string => {
+    return text.toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+  };
+
+  const filterDrafts = (drafts: AiDraft[]): AiDraft[] => {
+    if (activeFilter === 'all') return drafts;
+    
+    return drafts.filter(draft => {
+      const market = normalizeText(draft.market);
+      const confidence = parseFloat(draft.confidence);
+      
+      switch (activeFilter) {
+        case 'highConfidence':
+          return confidence >= 85;
+        case 'over25':
+          return market.includes('over 2.5') || market.includes('over 1.5') || market.includes('gols');
+        case 'btts':
+          return market.includes('btts') || market.includes('ambas');
+        case 'corners':
+          return market.includes('corner') || market.includes('escanteio');
+        case 'cards':
+          return market.includes('card') || market.includes('cartao') || market.includes('cartoes');
+        case 'shots':
+          return market.includes('shot') || market.includes('chute');
+        default:
+          return true;
+      }
+    });
+  };
+
+  const filteredDrafts = filterDrafts(drafts);
 
   const formatMatchTime = (dateString: string) => {
     const date = new Date(dateString);
@@ -218,9 +258,13 @@ export function AiDraftsPanel() {
 
   return (
     <div className="space-y-6">
-      {/* Header Stats */}
+      {/* Header Stats - Clickable Filter Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 rounded-xl p-4">
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'all' ? 'all' : 'all')}
+          className={`bg-gradient-to-br from-primary/20 to-primary/5 border rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'all' ? 'border-primary ring-2 ring-primary/50' : 'border-primary/30'}`}
+          data-testid="filter-all"
+        >
           <div className="flex items-center gap-2 mb-2">
             <Brain className="w-5 h-5 text-primary" />
             <span className="text-xs text-gray-400">RASCUNHOS</span>
@@ -228,7 +272,11 @@ export function AiDraftsPanel() {
           <p className="text-2xl font-bold text-white">{stats?.pendingDrafts || 0}</p>
         </div>
         
-        <div className="bg-gradient-to-br from-green-500/20 to-green-500/5 border border-green-500/30 rounded-xl p-4">
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'highConfidence' ? 'all' : 'highConfidence')}
+          className={`bg-gradient-to-br from-green-500/20 to-green-500/5 border rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'highConfidence' ? 'border-green-400 ring-2 ring-green-400/50' : 'border-green-500/30'}`}
+          data-testid="filter-high-confidence"
+        >
           <div className="flex items-center gap-2 mb-2">
             <Target className="w-5 h-5 text-green-400" />
             <span className="text-xs text-gray-400">ALTA CONFIANÇA</span>
@@ -236,7 +284,11 @@ export function AiDraftsPanel() {
           <p className="text-2xl font-bold text-green-400">{stats?.highConfidence || 0}</p>
         </div>
         
-        <div className="bg-gradient-to-br from-blue-500/20 to-blue-500/5 border border-blue-500/30 rounded-xl p-4">
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'over25' ? 'all' : 'over25')}
+          className={`bg-gradient-to-br from-blue-500/20 to-blue-500/5 border rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'over25' ? 'border-blue-400 ring-2 ring-blue-400/50' : 'border-blue-500/30'}`}
+          data-testid="filter-over25"
+        >
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-5 h-5 text-blue-400" />
             <span className="text-xs text-gray-400">OVER 2.5</span>
@@ -244,7 +296,11 @@ export function AiDraftsPanel() {
           <p className="text-2xl font-bold text-blue-400">{stats?.markets?.over25 || 0}</p>
         </div>
         
-        <div className="bg-gradient-to-br from-purple-500/20 to-purple-500/5 border border-purple-500/30 rounded-xl p-4">
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'btts' ? 'all' : 'btts')}
+          className={`bg-gradient-to-br from-purple-500/20 to-purple-500/5 border rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'btts' ? 'border-purple-400 ring-2 ring-purple-400/50' : 'border-purple-500/30'}`}
+          data-testid="filter-btts"
+        >
           <div className="flex items-center gap-2 mb-2">
             <Zap className="w-5 h-5 text-purple-400" />
             <span className="text-xs text-gray-400">BTTS</span>
@@ -252,6 +308,62 @@ export function AiDraftsPanel() {
           <p className="text-2xl font-bold text-purple-400">{stats?.markets?.btts || 0}</p>
         </div>
       </div>
+
+      {/* Secondary Filter Row - More Markets */}
+      <div className="grid grid-cols-3 gap-3">
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'corners' ? 'all' : 'corners')}
+          className={`bg-gradient-to-br from-orange-500/20 to-orange-500/5 border rounded-lg p-3 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'corners' ? 'border-orange-400 ring-2 ring-orange-400/50' : 'border-orange-500/30'}`}
+          data-testid="filter-corners"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🚩</span>
+            <span className="text-xs text-gray-400">ESCANTEIOS</span>
+          </div>
+          <p className="text-xl font-bold text-orange-400">{stats?.markets?.corners || 0}</p>
+        </div>
+        
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'cards' ? 'all' : 'cards')}
+          className={`bg-gradient-to-br from-red-500/20 to-red-500/5 border rounded-lg p-3 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'cards' ? 'border-red-400 ring-2 ring-red-400/50' : 'border-red-500/30'}`}
+          data-testid="filter-cards"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🟨</span>
+            <span className="text-xs text-gray-400">CARTÕES</span>
+          </div>
+          <p className="text-xl font-bold text-red-400">{stats?.markets?.cards || 0}</p>
+        </div>
+        
+        <div 
+          onClick={() => setActiveFilter(activeFilter === 'shots' ? 'all' : 'shots')}
+          className={`bg-gradient-to-br from-cyan-500/20 to-cyan-500/5 border rounded-lg p-3 cursor-pointer transition-all hover:scale-[1.02] ${activeFilter === 'shots' ? 'border-cyan-400 ring-2 ring-cyan-400/50' : 'border-cyan-500/30'}`}
+          data-testid="filter-shots"
+        >
+          <div className="flex items-center gap-2">
+            <span className="text-lg">🎯</span>
+            <span className="text-xs text-gray-400">CHUTES</span>
+          </div>
+          <p className="text-xl font-bold text-cyan-400">{stats?.markets?.shots || 0}</p>
+        </div>
+      </div>
+
+      {/* Active Filter Indicator */}
+      {activeFilter !== 'all' && (
+        <div className="flex items-center justify-between bg-primary/10 border border-primary/30 rounded-lg px-4 py-2">
+          <span className="text-sm text-primary font-medium">
+            Filtro ativo: <span className="font-bold uppercase">{activeFilter === 'highConfidence' ? 'Alta Confiança 85%+' : activeFilter === 'over25' ? 'Over 2.5 Gols' : activeFilter === 'btts' ? 'BTTS' : activeFilter === 'corners' ? 'Escanteios' : activeFilter === 'cards' ? 'Cartões' : 'Chutes'}</span>
+          </span>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            onClick={() => setActiveFilter('all')}
+            className="text-primary hover:text-white"
+          >
+            <X className="w-4 h-4 mr-1" /> Limpar
+          </Button>
+        </div>
+      )}
 
       {/* Confidence Explanation Card - Mobile Optimized */}
       <div className="bg-gradient-to-r from-primary/10 via-green-500/5 to-blue-500/10 border border-primary/20 rounded-xl p-3 sm:p-4">
@@ -343,24 +455,46 @@ export function AiDraftsPanel() {
             <Sparkles className="w-5 h-5 text-primary" />
             Previsões da IA
           </h3>
-          <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold">
-            {drafts.length} Rascunhos
-          </span>
+          <div className="flex items-center gap-2">
+            {activeFilter !== 'all' && (
+              <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-semibold">
+                {filteredDrafts.length} de {drafts.length}
+              </span>
+            )}
+            <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold">
+              {filteredDrafts.length} Rascunhos
+            </span>
+          </div>
         </div>
 
         {loadingDrafts ? (
           <div className="p-8 flex items-center justify-center">
             <Loader2 className="w-8 h-8 text-primary animate-spin" />
           </div>
-        ) : drafts.length === 0 ? (
+        ) : filteredDrafts.length === 0 ? (
           <div className="p-8 text-center text-gray-400">
             <Brain className="w-12 h-12 mx-auto mb-4 opacity-30" />
-            <p>Nenhuma previsão pendente</p>
-            <p className="text-sm mt-2">Execute a análise para gerar previsões</p>
+            {activeFilter !== 'all' ? (
+              <>
+                <p>Nenhuma previsão encontrada para este filtro</p>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => setActiveFilter('all')}
+                  className="mt-2 text-primary"
+                >
+                  Ver todas as previsões
+                </Button>
+              </>
+            ) : (
+              <>
+                <p>Nenhuma previsão pendente</p>
+                <p className="text-sm mt-2">Execute a análise para gerar previsões</p>
+              </>
+            )}
           </div>
         ) : (
           <div className="divide-y divide-white/5">
-            {drafts.map((draft) => {
+            {filteredDrafts.map((draft) => {
               const confidence = parseFloat(draft.confidence);
               const isExpanded = expandedDraft === draft.id;
               const isSelected = selectedDrafts.has(draft.id);
