@@ -90,28 +90,40 @@ const CardPaymentWrapper = memo(function CardPaymentWrapper({
   );
 }, () => true); // Always return true to prevent re-renders
 
-// Testimonials data
+// Testimonials data - International users from around the world
 const testimonials = [
-  { name: "Carlos Mendes", age: 34, city: "São Paulo, BR", text: "Incrível! Consegui dobrar minha banca em 2 meses seguindo os sinais. Plataforma muito profissional.", initials: "CM" },
-  { name: "Fernanda Lima", age: 28, city: "Rio de Janeiro, BR", text: "A assertividade dos sinais impressiona. Não fico mais perdida procurando apostas. Vale cada centavo.", initials: "FL" },
-  { name: "Ricardo Santos", age: 41, city: "Curitiba, BR", text: "Suporte rápido, sinais certeiros e uma plataforma linda. Melhor investimento que fiz.", initials: "RS" },
-  { name: "Ana Paula", age: 32, city: "Belo Horizonte, BR", text: "Em 3 meses de uso, consegui pagar a assinatura várias vezes. Recomendo muito!", initials: "AP" },
-  { name: "João Pedro", age: 26, city: "Porto Alegre, BR", text: "Antes eu perdia dinheiro apostando sozinho. Com a True Signal, finalmente estou lucrando.", initials: "JP" },
-  { name: "Mariana Costa", age: 29, city: "Salvador, BR", text: "Os sinais chegam na hora certa. Nunca mais perdi uma oportunidade boa.", initials: "MC" },
-  { name: "Diego Oliveira", age: 37, city: "Fortaleza, BR", text: "Plataforma séria e profissional. Os traders realmente sabem o que fazem.", initials: "DO" },
-  { name: "Camila Rocha", age: 25, city: "Recife, BR", text: "Comecei com medo, mas em 1 semana já vi resultados. Incrível!", initials: "CR" },
-  { name: "Bruno Almeida", age: 33, city: "Brasília, BR", text: "O gerenciamento de banca me ajudou muito. Agora sei exatamente quanto apostar.", initials: "BA" },
-  { name: "Patricia Souza", age: 30, city: "Manaus, BR", text: "Atendimento excepcional! Tiraram todas as minhas dúvidas pelo WhatsApp.", initials: "PS" },
-  { name: "Lucas Ferreira", age: 27, city: "Lisboa, PT", text: "Uso do Portugal e funciona perfeitamente. Sinais muito bons para futebol europeu.", initials: "LF" },
-  { name: "Maria Silva", age: 35, city: "Madrid, ES", text: "Desde España también funciona genial. Los señales son muy precisos.", initials: "MS" },
-  { name: "André Martins", age: 31, city: "Miami, USA", text: "Even from the US, the signals are accurate. Great platform for soccer betting.", initials: "AM" },
-  { name: "Juliana Neves", age: 24, city: "Florianópolis, BR", text: "A melhor decisão que tomei foi assinar. Resultados consistentes todo mês.", initials: "JN" },
-  { name: "Rafael Costa", age: 38, city: "Goiânia, BR", text: "7 anos de experiência dos traders faz toda diferença. Sinais muito bem analisados.", initials: "RC" },
-  { name: "Isabela Santos", age: 26, city: "Vitória, BR", text: "Adorei a interface! Fácil de usar e os sinais são muito claros.", initials: "IS" },
-  { name: "Thiago Ribeiro", age: 29, city: "Campinas, BR", text: "Já testei várias plataformas. True Signal é disparada a melhor.", initials: "TR" },
-  { name: "Carolina Dias", age: 33, city: "Natal, BR", text: "O período de teste me convenceu. Assinei e não me arrependo!", initials: "CD" },
-  { name: "Felipe Gomes", age: 36, city: "São Paulo, BR", text: "Profissionalismo de verdade. Dá pra confiar nos sinais de olhos fechados.", initials: "FG" },
-  { name: "Amanda Torres", age: 28, city: "Cuiabá, BR", text: "Minha renda extra do mês vem toda da True Signal. Gratidão!", initials: "AT" },
+  // Brazil
+  { name: "Carlos Mendes", age: 34, city: "São Paulo, Brasil 🇧🇷", text: "Incrível! Consegui dobrar minha banca em 2 meses seguindo os sinais. Plataforma muito profissional.", initials: "CM" },
+  { name: "Fernanda Lima", age: 28, city: "Rio de Janeiro, Brasil 🇧🇷", text: "A assertividade dos sinais impressiona. Não fico mais perdida procurando apostas. Vale cada centavo.", initials: "FL" },
+  // Portugal
+  { name: "João Rodrigues", age: 41, city: "Lisboa, Portugal 🇵🇹", text: "Fantástico! Uso há 4 meses e os resultados são consistentes. Muito bom para futebol europeu.", initials: "JR" },
+  { name: "Sofia Ferreira", age: 29, city: "Porto, Portugal 🇵🇹", text: "Excelente plataforma! Os sinais chegam sempre a tempo e a taxa de acerto é impressionante.", initials: "SF" },
+  // Spain
+  { name: "Alejandro García", age: 32, city: "Madrid, España 🇪🇸", text: "¡Increíble plataforma! Los señales son muy precisos y el soporte responde rápido. Muy recomendable.", initials: "AG" },
+  { name: "María Rodríguez", age: 26, city: "Barcelona, España 🇪🇸", text: "Llevo 3 meses usando True Signal y mis ganancias han sido constantes. ¡Gracias!", initials: "MR" },
+  // USA
+  { name: "Michael Johnson", age: 35, city: "New York, USA 🇺🇸", text: "Best betting signals I've ever used. The accuracy is incredible and the platform is very professional.", initials: "MJ" },
+  { name: "Sarah Williams", age: 28, city: "Los Angeles, USA 🇺🇸", text: "Amazing platform! I was skeptical at first but the results speak for themselves. Highly recommend!", initials: "SW" },
+  // UK
+  { name: "James Wilson", age: 38, city: "London, UK 🇬🇧", text: "Brilliant service! The signals are spot on and the bankroll management feature is fantastic.", initials: "JW" },
+  { name: "Emma Thompson", age: 31, city: "Manchester, UK 🇬🇧", text: "Been using True Signal for 2 months now. Consistent profits and excellent customer support.", initials: "ET" },
+  // Germany
+  { name: "Maximilian Müller", age: 33, city: "Berlin, Deutschland 🇩🇪", text: "Ausgezeichnete Plattform! Die Signale sind sehr genau und der Support ist erstklassig.", initials: "MM" },
+  { name: "Hannah Schmidt", age: 27, city: "München, Deutschland 🇩🇪", text: "Sehr zufrieden mit True Signal. Die Trefferquote ist beeindruckend!", initials: "HS" },
+  // France
+  { name: "Lucas Dubois", age: 30, city: "Paris, France 🇫🇷", text: "Excellente plateforme! Les signaux sont très précis et j'ai doublé ma bankroll en 2 mois.", initials: "LD" },
+  { name: "Camille Martin", age: 25, city: "Lyon, France 🇫🇷", text: "Je recommande vivement True Signal. Service professionnel et résultats constants.", initials: "CM" },
+  // Italy
+  { name: "Marco Rossi", age: 36, city: "Milano, Italia 🇮🇹", text: "Piattaforma eccellente! I segnali sono molto precisi e il supporto è velocissimo.", initials: "MR" },
+  { name: "Giulia Bianchi", age: 29, city: "Roma, Italia 🇮🇹", text: "Uso True Signal da 3 mesi e sono molto soddisfatta. Risultati costanti!", initials: "GB" },
+  // Argentina
+  { name: "Martín González", age: 34, city: "Buenos Aires, Argentina 🇦🇷", text: "¡Excelente! Las señales son muy precisas y el equipo de traders sabe lo que hace.", initials: "MG" },
+  // Mexico
+  { name: "Diego Hernández", age: 31, city: "Ciudad de México, México 🇲🇽", text: "¡Increíble plataforma! He tenido ganancias consistentes desde que me suscribí.", initials: "DH" },
+  // Japan
+  { name: "Takeshi Yamamoto", age: 28, city: "Tokyo, Japan 🇯🇵", text: "素晴らしいプラットフォーム！シグナルは非常に正確で、サポートも迅速です。", initials: "TY" },
+  // Australia
+  { name: "Liam Mitchell", age: 32, city: "Sydney, Australia 🇦🇺", text: "Top-notch signals and excellent platform. My betting game has completely changed!", initials: "LM" },
 ];
 
 // Testimonials Slider Component
