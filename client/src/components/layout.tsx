@@ -12,6 +12,7 @@ import { tipsService } from "@/lib/tips-service";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { OnboardingTour, WelcomeModal } from "./onboarding-tour";
+import { useContentProtection } from "@/hooks/use-content-protection";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -19,6 +20,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { t } = useLanguage();
   const [showWelcome, setShowWelcome] = useState(false);
   const [hasShownWelcome, setHasShownWelcome] = useState(false);
+  const { isBlurred } = useContentProtection();
   
   // Onboarding tour
   const {
@@ -125,7 +127,23 @@ export function Layout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground pb-20 md:pb-0 md:pl-64 font-sans">
+    <div 
+      className={cn(
+        "min-h-screen bg-background text-foreground pb-20 md:pb-0 md:pl-64 font-sans select-none",
+        isBlurred && "blur-xl pointer-events-none"
+      )}
+      style={{ WebkitUserSelect: 'none', userSelect: 'none' }}
+    >
+      {/* Overlay de proteção quando blur ativo */}
+      {isBlurred && (
+        <div className="fixed inset-0 z-[200] bg-black/90 flex items-center justify-center">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🔒</div>
+            <p className="text-white text-xl font-bold">Conteúdo Protegido</p>
+            <p className="text-gray-400 text-sm mt-2">Volte para a tela para continuar</p>
+          </div>
+        </div>
+      )}
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-card border-r border-primary/20 p-6 z-50">
         <Link href="/app" className="mb-10 px-2 block">
