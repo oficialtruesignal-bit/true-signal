@@ -187,14 +187,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile Bottom Nav - 5 Icons */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-around px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-center gap-0">
         {mobileNavItems.map((item) => (
           <Link 
             key={item.path} 
             href={item.path}
             data-testid={`nav-${item.label.toLowerCase()}`}
             className={cn(
-              "flex flex-col items-center justify-center w-16 h-full gap-1 transition-all relative",
+              "flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all relative max-w-[72px]",
               location === item.path ? "text-primary" : "text-muted-foreground"
             )}
           >
@@ -212,7 +212,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               )}
             </div>
             <span className={cn(
-              "text-[10px] font-medium transition-all",
+              "text-[9px] font-medium transition-all text-center leading-tight",
               location === item.path ? "font-bold" : ""
             )}>{item.label}</span>
           </Link>
