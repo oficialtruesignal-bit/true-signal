@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="48" height="58" viewBox="0 0 48 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="shield-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80" />
+      <stop offset="100%" stop-color="#33b864" />
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="1.5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  
+  <!-- Shield monolith shape -->
+  <g transform="translate(4, 5)">
+    <path 
+      d="M4 6 L4 32 Q4 40 20 46 Q36 40 36 32 L36 6 Q36 2 32 2 L8 2 Q4 2 4 6 Z" 
+      fill="none"
+      stroke="url(#shield-gradient)"
+      stroke-width="2.5"
+      filter="url(#glow)"
+    />
+    
+    <!-- Precision pulse/signal line -->
+    <path 
+      d="M8 24 L14 24 L17 18 L20 30 L23 22 L26 26 L32 26" 
+      stroke="#33b864" 
+      stroke-width="2.5" 
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      fill="none"
+    />
+    
+    <!-- Active signal dot -->
+    <circle cx="32" cy="26" r="2" fill="#33b864"/>
+  </g>
+</svg>
