@@ -718,9 +718,9 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-8 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 items-start max-w-6xl mx-auto">
             {/* Left Column - Benefits & Trust */}
-            <div className="lg:col-span-5 order-2 lg:order-1 space-y-6">
+            <div className="order-2 lg:order-1 space-y-6">
               
               {/* Price Card */}
               <div className="bg-gradient-to-br from-[#33b864]/20 to-emerald-600/10 border-2 border-[#33b864]/50 rounded-3xl p-6 relative overflow-hidden">
@@ -802,7 +802,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Right Column - Payment Form */}
-            <div className="lg:col-span-7 order-1 lg:order-2">
+            <div className="order-1 lg:order-2">
               <div className="bg-gradient-to-b from-card to-card/80 border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl shadow-black/50">
                 {/* Form Header */}
                 <div className="flex items-center justify-between mb-6">
