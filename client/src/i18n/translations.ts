@@ -30,7 +30,7 @@ export const translations = {
       cta: "Liberar Acesso Profissional",
     },
     tips: {
-      title: "Bilhetes Analisados",
+      title: "SINAIS PREMIUM",
       subtitle: "Análises curadas por 20 especialistas + IA com precisão de 97%",
       noTips: "Nenhum bilhete disponível no momento.",
       newSignals: "Novos bilhetes serão publicados em breve.",
@@ -134,7 +134,7 @@ export const translations = {
       cta: "Unlock Professional Access",
     },
     tips: {
-      title: "Ready Tickets",
+      title: "PREMIUM SIGNALS",
       subtitle: "Analysis curated by 20 experts + AI with 97% accuracy",
       noTips: "No tickets available at the moment.",
       newSignals: "New tickets will be published soon.",
@@ -238,7 +238,7 @@ export const translations = {
       cta: "Desbloquear Acceso Profesional",
     },
     tips: {
-      title: "Boletos Listos",
+      title: "SEÑALES PREMIUM",
       subtitle: "Análisis curado por 20 expertos + IA con 97% de precisión",
       noTips: "No hay boletos disponibles en este momento.",
       newSignals: "Nuevos boletos se publicarán pronto.",
@@ -342,7 +342,7 @@ export const translations = {
       cta: "Débloquer l'Accès Professionnel",
     },
     tips: {
-      title: "Billets Prêts",
+      title: "SIGNAUX PREMIUM",
       subtitle: "Analyses curées par 20 experts + IA avec 97% de précision",
       noTips: "Aucun billet disponible pour le moment.",
       newSignals: "De nouveaux billets seront publiés bientôt.",
@@ -446,7 +446,7 @@ export const translations = {
       cta: "Sblocca l'Accesso Professionale",
     },
     tips: {
-      title: "Biglietti Pronti",
+      title: "SEGNALI PREMIUM",
       subtitle: "Analisi curate da 20 esperti + IA con precisione del 97%",
       noTips: "Nessun biglietto disponibile al momento.",
       newSignals: "Nuovi biglietti saranno pubblicati a breve.",
@@ -550,7 +550,7 @@ export const translations = {
       cta: "解锁专业访问",
     },
     tips: {
-      title: "投注单准备就绪",
+      title: "优质信号",
       subtitle: "由20位专家策划的分析+AI，准确率97%",
       noTips: "目前没有可用的投注单。",
       newSignals: "新投注单即将发布。",

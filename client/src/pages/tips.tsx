@@ -114,7 +114,10 @@ export default function TipsPage() {
           <div className="p-2 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
             <Ticket className="w-6 h-6 text-[#33b864]" />
           </div>
-          <h1 className="text-3xl font-sora font-bold text-white">
+          <h1 
+            className="text-2xl md:text-3xl font-bold text-white tracking-[0.2em]"
+            style={{ fontFamily: "Sora, sans-serif" }}
+          >
             {t.tips.title}
           </h1>
         </div>
