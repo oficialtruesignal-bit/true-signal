@@ -653,31 +653,31 @@ export default function CheckoutPage() {
 
   return (
     <Layout>
-      {/* Floating Security Header - Enhanced */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-black via-[#0a1f0a] to-black backdrop-blur-lg border-b-2 border-[#33b864]/50 shadow-lg shadow-[#33b864]/10">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-10">
-            <div className="flex items-center gap-2 bg-[#33b864]/10 px-4 py-2 rounded-full border border-[#33b864]/30">
-              <Lock className="w-5 h-5 text-[#33b864]" />
-              <span className="text-sm font-semibold text-white">Checkout 100% Seguro</span>
+      {/* Floating Security Header - Compact */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-black via-[#0a1f0a] to-black backdrop-blur-lg border-b border-[#33b864]/40">
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="flex items-center justify-center gap-3 md:gap-6 flex-wrap">
+            <div className="flex items-center gap-1.5 text-[#33b864]">
+              <Lock className="w-4 h-4" />
+              <span className="text-xs font-semibold">Checkout Seguro</span>
             </div>
-            <div className="hidden md:flex items-center gap-2 bg-[#33b864]/10 px-4 py-2 rounded-full border border-[#33b864]/30">
-              <Shield className="w-5 h-5 text-[#33b864]" />
-              <span className="text-sm font-semibold text-white">SSL 256-bit</span>
+            <div className="hidden md:flex items-center gap-1.5 text-[#33b864]">
+              <Shield className="w-4 h-4" />
+              <span className="text-xs font-semibold">SSL 256-bit</span>
             </div>
-            <div className="flex items-center gap-2 bg-[#33b864]/10 px-4 py-2 rounded-full border border-[#33b864]/30">
-              <CheckCircle2 className="w-5 h-5 text-[#33b864]" />
-              <span className="text-sm font-semibold text-white">7 Dias de Garantia</span>
+            <div className="flex items-center gap-1.5 text-[#33b864]">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="text-xs font-semibold">7 Dias de Garantia</span>
             </div>
-            <div className="flex items-center gap-2 bg-green-500/20 px-4 py-2 rounded-full border border-green-500/40 animate-pulse">
-              <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-bold text-green-400">{onlineUsers} comprando agora</span>
+            <div className="flex items-center gap-1.5 text-green-400">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-xs font-bold">{onlineUsers} comprando agora</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="pt-28 pb-8">
+      <div className="pt-14 pb-8">
         <div className="max-w-7xl mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-10">
