@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { profiles, tips, type InsertProfile, type Profile, type InsertTip, type Tip } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+import { profiles, tips, favorites, type InsertProfile, type Profile, type InsertTip, type Tip, type Favorite, type InsertFavorite } from "@shared/schema";
+import { eq, desc, and } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -34,6 +34,16 @@ export interface IStorage {
   createTip(tip: InsertTip): Promise<Tip>;
   updateTipStatus(id: string, status: 'pending' | 'green' | 'red'): Promise<Tip | undefined>;
   deleteTip(id: string): Promise<void>;
+  
+  // Onboarding methods
+  updateTourCompleted(userId: string, completed: boolean): Promise<Profile | undefined>;
+  updatePreferredTheme(userId: string, theme: 'dark' | 'light'): Promise<Profile | undefined>;
+  
+  // Favorites methods
+  getUserFavorites(userId: string): Promise<Favorite[]>;
+  addFavorite(userId: string, tipId: string): Promise<Favorite>;
+  removeFavorite(userId: string, tipId: string): Promise<void>;
+  isFavorite(userId: string, tipId: string): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -225,6 +235,51 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTip(id: string): Promise<void> {
     await db.delete(tips).where(eq(tips.id, id));
+  }
+
+  // Onboarding methods
+  async updateTourCompleted(userId: string, completed: boolean): Promise<Profile | undefined> {
+    const [updatedProfile] = await db
+      .update(profiles)
+      .set({ hasCompletedTour: completed })
+      .where(eq(profiles.id, userId))
+      .returning();
+    return updatedProfile;
+  }
+
+  async updatePreferredTheme(userId: string, theme: 'dark' | 'light'): Promise<Profile | undefined> {
+    const [updatedProfile] = await db
+      .update(profiles)
+      .set({ preferredTheme: theme })
+      .where(eq(profiles.id, userId))
+      .returning();
+    return updatedProfile;
+  }
+
+  // Favorites methods
+  async getUserFavorites(userId: string): Promise<Favorite[]> {
+    return await db.select().from(favorites).where(eq(favorites.userId, userId)).orderBy(desc(favorites.createdAt));
+  }
+
+  async addFavorite(userId: string, tipId: string): Promise<Favorite> {
+    const [favorite] = await db
+      .insert(favorites)
+      .values({ userId, tipId })
+      .returning();
+    return favorite;
+  }
+
+  async removeFavorite(userId: string, tipId: string): Promise<void> {
+    await db.delete(favorites).where(
+      and(eq(favorites.userId, userId), eq(favorites.tipId, tipId))
+    );
+  }
+
+  async isFavorite(userId: string, tipId: string): Promise<boolean> {
+    const [existing] = await db.select().from(favorites).where(
+      and(eq(favorites.userId, userId), eq(favorites.tipId, tipId))
+    );
+    return !!existing;
   }
 }
 

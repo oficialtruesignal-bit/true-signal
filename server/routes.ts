@@ -418,6 +418,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Onboarding Routes
+  app.get("/api/profile/:id/onboarding", async (req, res) => {
+    try {
+      const profile = await storage.getProfileById(req.params.id);
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+      return res.json({
+        hasCompletedTour: profile.hasCompletedTour,
+        preferredTheme: profile.preferredTheme || 'dark',
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/profile/:id/tour-completed", async (req, res) => {
+    try {
+      const { completed } = req.body;
+      const profile = await storage.updateTourCompleted(req.params.id, completed ?? true);
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+      return res.json({ success: true, hasCompletedTour: profile.hasCompletedTour });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.put("/api/profile/:id/theme", async (req, res) => {
+    try {
+      const { theme } = req.body;
+      if (!theme || !['dark', 'light'].includes(theme)) {
+        return res.status(400).json({ error: "Theme must be 'dark' or 'light'" });
+      }
+      const profile = await storage.updatePreferredTheme(req.params.id, theme);
+      if (!profile) {
+        return res.status(404).json({ error: "Profile not found" });
+      }
+      return res.json({ success: true, preferredTheme: profile.preferredTheme });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Favorites Routes
+  app.get("/api/favorites/:userId", async (req, res) => {
+    try {
+      const favorites = await storage.getUserFavorites(req.params.userId);
+      return res.json({ favorites });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.post("/api/favorites", async (req, res) => {
+    try {
+      const { userId, tipId } = req.body;
+      if (!userId || !tipId) {
+        return res.status(400).json({ error: "userId and tipId are required" });
+      }
+      const favorite = await storage.addFavorite(userId, tipId);
+      return res.json({ success: true, favorite });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.delete("/api/favorites/:userId/:tipId", async (req, res) => {
+    try {
+      await storage.removeFavorite(req.params.userId, req.params.tipId);
+      return res.json({ success: true });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  app.get("/api/favorites/:userId/:tipId", async (req, res) => {
+    try {
+      const isFavorite = await storage.isFavorite(req.params.userId, req.params.tipId);
+      return res.json({ isFavorite });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Tips Routes
   app.get("/api/tips", async (req, res) => {
     try {

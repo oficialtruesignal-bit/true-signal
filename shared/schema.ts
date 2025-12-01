@@ -23,8 +23,27 @@ export const profiles = pgTable("profiles", {
   bankrollInitial: decimal("bankroll_initial", { precision: 12, scale: 2 }),
   riskProfile: text("risk_profile", { enum: ["conservador", "moderado", "agressivo"] }),
   unitValue: decimal("unit_value", { precision: 10, scale: 2 }),
+  // User Preferences
+  hasCompletedTour: boolean("has_completed_tour").notNull().default(false),
+  preferredTheme: text("preferred_theme", { enum: ["dark", "light"] }).default("dark"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
+
+// Favorites table - User saved tips
+export const favorites = pgTable("favorites", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  tipId: uuid("tip_id").notNull().references(() => tips.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertFavoriteSchema = createInsertSchema(favorites).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
+export type Favorite = typeof favorites.$inferSelect;
 
 export const insertProfileSchema = createInsertSchema(profiles).omit({
   id: true,
