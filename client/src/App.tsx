@@ -39,15 +39,36 @@ function ProtectedRoute({ component: Component, adminOnly = false }: { component
   const { isLocked } = useAccessControl();
   const [, setLocation] = useLocation();
 
+  // Check if there's a user in localStorage (backup during state transitions)
+  const hasLocalStorageUser = () => {
+    try {
+      const stored = localStorage.getItem('vantage_user');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        return !!(parsed.id && parsed.email);
+      }
+    } catch {
+      return false;
+    }
+    return false;
+  };
+
   useEffect(() => {
-    if (!isLoading && !user) {
+    // Only redirect if not loading, no user, AND no localStorage backup
+    if (!isLoading && !user && !hasLocalStorageUser()) {
       setLocation("/auth");
     } else if (!isLoading && user && adminOnly && user.role !== 'admin' && user.email !== 'kwillianferreira@gmail.com') {
       setLocation("/app");
     }
   }, [user, isLoading, adminOnly, setLocation]);
 
-  if (isLoading || !user) {
+  // Show loading if still loading OR if we have a localStorage user (recovery in progress)
+  if (isLoading || (!user && hasLocalStorageUser())) {
+    return <LoadingScreen />;
+  }
+
+  // No user and no localStorage backup - redirect will happen in useEffect
+  if (!user) {
     return <LoadingScreen />;
   }
 
