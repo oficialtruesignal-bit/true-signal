@@ -682,18 +682,18 @@ export default function CheckoutPage() {
             </div>
             
             {/* Urgency Banner - Full Width */}
-            <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-6 px-8 py-4 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-red-500/20 rounded-2xl border border-red-500/40 mb-5">
-              <div className="flex items-center gap-3">
-                <Zap className="w-6 h-6 text-yellow-400" />
-                <div className="text-left">
-                  <span className="text-sm font-bold text-yellow-400 block">PROMOÇÃO</span>
-                  <span className="text-lg font-bold text-white">DE FIM DE ANO</span>
+            <div className="w-full max-w-2xl mx-auto flex items-center justify-between gap-4 px-6 py-3 bg-gradient-to-r from-red-500/20 via-orange-500/20 to-red-500/20 rounded-2xl border border-red-500/40 mb-5">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                <div className="text-center">
+                  <span className="text-xs font-bold text-yellow-400 block">PROMOÇÃO</span>
+                  <span className="text-sm font-bold text-white">DE FIM DE ANO</span>
                 </div>
               </div>
-              <div className="h-12 w-px bg-white/30"></div>
-              <div className="text-right">
-                <span className="text-2xl font-bold text-red-400 block animate-pulse">52% OFF</span>
-                <span className="text-sm font-medium text-gray-300">Até 31/12</span>
+              <div className="h-10 w-px bg-white/20"></div>
+              <div className="text-center">
+                <span className="text-lg font-bold text-red-400 block animate-pulse">52% OFF</span>
+                <span className="text-xs font-medium text-gray-300">Até 31/12</span>
               </div>
             </div>
             
