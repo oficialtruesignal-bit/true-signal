@@ -33,7 +33,7 @@ export default function SettingsPage() {
   };
 
   const handleSupport = () => {
-    window.open('https://wa.me/5511999999999', '_blank');
+    window.open('https://wa.me/5516993253866?text=Olá! Preciso de ajuda com o True Signal.', '_blank');
   };
 
   return (
