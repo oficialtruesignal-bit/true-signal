@@ -49,10 +49,12 @@ Preferred communication style: Simple, everyday language.
 - **Dashboard Optimization**: Focus on premium signal feed, core HUD metrics (Assertiveness, Online Now, Total Signals), and a simplified AI Scanner.
 - **Admin Panel**: Enables real fixture selection via date picker, integrates with API-Football, and automates push notifications for new tips. Features a dedicated "IA Preditiva" tab for managing AI-generated predictions.
 - **AI Prediction Engine**: 
-  - **Data Collection**: Fetches last 10 matches per team, H2H history, and statistics from API-Football with intelligent caching (6-hour TTL).
-  - **Statistical Analysis**: Calculates goals scored/conceded (home/away), Over/Under percentages (0.5, 1.5, 2.5, 3.5), BTTS rates, clean sheets, form (W/D/L), and first-half stats.
+  - **Data Collection**: Fetches last 10 matches per team, H2H history, and detailed fixture statistics (shots, corners, cards) from API-Football with intelligent caching (6-hour TTL).
+  - **Statistical Analysis**: Calculates goals scored/conceded (home/away), Over/Under percentages, BTTS rates, clean sheets, form (W/D/L), first-half stats, shots on target, corners, and cards.
   - **Probability Model**: Uses Poisson distribution to calculate expected goals and market probabilities (1X2, Over/Under, BTTS).
-  - **Confidence Scoring**: Only generates tips when combined probability + historical trends yield ≥70% confidence.
+  - **Safety Margins**: Conservative line suggestions - Shots -40% (média 10 → Over 5.5), Corners -45% (média 12 → Over 6.5), Cards -50% (média 4 → Over 1.5).
+  - **Confidence Scoring**: Only generates tips when combined probability + historical trends yield ≥80% confidence.
+  - **Markets Supported**: Goals (FT/HT), BTTS, Corners (FT/HT), Cards (total/both teams receive), Shots on Target, Match Result.
   - **Draft Workflow**: Creates drafts in `ai_tickets` table → Admin reviews in "IA Preditiva" panel → Approves/Rejects → Published to `tips` table.
   - **Major Leagues**: Prioritizes Premier League, La Liga, Serie A, Bundesliga, Ligue 1, Brasileirão, Champions League, Europa League.
 - **Subscription System**: Freemium model with a 5-day free trial, `True Signal Pro` subscription (R$ 47,90/mês - Black Friday 52% off), and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
