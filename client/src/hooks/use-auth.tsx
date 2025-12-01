@@ -36,8 +36,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
+    // Timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000);
+
     // Check active session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      clearTimeout(loadingTimeout);
       if (session?.user) {
         loadUserProfile(session.user.id, false, session.user);
       } else {
@@ -57,6 +63,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         setIsLoading(false);
       }
+    }).catch(() => {
+      clearTimeout(loadingTimeout);
+      // On network error, try localStorage backup
+      const storedUser = localStorage.getItem('vantage_user');
+      if (storedUser) {
+        try {
+          const parsed = JSON.parse(storedUser);
+          if (parsed.id && parsed.email) {
+            loadUserProfile(parsed.id, false, { id: parsed.id, email: parsed.email, user_metadata: { first_name: parsed.firstName } });
+            return;
+          }
+        } catch (e) {
+          console.error('Error parsing stored user:', e);
+        }
+      }
+      setIsLoading(false);
     });
 
     // Listen for auth changes
