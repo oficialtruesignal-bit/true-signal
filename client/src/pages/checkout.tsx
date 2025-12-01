@@ -701,9 +701,8 @@ export default function CheckoutPage() {
               </div>
             </div>
             
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-sora font-bold text-white mb-4 leading-tight">
-              Acesse os{" "}
-              <span className="text-[#33b864]">Sinais Premium</span>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-sora font-bold text-white mb-4 leading-tight text-center">
+              Acesse os <span className="text-[#33b864]">Sinais Premium</span>
               <br />
               Agora Mesmo
             </h1>
