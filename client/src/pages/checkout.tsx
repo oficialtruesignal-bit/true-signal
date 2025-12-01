@@ -885,25 +885,7 @@ export default function CheckoutPage() {
               {/* Card Payment Form - Mercado Pago */}
               {paymentMethod === 'card' && mpReady && (
                 <div className="pt-4">
-                  <h3 className="font-sora font-bold text-white mb-3">Dados do Cartão</h3>
-                  <div className="flex items-center gap-2 mb-4">
-                    {/* Mastercard */}
-                    <div className="w-10 h-6 bg-[#2B2B2B] rounded flex items-center justify-center p-0.5">
-                      <svg viewBox="0 0 48 32" className="w-full h-full">
-                        <circle cx="17" cy="16" r="10" fill="#EB001B"/>
-                        <circle cx="31" cy="16" r="10" fill="#F79E1B"/>
-                        <path d="M24 8.5c2.5 2 4 5 4 7.5s-1.5 5.5-4 7.5c-2.5-2-4-5-4-7.5s1.5-5.5 4-7.5z" fill="#FF5F00"/>
-                      </svg>
-                    </div>
-                    {/* Visa */}
-                    <div className="w-10 h-6 bg-[#1A1F71] rounded flex items-center justify-center">
-                      <span className="text-white font-bold text-[10px] italic">VISA</span>
-                    </div>
-                    {/* Elo */}
-                    <div className="w-10 h-6 bg-black rounded flex items-center justify-center">
-                      <span className="text-yellow-400 font-bold text-[10px]">elo</span>
-                    </div>
-                  </div>
+                  <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
                   <div className="min-h-[300px] [&_.mp-sdk-container]:!max-w-full [&_form]:!max-w-full [&_.mp-card-payment-container]:!max-w-full [&_input]:!w-full [&_select]:!w-full [&_.mp-form-input]:!w-full">
                     <CardPaymentWrapper
                       onPaymentSubmit={onCardPaymentSubmit}
