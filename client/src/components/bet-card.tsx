@@ -580,15 +580,13 @@ export function BetCard({ signal, onDelete }: BetCardProps) {
           )}
         </div>
         
-        {/* Entrada Recomendada */}
-        {signal.stake && signal.stake !== 1 && (
-          <div className="mt-3 pt-3 border-t border-white/5 text-center">
-            <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
-              <span className="text-gray-400 text-xs">Entrada:</span>
-              <span className="text-[#33b864] font-bold text-sm">{signal.stake.toFixed(1)}u</span>
-            </span>
-          </div>
-        )}
+        {/* Entrada Recomendada - Sempre mostra */}
+        <div className="mt-3 pt-3 border-t border-white/5 text-center">
+          <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
+            <span className="text-gray-400 text-xs">Entrada:</span>
+            <span className="text-[#33b864] font-bold text-sm">{(signal.stake || 1).toFixed(1)}u</span>
+          </span>
+        </div>
       </div>
 
       {/* --- FOOTER: Botão de Ação --- */}
