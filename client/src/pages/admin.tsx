@@ -140,7 +140,10 @@ export default function Admin() {
     queryKey: ['live-pressure'],
     queryFn: async () => {
       const response = await axios.get('/api/live/pressure');
-      return response.data as LivePressureData[];
+      const data = response.data;
+      if (Array.isArray(data)) return data as LivePressureData[];
+      if (data?.matches && Array.isArray(data.matches)) return data.matches as LivePressureData[];
+      return [];
     },
     refetchInterval: isMonitorRunning ? 30000 : false,
     enabled: isMonitorRunning,
