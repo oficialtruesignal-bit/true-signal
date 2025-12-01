@@ -1,5 +1,5 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users, Pencil, Trash2, Share2, Heart } from "lucide-react";
+import { Copy, Users, Pencil, Trash2, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
@@ -637,68 +637,15 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
             </span>
           </div>
         ) : (
-          <div className="flex gap-2">
-            <button 
-              onClick={handleCopy}
-              data-testid={`button-copy-${signal.id}`}
-              className="flex-1 bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2"
-            >
-              <span className="text-black font-bold text-sm tracking-wide">
-                {isCopied ? "✓ COPIADO" : "COPIAR BILHETE"}
-              </span>
-            </button>
-            {/* Share Button with Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button 
-                  data-testid={`button-share-${signal.id}`}
-                  className="w-12 h-12 bg-white/10 hover:bg-white/20 active:scale-[0.98] transition-all rounded-xl flex items-center justify-center"
-                >
-                  <Share2 className="w-5 h-5 text-white" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-[#121212] border-[#33b864]/30 min-w-[160px]">
-                <DropdownMenuItem
-                  onClick={() => {
-                    const text = `🎯 *TRUE SIGNAL*\n\n⚽ ${signal.homeTeam} vs ${signal.awayTeam}\n📊 ${signal.market}\n💰 Odd: ${totalOdd.toFixed(2)}\n\n✨ Acesse: truesignal.com.br`;
-                    const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                    window.open(url, '_blank');
-                  }}
-                  className="cursor-pointer hover:bg-white/10"
-                >
-                  <span className="text-xl mr-2">💬</span>
-                  <span className="text-white">WhatsApp</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => {
-                    const text = `🎯 TRUE SIGNAL\n\n⚽ ${signal.homeTeam} vs ${signal.awayTeam}\n📊 ${signal.market}\n💰 Odd: ${totalOdd.toFixed(2)}\n\n✨ Acesse: truesignal.com.br`;
-                    const url = `https://t.me/share/url?url=${encodeURIComponent('https://truesignal.com.br')}&text=${encodeURIComponent(text)}`;
-                    window.open(url, '_blank');
-                  }}
-                  className="cursor-pointer hover:bg-white/10"
-                >
-                  <span className="text-xl mr-2">✈️</span>
-                  <span className="text-white">Telegram</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem
-                  onClick={() => {
-                    const text = `🎯 TRUE SIGNAL - ${signal.homeTeam} vs ${signal.awayTeam}\n${signal.market} @ ${totalOdd.toFixed(2)}`;
-                    navigator.clipboard.writeText(text);
-                    toast({
-                      title: "Texto copiado!",
-                      description: "Cole onde quiser compartilhar",
-                      className: "bg-primary/10 border-primary/20 text-primary",
-                    });
-                  }}
-                  className="cursor-pointer hover:bg-white/10"
-                >
-                  <Copy className="w-4 h-4 mr-2 text-gray-400" />
-                  <span className="text-white">Copiar Texto</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <button 
+            onClick={handleCopy}
+            data-testid={`button-copy-${signal.id}`}
+            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2"
+          >
+            <span className="text-black font-bold text-sm tracking-wide">
+              {isCopied ? "✓ COPIADO" : "COPIAR BILHETE"}
+            </span>
+          </button>
         )}
       </div>
 
