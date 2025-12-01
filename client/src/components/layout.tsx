@@ -78,11 +78,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { icon: LayoutDashboard, label: t.nav.admin, path: "/admin", hidden: !(user?.role === 'admin' || user?.email === 'kwillianferreira@gmail.com') },
   ];
 
-  // Mobile Nav Items (5 icons only, no Admin)
+  // Mobile Nav Items (6 icons, no Admin)
   const mobileNavItems = [
     { icon: Home, label: t.nav.home, path: "/app" },
     { icon: Ticket, label: t.nav.tips, path: "/tips" },
     { icon: Play, label: t.nav.live, path: "/live" },
+    { icon: Calendar, label: t.nav.pregame, path: "/pregame" },
     { icon: Wallet, label: t.nav.bankroll || "Gestão", path: "/gestao" },
     { icon: Settings, label: t.nav.settings, path: "/settings" },
   ];
@@ -186,33 +187,33 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      {/* Mobile Bottom Nav - 5 Icons */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-center gap-0">
+      {/* Mobile Bottom Nav - 6 Icons */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-evenly px-1">
         {mobileNavItems.map((item) => (
           <Link 
             key={item.path} 
             href={item.path}
             data-testid={`nav-${item.label.toLowerCase()}`}
             className={cn(
-              "flex flex-col items-center justify-center flex-1 h-full gap-0.5 transition-all relative max-w-[72px]",
+              "flex flex-col items-center justify-center h-full gap-0.5 transition-all relative px-1",
               location === item.path ? "text-primary" : "text-muted-foreground"
             )}
           >
             <div className="relative">
               <item.icon
                 className={cn(
-                  "w-5 h-5 transition-all",
+                  "w-[18px] h-[18px] transition-all",
                   location === item.path ? "scale-110 drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" : ""
                 )}
               />
               {item.path === "/tips" && unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                <div className="absolute -top-1 -right-1.5 w-3 h-3 bg-red-500 text-white text-[8px] font-bold rounded-full flex items-center justify-center animate-pulse">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </div>
               )}
             </div>
             <span className={cn(
-              "text-[9px] font-medium transition-all text-center leading-tight",
+              "text-[8px] font-medium transition-all text-center leading-tight truncate max-w-[50px]",
               location === item.path ? "font-bold" : ""
             )}>{item.label}</span>
           </Link>
