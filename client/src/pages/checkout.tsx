@@ -779,7 +779,8 @@ export default function CheckoutPage() {
                       {paymentMethod === 'card' ? (
                         <>
                           <p className="text-white font-medium">Assinatura Recorrente</p>
-                          <p className="text-blue-300 text-xs">R$ 47,90/mês - Cancele quando quiser</p>
+                          <p className="text-blue-300 text-xs">R$ 47,90/mês</p>
+                          <p className="text-gray-400 text-xs">Cancele quando quiser</p>
                         </>
                       ) : (
                         <>
