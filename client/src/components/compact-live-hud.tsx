@@ -109,8 +109,8 @@ export function CompactLiveHud() {
               >
                 {isLoading ? '--' : `${assertivityValue.toFixed(1)}%`}
               </span>
-              <span className="text-[10px] text-gray-400 mt-1">
-                Média Novembro
+              <span className="text-[10px] text-muted-foreground mt-1">
+                Média Dezembro
               </span>
             </div>
 

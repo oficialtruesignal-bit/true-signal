@@ -48,7 +48,7 @@ export default function LivePage() {
       {/* Back Button */}
       <button
         onClick={() => window.history.back()}
-        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4 group"
         data-testid="button-back"
       >
         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -61,7 +61,7 @@ export default function LivePage() {
             <div className="w-10 h-10 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
               <Play className="w-5 h-5 text-red-500 animate-pulse" />
             </div>
-            <h1 className="text-2xl font-display font-bold text-white">{t.live.title}</h1>
+            <h1 className="text-2xl font-display font-bold text-foreground">{t.live.title}</h1>
           </div>
           
           {/* Search Toggle */}
@@ -89,7 +89,7 @@ export default function LivePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.live.searchPlaceholder}
-              className="w-full px-4 py-3 bg-card border border-primary/20 rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
               data-testid="input-search-teams"
               autoFocus
             />
@@ -166,19 +166,19 @@ export default function LivePage() {
                       e.currentTarget.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect fill="%23333" width="40" height="40"/></svg>';
                     }}
                   />
-                  <span className="font-display font-bold text-white truncate max-w-[180px] block">
+                  <span className="font-display font-bold text-foreground truncate max-w-[180px] block">
                     {match.teams.home.name}
                   </span>
                 </div>
 
                 <div className="px-6 flex items-center gap-3 flex-shrink-0">
-                  <span className="text-3xl font-display font-black text-white">{match.goals.home ?? 0}</span>
+                  <span className="text-3xl font-display font-black text-foreground">{match.goals.home ?? 0}</span>
                   <span className="text-lg text-muted-foreground">:</span>
-                  <span className="text-3xl font-display font-black text-white">{match.goals.away ?? 0}</span>
+                  <span className="text-3xl font-display font-black text-foreground">{match.goals.away ?? 0}</span>
                 </div>
 
                 <div className="flex items-center gap-3 flex-1 justify-end min-w-0">
-                  <span className="font-display font-bold text-white text-right truncate max-w-[180px] block">
+                  <span className="font-display font-bold text-foreground text-right truncate max-w-[180px] block">
                     {match.teams.away.name}
                   </span>
                   <img 

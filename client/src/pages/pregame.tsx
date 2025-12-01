@@ -106,7 +106,7 @@ export default function PreGamePage() {
       {/* Back Button */}
       <button
         onClick={() => window.history.back()}
-        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4 group"
         data-testid="button-back"
       >
         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -119,7 +119,7 @@ export default function PreGamePage() {
             <div className="w-10 h-10 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
               <Calendar className="w-5 h-5 text-blue-500" />
             </div>
-            <h1 className="text-2xl font-display font-bold text-white">{t.pregame.title}</h1>
+            <h1 className="text-2xl font-display font-bold text-foreground">{t.pregame.title}</h1>
           </div>
           
           {/* Search Toggle */}
@@ -147,7 +147,7 @@ export default function PreGamePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t.pregame.searchPlaceholder}
-              className="w-full px-4 py-3 bg-card border border-primary/20 rounded-lg text-white placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+              className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
               data-testid="input-search-pregame"
               autoFocus
             />
