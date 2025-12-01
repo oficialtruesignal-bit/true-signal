@@ -21,9 +21,18 @@ const CardPaymentWrapper = memo(function CardPaymentWrapper({
   onPaymentSubmit: (formData: any) => Promise<void>;
   onPaymentError: (error: any) => void;
 }) {
+  const [isMounted, setIsMounted] = React.useState(false);
   const readyRef = React.useRef(false);
   const submitRef = React.useRef(onPaymentSubmit);
   const errorRef = React.useRef(onPaymentError);
+  
+  // Delay mounting to ensure DOM is ready
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsMounted(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
   
   // Update refs on prop changes without causing re-render
   React.useEffect(() => {
@@ -43,8 +52,23 @@ const CardPaymentWrapper = memo(function CardPaymentWrapper({
   }, []);
 
   const handleError = React.useCallback((error: any) => {
-    errorRef.current(error);
+    console.error('Card payment form error:', error);
+    // Only report critical errors, not setup issues
+    if (error?.type !== 'critical') {
+      errorRef.current(error);
+    }
   }, []);
+
+  if (!isMounted) {
+    return (
+      <div className="min-h-[300px] flex items-center justify-center">
+        <div className="flex items-center gap-2 text-gray-400">
+          <Loader2 className="w-5 h-5 animate-spin" />
+          <span>Carregando formulário...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <CardPayment
