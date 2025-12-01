@@ -698,7 +698,7 @@ export default function CheckoutPage() {
             </div>
             
             <h1 className="text-xl md:text-2xl lg:text-3xl font-sora font-bold text-white mb-4 text-center whitespace-nowrap">
-              Acesse os <span className="text-[#33b864]">Sinais Premium</span> Agora Mesmo
+              Acesse os <span className="text-[#33b864]">Sinais Premium</span>
             </h1>
             <p className="text-lg text-gray-400 max-w-2xl mx-auto mb-6">
               {daysRemaining > 0 
