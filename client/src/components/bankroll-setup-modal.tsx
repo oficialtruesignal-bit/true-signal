@@ -373,13 +373,13 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                           setShowExampleFor(profile.id);
                         }}
                         className={cn(
-                          "absolute top-3 right-3 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors flex items-center gap-1.5",
+                          "absolute top-3 right-3 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/70 transition-colors flex items-center gap-1.5",
                           profile.iconColor
                         )}
                         data-testid={`button-example-${profile.id}`}
                       >
-                        <HelpCircle className="w-4 h-4" />
-                        <span className="text-xs font-medium pr-1">Saiba mais</span>
+                        <HelpCircle className="w-3.5 h-3.5" />
+                        <span className="text-[11px] font-medium">Entenda o {profile.name}</span>
                       </button>
                     </div>
                   ))}
