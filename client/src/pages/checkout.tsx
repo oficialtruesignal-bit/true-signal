@@ -677,10 +677,10 @@ export default function CheckoutPage() {
             <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-full border border-red-500/40 mb-5">
               <div className="flex items-center gap-1.5">
                 <Zap className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-bold text-white">BLACK FRIDAY</span>
+                <span className="text-sm font-bold text-white">PROMOÇÃO DE FIM DE ANO</span>
               </div>
               <div className="h-4 w-px bg-white/20"></div>
-              <span className="text-sm font-bold text-red-400 animate-pulse">52% OFF - ÚLTIMAS VAGAS</span>
+              <span className="text-sm font-bold text-red-400 animate-pulse">52% OFF - ATÉ 31/12</span>
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-sora font-bold text-white mb-4 leading-tight">
@@ -1049,7 +1049,7 @@ export default function CheckoutPage() {
                     <span className="text-[#33b864]">R$ 0,00</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Black Friday</span>
+                    <span className="text-gray-400">Promoção Fim de Ano</span>
                     <span className="text-red-400 font-bold">-52% OFF</span>
                   </div>
                   <div className="flex justify-between pt-3 border-t border-white/10">
@@ -1194,7 +1194,7 @@ export default function CheckoutPage() {
                 Como funciona a cobrança?
               </h4>
               <p className="text-sm text-gray-400">
-                A cobrança é mensal e recorrente de R$ 47,90 (preço Black Friday, de R$ 99,87). Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
+                A cobrança é mensal e recorrente de R$ 47,90 (promoção válida até 31/12, de R$ 99,87). Você será notificado antes de cada renovação e pode cancelar a qualquer momento.
               </p>
             </div>
           </div>
