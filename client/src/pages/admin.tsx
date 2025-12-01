@@ -157,17 +157,18 @@ export default function Admin() {
 
   const toggleMonitor = async () => {
     try {
+      const adminData = { adminEmail: user?.email, adminUserId: user?.id };
       if (isMonitorRunning) {
-        await axios.post('/api/live/monitor/stop');
+        await axios.post('/api/live/monitor/stop', adminData);
         toast.success("Monitor de gols ao vivo pausado");
       } else {
-        await axios.post('/api/live/monitor/start');
+        await axios.post('/api/live/monitor/start', adminData);
         toast.success("Monitor de gols ao vivo iniciado!");
         refetchLive();
       }
       setIsMonitorRunning(!isMonitorRunning);
-    } catch (error) {
-      toast.error("Erro ao controlar monitor");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.error || "Erro ao controlar monitor");
     }
   };
 
