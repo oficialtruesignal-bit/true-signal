@@ -1,35 +1,41 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, useMemo, useCallback } from "react";
 import { translations, Language } from "@/i18n/translations";
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: any; // Simplified for prototype - contains all translation keys
+  t: (typeof translations)[Language];
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(() => {
-    const saved = localStorage.getItem("tipster-language");
-    return (saved as Language) || "pt";
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem("tipster-language");
+      return (saved as Language) || "pt";
+    }
+    return "pt";
   });
 
-  const setLanguage = (lang: Language) => {
+  const setLanguage = useCallback((lang: Language) => {
+    console.log("🌐 [LANGUAGE] Changing to:", lang);
     setLanguageState(lang);
     localStorage.setItem("tipster-language", lang);
-  };
+    document.documentElement.lang = lang;
+  }, []);
 
   useEffect(() => {
-    // Update HTML lang attribute for accessibility
     document.documentElement.lang = language;
   }, [language]);
 
-  const value: LanguageContextType = {
+  const t = useMemo(() => translations[language], [language]);
+
+  const value = useMemo<LanguageContextType>(() => ({
     language,
     setLanguage,
-    t: translations[language],
-  };
+    t,
+  }), [language, setLanguage, t]);
 
   return (
     <LanguageContext.Provider value={value}>
