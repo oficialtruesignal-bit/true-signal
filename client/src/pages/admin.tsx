@@ -2,6 +2,7 @@ import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
 import { ManualTicketForm } from "@/components/manual-ticket-form";
 import { AiDraftsPanel } from "@/components/ai-drafts-panel";
+import { MultiBotPanel } from "@/components/multi-bot-panel";
 import { tipsService } from "@/lib/tips-service";
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -34,21 +35,6 @@ interface LivePressureData {
   alertType?: string;
 }
 
-interface BotConfig {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  enabled: boolean;
-  alertCount: number;
-  successRate: number;
-  thresholds: {
-    minPressure: number;
-    minFavoritism: number;
-    minGoalProb: number;
-  };
-}
-
 export default function Admin() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -58,83 +44,8 @@ export default function Admin() {
   const [premiumDays, setPremiumDays] = useState("30");
   const [isActivatingPremium, setIsActivatingPremium] = useState(false);
   const [isMonitorRunning, setIsMonitorRunning] = useState(false);
-  const [botConfigs, setBotConfigs] = useState<BotConfig[]>([
-    {
-      id: "home_favorite",
-      name: "Fator Casa Favorito",
-      description: "Detecta times jogando em casa que são favoritos e dominando",
-      icon: <Home className="w-5 h-5 text-blue-400" />,
-      enabled: true,
-      alertCount: 0,
-      successRate: 0,
-      thresholds: { minPressure: 72, minFavoritism: 75, minGoalProb: 70 }
-    },
-    {
-      id: "away_dominant",
-      name: "Visitante Superior",
-      description: "Detecta quando o visitante é muito superior ao mandante",
-      icon: <Plane className="w-5 h-5 text-purple-400" />,
-      enabled: true,
-      alertCount: 0,
-      successRate: 0,
-      thresholds: { minPressure: 68, minFavoritism: 80, minGoalProb: 65 }
-    },
-    {
-      id: "market_favorite",
-      name: "Favorito do Mercado",
-      description: "Baseado em odds e expectativa do mercado",
-      icon: <TrendingUp className="w-5 h-5 text-green-400" />,
-      enabled: true,
-      alertCount: 0,
-      successRate: 0,
-      thresholds: { minPressure: 65, minFavoritism: 85, minGoalProb: 68 }
-    },
-    {
-      id: "pressure_surge",
-      name: "Explosão de Pressão",
-      description: "Detecta surges repentinos de pressão (+20% em 5min)",
-      icon: <Activity className="w-5 h-5 text-orange-400" />,
-      enabled: true,
-      alertCount: 0,
-      successRate: 0,
-      thresholds: { minPressure: 60, minFavoritism: 50, minGoalProb: 72 }
-    },
-  ]);
   
-  console.log('🔧 Admin Page Loaded - Version 4.0 - Multi-Tab Panel');
-
-  // Fetch bot configurations from backend
-  const { data: botData, refetch: refetchBots } = useQuery({
-    queryKey: ['bot-configs'],
-    queryFn: async () => {
-      const response = await axios.get('/api/live/bots');
-      return response.data.bots;
-    },
-    refetchInterval: 30000,
-  });
-
-  // Update local state when bot data changes
-  useEffect(() => {
-    if (botData) {
-      setBotConfigs(prev => prev.map(bot => {
-        const backendBot = botData.find((b: any) => b.id === bot.id);
-        if (backendBot) {
-          return {
-            ...bot,
-            enabled: backendBot.enabled,
-            alertCount: backendBot.alertCount || 0,
-            successRate: backendBot.successRate || 0,
-            thresholds: {
-              minPressure: backendBot.thresholds?.minPressure || bot.thresholds.minPressure,
-              minFavoritism: backendBot.thresholds?.minFavoritism || bot.thresholds.minFavoritism,
-              minGoalProb: backendBot.thresholds?.minGoalProb || bot.thresholds.minGoalProb,
-            }
-          };
-        }
-        return bot;
-      }));
-    }
-  }, [botData]);
+  console.log('🔧 Admin Page Loaded - Version 5.0 - Multi-Bot System');
 
   const { data: liveMatches = [], isLoading: isLoadingLive, refetch: refetchLive } = useQuery({
     queryKey: ['live-pressure'],
@@ -172,35 +83,6 @@ export default function Admin() {
       setIsMonitorRunning(!isMonitorRunning);
     } catch (error: any) {
       toast.error(error?.response?.data?.error || "Erro ao controlar monitor");
-    }
-  };
-
-  const toggleBot = async (botId: string) => {
-    const bot = botConfigs.find(b => b.id === botId);
-    if (!bot) return;
-    
-    const newEnabled = !bot.enabled;
-    
-    try {
-      await axios.post(`/api/live/bots/${botId}/toggle`, {
-        enabled: newEnabled,
-        adminEmail: user?.email,
-        adminUserId: user?.id,
-      });
-      
-      // Update local state
-      setBotConfigs(prev => prev.map(b => 
-        b.id === botId ? { ...b, enabled: newEnabled } : b
-      ));
-      
-      const botName = botId === 'home_favorite' ? 'Fator Casa' : 
-                      botId === 'away_dominant' ? 'Visitante Superior' : 
-                      botId === 'market_favorite' ? 'Favorito Mercado' : 'Explosão';
-      toast.success(`Bot ${botName} ${newEnabled ? 'ativado' : 'desativado'}`);
-      
-      refetchBots();
-    } catch (error) {
-      toast.error("Erro ao alterar bot");
     }
   };
 
@@ -598,8 +480,8 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                     <div className="text-xs text-gray-400">Alertas Hoje</div>
                   </div>
                   <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-3 text-center">
-                    <div className="text-2xl font-bold text-blue-400">{botConfigs.filter(b => b.enabled).length}/4</div>
-                    <div className="text-xs text-gray-400">Bots Ativos</div>
+                    <div className="text-2xl font-bold text-blue-400">8</div>
+                    <div className="text-xs text-gray-400">Bots Disponíveis</div>
                   </div>
                 </div>
 
@@ -689,89 +571,7 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
 
         {/* ==================== TAB 4: MULTI-BOT ==================== */}
         <TabsContent value="bots" className="mt-0">
-          <div className="space-y-4">
-            <Card className="border-cyan-500/30">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Target className="w-5 h-5 text-cyan-500" />
-                      Central Multi-Bot
-                    </CardTitle>
-                    <CardDescription>Múltiplos bots especializados rodando em paralelo</CardDescription>
-                  </div>
-                  <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
-                    {botConfigs.filter(b => b.enabled).length} de {botConfigs.length} ativos
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {botConfigs.map((bot) => (
-                    <Card key={bot.id} className={`border transition-all ${bot.enabled ? 'border-cyan-500/50 bg-cyan-500/5' : 'border-gray-700 opacity-60'}`}>
-                      <CardContent className="pt-4">
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${bot.enabled ? 'bg-gradient-to-br from-cyan-500/30 to-blue-500/30' : 'bg-gray-800'}`}>
-                              {bot.icon}
-                            </div>
-                            <div>
-                              <h4 className="font-bold text-white text-sm">{bot.name}</h4>
-                              <p className="text-xs text-gray-400">{bot.description}</p>
-                            </div>
-                          </div>
-                          <Switch
-                            checked={bot.enabled}
-                            onCheckedChange={() => toggleBot(bot.id)}
-                            data-testid={`switch-bot-${bot.id}`}
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 mb-3">
-                          <div className="bg-white/5 rounded-lg p-2 text-center">
-                            <div className="text-lg font-bold text-white">{bot.alertCount}</div>
-                            <div className="text-[10px] text-gray-400">Alertas</div>
-                          </div>
-                          <div className="bg-white/5 rounded-lg p-2 text-center">
-                            <div className="text-lg font-bold text-green-400">{bot.successRate}%</div>
-                            <div className="text-[10px] text-gray-400">Acerto</div>
-                          </div>
-                          <div className="bg-white/5 rounded-lg p-2 text-center">
-                            <div className="text-lg font-bold text-cyan-400">{bot.thresholds.minPressure}%</div>
-                            <div className="text-[10px] text-gray-400">Min. Pressão</div>
-                          </div>
-                        </div>
-
-                        <div className="text-xs text-gray-400 space-y-1">
-                          <div className="flex justify-between">
-                            <span>Min. Favoritismo:</span>
-                            <span className="text-white">{bot.thresholds.minFavoritism}%</span>
-                          </div>
-                          <div className="flex justify-between">
-                            <span>Min. Prob. Gol:</span>
-                            <span className="text-white">{bot.thresholds.minGoalProb}%</span>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                <div className="mt-6 p-4 bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-xl">
-                  <h4 className="font-bold text-white mb-2 flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-cyan-400" />
-                    Como funciona o Multi-Bot
-                  </h4>
-                  <ul className="text-xs text-gray-400 space-y-1">
-                    <li>• <strong className="text-blue-400">Fator Casa:</strong> Detecta favoritos jogando em casa dominando posse e chutes</li>
-                    <li>• <strong className="text-purple-400">Visitante Superior:</strong> Identifica quando visitante é muito mais forte que mandante</li>
-                    <li>• <strong className="text-green-400">Favorito Mercado:</strong> Usa odds implícitas para identificar grandes favoritos</li>
-                    <li>• <strong className="text-orange-400">Explosão de Pressão:</strong> Detecta surges repentinos (+20% em 5 minutos)</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <MultiBotPanel adminEmail={user?.email || ""} adminUserId={user?.id || ""} />
         </TabsContent>
       </Tabs>
     </Layout>

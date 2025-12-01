@@ -1692,13 +1692,222 @@ REGRAS IMPORTANTES:
 
   // ==================== MULTI-BOT API ENDPOINTS ====================
   
-  // Get bot configurations
-  app.get("/api/live/bots", async (req, res) => {
+  // Initialize Multi-Bot strategies on server start
+  (async () => {
     try {
-      const { getBotConfigs } = await import("./live-pressure-monitor");
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      await multiBotEngine.initializeStrategies();
+      console.log("[Multi-Bot] Engine initialized successfully");
+    } catch (error) {
+      console.error("[Multi-Bot] Failed to initialize:", error);
+    }
+  })();
+  
+  // Get all bot strategies
+  app.get("/api/multibot/strategies", async (req, res) => {
+    try {
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const strategies = await multiBotEngine.getStrategies();
       return res.json({
         success: true,
-        bots: getBotConfigs(),
+        strategies,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting strategies:", error);
+      return res.status(500).json({ error: "Erro ao buscar estratégias" });
+    }
+  });
+
+  // Get signals for all or specific strategy
+  app.get("/api/multibot/signals", async (req, res) => {
+    try {
+      const { strategyCode, status, limit } = req.query;
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const signals = await multiBotEngine.getSignals(
+        strategyCode as string,
+        status as string,
+        Number(limit) || 50
+      );
+      return res.json({
+        success: true,
+        signals,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting signals:", error);
+      return res.status(500).json({ error: "Erro ao buscar sinais" });
+    }
+  });
+
+  // Get performance stats for all bots
+  app.get("/api/multibot/performance", async (req, res) => {
+    try {
+      const { periodType } = req.query;
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const stats = await multiBotEngine.getPerformanceStats(periodType as string || "all_time");
+      return res.json({
+        success: true,
+        stats,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting performance:", error);
+      return res.status(500).json({ error: "Erro ao buscar performance" });
+    }
+  });
+
+  // Get detailed stats for a specific bot
+  app.get("/api/multibot/strategies/:strategyCode/stats", async (req, res) => {
+    try {
+      const { strategyCode } = req.params;
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const stats = await multiBotEngine.getBotDetailedStats(strategyCode);
+      
+      if (!stats) {
+        return res.status(404).json({ error: "Estratégia não encontrada" });
+      }
+      
+      return res.json({
+        success: true,
+        ...stats,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error getting bot stats:", error);
+      return res.status(500).json({ error: "Erro ao buscar estatísticas do bot" });
+    }
+  });
+
+  // Toggle strategy active status (admin only)
+  app.post("/api/multibot/strategies/:strategyCode/toggle", async (req, res) => {
+    try {
+      const { strategyCode } = req.params;
+      const { adminEmail, adminUserId, isActive } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      await multiBotEngine.toggleStrategy(strategyCode, isActive);
+      
+      return res.json({
+        success: true,
+        message: `Estratégia ${strategyCode} ${isActive ? 'ativada' : 'desativada'}`,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error toggling strategy:", error);
+      return res.status(500).json({ error: "Erro ao alterar estratégia" });
+    }
+  });
+
+  // Update signal outcome (admin only)
+  app.post("/api/multibot/signals/:signalId/resolve", async (req, res) => {
+    try {
+      const { signalId } = req.params;
+      const { adminEmail, adminUserId, status, finalScore } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      if (!["hit", "miss", "void"].includes(status)) {
+        return res.status(400).json({ error: "Status inválido. Use: hit, miss ou void" });
+      }
+      
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      await multiBotEngine.updateSignalOutcome(signalId, status, finalScore);
+      
+      return res.json({
+        success: true,
+        message: `Sinal atualizado para: ${status}`,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error resolving signal:", error);
+      return res.status(500).json({ error: "Erro ao resolver sinal" });
+    }
+  });
+
+  // Publish a signal as a tip (admin only)
+  app.post("/api/multibot/signals/:signalId/publish", async (req, res) => {
+    try {
+      const { signalId } = req.params;
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const tipId = await multiBotEngine.publishSignal(signalId, adminUserId);
+      
+      return res.json({
+        success: true,
+        message: "Sinal publicado como tip",
+        tipId,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error publishing signal:", error);
+      return res.status(500).json({ error: "Erro ao publicar sinal" });
+    }
+  });
+
+  // Manually analyze live matches with all bots (admin only)
+  app.post("/api/multibot/analyze", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      // Fetch live matches
+      const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
+        params: { live: "all" },
+        headers: { "x-apisports-key": FOOTBALL_API_KEY },
+      });
+      
+      const liveMatches = response.data?.response || [];
+      
+      // Transform API response to match format
+      const formattedMatches = liveMatches.map((m: any) => ({
+        fixtureId: m.fixture.id,
+        league: m.league.name,
+        leagueId: m.league.id,
+        homeTeam: m.teams.home.name,
+        awayTeam: m.teams.away.name,
+        homeTeamLogo: m.teams.home.logo,
+        awayTeamLogo: m.teams.away.logo,
+        homeScore: m.goals.home || 0,
+        awayScore: m.goals.away || 0,
+        matchMinute: m.fixture.status.elapsed || 0,
+        matchStatus: m.fixture.status.short,
+        homePossession: 50,
+        awayPossession: 50,
+        homeShotsOnTarget: 0,
+        awayShotsOnTarget: 0,
+      }));
+      
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const signals = await multiBotEngine.analyzeWithBots(formattedMatches);
+      
+      return res.json({
+        success: true,
+        matchesAnalyzed: formattedMatches.length,
+        signalsGenerated: signals.length,
+        signals,
+      });
+    } catch (error: any) {
+      console.error("[Multi-Bot] Error analyzing matches:", error);
+      return res.status(500).json({ error: "Erro ao analisar partidas" });
+    }
+  });
+
+  // Legacy bot endpoints for compatibility
+  app.get("/api/live/bots", async (req, res) => {
+    try {
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const strategies = await multiBotEngine.getStrategies();
+      return res.json({
+        success: true,
+        bots: strategies,
       });
     } catch (error: any) {
       console.error("[Multi-Bot] Error getting bots:", error);
@@ -1706,7 +1915,6 @@ REGRAS IMPORTANTES:
     }
   });
 
-  // Toggle bot enabled/disabled
   app.post("/api/live/bots/:botId/toggle", async (req, res) => {
     try {
       const { botId } = req.params;
@@ -1716,13 +1924,12 @@ REGRAS IMPORTANTES:
         return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
       }
       
-      const { toggleBot } = await import("./live-pressure-monitor");
-      const result = toggleBot(botId, enabled);
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      await multiBotEngine.toggleStrategy(botId, enabled);
       
       return res.json({
         success: true,
         message: `Bot ${botId} ${enabled ? 'ativado' : 'desativado'}`,
-        bot: result,
       });
     } catch (error: any) {
       console.error("[Multi-Bot] Error toggling bot:", error);
@@ -1730,13 +1937,13 @@ REGRAS IMPORTANTES:
     }
   });
 
-  // Get bot statistics
   app.get("/api/live/bots/stats", async (req, res) => {
     try {
-      const { getBotStats } = await import("./live-pressure-monitor");
+      const { multiBotEngine } = await import("./multi-bot-engine");
+      const stats = await multiBotEngine.getPerformanceStats("all_time");
       return res.json({
         success: true,
-        stats: getBotStats(),
+        stats,
       });
     } catch (error: any) {
       console.error("[Multi-Bot] Error getting bot stats:", error);
