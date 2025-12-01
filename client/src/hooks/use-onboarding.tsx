@@ -147,6 +147,7 @@ export function useOnboarding() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ completed: true }),
         });
+        setShowBankrollSetup(true);
       } catch (error) {
         console.error("Error marking tour as completed:", error);
       }
