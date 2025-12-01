@@ -508,30 +508,143 @@ export default function CheckoutPage() {
 
   return (
     <Layout>
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Top Security Bar */}
+        <div className="bg-gradient-to-r from-[#33b864]/20 via-[#33b864]/10 to-[#33b864]/20 border border-[#33b864]/30 rounded-xl p-3 mb-8">
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-xs md:text-sm">
+            <div className="flex items-center gap-2 text-[#33b864]">
+              <Lock className="w-4 h-4" />
+              <span>Pagamento 100% Seguro</span>
+            </div>
+            <div className="flex items-center gap-2 text-[#33b864]">
+              <Shield className="w-4 h-4" />
+              <span>Criptografia SSL 256-bit</span>
+            </div>
+            <div className="flex items-center gap-2 text-[#33b864]">
+              <CheckCircle2 className="w-4 h-4" />
+              <span>Garantia de 7 Dias</span>
+            </div>
+            <div className="flex items-center gap-2 text-white">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>{onlineUsers} pessoas comprando agora</span>
+            </div>
+          </div>
+        </div>
+
         {/* Logo */}
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
 
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 rounded-full border border-[#33b864]/20 mb-4">
-            <Sparkles className="w-4 h-4 text-[#33b864]" />
-            <span className="text-sm font-bold text-[#33b864]">CHECKOUT SEGURO</span>
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-red-500/20 rounded-full border border-red-500/30 mb-4 animate-pulse">
+            <Clock className="w-4 h-4 text-red-400" />
+            <span className="text-sm font-bold text-red-400">OFERTA BLACK FRIDAY - 52% OFF</span>
           </div>
-          <h1 className="text-3xl font-sora font-bold text-white mb-4">
+          <h1 className="text-2xl md:text-3xl font-sora font-bold text-white mb-3">
             Finalize sua assinatura True Signal Pro
           </h1>
-          <p className="text-xl text-gray-300">
+          <p className="text-gray-300 max-w-xl mx-auto">
             {daysRemaining > 0 
               ? `Restam ${daysRemaining} dias de teste. Complete o pagamento para garantir acesso ilimitado!`
-              : "Complete o pagamento para voltar a acessar todos os sinais premium!"
+              : "Junte-se a mais de 2.500 assinantes lucrativos!"
             }
           </p>
         </div>
 
-        <div className="max-w-md mx-auto">
+        <div className="grid lg:grid-cols-5 gap-8">
+          {/* Left Column - Order Summary */}
+          <div className="lg:col-span-2 order-2 lg:order-1">
+            {/* What You Get */}
+            <div className="bg-gradient-to-br from-card to-card/80 border border-white/10 rounded-2xl p-6 mb-6">
+              <h3 className="font-sora font-bold text-white mb-4 flex items-center gap-2">
+                <Gift className="w-5 h-5 text-[#33b864]" />
+                O que está incluso
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3 p-3 bg-[#33b864]/10 rounded-xl border border-[#33b864]/20">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-white">Sinais diários de 20+ traders profissionais</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-gray-300">Notificações push em tempo real</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-gray-300">Gestão de banca inteligente</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-gray-300">Estatísticas e análises em tempo real</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-gray-300">Suporte prioritário via WhatsApp</span>
+                </div>
+                <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
+                  <CheckCircle2 className="w-5 h-5 text-[#33b864] flex-shrink-0" />
+                  <span className="text-sm text-gray-300">Cancele quando quiser, sem taxas</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Guarantee */}
+            <div className="bg-gradient-to-r from-[#33b864]/10 to-emerald-500/10 border border-[#33b864]/30 rounded-2xl p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-16 h-16 bg-[#33b864]/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Shield className="w-8 h-8 text-[#33b864]" />
+                </div>
+                <div>
+                  <h4 className="font-bold text-white mb-1">Garantia de 7 Dias</h4>
+                  <p className="text-sm text-gray-400">
+                    Se não ficar 100% satisfeito nos primeiros 7 dias, devolvemos seu dinheiro integralmente. Sem perguntas, sem burocracia.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Testimonial */}
+            <div className="bg-card border border-white/10 rounded-2xl p-6 mb-6">
+              <div className="flex gap-1 mb-3">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 fill-yellow-500 text-yellow-500" />
+                ))}
+              </div>
+              <p className="text-sm text-gray-300 mb-4 italic">
+                "Em 3 meses consegui lucro consistente seguindo os sinais. A plataforma é incrível e o suporte responde em minutos. Vale muito mais que o valor cobrado!"
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#33b864]/20 rounded-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-[#33b864]" />
+                </div>
+                <div>
+                  <p className="text-sm font-medium text-white">Carlos Mendes</p>
+                  <p className="text-xs text-gray-500">Assinante há 4 meses</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Trust Badges */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-[#33b864]">83%</div>
+                <div className="text-xs text-gray-400">Assertividade</div>
+              </div>
+              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-[#33b864]">2.5K+</div>
+                <div className="text-xs text-gray-400">Assinantes</div>
+              </div>
+              <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
+                <div className="text-2xl font-bold text-[#33b864]">7+</div>
+                <div className="text-xs text-gray-400">Anos exp.</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Payment Form */}
+          <div className="lg:col-span-3 order-1 lg:order-2">
           {/* Checkout Form */}
           <div className="space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="bg-card border border-white/10 rounded-xl p-8 space-y-6">
@@ -800,7 +913,27 @@ export default function CheckoutPage() {
                   <span>Cancele a qualquer momento</span>
                 </div>
               </div>
+
+              {/* Payment Methods Icons */}
+              <div className="pt-4 border-t border-white/10">
+                <p className="text-xs text-gray-500 text-center mb-3">Formas de pagamento aceitas</p>
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">VISA</div>
+                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Mastercard</div>
+                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Elo</div>
+                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">PIX</div>
+                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Hipercard</div>
+                </div>
+              </div>
+
+              {/* Mercado Pago Badge */}
+              <div className="flex items-center justify-center gap-2 pt-4">
+                <Shield className="w-5 h-5 text-[#00b1ea]" />
+                <span className="text-sm text-gray-400">Pagamento seguro via</span>
+                <span className="text-sm font-bold text-[#00b1ea]">Mercado Pago</span>
+              </div>
             </form>
+          </div>
           </div>
         </div>
 
