@@ -3,18 +3,53 @@ import { Home, LayoutDashboard, Settings, LogOut, Bell, Ticket, Play, Calendar, 
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import OneSignal from 'react-onesignal';
 import { Button } from "./ui/button";
 import { Logo } from "./logo";
 import { useQuery } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
+import { useOnboarding } from "@/hooks/use-onboarding";
+import { OnboardingTour, WelcomeModal } from "./onboarding-tour";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
   const { user, logout } = useAuth();
   const { t } = useLanguage();
+  const [showWelcome, setShowWelcome] = useState(false);
+  
+  // Onboarding tour
+  const {
+    showTour,
+    currentStep,
+    totalSteps,
+    currentStepData,
+    isLoading: onboardingLoading,
+    nextStep,
+    prevStep,
+    skipTour,
+    completeTour,
+    setShowTour,
+  } = useOnboarding();
+
+  // Show welcome modal when tour should start
+  useEffect(() => {
+    if (showTour && currentStep === 0 && !onboardingLoading) {
+      setShowWelcome(true);
+      setShowTour(false);
+    }
+  }, [showTour, currentStep, onboardingLoading]);
+
+  const handleStartTour = () => {
+    setShowWelcome(false);
+    setShowTour(true);
+  };
+
+  const handleSkipWelcome = () => {
+    setShowWelcome(false);
+    skipTour();
+  };
 
   // Get tips for unread count
   const { data: tips = [] } = useQuery({
@@ -235,6 +270,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </button>
         </Link>
       )}
+
+      {/* Onboarding Tour */}
+      <WelcomeModal
+        isOpen={showWelcome}
+        onStartTour={handleStartTour}
+        onSkip={handleSkipWelcome}
+      />
+      
+      <OnboardingTour
+        showTour={showTour}
+        currentStep={currentStep}
+        totalSteps={totalSteps}
+        currentStepData={currentStepData}
+        onNext={nextStep}
+        onPrev={prevStep}
+        onSkip={skipTour}
+        onComplete={completeTour}
+      />
 
     </div>
   );
