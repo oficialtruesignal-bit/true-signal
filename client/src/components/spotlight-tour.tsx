@@ -1,8 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, X, Rocket } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Rocket, Home, Ticket, Play, Calendar, Wallet, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useCallback } from "react";
 import { TourStep } from "@/hooks/use-onboarding";
+
+const STEP_ICONS: Record<string, React.ReactNode> = {
+  "welcome": <Home className="w-6 h-6 text-white" />,
+  "tips": <Ticket className="w-6 h-6 text-white" />,
+  "live": <Play className="w-6 h-6 text-white" />,
+  "pregame": <Calendar className="w-6 h-6 text-white" />,
+  "gestao": <Wallet className="w-6 h-6 text-white" />,
+  "settings": <Settings className="w-6 h-6 text-white" />,
+};
 
 interface SpotlightTourProps {
   isOpen: boolean;
@@ -197,8 +206,8 @@ export function SpotlightTour({
 
           <div className="px-4 py-4">
             <div className="flex items-center gap-3 mb-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#33b864]/20 to-[#33b864]/5 border border-[#33b864]/30 flex items-center justify-center">
-                <span className="text-2xl">{stepData.icon}</span>
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#33b864] to-[#1a8f4a] border border-[#33b864]/30 flex items-center justify-center shadow-lg shadow-[#33b864]/30">
+                {STEP_ICONS[stepData.id] || <Home className="w-6 h-6 text-white" />}
               </div>
               <div>
                 <div className="text-[10px] text-[#33b864] font-medium mb-0.5">

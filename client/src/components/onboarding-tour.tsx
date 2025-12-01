@@ -1,8 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, X, Rocket, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, Rocket, ArrowRight, Home, Ticket, Play, Calendar, Wallet, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { Logo } from "@/components/logo";
+
+const STEP_ICONS: Record<string, React.ReactNode> = {
+  "welcome": <Home className="w-8 h-8 text-white" />,
+  "tips": <Ticket className="w-8 h-8 text-white" />,
+  "live": <Play className="w-8 h-8 text-white" />,
+  "pregame": <Calendar className="w-8 h-8 text-white" />,
+  "gestao": <Wallet className="w-8 h-8 text-white" />,
+  "settings": <Settings className="w-8 h-8 text-white" />,
+};
 
 interface OnboardingTourProps {
   showTour: boolean;
@@ -187,14 +196,48 @@ export function WelcomeModal({
 
             {/* Content */}
             <div className="relative px-6 py-10 text-center">
-              {/* Welcome Icon */}
+              {/* Welcome Icon - Professional Shield */}
               <motion.div
-                initial={{ scale: 0, rotate: -180 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", delay: 0.2, duration: 0.8 }}
-                className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-[#33b864] to-[#1a8f4a] flex items-center justify-center shadow-lg shadow-[#33b864]/40"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ type: "spring", delay: 0.2, duration: 0.6 }}
+                className="w-20 h-20 mx-auto mb-6"
               >
-                <span className="text-5xl">🎯</span>
+                <svg viewBox="0 0 80 96" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="welcome-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#4ade80" />
+                      <stop offset="100%" stopColor="#33b864" />
+                    </linearGradient>
+                    <filter id="welcome-glow" x="-50%" y="-50%" width="200%" height="200%">
+                      <feGaussianBlur stdDeviation="3" result="blur" />
+                      <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                      </feMerge>
+                    </filter>
+                  </defs>
+                  <path 
+                    d="M8 12 L8 64 Q8 80 40 92 Q72 80 72 64 L72 12 Q72 4 64 4 L16 4 Q8 4 8 12 Z" 
+                    fill="none"
+                    stroke="url(#welcome-gradient)"
+                    strokeWidth="3"
+                    filter="url(#welcome-glow)"
+                  />
+                  <path 
+                    d="M16 48 L28 48 L34 36 L40 60 L46 44 L52 52 L64 52" 
+                    stroke="#33b864" 
+                    strokeWidth="3" 
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    fill="none"
+                  >
+                    <animate attributeName="stroke-dasharray" values="0,200;100,200" dur="1.5s" fill="freeze" />
+                  </path>
+                  <circle cx="64" cy="52" r="4" fill="#33b864">
+                    <animate attributeName="opacity" values="0;1" dur="1.5s" fill="freeze" />
+                  </circle>
+                </svg>
               </motion.div>
 
               {/* Title */}
@@ -205,7 +248,7 @@ export function WelcomeModal({
                 className="mb-2"
               >
                 <h1 
-                  className="text-2xl font-bold text-white mb-3"
+                  className="text-2xl font-bold text-white mb-4"
                   style={{ fontFamily: "Sora, sans-serif" }}
                 >
                   Bem-Vindo ao

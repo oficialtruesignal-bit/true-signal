@@ -13,6 +13,7 @@ import { useUnreadTips } from "@/hooks/use-unread-tips";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { WelcomeModal } from "./onboarding-tour";
 import { SpotlightTour } from "./spotlight-tour";
+import { BankrollSetupModal } from "./bankroll-setup-modal";
 import { useContentProtection } from "@/hooks/use-content-protection";
 import { PWAInstallPrompt } from "./pwa-install-prompt";
 
@@ -28,6 +29,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const {
     showWelcome: onboardingShowWelcome,
     showTour,
+    showBankrollSetup,
     currentStep,
     totalSteps,
     currentStepData,
@@ -37,6 +39,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     prevStep,
     skipTour,
     completeTour,
+    closeBankrollSetup,
     setShowWelcome: setOnboardingShowWelcome,
   } = useOnboarding();
 
@@ -314,6 +317,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
         onPrev={prevStep}
         onSkip={skipTour}
         onComplete={completeTour}
+      />
+
+      {/* Bankroll Setup Modal - After Tour */}
+      <BankrollSetupModal
+        isOpen={showBankrollSetup}
+        onComplete={async (data) => {
+          if (user?.id) {
+            await fetch(`/api/profile/${user.id}/bankroll`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+          }
+          closeBankrollSetup();
+        }}
       />
 
       {/* PWA Install Prompt */}

@@ -77,6 +77,7 @@ export function useOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasChecked, setHasChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showBankrollSetup, setShowBankrollSetup] = useState(false);
 
   useEffect(() => {
     const checkOnboardingStatus = async () => {
@@ -161,15 +162,21 @@ export function useOnboarding() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ completed: true }),
         });
+        setShowBankrollSetup(true);
       } catch (error) {
         console.error("Error marking tour as completed:", error);
       }
     }
   }, [user?.id]);
 
+  const closeBankrollSetup = useCallback(() => {
+    setShowBankrollSetup(false);
+  }, []);
+
   return {
     showWelcome,
     showTour,
+    showBankrollSetup,
     currentStep,
     totalSteps: TOUR_STEPS.length,
     currentStepData: TOUR_STEPS[currentStep],
@@ -180,6 +187,7 @@ export function useOnboarding() {
     prevStep,
     skipTour,
     completeTour,
+    closeBankrollSetup,
     setShowTour,
     setShowWelcome,
   };
