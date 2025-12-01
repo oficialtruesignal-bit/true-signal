@@ -190,32 +190,32 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </main>
 
       {/* Mobile Bottom Nav - 5 Icons */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-14 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-around px-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-card/95 backdrop-blur-md border-t border-primary/20 z-50 flex items-center justify-around px-4">
         {mobileNavItems.map((item) => (
           <Link 
             key={item.path} 
             href={item.path}
             data-testid={`nav-${item.label.toLowerCase()}`}
             className={cn(
-              "flex flex-col items-center justify-center h-full gap-0.5 transition-all relative",
+              "flex flex-col items-center justify-center h-full gap-1 transition-all relative flex-1",
               location === item.path ? "text-primary" : "text-muted-foreground"
             )}
           >
             <div className="relative">
               <item.icon
                 className={cn(
-                  "w-5 h-5 transition-all",
-                  location === item.path ? "scale-110 drop-shadow-[0_0_8px_rgba(51,184,100,0.6)]" : ""
+                  "w-6 h-6 transition-all",
+                  location === item.path ? "scale-110 drop-shadow-[0_0_10px_rgba(51,184,100,0.7)]" : ""
                 )}
               />
               {item.path === "/tips" && unreadCount > 0 && (
-                <div className="absolute -top-1 -right-1.5 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
+                <div className="absolute -top-1 -right-2 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-pulse">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </div>
               )}
             </div>
             <span className={cn(
-              "text-[9px] font-medium transition-all text-center leading-tight",
+              "text-[10px] font-medium transition-all text-center",
               location === item.path ? "font-bold" : ""
             )}>{item.label}</span>
           </Link>
