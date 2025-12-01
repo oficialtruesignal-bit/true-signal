@@ -262,12 +262,25 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                 </div>
                 
                 <h1 className="text-2xl md:text-3xl font-bold text-white mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
-                  Definição de Capital Operacional
+                  Configure sua Banca
                 </h1>
-                <p className="text-gray-400 mb-8">
-                  Qual o valor total disponível para suas operações hoje?
-                </p>
+                
+                <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
+                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
+                    <strong className="text-white">Por que isso é importante?</strong>
+                  </p>
+                  <p className="text-gray-400 text-sm leading-relaxed mb-2">
+                    Para operar de forma profissional, precisamos saber quanto você tem disponível para suas apostas. 
+                    Com esse valor, vamos calcular automaticamente o <strong className="text-[#33b864]">valor exato</strong> que você deve apostar em cada bilhete.
+                  </p>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    Isso garante uma <strong className="text-white">gestão de risco inteligente</strong>, protege seu capital e permite que você acompanhe seus ganhos e perdas com precisão.
+                  </p>
+                </div>
 
+                <label className="block text-sm text-gray-400 mb-2">
+                  Qual o valor total disponível para apostas hoje?
+                </label>
                 <div className="mb-4">
                   <Input
                     type="text"
@@ -280,10 +293,17 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                   />
                 </div>
 
+                <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-4 mb-4">
+                  <p className="text-[#33b864] text-sm">
+                    <strong>Como funciona:</strong> Em cada bilhete você verá "Stake: 1 = R$ X", 
+                    onde X é o valor calculado com base no seu capital. Basta apostar esse valor!
+                  </p>
+                </div>
+
                 <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
                   <p className="text-yellow-400 text-sm">
-                    <strong>Atenção:</strong> Não use dinheiro destinado a contas essenciais. 
-                    Operamos com capital de risco.
+                    <strong>Importante:</strong> Use apenas dinheiro que você pode perder sem comprometer suas contas essenciais. 
+                    Apostas envolvem risco.
                   </p>
                 </div>
               </div>
