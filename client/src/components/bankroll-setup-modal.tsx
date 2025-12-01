@@ -264,24 +264,11 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                 <h1 className="text-2xl md:text-3xl font-bold text-white mb-2" style={{ fontFamily: "Sora, sans-serif" }}>
                   Configure sua Banca
                 </h1>
-                
-                <div className="bg-white/5 border border-white/10 rounded-xl p-4 mb-6">
-                  <p className="text-gray-300 text-sm leading-relaxed mb-3">
-                    <strong className="text-white">Por que isso é importante?</strong>
-                  </p>
-                  <p className="text-gray-400 text-sm leading-relaxed mb-2">
-                    Para operar de forma profissional, precisamos saber quanto você tem disponível para suas apostas. 
-                    Com esse valor, vamos calcular automaticamente o <strong className="text-[#33b864]">valor exato</strong> que você deve apostar em cada bilhete.
-                  </p>
-                  <p className="text-gray-400 text-sm leading-relaxed">
-                    Isso garante uma <strong className="text-white">gestão de risco inteligente</strong>, protege seu capital e permite que você acompanhe seus ganhos e perdas com precisão.
-                  </p>
-                </div>
+                <p className="text-gray-400 text-sm mb-5">
+                  Para calcularmos o valor ideal de cada aposta, informe seu capital disponível.
+                </p>
 
-                <label className="block text-sm text-gray-400 mb-2">
-                  Qual o valor total disponível para apostas hoje?
-                </label>
-                <div className="mb-4">
+                <div className="mb-5">
                   <Input
                     type="text"
                     inputMode="numeric"
@@ -291,19 +278,40 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                     className="h-16 text-2xl md:text-3xl font-bold text-center bg-white/5 border-white/10 text-white placeholder:text-gray-600"
                     data-testid="input-bankroll-amount"
                   />
+                  <p className="text-center text-xs text-gray-500 mt-2">Mínimo: R$ 50,00</p>
                 </div>
 
-                <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-4 mb-4">
-                  <p className="text-[#33b864] text-sm">
-                    <strong>Como funciona:</strong> Em cada bilhete você verá "Stake: 1 = R$ X", 
-                    onde X é o valor calculado com base no seu capital. Basta apostar esse valor!
-                  </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-3">Como funciona</p>
+                
+                <div className="space-y-3 mb-4">
+                  <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
+                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">1</div>
+                    <div>
+                      <p className="text-white text-sm font-medium">Você informa seu capital</p>
+                      <p className="text-gray-400 text-xs">O valor que você tem disponível para apostar</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
+                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">2</div>
+                    <div>
+                      <p className="text-white text-sm font-medium">Calculamos sua unidade (stake)</p>
+                      <p className="text-gray-400 text-xs">Dividimos seu capital para proteger sua banca</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-3">
+                    <div className="w-7 h-7 rounded-full bg-[#33b864] flex items-center justify-center flex-shrink-0 text-black font-bold text-sm">3</div>
+                    <div>
+                      <p className="text-white text-sm font-medium">Você vê o valor exato em cada bilhete</p>
+                      <p className="text-gray-400 text-xs">Ex: "Stake 1 = R$ 20,00" — é só apostar esse valor!</p>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
-                  <p className="text-yellow-400 text-sm">
-                    <strong>Importante:</strong> Use apenas dinheiro que você pode perder sem comprometer suas contas essenciais. 
-                    Apostas envolvem risco.
+                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
+                  <p className="text-yellow-400 text-xs">
+                    <strong>Atenção:</strong> Use apenas dinheiro que você pode perder. Apostas envolvem risco.
                   </p>
                 </div>
               </div>
