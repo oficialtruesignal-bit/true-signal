@@ -669,10 +669,6 @@ export default function CheckoutPage() {
               <CheckCircle2 className="w-4 h-4" />
               <span className="text-xs font-semibold">7 Dias de Garantia</span>
             </div>
-            <div className="flex items-center gap-1.5 text-green-400">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="text-xs font-bold">{onlineUsers} comprando agora</span>
-            </div>
           </div>
         </div>
       </div>
