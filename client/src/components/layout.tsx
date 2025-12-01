@@ -13,6 +13,7 @@ import { useUnreadTips } from "@/hooks/use-unread-tips";
 import { useOnboarding } from "@/hooks/use-onboarding";
 import { OnboardingTour, WelcomeModal } from "./onboarding-tour";
 import { useContentProtection } from "@/hooks/use-content-protection";
+import { PWAInstallPrompt } from "./pwa-install-prompt";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [location] = useLocation();
@@ -308,6 +309,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         onSkip={skipTour}
         onComplete={completeTour}
       />
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
 
     </div>
   );
