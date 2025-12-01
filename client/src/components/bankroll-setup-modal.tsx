@@ -319,68 +319,70 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
 
                 <div className="space-y-4">
                   {riskProfiles.map((profile) => (
-                    <div key={profile.id} className="relative">
-                      <button
-                        onClick={() => setSelectedProfile(profile.id)}
-                        className={cn(
-                          "w-full p-4 rounded-2xl border-2 text-left transition-all",
-                          `bg-gradient-to-br ${profile.color}`,
-                          selectedProfile === profile.id
-                            ? `${profile.borderColor} scale-[1.02]`
-                            : "border-white/10 hover:border-white/20"
-                        )}
-                        data-testid={`button-profile-${profile.id}`}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className={cn("p-3 rounded-xl bg-black/30", profile.iconColor)}>
-                            <profile.icon className="w-6 h-6" />
+                    <div
+                      key={profile.id}
+                      onClick={() => setSelectedProfile(profile.id)}
+                      className={cn(
+                        "w-full p-4 rounded-2xl border-2 text-left transition-all cursor-pointer",
+                        `bg-gradient-to-br ${profile.color}`,
+                        selectedProfile === profile.id
+                          ? `${profile.borderColor} scale-[1.02]`
+                          : "border-white/10 hover:border-white/20"
+                      )}
+                      data-testid={`button-profile-${profile.id}`}
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className={cn("p-3 rounded-xl bg-black/30 flex-shrink-0", profile.iconColor)}>
+                          <profile.icon className="w-6 h-6" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-bold text-white">{profile.name}</span>
+                            <span className="text-xs text-gray-400">({profile.percentage})</span>
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1 flex-wrap">
-                              <span className="font-bold text-white">{profile.name}</span>
-                              <span className="text-xs text-gray-400">({profile.percentage})</span>
-                              {profile.recommended && (
-                                <span className="px-2 py-0.5 bg-[#33b864] text-black text-[10px] font-bold rounded-full">
-                                  RECOMENDADO
-                                </span>
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-400">{profile.description}</p>
-                            {selectedProfile === profile.id && (
-                              <div className="mt-3 pt-3 border-t border-white/10">
-                                <p className="text-sm text-white">
-                                  Sua unidade será:{" "}
-                                  <span className="font-bold text-[#33b864]">
-                                    {new Intl.NumberFormat("pt-BR", {
-                                      style: "currency",
-                                      currency: "BRL",
-                                    }).format(getNumericAmount() / profile.divisor)}
-                                  </span>
-                                </p>
-                              </div>
+                          {profile.recommended && (
+                            <span className="inline-block px-2 py-0.5 bg-[#33b864] text-black text-[10px] font-bold rounded-full mb-2">
+                              RECOMENDADO
+                            </span>
+                          )}
+                          <p className="text-sm text-gray-400 mb-3">{profile.description}</p>
+                          
+                          {/* Botão Entenda */}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setShowExampleFor(profile.id);
+                            }}
+                            className={cn(
+                              "px-3 py-1.5 rounded-full bg-black/40 hover:bg-black/60 transition-colors flex items-center gap-1.5 w-fit",
+                              profile.iconColor
                             )}
-                          </div>
+                            data-testid={`button-example-${profile.id}`}
+                          >
+                            <HelpCircle className="w-3.5 h-3.5" />
+                            <span className="text-[11px] font-medium">Entenda o {profile.name}</span>
+                          </button>
+
                           {selectedProfile === profile.id && (
-                            <div className="p-1 rounded-full bg-[#33b864]">
-                              <Check className="w-4 h-4 text-black" />
+                            <div className="mt-3 pt-3 border-t border-white/10">
+                              <p className="text-sm text-white">
+                                Sua unidade será:{" "}
+                                <span className="font-bold text-[#33b864]">
+                                  {new Intl.NumberFormat("pt-BR", {
+                                    style: "currency",
+                                    currency: "BRL",
+                                  }).format(getNumericAmount() / profile.divisor)}
+                                </span>
+                              </p>
                             </div>
                           )}
                         </div>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowExampleFor(profile.id);
-                        }}
-                        className={cn(
-                          "absolute top-3 right-3 px-3 py-1.5 rounded-full bg-black/50 hover:bg-black/70 transition-colors flex items-center gap-1.5",
-                          profile.iconColor
+                        {selectedProfile === profile.id && (
+                          <div className="p-1 rounded-full bg-[#33b864] flex-shrink-0">
+                            <Check className="w-4 h-4 text-black" />
+                          </div>
                         )}
-                        data-testid={`button-example-${profile.id}`}
-                      >
-                        <HelpCircle className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-medium">Entenda o {profile.name}</span>
-                      </button>
+                      </div>
                     </div>
                   ))}
                 </div>
