@@ -298,7 +298,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   if (signal.imageUrl) {
     return (
       <div 
-        className="w-full bg-[#0a0a0a] border border-[#33b864]/30 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/5 relative group hover:border-[#33b864]/50 transition-all"
+        className="w-full bg-[#141414] border border-white/15 rounded-2xl overflow-hidden shadow-lg shadow-black/50 relative group hover:border-[#33b864]/40 transition-all"
         data-testid={`bet-card-image-${signal.id}`}
       >
         {/* A IMAGEM DO BILHETE */}
@@ -435,7 +435,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   // Layout tradicional (sem imagem) - NOVO DESIGN ESTILO BETANO
   return (
     <div 
-      className="w-full bg-[#1a1a1a] rounded-2xl overflow-hidden shadow-lg relative group"
+      className="w-full bg-[#1e1e1e] border border-white/15 rounded-2xl overflow-hidden shadow-lg shadow-black/50 relative group"
       data-testid={`bet-card-${signal.id}`}
     >
       {/* --- HEADER: ODD TOTAL + Controles Admin + Favorito --- */}
@@ -523,7 +523,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
             {signal.market.split('\n').filter(line => line.trim()).map((line, idx, arr) => (
               <div key={idx} className="relative flex items-start">
                 {/* Bolinha */}
-                <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-gray-600 flex items-center justify-center">
+                <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1e1e1e] border-2 border-gray-500 flex items-center justify-center">
                   <div className="w-1.5 h-1.5 rounded-full bg-gray-500"></div>
                 </div>
                 {/* Texto da linha */}
