@@ -689,7 +689,7 @@ export default function CheckoutPage() {
             <div className="inline-flex items-center gap-4 px-6 py-3 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/40 mb-5">
               <div className="flex items-center gap-2">
                 <Zap className="w-5 h-5 text-yellow-400" />
-                <div className="text-left">
+                <div className="text-center">
                   <span className="text-xs font-bold text-yellow-400 block">PROMOÇÃO</span>
                   <span className="text-sm font-bold text-white">DE FIM DE ANO</span>
                 </div>
