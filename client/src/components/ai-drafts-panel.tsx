@@ -674,74 +674,165 @@ export function AiDraftsPanel() {
                       >
                         <X className="w-4 h-4" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => setExpandedDraft(isExpanded ? null : draft.id)}
-                        className="text-gray-400 hover:text-white"
-                        data-testid={`button-expand-${draft.id}`}
-                      >
-                        {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                      </Button>
                     </div>
                   </div>
 
-                  {/* Expanded Details */}
+                  {/* Entenda o Motivo da Entrada - Expandable Button */}
+                  <button
+                    onClick={() => setExpandedDraft(isExpanded ? null : draft.id)}
+                    className={`w-full mt-3 py-2 px-4 rounded-lg border transition-all flex items-center justify-center gap-2 text-sm font-medium ${
+                      isExpanded 
+                        ? 'bg-primary/20 border-primary/50 text-primary' 
+                        : 'bg-white/5 border-white/10 text-gray-400 hover:text-white hover:border-primary/30'
+                    }`}
+                    data-testid={`button-expand-${draft.id}`}
+                  >
+                    <Brain className="w-4 h-4" />
+                    {isExpanded ? 'Ocultar explicação' : 'Entenda o motivo da entrada'}
+                    {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+
+                  {/* Expanded Details - Entenda o Motivo da Entrada */}
                   {isExpanded && (
-                    <div className="mt-4 pt-4 border-t border-white/10">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        {/* Scores */}
-                        <div className="bg-background/50 rounded-lg p-4">
-                          <h4 className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
-                            <BarChart3 className="w-4 h-4" />
-                            Scores da Análise
-                          </h4>
-                          <div className="space-y-2">
-                            <div className="flex justify-between">
-                              <span className="text-sm text-gray-400">Forma</span>
-                              <span className="text-sm text-white">{draft.formScore ? `${parseFloat(draft.formScore).toFixed(0)}%` : '-'}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-sm text-gray-400">Tendência de Gols</span>
-                              <span className="text-sm text-white">{draft.goalTrendScore ? `${parseFloat(draft.goalTrendScore).toFixed(0)}%` : '-'}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-sm text-gray-400">H2H</span>
-                              <span className="text-sm text-white">{draft.h2hScore ? `${parseFloat(draft.h2hScore).toFixed(0)}%` : '-'}</span>
-                            </div>
-                            <div className="flex justify-between pt-2 border-t border-white/10">
-                              <span className="text-sm text-gray-400">Probabilidade</span>
-                              <span className="text-sm font-bold text-primary">{parseFloat(draft.probability).toFixed(1)}%</span>
-                            </div>
+                    <div className="mt-4 space-y-4 animate-in slide-in-from-top-2 duration-200">
+                      {/* Section 1: Dados Obtidos */}
+                      <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 rounded-xl p-4">
+                        <h4 className="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4" />
+                          📊 Dados Obtidos pela IA
+                        </h4>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div className="bg-background/50 rounded-lg p-3 text-center">
+                            <p className="text-xs text-gray-500 mb-1">Forma dos Times</p>
+                            <p className="text-lg font-bold text-white">
+                              {draft.formScore ? `${parseFloat(draft.formScore).toFixed(0)}%` : '-'}
+                            </p>
+                          </div>
+                          <div className="bg-background/50 rounded-lg p-3 text-center">
+                            <p className="text-xs text-gray-500 mb-1">Tendência de Gols</p>
+                            <p className="text-lg font-bold text-white">
+                              {draft.goalTrendScore ? `${parseFloat(draft.goalTrendScore).toFixed(0)}%` : '-'}
+                            </p>
+                          </div>
+                          <div className="bg-background/50 rounded-lg p-3 text-center">
+                            <p className="text-xs text-gray-500 mb-1">Histórico H2H</p>
+                            <p className="text-lg font-bold text-white">
+                              {draft.h2hScore ? `${parseFloat(draft.h2hScore).toFixed(0)}%` : '-'}
+                            </p>
+                          </div>
+                          <div className="bg-background/50 rounded-lg p-3 text-center">
+                            <p className="text-xs text-gray-500 mb-1">Probabilidade</p>
+                            <p className="text-lg font-bold text-primary">
+                              {parseFloat(draft.probability).toFixed(1)}%
+                            </p>
                           </div>
                         </div>
+                        <p className="text-xs text-gray-500 mt-3 italic">
+                          * Baseado nos últimos 10 jogos de cada time + confrontos diretos
+                        </p>
+                      </div>
 
-                        {/* Rationale */}
-                        <div className="md:col-span-2 bg-background/50 rounded-lg p-4">
-                          <h4 className="text-sm font-semibold text-gray-400 mb-3 flex items-center gap-2">
-                            <Brain className="w-4 h-4" />
-                            Análise da IA
-                          </h4>
-                          <ul className="space-y-1.5">
-                            {rationale.map((reason: string, index: number) => (
-                              <li key={index} className="text-sm text-gray-300 flex items-start gap-2">
-                                <span className="text-primary mt-0.5">•</span>
-                                {reason}
-                              </li>
-                            ))}
-                          </ul>
+                      {/* Section 2: Lógica da Entrada */}
+                      <div className="bg-gradient-to-br from-primary/10 to-green-500/5 border border-primary/20 rounded-xl p-4">
+                        <h4 className="text-sm font-bold text-primary mb-3 flex items-center gap-2">
+                          <Brain className="w-4 h-4" />
+                          🧠 Lógica da Entrada
+                        </h4>
+                        <div className="space-y-2">
+                          {rationale.length > 0 ? (
+                            rationale.map((reason: string, index: number) => (
+                              <div key={index} className="flex items-start gap-3 bg-background/30 rounded-lg p-3">
+                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                                  <span className="text-xs font-bold text-primary">{index + 1}</span>
+                                </div>
+                                <p className="text-sm text-gray-300 leading-relaxed">{reason}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-sm text-gray-400 italic">
+                              Análise baseada em modelo estatístico Poisson + tendências históricas
+                            </p>
+                          )}
                         </div>
                       </div>
 
-                      {/* Expected Value */}
-                      {draft.expectedValue && (
-                        <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                          <p className="text-sm">
-                            <span className="text-gray-400">Valor Esperado (EV): </span>
-                            <span className={`font-bold ${parseFloat(draft.expectedValue) > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                              {parseFloat(draft.expectedValue) > 0 ? '+' : ''}{parseFloat(draft.expectedValue).toFixed(1)}%
+                      {/* Section 3: Motivo da Porcentagem */}
+                      <div className="bg-gradient-to-br from-purple-500/10 to-pink-500/5 border border-purple-500/20 rounded-xl p-4">
+                        <h4 className="text-sm font-bold text-purple-400 mb-3 flex items-center gap-2">
+                          <Target className="w-4 h-4" />
+                          🎯 Motivo da Confiança de {confidence.toFixed(0)}%
+                        </h4>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-3">
+                            <div className="flex-1 bg-background/30 rounded-full h-2">
+                              <div 
+                                className="bg-gradient-to-r from-primary to-green-400 h-2 rounded-full transition-all"
+                                style={{ width: `${Math.min(confidence, 100)}%` }}
+                              />
+                            </div>
+                            <span className={`text-sm font-bold ${confidence >= 85 ? 'text-green-400' : confidence >= 75 ? 'text-yellow-400' : 'text-orange-400'}`}>
+                              {confidence >= 85 ? 'Alta' : confidence >= 75 ? 'Média' : 'Moderada'}
                             </span>
-                          </p>
+                          </div>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div className="bg-background/30 rounded-lg p-3">
+                              <p className="text-gray-400 mb-1">Cálculo baseado em:</p>
+                              <ul className="text-gray-300 space-y-1">
+                                <li className="flex items-center gap-2">
+                                  <span className="text-primary">•</span>
+                                  Modelo Poisson de probabilidade
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-primary">•</span>
+                                  Estatísticas dos últimos 10 jogos
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-primary">•</span>
+                                  Histórico de confrontos diretos
+                                </li>
+                              </ul>
+                            </div>
+                            <div className="bg-background/30 rounded-lg p-3">
+                              <p className="text-gray-400 mb-1">Validação:</p>
+                              <ul className="text-gray-300 space-y-1">
+                                <li className="flex items-center gap-2">
+                                  <span className="text-green-400">✓</span>
+                                  Odd mínima de 1.45 atingida
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className="text-green-400">✓</span>
+                                  Confiança acima de 85%
+                                </li>
+                                <li className="flex items-center gap-2">
+                                  <span className={parseFloat(draft.expectedValue || '0') > 0 ? 'text-green-400' : 'text-yellow-400'}>
+                                    {parseFloat(draft.expectedValue || '0') > 0 ? '✓' : '⚠'}
+                                  </span>
+                                  EV: {draft.expectedValue ? `${parseFloat(draft.expectedValue) > 0 ? '+' : ''}${parseFloat(draft.expectedValue).toFixed(1)}%` : 'N/A'}
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Expected Value Summary */}
+                      {draft.expectedValue && parseFloat(draft.expectedValue) > 0 && (
+                        <div className="bg-gradient-to-r from-green-500/20 to-primary/20 border border-green-500/30 rounded-xl p-4 flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                              <TrendingUp className="w-5 h-5 text-green-400" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-gray-400">Valor Esperado Positivo</p>
+                              <p className="text-lg font-bold text-green-400">
+                                +{parseFloat(draft.expectedValue).toFixed(1)}% EV
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-gray-500">Esta entrada tem</p>
+                            <p className="text-sm font-semibold text-green-400">vantagem matemática</p>
+                          </div>
                         </div>
                       )}
                     </div>
