@@ -801,27 +801,6 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {/* Testimonial Card */}
-              <div className="bg-card border border-white/10 rounded-2xl p-5">
-                <div className="flex items-start gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold">
-                    CM
-                  </div>
-                  <div>
-                    <p className="font-medium text-white">Carlos Mendes</p>
-                    <div className="flex items-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3 h-3 fill-yellow-500 text-yellow-500" />
-                      ))}
-                      <span className="text-xs text-gray-500 ml-1">Verificado</span>
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-300 italic leading-relaxed">
-                  "Em 3 meses consegui lucro consistente seguindo os sinais. O suporte responde em minutos e a plataforma é sensacional. Melhor investimento que fiz!"
-                </p>
-              </div>
-
               {/* Stats Row */}
               <div className="grid grid-cols-3 gap-3">
                 <div className="bg-card border border-white/10 rounded-xl p-4 text-center">
