@@ -1,10 +1,12 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTipSchema, insertProfileSchema } from "@shared/schema";
+import { insertTipSchema, insertProfileSchema, tips } from "@shared/schema";
 import axios from "axios";
 import { mercadoPagoService } from "./mercadopago-service";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { aiPredictionEngine } from "./ai-prediction-engine";
+import { db } from "./db";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -1261,6 +1263,207 @@ REGRAS IMPORTANTES:
     } catch (error: any) {
       console.error("Error activating premium:", error);
       return res.status(500).json({ error: "Erro ao ativar acesso premium" });
+    }
+  });
+
+  // =====================================================
+  // AI PREDICTION ENGINE ROUTES
+  // =====================================================
+
+  // Run AI analysis for upcoming fixtures
+  app.post("/api/ai/analyze", async (req, res) => {
+    try {
+      const { date, adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const analysisDate = date || new Date().toISOString().split('T')[0];
+      console.log(`🤖 [AI Engine] Starting analysis for ${analysisDate}`);
+      
+      const result = await aiPredictionEngine.analyzeUpcomingFixtures(analysisDate);
+      
+      return res.json({
+        success: true,
+        date: analysisDate,
+        fixturesAnalyzed: result.analyzed,
+        predictionsGenerated: result.predictions,
+        message: `Análise completa! ${result.predictions} previsões geradas de ${result.analyzed} jogos.`
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Analysis error:", error);
+      return res.status(500).json({ error: "Erro ao executar análise de IA" });
+    }
+  });
+
+  // Get AI draft tickets
+  app.get("/api/ai/drafts", async (req, res) => {
+    try {
+      const drafts = await aiPredictionEngine.getDraftTickets();
+      return res.json(drafts);
+    } catch (error: any) {
+      console.error("[AI Engine] Error fetching drafts:", error);
+      return res.status(500).json({ error: "Erro ao buscar rascunhos de IA" });
+    }
+  });
+
+  // Approve AI ticket and convert to tip
+  app.post("/api/ai/drafts/:id/approve", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { adminEmail, adminUserId, notes, adjustedOdd, adjustedStake } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      // Get the draft ticket
+      const drafts = await aiPredictionEngine.getDraftTickets();
+      const draft = drafts.find((d: any) => d.id === id);
+      
+      if (!draft) {
+        return res.status(404).json({ error: "Rascunho não encontrado" });
+      }
+      
+      // Create a new tip from the draft
+      const matchTime = new Date(draft.matchTime);
+      const formattedTime = matchTime.toLocaleDateString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      const newTip = await storage.createTip({
+        fixtureId: draft.fixtureId,
+        league: draft.league,
+        homeTeam: draft.homeTeam,
+        awayTeam: draft.awayTeam,
+        homeTeamLogo: draft.homeTeamLogo,
+        awayTeamLogo: draft.awayTeamLogo,
+        matchTime: formattedTime,
+        market: `${draft.market}: ${draft.predictedOutcome}`,
+        odd: adjustedOdd || draft.suggestedOdd,
+        stake: adjustedStake || draft.suggestedStake,
+        status: 'pending',
+        isLive: false,
+      });
+      
+      // Update the draft status
+      await aiPredictionEngine.approveTicket(id, adminUserId, notes);
+      
+      console.log(`✅ [AI Engine] Draft ${id} approved and published as tip ${newTip.id}`);
+      
+      return res.json({
+        success: true,
+        message: "Previsão aprovada e publicada!",
+        tipId: newTip.id
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Error approving draft:", error);
+      return res.status(500).json({ error: "Erro ao aprovar previsão" });
+    }
+  });
+
+  // Reject AI ticket
+  app.post("/api/ai/drafts/:id/reject", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { adminEmail, adminUserId, notes } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      await aiPredictionEngine.rejectTicket(id, adminUserId, notes);
+      
+      return res.json({
+        success: true,
+        message: "Previsão rejeitada."
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Error rejecting draft:", error);
+      return res.status(500).json({ error: "Erro ao rejeitar previsão" });
+    }
+  });
+
+  // Bulk approve multiple AI tickets
+  app.post("/api/ai/drafts/bulk-approve", async (req, res) => {
+    try {
+      const { ids, adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ error: "IDs inválidos" });
+      }
+      
+      const drafts = await aiPredictionEngine.getDraftTickets();
+      let approvedCount = 0;
+      
+      for (const id of ids) {
+        const draft = drafts.find((d: any) => d.id === id);
+        if (!draft) continue;
+        
+        const matchTime = new Date(draft.matchTime);
+        const formattedTime = matchTime.toLocaleDateString('pt-BR', { 
+          day: '2-digit', 
+          month: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        
+        await storage.createTip({
+          fixtureId: draft.fixtureId,
+          league: draft.league,
+          homeTeam: draft.homeTeam,
+          awayTeam: draft.awayTeam,
+          homeTeamLogo: draft.homeTeamLogo,
+          awayTeamLogo: draft.awayTeamLogo,
+          matchTime: formattedTime,
+          market: `${draft.market}: ${draft.predictedOutcome}`,
+          odd: draft.suggestedOdd,
+          stake: draft.suggestedStake,
+          status: 'pending',
+          isLive: false,
+        });
+        
+        await aiPredictionEngine.approveTicket(id, adminUserId, 'Bulk approved');
+        approvedCount++;
+      }
+      
+      return res.json({
+        success: true,
+        message: `${approvedCount} previsões aprovadas e publicadas!`,
+        approvedCount
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Error bulk approving:", error);
+      return res.status(500).json({ error: "Erro ao aprovar previsões em lote" });
+    }
+  });
+
+  // Get AI engine stats
+  app.get("/api/ai/stats", async (req, res) => {
+    try {
+      const drafts = await aiPredictionEngine.getDraftTickets();
+      
+      return res.json({
+        pendingDrafts: drafts.length,
+        highConfidence: drafts.filter((d: any) => parseFloat(d.confidence) >= 80).length,
+        markets: {
+          over25: drafts.filter((d: any) => d.market.includes('Over 2.5')).length,
+          under25: drafts.filter((d: any) => d.market.includes('Under 2.5')).length,
+          btts: drafts.filter((d: any) => d.market.includes('Ambas')).length,
+          result: drafts.filter((d: any) => d.market.includes('Resultado')).length,
+        }
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Error fetching stats:", error);
+      return res.status(500).json({ error: "Erro ao buscar estatísticas" });
     }
   });
 

@@ -1,12 +1,13 @@
 import { Layout } from "@/components/layout";
 import { SignalForm } from "@/components/signal-form";
 import { ManualTicketForm } from "@/components/manual-ticket-form";
+import { AiDraftsPanel } from "@/components/ai-drafts-panel";
 import { tipsService } from "@/lib/tips-service";
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenLine, Crown, UserPlus, Loader2 } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, ExternalLink, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -171,6 +172,29 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
         <p className="text-muted-foreground">Gerencie os sinais e resultados.</p>
       </div>
 
+      {/* Main Admin Tabs */}
+      <Tabs defaultValue="signals" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6 bg-background/50 p-1.5 h-14 max-w-md">
+          <TabsTrigger 
+            value="signals" 
+            className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black font-bold text-base"
+            data-testid="tab-signals"
+          >
+            <LayoutDashboard className="w-5 h-5" />
+            Gerenciar Sinais
+          </TabsTrigger>
+          <TabsTrigger 
+            value="ai" 
+            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white font-bold text-base"
+            data-testid="tab-ai-predictions"
+          >
+            <Brain className="w-5 h-5" />
+            IA Preditiva
+          </TabsTrigger>
+        </TabsList>
+
+        {/* Signals Management Tab */}
+        <TabsContent value="signals" className="mt-0">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Create Tip Flow */}
         <div className="lg:col-span-1 space-y-6">
@@ -439,6 +463,13 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
           </div>
         </div>
       </div>
+        </TabsContent>
+
+        {/* AI Predictions Tab */}
+        <TabsContent value="ai" className="mt-0">
+          <AiDraftsPanel />
+        </TabsContent>
+      </Tabs>
     </Layout>
   );
 }
