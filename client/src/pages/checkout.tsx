@@ -12,6 +12,7 @@ import { z } from "zod";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { analytics, fbPixel, ga4 } from "@/lib/analytics";
 import { Logo } from "@/components/logo";
+import { PaymentMethods } from "@/components/PaymentMethods";
 
 // Isolated CardPayment component using refs to prevent re-renders
 const CardPaymentWrapper = memo(function CardPaymentWrapper({
@@ -1079,40 +1080,8 @@ export default function CheckoutPage() {
                 )}
               </button>
 
-              {/* Security Badges */}
-              <div className="space-y-2 pt-4 border-t border-white/10">
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
-                  <span>Criptografia SSL de 256 bits</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
-                  <span>Dados protegidos pela LGPD</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-gray-400">
-                  <CheckCircle2 className="w-4 h-4 text-[#33b864]" />
-                  <span>Cancele a qualquer momento</span>
-                </div>
-              </div>
-
-              {/* Payment Methods Icons */}
-              <div className="pt-4 border-t border-white/10">
-                <p className="text-xs text-gray-500 text-center mb-3">Formas de pagamento aceitas</p>
-                <div className="flex items-center justify-center gap-3 flex-wrap">
-                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">VISA</div>
-                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Mastercard</div>
-                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Elo</div>
-                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">PIX</div>
-                  <div className="bg-white/10 rounded px-3 py-1.5 text-xs font-bold text-white">Hipercard</div>
-                </div>
-              </div>
-
-              {/* Mercado Pago Badge */}
-              <div className="flex items-center justify-center gap-2 pt-4">
-                <Shield className="w-5 h-5 text-[#00b1ea]" />
-                <span className="text-sm text-gray-400">Pagamento seguro via</span>
-                <span className="text-sm font-bold text-[#00b1ea]">Mercado Pago</span>
-              </div>
+              {/* Payment Methods Footer */}
+              <PaymentMethods />
             </form>
           </div>
           </div>
