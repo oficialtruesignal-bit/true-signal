@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Shield, Scale, Rocket, ArrowRight, ArrowLeft, Check, Wallet } from "lucide-react";
+import { Shield, Scale, Rocket, ArrowRight, ArrowLeft, Check, Wallet, HelpCircle, X, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -21,6 +21,15 @@ const riskProfiles = [
     color: "from-blue-500/20 to-blue-600/10",
     borderColor: "border-blue-500/50",
     iconColor: "text-blue-400",
+    example: {
+      capital: 100,
+      unit: 1.00,
+      stakes: [
+        { stake: 1, value: 1.00 },
+        { stake: 0.5, value: 0.50 },
+        { stake: 0.25, value: 0.25 },
+      ],
+    },
   },
   {
     id: "moderado",
@@ -33,6 +42,15 @@ const riskProfiles = [
     color: "from-[#33b864]/20 to-[#33b864]/10",
     borderColor: "border-[#33b864]/50",
     iconColor: "text-[#33b864]",
+    example: {
+      capital: 100,
+      unit: 2.00,
+      stakes: [
+        { stake: 1, value: 2.00 },
+        { stake: 0.5, value: 1.00 },
+        { stake: 0.25, value: 0.50 },
+      ],
+    },
   },
   {
     id: "agressivo",
@@ -44,14 +62,117 @@ const riskProfiles = [
     color: "from-orange-500/20 to-orange-600/10",
     borderColor: "border-orange-500/50",
     iconColor: "text-orange-400",
+    example: {
+      capital: 100,
+      unit: 3.33,
+      stakes: [
+        { stake: 1, value: 3.33 },
+        { stake: 0.5, value: 1.67 },
+        { stake: 0.25, value: 0.83 },
+      ],
+    },
   },
 ];
+
+function ProfileExampleModal({ 
+  profile, 
+  onClose 
+}: { 
+  profile: typeof riskProfiles[0]; 
+  onClose: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-[200] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        onClick={(e) => e.stopPropagation()}
+        className={cn(
+          "w-full max-w-md bg-gradient-to-br rounded-2xl p-6 border-2",
+          profile.color,
+          profile.borderColor
+        )}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className={cn("p-2 rounded-xl bg-black/30", profile.iconColor)}>
+              <profile.icon className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-white text-lg">{profile.name}</h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-white/10 transition-colors"
+          >
+            <X className="w-5 h-5 text-gray-400" />
+          </button>
+        </div>
+
+        <div className="bg-black/40 rounded-xl p-4 mb-4">
+          <p className="text-sm text-gray-300 mb-3">
+            <strong className="text-white">Exemplo prático:</strong> Se você depositar{" "}
+            <span className={profile.iconColor}>R$ {profile.example.capital},00</span>, 
+            sua unidade será de{" "}
+            <span className={profile.iconColor}>
+              R$ {profile.example.unit.toFixed(2).replace(".", ",")}
+            </span>
+          </p>
+
+          <div className="space-y-2">
+            {profile.example.stakes.map((s, i) => (
+              <div 
+                key={i}
+                className="flex items-center justify-between bg-black/30 rounded-lg p-3"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-400">Se o bilhete indicar</span>
+                  <span className={cn("font-bold", profile.iconColor)}>
+                    {s.stake} stake{s.stake !== 1 ? 's' : ''}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-sm text-gray-400">aposte</span>
+                  <span className="font-bold text-white">
+                    R$ {s.value.toFixed(2).replace(".", ",")}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+          <p className="text-sm text-yellow-400">
+            <strong>Stakes menores (0.5 ou 0.25)</strong> podem aparecer em bilhetes de SUPER ODD. 
+            São apostas de alta probabilidade de acerto, mas com risco maior por conta da odd elevada.
+          </p>
+        </div>
+
+        <Button
+          onClick={onClose}
+          className="w-full mt-4 h-12 bg-white/10 hover:bg-white/20 text-white"
+        >
+          Entendi
+        </Button>
+      </motion.div>
+    </motion.div>
+  );
+}
 
 export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalProps) {
   const [step, setStep] = useState(1);
   const [bankrollAmount, setBankrollAmount] = useState("");
   const [selectedProfile, setSelectedProfile] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showExampleFor, setShowExampleFor] = useState<string | null>(null);
 
   const formatCurrency = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -198,54 +319,69 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
 
                 <div className="space-y-4">
                   {riskProfiles.map((profile) => (
-                    <button
-                      key={profile.id}
-                      onClick={() => setSelectedProfile(profile.id)}
-                      className={cn(
-                        "w-full p-4 rounded-2xl border-2 text-left transition-all",
-                        `bg-gradient-to-br ${profile.color}`,
-                        selectedProfile === profile.id
-                          ? `${profile.borderColor} scale-[1.02]`
-                          : "border-white/10 hover:border-white/20"
-                      )}
-                      data-testid={`button-profile-${profile.id}`}
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className={cn("p-3 rounded-xl bg-black/30", profile.iconColor)}>
-                          <profile.icon className="w-6 h-6" />
-                        </div>
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-bold text-white">{profile.name}</span>
-                            <span className="text-xs text-gray-400">({profile.percentage})</span>
-                            {profile.recommended && (
-                              <span className="px-2 py-0.5 bg-[#33b864] text-black text-[10px] font-bold rounded-full">
-                                RECOMENDADO
-                              </span>
+                    <div key={profile.id} className="relative">
+                      <button
+                        onClick={() => setSelectedProfile(profile.id)}
+                        className={cn(
+                          "w-full p-4 rounded-2xl border-2 text-left transition-all",
+                          `bg-gradient-to-br ${profile.color}`,
+                          selectedProfile === profile.id
+                            ? `${profile.borderColor} scale-[1.02]`
+                            : "border-white/10 hover:border-white/20"
+                        )}
+                        data-testid={`button-profile-${profile.id}`}
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className={cn("p-3 rounded-xl bg-black/30", profile.iconColor)}>
+                            <profile.icon className="w-6 h-6" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1 flex-wrap">
+                              <span className="font-bold text-white">{profile.name}</span>
+                              <span className="text-xs text-gray-400">({profile.percentage})</span>
+                              {profile.recommended && (
+                                <span className="px-2 py-0.5 bg-[#33b864] text-black text-[10px] font-bold rounded-full">
+                                  RECOMENDADO
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-sm text-gray-400">{profile.description}</p>
+                            {selectedProfile === profile.id && (
+                              <div className="mt-3 pt-3 border-t border-white/10">
+                                <p className="text-sm text-white">
+                                  Sua unidade será:{" "}
+                                  <span className="font-bold text-[#33b864]">
+                                    {new Intl.NumberFormat("pt-BR", {
+                                      style: "currency",
+                                      currency: "BRL",
+                                    }).format(getNumericAmount() / profile.divisor)}
+                                  </span>
+                                </p>
+                              </div>
                             )}
                           </div>
-                          <p className="text-sm text-gray-400">{profile.description}</p>
                           {selectedProfile === profile.id && (
-                            <div className="mt-3 pt-3 border-t border-white/10">
-                              <p className="text-sm text-white">
-                                Sua unidade será:{" "}
-                                <span className="font-bold text-[#33b864]">
-                                  {new Intl.NumberFormat("pt-BR", {
-                                    style: "currency",
-                                    currency: "BRL",
-                                  }).format(getNumericAmount() / profile.divisor)}
-                                </span>
-                              </p>
+                            <div className="p-1 rounded-full bg-[#33b864]">
+                              <Check className="w-4 h-4 text-black" />
                             </div>
                           )}
                         </div>
-                        {selectedProfile === profile.id && (
-                          <div className="p-1 rounded-full bg-[#33b864]">
-                            <Check className="w-4 h-4 text-black" />
-                          </div>
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowExampleFor(profile.id);
+                        }}
+                        className={cn(
+                          "absolute top-3 right-3 p-2 rounded-full bg-black/50 hover:bg-black/70 transition-colors flex items-center gap-1.5",
+                          profile.iconColor
                         )}
-                      </div>
-                    </button>
+                        data-testid={`button-example-${profile.id}`}
+                      >
+                        <HelpCircle className="w-4 h-4" />
+                        <span className="text-xs font-medium pr-1">Saiba mais</span>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -347,6 +483,16 @@ export function BankrollSetupModal({ isOpen, onComplete }: BankrollSetupModalPro
                 </Button>
               </div>
             </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Example Modal */}
+        <AnimatePresence>
+          {showExampleFor && (
+            <ProfileExampleModal
+              profile={riskProfiles.find((p) => p.id === showExampleFor)!}
+              onClose={() => setShowExampleFor(null)}
+            />
           )}
         </AnimatePresence>
       </div>
