@@ -570,11 +570,23 @@ export default function CheckoutPage() {
               {paymentMethod === 'card' && mpReady && (
                 <div className="pt-4">
                   <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <MemoizedCardPayment
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 min-h-[300px]">
+                    <CardPayment
+                      key="card-payment-form"
+                      initialization={{ amount: 47.90 }}
                       onSubmit={onCardPaymentSubmit}
                       onReady={onCardPaymentReady}
                       onError={onCardPaymentError}
+                      customization={{
+                        paymentMethods: {
+                          maxInstallments: 1,
+                        },
+                        visual: {
+                          style: {
+                            theme: 'dark',
+                          },
+                        },
+                      }}
                     />
                   </div>
                   {cardPaymentStatus === 'processing' && (

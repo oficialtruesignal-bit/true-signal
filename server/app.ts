@@ -28,12 +28,12 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://sdk.mercadopago.com", "https://http2.mlstatic.com", "blob:"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://http2.mlstatic.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com", "data:"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://sdk.mercadopago.com", "https://http2.mlstatic.com", "https://*.mercadopago.com", "https://*.mercadolibre.com", "blob:"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://http2.mlstatic.com", "https://*.mercadopago.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://http2.mlstatic.com", "data:"],
       imgSrc: ["'self'", "data:", "https:", "blob:"],
-      connectSrc: ["'self'", "https://api.mercadopago.com", "https://events.mercadopago.com", "https://api-sports.io", "https://v3.football.api-sports.io", "wss:", "ws:"],
-      frameSrc: ["'self'", "https://www.mercadopago.com.br", "https://sdk.mercadopago.com"],
+      connectSrc: ["'self'", "https://api.mercadopago.com", "https://events.mercadopago.com", "https://*.mercadopago.com", "https://*.mercadolibre.com", "https://http2.mlstatic.com", "https://api-sports.io", "https://v3.football.api-sports.io", "wss:", "ws:"],
+      frameSrc: ["'self'", "https://www.mercadopago.com.br", "https://sdk.mercadopago.com", "https://*.mercadopago.com"],
       objectSrc: ["'none'"],
       workerSrc: ["'self'", "blob:"],
       childSrc: ["'self'", "blob:"],
