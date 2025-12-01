@@ -818,7 +818,7 @@ class AIPredictionEngine {
       ...awayMatches.map(m => m.fixture.id),
       ...h2hMatches.map(m => m.fixture.id)
     ];
-    const uniqueFixtureIds = [...new Set(allFixtureIds)];
+    const uniqueFixtureIds = Array.from(new Set(allFixtureIds));
     
     console.log(`[AI Engine] Fetching detailed statistics for ${uniqueFixtureIds.length} fixtures...`);
     const fixtureStatsMap = await this.fetchMultipleFixtureStatistics(uniqueFixtureIds);
@@ -1030,6 +1030,280 @@ class AIPredictionEngine {
         updatedAt: new Date()
       })
       .where(eq(aiTickets.id, ticketId));
+  }
+
+  // ==========================================
+  // SELETOR TOP 6-8 JOGOS DO DIA
+  // ==========================================
+  
+  // Ligas prioritárias com maior liquidez e dados confiáveis
+  private readonly TOP_LEAGUES = [
+    { id: 39, name: 'Premier League', tier: 1 },
+    { id: 140, name: 'La Liga', tier: 1 },
+    { id: 135, name: 'Serie A', tier: 1 },
+    { id: 78, name: 'Bundesliga', tier: 1 },
+    { id: 61, name: 'Ligue 1', tier: 1 },
+    { id: 2, name: 'Champions League', tier: 1 },
+    { id: 3, name: 'Europa League', tier: 1 },
+    { id: 71, name: 'Brasileirão', tier: 2 },
+    { id: 94, name: 'Primeira Liga', tier: 2 },
+    { id: 88, name: 'Eredivisie', tier: 2 },
+    { id: 128, name: 'Argentina', tier: 2 },
+    { id: 13, name: 'Libertadores', tier: 2 },
+    { id: 40, name: 'Championship', tier: 3 },
+    { id: 203, name: 'Süper Lig', tier: 3 },
+    { id: 307, name: 'Saudi Pro League', tier: 3 },
+  ];
+
+  // Ligas a excluir (baixa qualidade de dados ou liquidez)
+  private readonly EXCLUDED_PATTERNS = [
+    'U19', 'U20', 'U21', 'U23', 'Youth', 'Junior', 'Reserve',
+    'Friendly', 'Amistoso', 'Women', 'Feminino'
+  ];
+
+  private isLeagueExcluded(leagueName: string): boolean {
+    const upper = leagueName.toUpperCase();
+    return this.EXCLUDED_PATTERNS.some(p => upper.includes(p.toUpperCase()));
+  }
+
+  private getLeagueTier(leagueId: number): number {
+    const league = this.TOP_LEAGUES.find(l => l.id === leagueId);
+    return league?.tier || 4;
+  }
+
+  /**
+   * Calcula a importância de um jogo baseado em contexto
+   * Fatores: fase da competição, distância na tabela, sequência de resultados
+   */
+  private async calculateMatchImportance(
+    fixture: FixtureData,
+    homeStats: TeamStats,
+    awayStats: TeamStats
+  ): Promise<{ score: number; factors: string[] }> {
+    let score = 50; // Base
+    const factors: string[] = [];
+
+    // 1. Liga tier (maior tier = mais importante)
+    const tier = this.getLeagueTier(fixture.league.id);
+    const tierBonus = (5 - tier) * 10; // Tier 1 = +40, Tier 2 = +30, etc.
+    score += tierBonus;
+    if (tier === 1) factors.push('Liga de elite (Tier 1)');
+
+    // 2. Forma recente dos times (times em boa forma = jogo mais interessante)
+    const homeForm = (homeStats.formPoints / 15) * 100; // Max 15 pontos em 5 jogos
+    const awayForm = (awayStats.formPoints / 15) * 100;
+    const avgForm = (homeForm + awayForm) / 2;
+    
+    if (avgForm >= 60) {
+      score += 15;
+      factors.push('Ambos times em boa forma');
+    } else if (avgForm >= 40) {
+      score += 5;
+    }
+
+    // 3. Potencial ofensivo (times que marcam = jogos melhores para apostas)
+    const homeGoalsPer90 = homeStats.goalsScored / Math.max(1, homeStats.matchesAnalyzed);
+    const awayGoalsPer90 = awayStats.goalsScored / Math.max(1, awayStats.matchesAnalyzed);
+    
+    if (homeGoalsPer90 >= 1.5 && awayGoalsPer90 >= 1.5) {
+      score += 20;
+      factors.push('Ambos times muito ofensivos');
+    } else if (homeGoalsPer90 >= 1.2 || awayGoalsPer90 >= 1.2) {
+      score += 10;
+      factors.push('Pelo menos um time ofensivo');
+    }
+
+    // 4. Taxa de BTTS alta (indica jogos abertos)
+    const avgBTTS = (homeStats.bttsPct + awayStats.bttsPct) / 2;
+    if (avgBTTS >= 55) {
+      score += 15;
+      factors.push(`Alta taxa BTTS (${avgBTTS.toFixed(0)}%)`);
+    }
+
+    // 5. Histórico de Over 2.5
+    const avgOver25 = (homeStats.over25Pct + awayStats.over25Pct) / 2;
+    if (avgOver25 >= 55) {
+      score += 10;
+      factors.push(`Tendência Over 2.5 (${avgOver25.toFixed(0)}%)`);
+    }
+
+    // 6. Penalização por times defensivos demais
+    const homeCleanSheet = homeStats.cleanSheetPct;
+    const awayCleanSheet = awayStats.cleanSheetPct;
+    if (homeCleanSheet >= 50 && awayCleanSheet >= 50) {
+      score -= 15;
+      factors.push('Ambos times muito defensivos (risco)');
+    }
+
+    return {
+      score: Math.min(100, Math.max(0, score)),
+      factors
+    };
+  }
+
+  /**
+   * Score composto para ranquear jogos
+   * 40% forma/motivação + 30% estatística + 20% mercado + 10% risco
+   */
+  private calculateCompositeScore(
+    homeStats: TeamStats,
+    awayStats: TeamStats,
+    importanceScore: number,
+    leagueTier: number
+  ): { score: number; breakdown: Record<string, number> } {
+    // 1. FORMA/MOTIVAÇÃO (40%)
+    const homeForm = (homeStats.formPoints / 15) * 100;
+    const awayForm = (awayStats.formPoints / 15) * 100;
+    const formScore = ((homeForm + awayForm) / 2 + importanceScore) / 2;
+
+    // 2. ESTATÍSTICA (30%) - Previsibilidade dos padrões
+    const homeOver25 = homeStats.over25Pct;
+    const awayOver25 = awayStats.over25Pct;
+    const homeBTTS = homeStats.bttsPct;
+    const awayBTTS = awayStats.bttsPct;
+    
+    // Quanto mais extremo (alto ou baixo), mais previsível
+    const goalsPredict = Math.abs(50 - (homeOver25 + awayOver25) / 2) * 2;
+    const bttsPredict = Math.abs(50 - (homeBTTS + awayBTTS) / 2) * 2;
+    const statsScore = (goalsPredict + bttsPredict) / 2;
+
+    // 3. MERCADO (20%) - Liga tier afeta liquidez
+    const marketScore = (5 - leagueTier) * 25; // Tier 1 = 100, Tier 4 = 25
+
+    // 4. RISCO (10%) - Menor variância é melhor
+    const homeVariance = Math.abs(homeStats.goalsScored - homeStats.goalsConceded) / Math.max(1, homeStats.matchesAnalyzed);
+    const awayVariance = Math.abs(awayStats.goalsScored - awayStats.goalsConceded) / Math.max(1, awayStats.matchesAnalyzed);
+    const riskScore = 100 - (homeVariance + awayVariance) * 20;
+
+    // Compor score final
+    const compositeScore = 
+      (formScore * 0.40) +
+      (statsScore * 0.30) +
+      (marketScore * 0.20) +
+      (Math.max(0, riskScore) * 0.10);
+
+    return {
+      score: Math.min(100, Math.max(0, compositeScore)),
+      breakdown: {
+        form: formScore,
+        stats: statsScore,
+        market: marketScore,
+        risk: riskScore
+      }
+    };
+  }
+
+  /**
+   * Seleciona os TOP 6-8 melhores jogos do dia
+   * Baseado em score composto >= 0.78 (78%)
+   */
+  async selectTopMatchesOfDay(date: string, maxMatches: number = 8): Promise<{
+    matches: Array<{
+      fixture: FixtureData;
+      compositeScore: number;
+      importanceScore: number;
+      breakdown: Record<string, number>;
+      factors: string[];
+      tier: string;
+    }>;
+    totalAnalyzed: number;
+  }> {
+    console.log(`[AI Selector] Selecionando top ${maxMatches} jogos para ${date}...`);
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/fixtures`, {
+        params: { date, status: 'NS' },
+        headers: this.apiHeaders
+      });
+
+      const allFixtures: FixtureData[] = response.data?.response || [];
+      console.log(`[AI Selector] ${allFixtures.length} jogos encontrados`);
+
+      // Filtrar ligas ruins
+      const cleanFixtures = allFixtures.filter(f => 
+        !this.isLeagueExcluded(f.league.name)
+      );
+      console.log(`[AI Selector] ${cleanFixtures.length} após filtro de qualidade`);
+
+      // Priorizar ligas top
+      const topLeagueIds = this.TOP_LEAGUES.map(l => l.id);
+      const prioritizedFixtures = cleanFixtures.filter(f => 
+        topLeagueIds.includes(f.league.id)
+      );
+      console.log(`[AI Selector] ${prioritizedFixtures.length} de ligas prioritárias`);
+
+      // Analisar cada jogo
+      const scoredMatches: Array<{
+        fixture: FixtureData;
+        compositeScore: number;
+        importanceScore: number;
+        breakdown: Record<string, number>;
+        factors: string[];
+        tier: string;
+      }> = [];
+
+      for (const fixture of prioritizedFixtures.slice(0, 50)) { // Limitar análise
+        try {
+          const [homeMatches, awayMatches] = await Promise.all([
+            this.fetchTeamLastMatches(fixture.teams.home.id, fixture.league.season),
+            this.fetchTeamLastMatches(fixture.teams.away.id, fixture.league.season)
+          ]);
+
+          if (homeMatches.length < 5 || awayMatches.length < 5) {
+            continue; // Pular jogos sem dados suficientes
+          }
+
+          const allFixtureIds = Array.from(new Set([
+            ...homeMatches.map(m => m.fixture.id),
+            ...awayMatches.map(m => m.fixture.id)
+          ]));
+          
+          const statsMap = await this.fetchMultipleFixtureStatistics(allFixtureIds);
+          
+          const homeStats = this.calculateTeamStats(homeMatches, fixture.teams.home.id, statsMap);
+          const awayStats = this.calculateTeamStats(awayMatches, fixture.teams.away.id, statsMap);
+
+          const importance = await this.calculateMatchImportance(fixture, homeStats, awayStats);
+          const leagueTier = this.getLeagueTier(fixture.league.id);
+          const composite = this.calculateCompositeScore(homeStats, awayStats, importance.score, leagueTier);
+
+          // Determinar tier de confiança
+          let tier = 'LOW';
+          if (composite.score >= 85) tier = 'PRIME';
+          else if (composite.score >= 80) tier = 'CORE';
+          else if (composite.score >= 75) tier = 'WATCH';
+
+          scoredMatches.push({
+            fixture,
+            compositeScore: composite.score,
+            importanceScore: importance.score,
+            breakdown: composite.breakdown,
+            factors: importance.factors,
+            tier
+          });
+
+          await new Promise(r => setTimeout(r, 500)); // Rate limiting
+        } catch (err: any) {
+          console.error(`[AI Selector] Erro analisando ${fixture.teams.home.name}:`, err.message);
+        }
+      }
+
+      // Ordenar por score composto e pegar os top N
+      const topMatches = scoredMatches
+        .sort((a, b) => b.compositeScore - a.compositeScore)
+        .filter(m => m.compositeScore >= 75) // Mínimo 75% de score
+        .slice(0, maxMatches);
+
+      console.log(`[AI Selector] ${topMatches.length} jogos selecionados com score >= 75%`);
+
+      return {
+        matches: topMatches,
+        totalAnalyzed: scoredMatches.length
+      };
+    } catch (error: any) {
+      console.error('[AI Selector] Erro:', error.message);
+      return { matches: [], totalAnalyzed: 0 };
+    }
   }
 }
 

@@ -57,14 +57,31 @@ Preferred communication style: Simple, everyday language.
   - **Markets Supported**: Goals (FT/HT), BTTS, Corners (FT/HT), Cards (total/both teams receive), Shots on Target, Match Result.
   - **Draft Workflow**: Creates drafts in `ai_tickets` table → Admin reviews in "IA Preditiva" panel → Approves/Rejects → Published to `tips` table.
   - **Major Leagues**: Prioritizes Premier League, La Liga, Serie A, Bundesliga, Ligue 1, Brasileirão, Champions League, Europa League.
-- **Live Pressure Monitor (Bot de Gols Ao Vivo)**:
+- **Live Pressure Monitor (Bot de Gols Ao Vivo v2.0)**:
   - **Real-time Analysis**: Polls API-Football every 45 seconds for live match statistics.
-  - **Pressure Index Algorithm**: Weighted calculation using Shots on Target (3x), Dangerous Attacks (2.5x), Corners (1.5x), Possession delta (0.8x), Total Attacks (0.5x).
-  - **Goal Probability**: Calculates 5-minute goal probability using Poisson distribution adjusted by current pressure.
-  - **Alert Thresholds**: Triggers when pressure >70% sustained for 2 intervals, or sudden surge >25%, or goal probability >75%.
-  - **Hot Matches Dashboard**: `/hot-matches` page showing live fixtures sorted by pressure with expandable statistics.
-  - **Database Tables**: `live_pressure_snapshots` (rolling window of match data), `live_alerts` (history of triggered alerts), `live_monitor_settings` (configurable thresholds).
-  - **API Endpoints**: `GET /api/live/pressure`, `GET /api/live/pressure/:fixtureId`, `GET /api/live/alerts`, `POST /api/live/monitor/start`, `POST /api/live/monitor/stop`.
+  - **Pressure Index Algorithm (Calibrado Cientificamente)**: Pesos normalizados baseados em análise de mercado (Overlyzer, AI Stats):
+    - Shots on Target: 0.28 (28%)
+    - Dangerous Attacks: 0.24 (24%)
+    - xG Delta (time vs oponente): 0.18 (18%)
+    - Corners: 0.12 (12%)
+    - Possession Swing: 0.10 (10%)
+    - Cards Tempo: 0.05 (5%)
+    - Total Attacks: 0.03 (3%)
+  - **Thresholds Separados HT/FT**:
+    - 1º Tempo (HT): Pressão ≥68%, após 15', delta ≥18%, prob. gol ≥65%
+    - 2º Tempo (FT): Pressão ≥72%, após 55', surge ≥24%, prob. gol ≥70%
+  - **Tiers de Confiança**: PRIME (85%+), CORE (80-84%), WATCH (75-79%)
+  - **Sugestão de Mercado**: Baseada em situação do jogo e mercados Bet365 disponíveis (Goals ≥1.5/2.5, Corners ≥6.5, Cards ≥3.5)
+  - **Filtros de Qualidade**: Exclui Sub-21, amistosos, ligas sem liquidez; prioriza Top 15 ligas mundiais
+  - **Database Tables**: `live_pressure_snapshots`, `live_alerts`, `live_monitor_settings`
+  - **API Endpoints**: `GET /api/live/pressure`, `GET /api/live/pressure/:fixtureId`, `GET /api/live/alerts`, `POST /api/live/monitor/start`, `POST /api/live/monitor/stop`
+- **Seletor Top 6-8 Jogos do Dia (Bilhetes Pré-Live)**:
+  - **Endpoint**: `GET /api/ai/top-matches?date=YYYY-MM-DD&max=8`
+  - **Score Composto**: 40% forma/motivação + 30% estatística + 20% mercado + 10% risco
+  - **Importância do Jogo**: Tier da liga, forma recente, potencial ofensivo, BTTS, Over 2.5
+  - **Filtros**: Exclui Sub-21, amistosos, ligas com baixa liquidez
+  - **Ligas Prioritárias**: Premier League, La Liga, Serie A, Bundesliga, Ligue 1, Champions League, Europa League, Brasileirão, Primeira Liga, Eredivisie, Argentina, Libertadores
+  - **Output**: Lista ordenada por score composto com tier de confiança (PRIME/CORE/WATCH)
 - **Subscription System**: Freemium model with a 5-day free trial, `True Signal Pro` subscription (R$ 47,90/mês - Black Friday 52% off), and `useAccessControl` hook for managing access based on `subscription_status`, `trial_start_date`, `subscriptionActivatedAt`, and `subscriptionEndsAt`. Implements paywalls (`LockedScreen`, `TrialBanner`, blurred tips) and a dedicated subscription management page.
 - **Synchronization**: Achieved through React Query cache invalidation, Supabase Realtime subscriptions for `tips`, and `localStorage` for preferences.
 - **Legal Compliance**: Dedicated pages for Terms and Conditions, Privacy Policy (LGPD compliant), and Risk Disclaimer, integrated into the landing page footer.

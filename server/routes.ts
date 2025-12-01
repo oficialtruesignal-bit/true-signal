@@ -1468,6 +1468,51 @@ REGRAS IMPORTANTES:
   });
 
   // =====================================================
+  // TOP MATCHES SELECTOR - Seletor de Top 6-8 Jogos do Dia
+  // =====================================================
+
+  // Selecionar os melhores jogos do dia para bilhetes pré-live
+  app.get("/api/ai/top-matches", async (req, res) => {
+    try {
+      const date = req.query.date as string || new Date().toISOString().split('T')[0];
+      const maxMatches = parseInt(req.query.max as string) || 8;
+      
+      console.log(`[AI Selector] Requisição para top ${maxMatches} jogos em ${date}`);
+      
+      const result = await aiPredictionEngine.selectTopMatchesOfDay(date, maxMatches);
+      
+      return res.json({
+        success: true,
+        date,
+        totalAnalyzed: result.totalAnalyzed,
+        selectedCount: result.matches.length,
+        matches: result.matches.map(m => ({
+          fixtureId: m.fixture.fixture.id,
+          league: m.fixture.league.name,
+          homeTeam: m.fixture.teams.home.name,
+          awayTeam: m.fixture.teams.away.name,
+          homeTeamLogo: m.fixture.teams.home.logo,
+          awayTeamLogo: m.fixture.teams.away.logo,
+          matchTime: new Date(m.fixture.fixture.timestamp * 1000).toISOString(),
+          compositeScore: Math.round(m.compositeScore * 10) / 10,
+          importanceScore: Math.round(m.importanceScore * 10) / 10,
+          tier: m.tier,
+          factors: m.factors,
+          breakdown: {
+            form: Math.round(m.breakdown.form * 10) / 10,
+            stats: Math.round(m.breakdown.stats * 10) / 10,
+            market: Math.round(m.breakdown.market * 10) / 10,
+            risk: Math.round(m.breakdown.risk * 10) / 10,
+          }
+        }))
+      });
+    } catch (error: any) {
+      console.error("[AI Selector] Error:", error);
+      return res.status(500).json({ error: "Erro ao selecionar jogos do dia" });
+    }
+  });
+
+  // =====================================================
   // LIVE PRESSURE MONITOR ENDPOINTS
   // =====================================================
 
