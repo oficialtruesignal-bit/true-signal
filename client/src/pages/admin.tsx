@@ -347,22 +347,22 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
       </div>
 
       <Tabs defaultValue="tickets" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-6 bg-background/50 p-1.5 h-14">
+        <TabsList className="flex w-full mb-6 bg-background/50 p-1.5 h-auto overflow-x-auto gap-1 scrollbar-hide">
           <TabsTrigger 
             value="tickets" 
-            className="gap-2 data-[state=active]:bg-primary data-[state=active]:text-black font-bold text-sm"
+            className="flex-shrink-0 gap-1.5 px-3 py-2 data-[state=active]:bg-primary data-[state=active]:text-black font-bold text-xs sm:text-sm whitespace-nowrap"
             data-testid="tab-tickets"
           >
             <LayoutDashboard className="w-4 h-4" />
-            Bilhetes
+            <span className="hidden sm:inline">Bilhetes</span>
           </TabsTrigger>
           <TabsTrigger 
             value="live" 
-            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white font-bold text-sm relative"
+            className="flex-shrink-0 gap-1.5 px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-red-500 data-[state=active]:text-white font-bold text-xs sm:text-sm relative whitespace-nowrap"
             data-testid="tab-live"
           >
             <Flame className="w-4 h-4" />
-            Jogos Quentes
+            <span className="hidden sm:inline">Jogos Quentes</span>
             {hotMatches.length > 0 && (
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] rounded-full w-5 h-5 flex items-center justify-center animate-pulse">
                 {hotMatches.length}
@@ -371,19 +371,19 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
           </TabsTrigger>
           <TabsTrigger 
             value="ai" 
-            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white font-bold text-sm"
+            className="flex-shrink-0 gap-1.5 px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white font-bold text-xs sm:text-sm whitespace-nowrap"
             data-testid="tab-ai-predictions"
           >
             <Brain className="w-4 h-4" />
-            IA Preditiva
+            <span className="hidden sm:inline">IA Preditiva</span>
           </TabsTrigger>
           <TabsTrigger 
             value="bots" 
-            className="gap-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white font-bold text-sm"
+            className="flex-shrink-0 gap-1.5 px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-blue-500 data-[state=active]:text-white font-bold text-xs sm:text-sm whitespace-nowrap"
             data-testid="tab-bots"
           >
             <Target className="w-4 h-4" />
-            Multi-Bot
+            <span className="hidden sm:inline">Multi-Bot</span>
           </TabsTrigger>
         </TabsList>
 
