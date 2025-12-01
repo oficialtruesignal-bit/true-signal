@@ -25,14 +25,17 @@ export default function SettingsPage() {
     if (!user) return;
     setIsResettingTour(true);
     try {
-      const response = await fetch(`/api/profiles/${user.id}/onboarding`, {
-        method: 'POST',
+      const response = await fetch(`/api/profile/${user.id}/tour-completed`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ hasCompletedTour: false }),
+        body: JSON.stringify({ completed: false }),
       });
       if (response.ok) {
-        toast.success("Tour resetado! Recarregue a página para ver.");
-        setTimeout(() => window.location.reload(), 1000);
+        toast.success("Tour resetado!");
+        setTimeout(() => {
+          navigate('/app');
+          window.location.reload();
+        }, 500);
       }
     } catch {
       toast.error("Erro ao resetar tour");
