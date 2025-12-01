@@ -1,5 +1,5 @@
 import { Layout } from "@/components/layout";
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo, memo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import { CreditCard, Check, Sparkles, Shield, Zap, TrendingUp, Clock, Gift, Lock, Users, Star, CheckCircle2, AlertCircle, User, Mail, Phone, FileText, QrCode, Copy, Loader2, RefreshCw } from "lucide-react";
@@ -11,6 +11,36 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { analytics, fbPixel, ga4 } from "@/lib/analytics";
+
+// Memoized CardPayment wrapper to prevent re-renders
+const MemoizedCardPayment = memo(function MemoizedCardPayment({
+  onSubmit,
+  onReady,
+  onError,
+}: {
+  onSubmit: (formData: any) => Promise<void>;
+  onReady: () => void;
+  onError: (error: any) => void;
+}) {
+  return (
+    <CardPayment
+      initialization={{ amount: 47.90 }}
+      onSubmit={onSubmit}
+      onReady={onReady}
+      onError={onError}
+      customization={{
+        paymentMethods: {
+          maxInstallments: 1,
+        },
+        visual: {
+          style: {
+            theme: 'dark',
+          },
+        },
+      }}
+    />
+  );
+});
 
 type PaymentMethod = 'card' | 'pix';
 type CardPaymentStatus = 'idle' | 'processing' | 'success' | 'error';
@@ -297,21 +327,10 @@ export default function CheckoutPage() {
               <>
                 {/* Mercado Pago Card Payment Brick */}
                 <div className="mb-6">
-                  <CardPayment
-                    initialization={{ amount: 47.90 }}
+                  <MemoizedCardPayment
                     onSubmit={onCardPaymentSubmit}
                     onReady={onCardPaymentReady}
                     onError={onCardPaymentError}
-                    customization={{
-                      paymentMethods: {
-                        maxInstallments: 1,
-                      },
-                      visual: {
-                        style: {
-                          theme: 'dark',
-                        },
-                      },
-                    }}
                   />
                 </div>
 
@@ -546,20 +565,7 @@ export default function CheckoutPage() {
                 <div className="pt-4">
                   <h3 className="font-sora font-bold text-white mb-4">Dados do Cartão</h3>
                   <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-                    <CardPayment
-                      initialization={{
-                        amount: 47.90,
-                      }}
-                      customization={{
-                        paymentMethods: {
-                          maxInstallments: 1,
-                        },
-                        visual: {
-                          style: {
-                            theme: 'dark',
-                          },
-                        },
-                      }}
+                    <MemoizedCardPayment
                       onSubmit={onCardPaymentSubmit}
                       onReady={onCardPaymentReady}
                       onError={onCardPaymentError}
