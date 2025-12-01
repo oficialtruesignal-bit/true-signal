@@ -71,7 +71,7 @@ export default function SettingsPage() {
       {/* Back Button */}
       <button
         onClick={() => window.history.back()}
-        className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-4 group"
+        className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors mb-4 group"
         data-testid="button-back"
       >
         <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
@@ -83,33 +83,33 @@ export default function SettingsPage() {
           <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
             <SettingsIcon className="w-5 h-5 text-purple-500" />
           </div>
-          <h1 className="text-2xl font-display font-bold text-white">{t.settings.title}</h1>
+          <h1 className="text-2xl font-display font-bold text-foreground">{t.settings.title}</h1>
         </div>
         <p className="text-muted-foreground">{t.settings.subtitle}</p>
       </div>
 
       <div className="space-y-6">
         {/* Subscription Plan */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <Crown className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">Plano e assinatura</h3>
+            <h3 className="font-bold text-foreground">Plano e assinatura</h3>
           </div>
           
           <div className="space-y-4">
             {/* Current Plan Status */}
-            <div className="p-4 bg-black/30 border border-white/10 rounded-lg">
+            <div className="p-4 bg-muted/50 border border-border rounded-lg">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   {isPremium ? (
                     <>
                       <Crown className="w-5 h-5 text-[#33b864]" />
-                      <span className="font-bold text-white">True Signal Pro</span>
+                      <span className="font-bold text-foreground">True Signal Pro</span>
                     </>
                   ) : (
                     <>
                       <Clock className="w-5 h-5 text-yellow-500" />
-                      <span className="font-bold text-white">Período gratuito</span>
+                      <span className="font-bold text-foreground">Período gratuito</span>
                     </>
                   )}
                 </div>
@@ -124,7 +124,7 @@ export default function SettingsPage() {
                 </div>
               </div>
               
-              <div className="space-y-2 text-sm text-gray-400">
+              <div className="space-y-2 text-sm text-muted-foreground">
                 {isPremium && (
                   <>
                     <p>✓ Acesso ilimitado</p>
@@ -163,7 +163,7 @@ export default function SettingsPage() {
               <Link href="/assinatura" className="block mt-4">
                 <Button
                   variant="outline"
-                  className="w-full h-12 border-white/20 hover:bg-white/5 text-white"
+                  className="w-full h-12 border-border hover:bg-muted/50 text-foreground"
                   data-testid="button-manage-subscription"
                 >
                   <Crown className="w-4 h-4 mr-2" />
@@ -176,14 +176,14 @@ export default function SettingsPage() {
         </div>
 
         {/* Theme Selector */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             {resolvedTheme === 'dark' ? (
               <Moon className="w-5 h-5 text-primary" />
             ) : (
               <Sun className="w-5 h-5 text-primary" />
             )}
-            <h3 className="font-bold text-white">Tema</h3>
+            <h3 className="font-bold text-foreground">Tema</h3>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <button
@@ -192,7 +192,7 @@ export default function SettingsPage() {
               className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
                 theme === 'light'
                   ? 'bg-primary/20 border-primary text-primary'
-                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+                  : 'bg-muted/50 border-border text-muted-foreground hover:border-primary/30'
               }`}
             >
               <Sun className="w-6 h-6" />
@@ -204,7 +204,7 @@ export default function SettingsPage() {
               className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
                 theme === 'dark'
                   ? 'bg-primary/20 border-primary text-primary'
-                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+                  : 'bg-muted/50 border-border text-muted-foreground hover:border-primary/30'
               }`}
             >
               <Moon className="w-6 h-6" />
@@ -216,7 +216,7 @@ export default function SettingsPage() {
               className={`p-4 rounded-lg border transition-all flex flex-col items-center gap-2 ${
                 theme === 'system'
                   ? 'bg-primary/20 border-primary text-primary'
-                  : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+                  : 'bg-muted/50 border-border text-muted-foreground hover:border-primary/30'
               }`}
             >
               <Monitor className="w-6 h-6" />
@@ -226,10 +226,10 @@ export default function SettingsPage() {
         </div>
 
         {/* Language Selector */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <Globe className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">{t.settings.language}</h3>
+            <h3 className="font-bold text-foreground">{t.settings.language}</h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {languages.map((lang) => (
@@ -240,7 +240,7 @@ export default function SettingsPage() {
                 className={`p-3 rounded-lg border transition-all ${
                   language === lang.code
                     ? 'bg-primary/20 border-primary text-primary font-bold'
-                    : 'bg-black/20 border-white/10 text-muted-foreground hover:border-primary/30'
+                    : 'bg-muted/50 border-border text-muted-foreground hover:border-primary/30'
                 }`}
               >
                 <span className="text-2xl mb-1 block">{lang.flag}</span>
@@ -251,10 +251,10 @@ export default function SettingsPage() {
         </div>
 
         {/* Change Password */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <Lock className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">{t.settings.password}</h3>
+            <h3 className="font-bold text-foreground">{t.settings.password}</h3>
           </div>
           <div className="space-y-3">
             <div>
@@ -264,7 +264,7 @@ export default function SettingsPage() {
                 type="password"
                 placeholder="••••••••"
                 data-testid="input-current-password"
-                className="mt-1 bg-black/20 border-white/10"
+                className="mt-1 bg-muted/50 border-border text-foreground"
               />
             </div>
             <div>
@@ -274,7 +274,7 @@ export default function SettingsPage() {
                 type="password"
                 placeholder="••••••••"
                 data-testid="input-new-password"
-                className="mt-1 bg-black/20 border-white/10"
+                className="mt-1 bg-muted/50 border-border text-foreground"
               />
             </div>
             <Button
@@ -288,26 +288,26 @@ export default function SettingsPage() {
         </div>
 
         {/* Support */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <MessageCircle className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">{t.settings.support}</h3>
+            <h3 className="font-bold text-foreground">{t.settings.support}</h3>
           </div>
           <Button
             onClick={handleSupport}
             data-testid="button-support"
             variant="outline"
-            className="w-full border-primary/30 hover:bg-primary/10"
+            className="w-full border-border hover:bg-primary/10 text-foreground"
           >
             {t.settings.contactSupport}
           </Button>
         </div>
 
         {/* Tour Reset */}
-        <div className="bg-card border border-primary/10 rounded-xl p-6">
+        <div className="bg-card border border-border rounded-xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <RotateCcw className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-white">Tutorial</h3>
+            <h3 className="font-bold text-foreground">Tutorial</h3>
           </div>
           <p className="text-sm text-muted-foreground mb-4">
             Ver novamente o tour de boas-vindas do aplicativo.
@@ -317,7 +317,7 @@ export default function SettingsPage() {
             disabled={isResettingTour}
             data-testid="button-reset-tour"
             variant="outline"
-            className="w-full border-primary/30 hover:bg-primary/10"
+            className="w-full border-border hover:bg-primary/10 text-foreground"
           >
             <RotateCcw className={`w-4 h-4 mr-2 ${isResettingTour ? 'animate-spin' : ''}`} />
             {isResettingTour ? 'Resetando...' : 'Reiniciar tour'}
