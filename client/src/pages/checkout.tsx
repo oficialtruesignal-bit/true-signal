@@ -90,6 +90,115 @@ const CardPaymentWrapper = memo(function CardPaymentWrapper({
   );
 }, () => true); // Always return true to prevent re-renders
 
+// Testimonials data
+const testimonials = [
+  { name: "Carlos Mendes", age: 34, city: "São Paulo, BR", text: "Incrível! Consegui dobrar minha banca em 2 meses seguindo os sinais. Plataforma muito profissional.", initials: "CM" },
+  { name: "Fernanda Lima", age: 28, city: "Rio de Janeiro, BR", text: "A assertividade dos sinais impressiona. Não fico mais perdida procurando apostas. Vale cada centavo.", initials: "FL" },
+  { name: "Ricardo Santos", age: 41, city: "Curitiba, BR", text: "Suporte rápido, sinais certeiros e uma plataforma linda. Melhor investimento que fiz.", initials: "RS" },
+  { name: "Ana Paula", age: 32, city: "Belo Horizonte, BR", text: "Em 3 meses de uso, consegui pagar a assinatura várias vezes. Recomendo muito!", initials: "AP" },
+  { name: "João Pedro", age: 26, city: "Porto Alegre, BR", text: "Antes eu perdia dinheiro apostando sozinho. Com a True Signal, finalmente estou lucrando.", initials: "JP" },
+  { name: "Mariana Costa", age: 29, city: "Salvador, BR", text: "Os sinais chegam na hora certa. Nunca mais perdi uma oportunidade boa.", initials: "MC" },
+  { name: "Diego Oliveira", age: 37, city: "Fortaleza, BR", text: "Plataforma séria e profissional. Os traders realmente sabem o que fazem.", initials: "DO" },
+  { name: "Camila Rocha", age: 25, city: "Recife, BR", text: "Comecei com medo, mas em 1 semana já vi resultados. Incrível!", initials: "CR" },
+  { name: "Bruno Almeida", age: 33, city: "Brasília, BR", text: "O gerenciamento de banca me ajudou muito. Agora sei exatamente quanto apostar.", initials: "BA" },
+  { name: "Patricia Souza", age: 30, city: "Manaus, BR", text: "Atendimento excepcional! Tiraram todas as minhas dúvidas pelo WhatsApp.", initials: "PS" },
+  { name: "Lucas Ferreira", age: 27, city: "Lisboa, PT", text: "Uso do Portugal e funciona perfeitamente. Sinais muito bons para futebol europeu.", initials: "LF" },
+  { name: "Maria Silva", age: 35, city: "Madrid, ES", text: "Desde España también funciona genial. Los señales son muy precisos.", initials: "MS" },
+  { name: "André Martins", age: 31, city: "Miami, USA", text: "Even from the US, the signals are accurate. Great platform for soccer betting.", initials: "AM" },
+  { name: "Juliana Neves", age: 24, city: "Florianópolis, BR", text: "A melhor decisão que tomei foi assinar. Resultados consistentes todo mês.", initials: "JN" },
+  { name: "Rafael Costa", age: 38, city: "Goiânia, BR", text: "7 anos de experiência dos traders faz toda diferença. Sinais muito bem analisados.", initials: "RC" },
+  { name: "Isabela Santos", age: 26, city: "Vitória, BR", text: "Adorei a interface! Fácil de usar e os sinais são muito claros.", initials: "IS" },
+  { name: "Thiago Ribeiro", age: 29, city: "Campinas, BR", text: "Já testei várias plataformas. True Signal é disparada a melhor.", initials: "TR" },
+  { name: "Carolina Dias", age: 33, city: "Natal, BR", text: "O período de teste me convenceu. Assinei e não me arrependo!", initials: "CD" },
+  { name: "Felipe Gomes", age: 36, city: "São Paulo, BR", text: "Profissionalismo de verdade. Dá pra confiar nos sinais de olhos fechados.", initials: "FG" },
+  { name: "Amanda Torres", age: 28, city: "Cuiabá, BR", text: "Minha renda extra do mês vem toda da True Signal. Gratidão!", initials: "AT" },
+];
+
+// Testimonials Slider Component
+const TestimonialsSlider = memo(function TestimonialsSlider() {
+  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [isAnimating, setIsAnimating] = React.useState(false);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setIsAnimating(true);
+      setTimeout(() => {
+        setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        setIsAnimating(false);
+      }, 300);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const visibleTestimonials = React.useMemo(() => {
+    const items = [];
+    for (let i = 0; i < 3; i++) {
+      items.push(testimonials[(currentIndex + i) % testimonials.length]);
+    }
+    return items;
+  }, [currentIndex]);
+
+  const goToSlide = (index: number) => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  return (
+    <div className="bg-card border border-white/10 rounded-xl p-8 mb-12">
+      <div className="text-center mb-6">
+        <h3 className="font-sora font-bold text-white text-xl mb-2">O que dizem nossos assinantes</h3>
+        <p className="text-sm text-gray-400">Mais de 12.000 pessoas do mundo todo confiam na TRUE SIGNAL</p>
+      </div>
+      
+      <div className={`grid md:grid-cols-3 gap-6 transition-opacity duration-300 ${isAnimating ? 'opacity-0' : 'opacity-100'}`}>
+        {visibleTestimonials.map((testimonial, i) => (
+          <div key={`${currentIndex}-${i}`} className="bg-white/5 rounded-xl p-5 border border-white/10">
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#33b864] to-emerald-600 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {testimonial.initials}
+              </div>
+              <div>
+                <p className="font-medium text-white">{testimonial.name}, {testimonial.age}</p>
+                <p className="text-xs text-gray-500">{testimonial.city}</p>
+                <div className="flex gap-0.5 mt-1">
+                  {[...Array(5)].map((_, j) => (
+                    <Star key={j} className="w-3 h-3 fill-yellow-500 text-yellow-500" />
+                  ))}
+                </div>
+              </div>
+            </div>
+            <p className="text-sm text-gray-300 italic leading-relaxed">"{testimonial.text}"</p>
+          </div>
+        ))}
+      </div>
+      
+      {/* Dots Navigation */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {Array.from({ length: Math.ceil(testimonials.length / 3) }).map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goToSlide(i * 3)}
+            className={`w-2 h-2 rounded-full transition-all ${
+              Math.floor(currentIndex / 3) === i 
+                ? 'bg-[#33b864] w-6' 
+                : 'bg-white/20 hover:bg-white/40'
+            }`}
+            data-testid={`testimonial-dot-${i}`}
+          />
+        ))}
+      </div>
+      
+      {/* Counter */}
+      <p className="text-center text-xs text-gray-500 mt-4">
+        Mostrando {currentIndex + 1}-{Math.min(currentIndex + 3, testimonials.length)} de {testimonials.length} avaliações
+      </p>
+    </div>
+  );
+});
+
 type PaymentMethod = 'card' | 'pix';
 type CardPaymentStatus = 'idle' | 'processing' | 'success' | 'error';
 
@@ -1052,45 +1161,8 @@ export default function CheckoutPage() {
           </div>
         </div>
 
-        {/* Testimonials */}
-        <div className="bg-card border border-white/10 rounded-xl p-8 mb-12">
-          <h3 className="font-sora font-bold text-white text-center mb-8">O que dizem nossos assinantes</h3>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white/5 rounded-lg p-6">
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
-                ))}
-              </div>
-              <p className="text-sm text-gray-300 mb-4">
-                "Incrível! Consegui dobrar minha banca em 2 meses seguindo os sinais. Plataforma muito profissional."
-              </p>
-              <p className="text-xs text-gray-500">— Carlos M., São Paulo</p>
-            </div>
-            <div className="bg-white/5 rounded-lg p-6">
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
-                ))}
-              </div>
-              <p className="text-sm text-gray-300 mb-4">
-                "A assertividade dos sinais impressiona. Não fico mais perdido procurando apostas. Vale cada centavo."
-              </p>
-              <p className="text-xs text-gray-500">— Fernanda L., Rio de Janeiro</p>
-            </div>
-            <div className="bg-white/5 rounded-lg p-6">
-              <div className="flex gap-1 mb-3">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[#33b864] text-[#33b864]" />
-                ))}
-              </div>
-              <p className="text-sm text-gray-300 mb-4">
-                "Suporte rápido, sinais certeiros e uma plataforma linda. Melhor investimento que fiz."
-              </p>
-              <p className="text-xs text-gray-500">— Ricardo S., Curitiba</p>
-            </div>
-          </div>
-        </div>
+        {/* Testimonials Slider */}
+        <TestimonialsSlider />
 
         {/* FAQ */}
         <div className="bg-card border border-white/10 rounded-xl p-8">
