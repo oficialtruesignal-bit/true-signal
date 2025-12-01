@@ -253,6 +253,39 @@ export function AiDraftsPanel() {
         </div>
       </div>
 
+      {/* Confidence Explanation Card */}
+      <div className="bg-gradient-to-r from-primary/10 via-green-500/5 to-blue-500/10 border border-primary/20 rounded-xl p-4">
+        <div className="flex items-start gap-3">
+          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+            <Target className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <h4 className="font-bold text-white text-sm mb-1">O que significa a % de Confiança?</h4>
+            <p className="text-xs text-gray-400 leading-relaxed">
+              A porcentagem indica o <span className="text-primary font-semibold">nível de confiança da IA</span> na previsão. 
+              É calculada com base em estatísticas dos últimos 10 jogos, histórico H2H, forma dos times e modelo matemático de Poisson.
+            </p>
+            <div className="flex items-center gap-4 mt-2 text-xs">
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-green-400"></span>
+                <span className="text-green-400 font-semibold">85%+</span>
+                <span className="text-gray-500">Alta</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+                <span className="text-yellow-400 font-semibold">75-84%</span>
+                <span className="text-gray-500">Média</span>
+              </span>
+              <span className="flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full bg-orange-400"></span>
+                <span className="text-orange-400 font-semibold">&lt;75%</span>
+                <span className="text-gray-500">Baixa</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Analysis Controls */}
       <div className="bg-card border border-primary/20 rounded-xl p-6">
         <div className="flex flex-col md:flex-row items-center gap-4">
