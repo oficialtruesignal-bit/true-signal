@@ -162,6 +162,120 @@ class AIPredictionEngine {
     }
   }
 
+  // Fetch Bet365 odds for a fixture
+  async fetchBet365Odds(fixtureId: number): Promise<Record<string, Record<string, number>> | null> {
+    const cacheKey = `bet365_odds_${fixtureId}`;
+    const cached = await this.getCachedData(cacheKey);
+    if (cached) return cached;
+
+    try {
+      const response = await axios.get(`${API_BASE_URL}/odds`, {
+        params: {
+          fixture: fixtureId,
+          bookmaker: 8 // Bet365 ID
+        },
+        headers: this.apiHeaders
+      });
+
+      const oddsData = response.data.response?.[0];
+      if (!oddsData) return null;
+
+      const bet365 = oddsData.bookmakers?.find((b: any) => b.id === 8) || oddsData.bookmakers?.[0];
+      if (!bet365) return null;
+
+      const markets: Record<string, Record<string, number>> = {};
+      bet365.bets?.forEach((bet: any) => {
+        const marketName = bet.name;
+        const values: Record<string, number> = {};
+        bet.values?.forEach((v: any) => {
+          values[v.value] = parseFloat(v.odd);
+        });
+        markets[marketName] = values;
+      });
+
+      // Cache for 2 hours (odds change frequently)
+      await this.setCachedData(cacheKey, 'odds', markets, 2);
+      console.log(`[AI Engine] Fetched Bet365 odds for fixture ${fixtureId}:`, Object.keys(markets).join(', '));
+      return markets;
+    } catch (error) {
+      console.error(`[AI Engine] Failed to fetch Bet365 odds for fixture ${fixtureId}:`, error);
+      return null;
+    }
+  }
+
+  // Get Bet365 odd for a specific market (handles dynamic lines like Over X.5)
+  getBet365OddForMarket(odds: Record<string, Record<string, number>> | null, market: string, outcome: string): number | null {
+    if (!odds) return null;
+
+    // Parse dynamic market names to extract the line and market type
+    // Examples: "Over 2.5 Gols FT", "Over 6.5 Escanteios FT", "Over 3.5 Cartões FT"
+    
+    // Goals markets
+    const goalsMatch = market.match(/Over (\d+\.?\d*) Gols (FT|HT|1T)/i);
+    if (goalsMatch) {
+      const line = goalsMatch[1];
+      const period = goalsMatch[2].toUpperCase();
+      const bet365Name = period === 'FT' ? 'Goals Over/Under' : 'Goals Over/Under First Half';
+      const bet365Market = odds[bet365Name];
+      if (bet365Market) {
+        return bet365Market[`Over ${line}`] || null;
+      }
+    }
+    
+    // BTTS market
+    if (market.includes('BTTS') || market.includes('Ambas Marcam')) {
+      const bet365Market = odds['Both Teams Score'];
+      if (bet365Market) {
+        return bet365Market['Yes'] || null;
+      }
+    }
+    
+    // Corners markets
+    const cornersMatch = market.match(/Over (\d+\.?\d*) Escanteios/i);
+    if (cornersMatch) {
+      const line = cornersMatch[1];
+      const bet365Market = odds['Total Corners'] || odds['Corners Over/Under'];
+      if (bet365Market) {
+        return bet365Market[`Over ${line}`] || null;
+      }
+    }
+    
+    // Cards markets
+    const cardsMatch = market.match(/Over (\d+\.?\d*) Cart/i);
+    if (cardsMatch) {
+      const line = cardsMatch[1];
+      const bet365Market = odds['Total Cards'] || odds['Cards Over/Under'];
+      if (bet365Market) {
+        return bet365Market[`Over ${line}`] || null;
+      }
+    }
+    
+    // Shots on target
+    const shotsMatch = market.match(/Over (\d+\.?\d*) Chutes/i);
+    if (shotsMatch) {
+      const line = shotsMatch[1];
+      const bet365Market = odds['Shots on Target'] || odds['Total Shots'];
+      if (bet365Market) {
+        return bet365Market[`Over ${line}`] || null;
+      }
+    }
+    
+    // Match result (1X2)
+    if (market.includes('Vitória')) {
+      const bet365Market = odds['Match Winner'] || odds['1X2'];
+      if (bet365Market) {
+        if (market.includes('Casa') || outcome.includes('Home')) {
+          return bet365Market['Home'] || bet365Market['1'] || null;
+        }
+        if (market.includes('Fora') || outcome.includes('Away')) {
+          return bet365Market['Away'] || bet365Market['2'] || null;
+        }
+      }
+    }
+    
+    return null;
+  }
+
   async fetchTeamLastMatches(teamId: number, season: number = 2024): Promise<FixtureData[]> {
     const cacheKey = `team_fixtures_${teamId}_${season}`;
     const cached = await this.getCachedData(cacheKey);
@@ -534,14 +648,33 @@ class AIPredictionEngine {
   generatePredictions(
     homeStats: TeamStats, 
     awayStats: TeamStats,
-    h2hStats: { homeWins: number; draws: number; awayWins: number; avgGoals: number; avgCorners: number; avgCards: number } | null
+    h2hStats: { homeWins: number; draws: number; awayWins: number; avgGoals: number; avgCorners: number; avgCards: number } | null,
+    bet365Odds: Record<string, Record<string, number>> | null = null
   ): PredictionResult[] {
     const predictions: PredictionResult[] = [];
     const CONFIDENCE_THRESHOLD = 80;
+    const MIN_EV_THRESHOLD = 0; // Só aceitar EV >= 0 (positivo ou neutro)
     const SAFETY_MARGIN_SHOTS = 0.60;
     const SAFETY_MARGIN_CORNERS = 0.55;
     const SAFETY_MARGIN_CARDS = 0.50;
     const SAFETY_MARGIN_GOALS = 0.65;
+    
+    // Helper para calcular EV real
+    const calculateEV = (probability: number, odd: number): number => {
+      // EV = (probability * odd) - 1  (em formato decimal: 0.05 = 5%)
+      return ((probability / 100) * odd - 1) * 100;
+    };
+    
+    // Helper para obter odd da Bet365 ou calcular a "justa"
+    const getOddForMarket = (market: string, outcome: string, fairOdd: number): { odd: number; source: 'bet365' | 'calculated' } => {
+      if (bet365Odds) {
+        const bet365Odd = this.getBet365OddForMarket(bet365Odds, market, outcome);
+        if (bet365Odd && bet365Odd >= 1.10) {
+          return { odd: bet365Odd, source: 'bet365' };
+        }
+      }
+      return { odd: fairOdd, source: 'calculated' };
+    };
     
     const homeExpectedGoals = (homeStats.goalsScoredHome + awayStats.goalsConcededAway) / 2;
     const awayExpectedGoals = (awayStats.goalsScoredAway + homeStats.goalsConcededHome) / 2;
@@ -576,95 +709,130 @@ class AIPredictionEngine {
     }
     
     if (combinedOver15 >= CONFIDENCE_THRESHOLD) {
-      predictions.push({
-        market: 'Over 1.5 Gols FT',
-        predictedOutcome: 'Pelo menos 2 gols na partida',
-        probability: combinedOver15,
-        confidence: Math.min(95, combinedOver15),
-        suggestedOdd: Number((100 / combinedOver15).toFixed(2)),
-        suggestedStake: 2,
-        rationale: [
-          `Média de gols esperados: ${totalExpectedGoals.toFixed(2)}`,
-          `${homeStats.teamName} Over 1.5: ${homeStats.over15Pct}%`,
-          `${awayStats.teamName} Over 1.5: ${awayStats.over15Pct}%`,
-          `Probabilidade combinada: ${combinedOver15.toFixed(1)}%`
-        ]
-      });
+      const fairOdd = Number((100 / combinedOver15).toFixed(2));
+      const oddInfo = getOddForMarket('Over 1.5 Gols FT', 'Over 1.5', fairOdd);
+      const ev = calculateEV(combinedOver15, oddInfo.odd);
+      
+      if (ev >= MIN_EV_THRESHOLD) {
+        predictions.push({
+          market: 'Over 1.5 Gols FT',
+          predictedOutcome: 'Pelo menos 2 gols na partida',
+          probability: combinedOver15,
+          confidence: Math.min(95, combinedOver15),
+          suggestedOdd: oddInfo.odd,
+          suggestedStake: 2,
+          rationale: [
+            `Média de gols esperados: ${totalExpectedGoals.toFixed(2)}`,
+            `${homeStats.teamName} Over 1.5: ${homeStats.over15Pct}%`,
+            `${awayStats.teamName} Over 1.5: ${awayStats.over15Pct}%`,
+            `Probabilidade: ${combinedOver15.toFixed(1)}%`,
+            oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+          ]
+        });
+      }
     }
     
     if (combinedOver25 + h2hBonus >= CONFIDENCE_THRESHOLD) {
-      predictions.push({
-        market: 'Over 2.5 Gols FT',
-        predictedOutcome: 'Pelo menos 3 gols na partida',
-        probability: combinedOver25,
-        confidence: Math.min(95, combinedOver25 + h2hBonus),
-        suggestedOdd: Number((100 / combinedOver25).toFixed(2)),
-        suggestedStake: 2,
-        rationale: [
-          `Média de gols esperados: ${totalExpectedGoals.toFixed(2)}`,
-          `${homeStats.teamName} marca ${homeStats.goalsScoredHome.toFixed(2)} gols em casa`,
-          `${awayStats.teamName} sofre ${awayStats.goalsConcededAway.toFixed(2)} gols fora`,
-          `Histórico Over 2.5: ${historicalOver25.toFixed(1)}%`,
-          h2hBonus > 0 ? `H2H: média de ${h2hStats?.avgGoals.toFixed(2)} gols` : ''
-        ].filter(Boolean)
-      });
+      const fairOdd = Number((100 / combinedOver25).toFixed(2));
+      const oddInfo = getOddForMarket('Over 2.5 Gols FT', 'Over 2.5', fairOdd);
+      const ev = calculateEV(combinedOver25, oddInfo.odd);
+      
+      if (ev >= MIN_EV_THRESHOLD) {
+        predictions.push({
+          market: 'Over 2.5 Gols FT',
+          predictedOutcome: 'Pelo menos 3 gols na partida',
+          probability: combinedOver25,
+          confidence: Math.min(95, combinedOver25 + h2hBonus),
+          suggestedOdd: oddInfo.odd,
+          suggestedStake: 2,
+          rationale: [
+            `Média de gols esperados: ${totalExpectedGoals.toFixed(2)}`,
+            `${homeStats.teamName} marca ${homeStats.goalsScoredHome.toFixed(2)} gols em casa`,
+            `${awayStats.teamName} sofre ${awayStats.goalsConcededAway.toFixed(2)} gols fora`,
+            `Histórico Over 2.5: ${historicalOver25.toFixed(1)}%`,
+            h2hBonus > 0 ? `H2H: média de ${h2hStats?.avgGoals.toFixed(2)} gols` : '',
+            oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+          ].filter(Boolean)
+        });
+      }
     }
     
     const htGoalsProbability = (homeStats.goalsFirstHalfOver05Pct + awayStats.goalsFirstHalfOver05Pct) / 2;
     if (htGoalsProbability >= CONFIDENCE_THRESHOLD) {
-      predictions.push({
-        market: 'Over 0.5 Gols HT',
-        predictedOutcome: 'Pelo menos 1 gol no 1º tempo',
-        probability: htGoalsProbability,
-        confidence: Math.min(95, htGoalsProbability),
-        suggestedOdd: Number((100 / htGoalsProbability).toFixed(2)),
-        suggestedStake: 2,
-        rationale: [
-          `${homeStats.teamName} gols 1ºT: ${homeStats.goalsFirstHalf.toFixed(2)} média`,
-          `${awayStats.teamName} gols 1ºT: ${awayStats.goalsFirstHalf.toFixed(2)} média`,
-          `Histórico Over 0.5 HT: ${htGoalsProbability.toFixed(1)}%`
-        ]
-      });
+      const fairOdd = Number((100 / htGoalsProbability).toFixed(2));
+      const oddInfo = getOddForMarket('Over 0.5 Gols 1T', 'Over 0.5', fairOdd);
+      const ev = calculateEV(htGoalsProbability, oddInfo.odd);
+      
+      if (ev >= MIN_EV_THRESHOLD) {
+        predictions.push({
+          market: 'Over 0.5 Gols HT',
+          predictedOutcome: 'Pelo menos 1 gol no 1º tempo',
+          probability: htGoalsProbability,
+          confidence: Math.min(95, htGoalsProbability),
+          suggestedOdd: oddInfo.odd,
+          suggestedStake: 2,
+          rationale: [
+            `${homeStats.teamName} gols 1ºT: ${homeStats.goalsFirstHalf.toFixed(2)} média`,
+            `${awayStats.teamName} gols 1ºT: ${awayStats.goalsFirstHalf.toFixed(2)} média`,
+            `Probabilidade: ${htGoalsProbability.toFixed(1)}%`,
+            oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+          ]
+        });
+      }
     }
     
     if (combinedBtts >= CONFIDENCE_THRESHOLD) {
-      predictions.push({
-        market: 'Ambas Marcam FT',
-        predictedOutcome: 'Sim - Ambos times marcam',
-        probability: combinedBtts,
-        confidence: Math.min(95, combinedBtts),
-        suggestedOdd: Number((100 / combinedBtts).toFixed(2)),
-        suggestedStake: 2,
-        rationale: [
-          `${homeStats.teamName} BTTS: ${homeStats.bttsPct}%`,
-          `${awayStats.teamName} BTTS: ${awayStats.bttsPct}%`,
-          `Probabilidade Poisson BTTS: ${poissonProbs.btts.toFixed(1)}%`,
-          `${homeStats.teamName} falha em marcar: ${homeStats.failedToScorePct}%`
-        ]
-      });
+      const fairOdd = Number((100 / combinedBtts).toFixed(2));
+      const oddInfo = getOddForMarket('Ambas Marcam', 'Yes', fairOdd);
+      const ev = calculateEV(combinedBtts, oddInfo.odd);
+      
+      if (ev >= MIN_EV_THRESHOLD) {
+        predictions.push({
+          market: 'Ambas Marcam FT',
+          predictedOutcome: 'Sim - Ambos times marcam',
+          probability: combinedBtts,
+          confidence: Math.min(95, combinedBtts),
+          suggestedOdd: oddInfo.odd,
+          suggestedStake: 2,
+          rationale: [
+            `${homeStats.teamName} BTTS: ${homeStats.bttsPct}%`,
+            `${awayStats.teamName} BTTS: ${awayStats.bttsPct}%`,
+            `Probabilidade Poisson BTTS: ${poissonProbs.btts.toFixed(1)}%`,
+            `${homeStats.teamName} falha em marcar: ${homeStats.failedToScorePct}%`,
+            oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+          ]
+        });
+      }
     }
 
     const avgShotsOnTarget = homeStats.avgShotsOnTarget + awayStats.avgShotsOnTarget;
     if (avgShotsOnTarget >= 6) {
       const safeLine = Math.floor(avgShotsOnTarget * SAFETY_MARGIN_SHOTS) + 0.5;
       const historicalPct = (homeStats.shotsOnTargetOver35Pct + awayStats.shotsOnTargetOver35Pct) / 2;
+      const marketName = `Over ${safeLine} Chutes ao Gol FT`;
       
       if (historicalPct >= CONFIDENCE_THRESHOLD && safeLine >= 3.5) {
-        predictions.push({
-          market: `Over ${safeLine} Chutes ao Gol FT`,
-          predictedOutcome: `Pelo menos ${Math.ceil(safeLine)} chutes ao gol`,
-          probability: historicalPct,
-          confidence: Math.min(95, historicalPct),
-          suggestedOdd: Number((100 / historicalPct).toFixed(2)),
-          suggestedStake: 2,
-          rationale: [
-            `Média de chutes ao gol: ${avgShotsOnTarget.toFixed(1)}`,
-            `${homeStats.teamName}: ${homeStats.avgShotsOnTarget.toFixed(1)} chutes/jogo`,
-            `${awayStats.teamName}: ${awayStats.avgShotsOnTarget.toFixed(1)} chutes/jogo`,
-            `Linha segura (-40%): ${safeLine}`,
-            `Histórico Over 3.5: ${historicalPct.toFixed(1)}%`
-          ]
-        });
+        const fairOdd = Number((100 / historicalPct).toFixed(2));
+        const oddInfo = getOddForMarket(marketName, `Over ${safeLine}`, fairOdd);
+        const ev = calculateEV(historicalPct, oddInfo.odd);
+        
+        if (ev >= MIN_EV_THRESHOLD) {
+          predictions.push({
+            market: marketName,
+            predictedOutcome: `Pelo menos ${Math.ceil(safeLine)} chutes ao gol`,
+            probability: historicalPct,
+            confidence: Math.min(95, historicalPct),
+            suggestedOdd: oddInfo.odd,
+            suggestedStake: 2,
+            rationale: [
+              `Média de chutes ao gol: ${avgShotsOnTarget.toFixed(1)}`,
+              `${homeStats.teamName}: ${homeStats.avgShotsOnTarget.toFixed(1)} chutes/jogo`,
+              `${awayStats.teamName}: ${awayStats.avgShotsOnTarget.toFixed(1)} chutes/jogo`,
+              `Linha segura (-40%): ${safeLine}`,
+              oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+            ]
+          });
+        }
       }
     }
 
@@ -672,40 +840,55 @@ class AIPredictionEngine {
     if (avgCorners >= 8) {
       const safeLine = Math.floor(avgCorners * SAFETY_MARGIN_CORNERS) + 0.5;
       const historicalPct = (homeStats.cornersOver55Pct + awayStats.cornersOver55Pct) / 2;
+      const marketName = `Over ${safeLine} Escanteios FT`;
       
       if (historicalPct >= CONFIDENCE_THRESHOLD && safeLine >= 4.5) {
-        predictions.push({
-          market: `Over ${safeLine} Escanteios FT`,
-          predictedOutcome: `Pelo menos ${Math.ceil(safeLine)} escanteios`,
-          probability: historicalPct,
-          confidence: Math.min(95, historicalPct),
-          suggestedOdd: Number((100 / historicalPct).toFixed(2)),
-          suggestedStake: 2,
-          rationale: [
-            `Média de escanteios: ${avgCorners.toFixed(1)}`,
-            `${homeStats.teamName}: ${homeStats.avgCorners.toFixed(1)} escanteios/jogo`,
-            `${awayStats.teamName}: ${awayStats.avgCorners.toFixed(1)} escanteios/jogo`,
-            `Linha segura (-45%): ${safeLine}`,
-            `Histórico Over 5.5: ${historicalPct.toFixed(1)}%`
-          ]
-        });
+        const fairOdd = Number((100 / historicalPct).toFixed(2));
+        const oddInfo = getOddForMarket(marketName, `Over ${safeLine}`, fairOdd);
+        const ev = calculateEV(historicalPct, oddInfo.odd);
+        
+        if (ev >= MIN_EV_THRESHOLD) {
+          predictions.push({
+            market: marketName,
+            predictedOutcome: `Pelo menos ${Math.ceil(safeLine)} escanteios`,
+            probability: historicalPct,
+            confidence: Math.min(95, historicalPct),
+            suggestedOdd: oddInfo.odd,
+            suggestedStake: 2,
+            rationale: [
+              `Média de escanteios: ${avgCorners.toFixed(1)}`,
+              `${homeStats.teamName}: ${homeStats.avgCorners.toFixed(1)} escanteios/jogo`,
+              `${awayStats.teamName}: ${awayStats.avgCorners.toFixed(1)} escanteios/jogo`,
+              `Linha segura (-45%): ${safeLine}`,
+              oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+            ]
+          });
+        }
       }
       
       const safeLineHT = Math.floor((avgCorners * 0.45) * SAFETY_MARGIN_CORNERS) + 0.5;
+      const marketNameHT = `Over ${safeLineHT} Escanteios HT`;
+      const htPct = historicalPct * 0.9;
       if (safeLineHT >= 2.5 && historicalPct >= CONFIDENCE_THRESHOLD) {
-        predictions.push({
-          market: `Over ${safeLineHT} Escanteios HT`,
-          predictedOutcome: `Pelo menos ${Math.ceil(safeLineHT)} escanteios no 1º tempo`,
-          probability: historicalPct * 0.9,
-          confidence: Math.min(92, historicalPct * 0.9),
-          suggestedOdd: Number((100 / (historicalPct * 0.9)).toFixed(2)),
-          suggestedStake: 1.5,
-          rationale: [
-            `Média de escanteios 1ºT estimada: ${(avgCorners * 0.45).toFixed(1)}`,
-            `Linha segura HT (-45%): ${safeLineHT}`,
-            `Baseado na média FT de ${avgCorners.toFixed(1)} escanteios`
-          ]
-        });
+        const fairOdd = Number((100 / htPct).toFixed(2));
+        const oddInfo = getOddForMarket(marketNameHT, `Over ${safeLineHT}`, fairOdd);
+        const ev = calculateEV(htPct, oddInfo.odd);
+        
+        if (ev >= MIN_EV_THRESHOLD) {
+          predictions.push({
+            market: marketNameHT,
+            predictedOutcome: `Pelo menos ${Math.ceil(safeLineHT)} escanteios no 1º tempo`,
+            probability: htPct,
+            confidence: Math.min(92, htPct),
+            suggestedOdd: oddInfo.odd,
+            suggestedStake: 1.5,
+            rationale: [
+              `Média de escanteios 1ºT estimada: ${(avgCorners * 0.45).toFixed(1)}`,
+              `Linha segura HT (-45%): ${safeLineHT}`,
+              oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+            ]
+          });
+        }
       }
     }
 
@@ -713,54 +896,70 @@ class AIPredictionEngine {
     if (avgCards >= 3) {
       const safeCardLine = Math.max(1.5, Math.floor(avgCards * SAFETY_MARGIN_CARDS) - 0.5 + 0.5);
       const historicalPct = (homeStats.cardsOver15Pct + awayStats.cardsOver15Pct) / 2;
+      const marketName = `Over ${safeCardLine} Cartões FT`;
       
       if (historicalPct >= CONFIDENCE_THRESHOLD && safeCardLine >= 1.5) {
-        predictions.push({
-          market: `Over ${safeCardLine} Cartões FT`,
-          predictedOutcome: `Pelo menos ${Math.ceil(safeCardLine)} cartões`,
-          probability: historicalPct,
-          confidence: Math.min(95, historicalPct),
-          suggestedOdd: Number((100 / historicalPct).toFixed(2)),
-          suggestedStake: 2,
-          rationale: [
-            `Média de cartões: ${avgCards.toFixed(1)}`,
-            `${homeStats.teamName}: ${homeStats.avgCards.toFixed(1)} cartões/jogo`,
-            `${awayStats.teamName}: ${awayStats.avgCards.toFixed(1)} cartões/jogo`,
-            `Linha segura (-50%): ${safeCardLine}`,
-            `Histórico Over 1.5: ${historicalPct.toFixed(1)}%`
-          ]
-        });
+        const fairOdd = Number((100 / historicalPct).toFixed(2));
+        const oddInfo = getOddForMarket(marketName, `Over ${safeCardLine}`, fairOdd);
+        const ev = calculateEV(historicalPct, oddInfo.odd);
+        
+        if (ev >= MIN_EV_THRESHOLD) {
+          predictions.push({
+            market: marketName,
+            predictedOutcome: `Pelo menos ${Math.ceil(safeCardLine)} cartões`,
+            probability: historicalPct,
+            confidence: Math.min(95, historicalPct),
+            suggestedOdd: oddInfo.odd,
+            suggestedStake: 2,
+            rationale: [
+              `Média de cartões: ${avgCards.toFixed(1)}`,
+              `${homeStats.teamName}: ${homeStats.avgCards.toFixed(1)} cartões/jogo`,
+              `${awayStats.teamName}: ${awayStats.avgCards.toFixed(1)} cartões/jogo`,
+              `Linha segura (-50%): ${safeCardLine}`,
+              oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+            ]
+          });
+        }
       }
       
       const bothTeamsCardPct = (homeStats.bothTeamsCardPct + awayStats.bothTeamsCardPct) / 2;
       if (bothTeamsCardPct >= CONFIDENCE_THRESHOLD) {
-        predictions.push({
-          market: 'Ambas Recebem Cartão FT',
-          predictedOutcome: 'Sim - Ambos times recebem cartão',
-          probability: bothTeamsCardPct,
-          confidence: Math.min(95, bothTeamsCardPct),
-          suggestedOdd: Number((100 / bothTeamsCardPct).toFixed(2)),
-          suggestedStake: 2,
-          rationale: [
-            `${homeStats.teamName} recebe cartão: ${homeStats.bothTeamsCardPct}% dos jogos`,
-            `${awayStats.teamName} recebe cartão: ${awayStats.bothTeamsCardPct}% dos jogos`,
-            `Probabilidade combinada: ${bothTeamsCardPct.toFixed(1)}%`
-          ]
-        });
+        const fairOdd = Number((100 / bothTeamsCardPct).toFixed(2));
+        const oddInfo = getOddForMarket('Ambas Recebem Cartão FT', 'Yes', fairOdd);
+        const ev = calculateEV(bothTeamsCardPct, oddInfo.odd);
+        
+        if (ev >= MIN_EV_THRESHOLD) {
+          predictions.push({
+            market: 'Ambas Recebem Cartão FT',
+            predictedOutcome: 'Sim - Ambos times recebem cartão',
+            probability: bothTeamsCardPct,
+            confidence: Math.min(95, bothTeamsCardPct),
+            suggestedOdd: oddInfo.odd,
+            suggestedStake: 2,
+            rationale: [
+              `${homeStats.teamName} recebe cartão: ${homeStats.bothTeamsCardPct}% dos jogos`,
+              `${awayStats.teamName} recebe cartão: ${awayStats.bothTeamsCardPct}% dos jogos`,
+              oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
+            ]
+          });
+        }
       }
     }
     
     if (poissonProbs.homeWin >= 60 && homeStats.formPoints >= 10) {
       const formBonus = (homeStats.formPoints - 9) * 2;
       const confidence = Math.min(95, poissonProbs.homeWin + formBonus);
+      const fairOdd = Number((100 / poissonProbs.homeWin).toFixed(2));
+      const oddInfo = getOddForMarket(`Vitória ${homeStats.teamName}`, 'Home', fairOdd);
+      const ev = calculateEV(poissonProbs.homeWin, oddInfo.odd);
       
-      if (confidence >= CONFIDENCE_THRESHOLD) {
+      if (confidence >= CONFIDENCE_THRESHOLD && ev >= MIN_EV_THRESHOLD) {
         predictions.push({
           market: 'Resultado Final',
           predictedOutcome: `Vitória ${homeStats.teamName}`,
           probability: poissonProbs.homeWin,
           confidence: confidence,
-          suggestedOdd: Number((100 / poissonProbs.homeWin).toFixed(2)),
+          suggestedOdd: oddInfo.odd,
           suggestedStake: 2,
           rationale: [
             `${homeStats.teamName} forma: ${homeStats.formWins}V ${homeStats.formDraws}E ${homeStats.formLosses}D`,
@@ -775,20 +974,23 @@ class AIPredictionEngine {
     if (poissonProbs.awayWin >= 50 && awayStats.formPoints >= 11) {
       const formBonus = (awayStats.formPoints - 9) * 2;
       const confidence = Math.min(95, poissonProbs.awayWin + formBonus);
+      const fairOdd = Number((100 / poissonProbs.awayWin).toFixed(2));
+      const oddInfo = getOddForMarket(`Vitória ${awayStats.teamName}`, 'Away', fairOdd);
+      const ev = calculateEV(poissonProbs.awayWin, oddInfo.odd);
       
-      if (confidence >= CONFIDENCE_THRESHOLD) {
+      if (confidence >= CONFIDENCE_THRESHOLD && ev >= MIN_EV_THRESHOLD) {
         predictions.push({
           market: 'Resultado Final',
           predictedOutcome: `Vitória ${awayStats.teamName}`,
           probability: poissonProbs.awayWin,
           confidence: confidence,
-          suggestedOdd: Number((100 / poissonProbs.awayWin).toFixed(2)),
+          suggestedOdd: oddInfo.odd,
           suggestedStake: 1.5,
           rationale: [
             `${awayStats.teamName} forma: ${awayStats.formWins}V ${awayStats.formDraws}E ${awayStats.formLosses}D`,
             `Probabilidade vitória fora: ${poissonProbs.awayWin.toFixed(1)}%`,
             `${awayStats.teamName} marca ${awayStats.goalsScoredAway.toFixed(2)} gols fora`,
-            `${homeStats.teamName} sofre ${homeStats.goalsConcededHome.toFixed(2)} gols em casa`
+            oddInfo.source === 'bet365' ? `Odd Bet365: ${oddInfo.odd} | EV: ${ev > 0 ? '+' : ''}${ev.toFixed(1)}%` : `Odd calculada: ${oddInfo.odd}`
           ]
         });
       }
@@ -803,11 +1005,16 @@ class AIPredictionEngine {
     const homeTeamId = fixture.teams.home.id;
     const awayTeamId = fixture.teams.away.id;
     
-    const [homeMatches, awayMatches, h2hMatches] = await Promise.all([
+    const [homeMatches, awayMatches, h2hMatches, bet365Odds] = await Promise.all([
       this.fetchTeamLastMatches(homeTeamId, fixture.league.season),
       this.fetchTeamLastMatches(awayTeamId, fixture.league.season),
-      this.fetchH2H(homeTeamId, awayTeamId)
+      this.fetchH2H(homeTeamId, awayTeamId),
+      this.fetchBet365Odds(fixture.fixture.id)
     ]);
+    
+    if (bet365Odds) {
+      console.log(`[AI Engine] Found Bet365 odds for fixture ${fixture.fixture.id}`);
+    }
     
     if (homeMatches.length < 5 || awayMatches.length < 5) {
       console.log(`[AI Engine] Insufficient data for analysis (home: ${homeMatches.length}, away: ${awayMatches.length})`);
@@ -925,7 +1132,7 @@ class AIPredictionEngine {
         .onConflictDoNothing()
     ]);
     
-    const predictions = this.generatePredictions(homeStats, awayStats, h2hAnalysis);
+    const predictions = this.generatePredictions(homeStats, awayStats, h2hAnalysis, bet365Odds);
     
     for (const prediction of predictions) {
       await db.insert(aiTickets)

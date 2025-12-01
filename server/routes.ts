@@ -103,6 +103,55 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Odds from bookmakers (Bet365 priority)
+  app.get("/api/football/odds/:fixtureId", async (req, res) => {
+    try {
+      const { fixtureId } = req.params;
+      const response = await axios.get("https://v3.football.api-sports.io/odds", {
+        params: { 
+          fixture: fixtureId,
+          bookmaker: 8 // Bet365 ID
+        },
+        headers: {
+          "x-apisports-key": FOOTBALL_API_KEY,
+        },
+      });
+      
+      const oddsData = response.data.response?.[0];
+      if (!oddsData) {
+        return res.json({ success: false, message: "No odds available", odds: null });
+      }
+      
+      // Parse Bet365 odds
+      const bet365 = oddsData.bookmakers?.find((b: any) => b.id === 8) || oddsData.bookmakers?.[0];
+      if (!bet365) {
+        return res.json({ success: false, message: "Bet365 odds not available", odds: null });
+      }
+      
+      // Extract markets
+      const markets: Record<string, any> = {};
+      bet365.bets?.forEach((bet: any) => {
+        const marketName = bet.name;
+        const values: Record<string, number> = {};
+        bet.values?.forEach((v: any) => {
+          values[v.value] = parseFloat(v.odd);
+        });
+        markets[marketName] = values;
+      });
+      
+      return res.json({ 
+        success: true, 
+        bookmaker: bet365.name,
+        fixtureId,
+        markets,
+        raw: bet365
+      });
+    } catch (error: any) {
+      console.error(`[API-Football] Error fetching odds for fixture ${req.params.fixtureId}:`, error.message);
+      return res.status(500).json({ error: "Failed to fetch odds", details: error.message });
+    }
+  });
+
   // Pre-game Insights - Last 5 matches + H2H averages
   app.get("/api/football/pregame-insights", async (req, res) => {
     try {
