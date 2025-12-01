@@ -18,6 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
   const { t } = useLanguage();
   const [showWelcome, setShowWelcome] = useState(false);
+  const [hasShownWelcome, setHasShownWelcome] = useState(false);
   
   // Onboarding tour
   const {
@@ -33,13 +34,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
     setShowTour,
   } = useOnboarding();
 
-  // Show welcome modal when tour should start
+  // Show welcome modal only once when tour should start
   useEffect(() => {
-    if (showTour && currentStep === 0 && !onboardingLoading) {
+    if (showTour && currentStep === 0 && !onboardingLoading && !hasShownWelcome) {
       setShowWelcome(true);
+      setHasShownWelcome(true);
       setShowTour(false);
     }
-  }, [showTour, currentStep, onboardingLoading]);
+  }, [showTour, currentStep, onboardingLoading, hasShownWelcome]);
 
   const handleStartTour = () => {
     setShowWelcome(false);
