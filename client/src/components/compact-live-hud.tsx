@@ -126,7 +126,7 @@ export function CompactLiveHud() {
       <div className="grid grid-cols-2 gap-4">
         
         {/* CARD A: ODD MÉDIA com comparativo */}
-        <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-lg shadow-black/50 overflow-hidden">
+        <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-[#33b864]/50 transition-all flex flex-col justify-center relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
           
@@ -148,7 +148,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* CARD B: USUÁRIOS ONLINE com latência */}
-        <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
+        <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
           
@@ -177,7 +177,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* CARD C: GREENS (dados reais dos bilhetes) */}
-        <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
+        <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
           
@@ -205,7 +205,7 @@ export function CompactLiveHud() {
         </div>
 
         {/* CARD D: REDS (dados reais dos bilhetes) */}
-        <div className="h-32 bg-[#121212] border border-[#33b864]/20 rounded-2xl p-4 hover:bg-[#161616] hover:border-[#33b864]/30 transition-all flex flex-col justify-between relative group shadow-lg shadow-black/50 overflow-hidden">
+        <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-red-500/40 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
           

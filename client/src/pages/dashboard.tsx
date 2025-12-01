@@ -264,7 +264,7 @@ export default function Dashboard() {
 
         {/* AI Scanner - Right Sidebar */}
         <div className="lg:col-span-4 space-y-4">
-          <div className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] overflow-hidden">
+          <div className="bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-6 shadow-xl shadow-black/60 overflow-hidden">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-display font-bold text-slate-900 dark:text-white flex items-center gap-2">
                 <Bot className="w-5 h-5 text-primary animate-pulse" />
