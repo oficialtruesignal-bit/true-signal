@@ -26,7 +26,7 @@ export default function SubscriptionPage() {
     if (isPremium) {
       return {
         icon: <CheckCircle className="w-6 h-6" />,
-        title: "True Signal Pro Ativo",
+        title: "True Signal Prime Ativo",
         subtitle: "Você tem acesso completo a todos os bilhetes",
         color: "text-[#33b864]",
         bgColor: "bg-[#33b864]/10",
@@ -74,7 +74,7 @@ export default function SubscriptionPage() {
             <h1 className="text-2xl font-bold text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
               Minha Assinatura
             </h1>
-            <p className="text-gray-400 text-sm">Gerencie seu plano True Signal Pro</p>
+            <p className="text-gray-400 text-sm">Gerencie seu plano True Signal Prime</p>
           </div>
         </div>
 
@@ -159,7 +159,7 @@ export default function SubscriptionPage() {
               data-testid="button-subscribe"
             >
               <Sparkles className="w-5 h-5" />
-              {isExpired ? "Renovar Assinatura" : "Assinar True Signal Pro"}
+              {isExpired ? "Renovar Assinatura" : "Assinar True Signal Prime"}
             </Button>
           )}
 
@@ -178,7 +178,7 @@ export default function SubscriptionPage() {
         {/* Benefits */}
         <div className="bg-[#121212] border border-white/10 rounded-2xl p-6">
           <h3 className="text-lg font-bold text-white mb-4" style={{ fontFamily: 'Sora, sans-serif' }}>
-            Benefícios do True Signal Pro
+            Benefícios do True Signal Prime
           </h3>
           
           <div className="space-y-4">

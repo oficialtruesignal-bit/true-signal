@@ -193,7 +193,7 @@ export function OfferPack() {
             <div className="text-center">
               {/* Plan name */}
               <h3 className="text-2xl md:text-3xl font-black text-white mb-6" style={{ fontFamily: 'Sora, sans-serif' }}>
-                Plano True Signal Pro
+                Plano True Signal Prime
               </h3>
               
               {/* Price */}
@@ -225,7 +225,7 @@ export function OfferPack() {
                     data-testid="button-offer-cta"
                   >
                     <Zap className="w-6 h-6 flex-shrink-0" />
-                    <span className="whitespace-nowrap">QUERO ACESSO PRO</span>
+                    <span className="whitespace-nowrap">QUERO ACESSO PRIME</span>
                   </motion.button>
                 </Link>
               </div>

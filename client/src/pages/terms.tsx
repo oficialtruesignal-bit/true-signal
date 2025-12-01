@@ -59,7 +59,7 @@ export default function TermsPage() {
             </ul>
             <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-6 mt-4">
               <p className="text-[#33b864] font-semibold">
-                Após os 5 dias, o acesso total requer assinatura do plano True Signal Pro (R$ 47,90/mês).
+                Após os 5 dias, o acesso total requer assinatura do plano True Signal Prime (R$ 47,90/mês).
               </p>
             </div>
           </section>
@@ -67,7 +67,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">4. Assinatura e Pagamento</h2>
             <p>
-              A assinatura <strong className="text-white">True Signal Pro</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
+              A assinatura <strong className="text-white">True Signal Prime</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Cobrança mensal recorrente de <strong className="text-white">R$ 47,90</strong>;</li>

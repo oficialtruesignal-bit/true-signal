@@ -450,7 +450,7 @@ export default function CheckoutPage() {
             <Check className="w-10 h-10 text-[#33b864]" />
           </div>
           <h1 className="text-3xl font-sora font-bold text-white mb-4">
-            Você já é True Signal Pro!
+            Você já é True Signal Prime!
           </h1>
           <p className="text-gray-300 mb-8">
             Aproveite todos os benefícios da sua assinatura premium.
@@ -520,7 +520,7 @@ export default function CheckoutPage() {
                 <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
               </div>
               <p className="text-xs text-gray-500 mt-2">
-                Acesso por 30 dias ao True Signal Pro
+                Acesso por 30 dias ao True Signal Prime
               </p>
             </div>
 
@@ -622,7 +622,7 @@ export default function CheckoutPage() {
                     <span className="text-2xl font-bold text-[#33b864]">R$ 47,90</span>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Acesso por 30 dias ao True Signal Pro
+                    Acesso por 30 dias ao True Signal Prime
                   </p>
                 </div>
               </>
@@ -1019,7 +1019,7 @@ export default function CheckoutPage() {
               <div className="pt-6 border-t border-white/10">
                 <div className="space-y-3 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">True Signal Pro (mensal)</span>
+                    <span className="text-gray-400">True Signal Prime (mensal)</span>
                     <div className="text-right">
                       <span className="text-gray-500 line-through text-xs mr-2">R$ 99,87</span>
                       <span className="text-[#33b864]">R$ 47,90</span>

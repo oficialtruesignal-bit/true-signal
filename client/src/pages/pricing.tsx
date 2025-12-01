@@ -78,7 +78,7 @@ export default function PricingPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-lg">
               <Crown className="w-4 h-4 text-[#33b864]" />
               <span className="text-sm text-[#33b864] font-bold">
-                Você já é True Signal Pro! 🎉
+                Você já é True Signal Prime! 🎉
               </span>
             </div>
           )}
@@ -150,7 +150,7 @@ export default function PricingPage() {
             </div>
           </motion.div>
 
-          {/* True Signal Pro Card */}
+          {/* True Signal Prime Card */}
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -173,7 +173,7 @@ export default function PricingPage() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-white" style={{ fontFamily: 'Sora, sans-serif' }}>
-                    True Signal Pro
+                    True Signal Prime
                   </h3>
                   <p className="text-sm text-[#33b864]">Acesso completo ilimitado</p>
                 </div>
@@ -215,7 +215,7 @@ export default function PricingPage() {
                 >
                   <button className="w-full py-4 bg-[#33b864] hover:bg-[#2ea558] text-black font-black rounded-xl transition-all shadow-xl shadow-[#33b864]/50 hover:shadow-[#33b864]/70 flex items-center justify-center gap-2 group">
                     <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
-                    Assinar True Signal Pro
+                    Assinar True Signal Prime
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
                 </a>
@@ -242,7 +242,7 @@ export default function PricingPage() {
               <div>
                 <p className="text-sm font-semibold text-[#33b864] mb-1">O que acontece após o período gratuito?</p>
                 <p className="text-sm text-gray-400">
-                  Após 5 dias, seu acesso será bloqueado. Você pode assinar o True Signal Pro a qualquer momento para continuar.
+                  Após 5 dias, seu acesso será bloqueado. Você pode assinar o True Signal Prime a qualquer momento para continuar.
                 </p>
               </div>
               <div>

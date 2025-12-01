@@ -150,7 +150,7 @@ export const ga4 = {
       window.gtag('event', 'begin_checkout', {
         currency: 'BRL',
         value: value,
-        items: items || [{ item_id: 'true_signal_pro', item_name: 'True Signal Pro', price: value }]
+        items: items || [{ item_id: 'true_signal_prime', item_name: 'True Signal Prime', price: value }]
       });
     }
   },
@@ -173,7 +173,7 @@ export const ga4 = {
         transaction_id: transactionId,
         currency: 'BRL',
         value: value,
-        items: items || [{ item_id: 'true_signal_pro', item_name: 'True Signal Pro', price: value }]
+        items: items || [{ item_id: 'true_signal_prime', item_name: 'True Signal Prime', price: value }]
       });
     }
   },
@@ -209,7 +209,7 @@ export const ga4 = {
 export const analytics = {
   // Track registration on both platforms
   trackRegistration: (email?: string) => {
-    fbPixel.completeRegistration({ content_name: 'True Signal Pro' });
+    fbPixel.completeRegistration({ content_name: 'True Signal Prime' });
     ga4.signUp('email');
   },
   
@@ -227,7 +227,7 @@ export const analytics = {
   
   // Track successful purchase/subscription
   trackPurchase: (transactionId: string, value: number) => {
-    fbPixel.purchase({ value, content_name: 'True Signal Pro' });
+    fbPixel.purchase({ value, content_name: 'True Signal Prime' });
     fbPixel.subscribe({ value });
     ga4.purchase(transactionId, value);
   },

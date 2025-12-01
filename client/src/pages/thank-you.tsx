@@ -100,7 +100,7 @@ export default function ThankYouPage() {
           {/* Crown Badge */}
           <div className="inline-flex items-center gap-2 bg-[#33b864]/10 border border-[#33b864]/30 rounded-full px-4 py-2 mb-6">
             <Crown className="w-5 h-5 text-[#33b864]" />
-            <span className="text-[#33b864] font-bold text-sm uppercase tracking-wider">True Signal Pro</span>
+            <span className="text-[#33b864] font-bold text-sm uppercase tracking-wider">True Signal Prime</span>
           </div>
 
           {/* Title */}

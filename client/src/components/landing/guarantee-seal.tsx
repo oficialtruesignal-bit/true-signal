@@ -86,7 +86,7 @@ export function GuaranteeSeal() {
             >
               <p className="text-lg text-gray-300 leading-relaxed">
                 Durante os <span className="text-white font-bold">5 dias de teste</span>, você terá acesso completo a todos os sinais e funcionalidades.
-                Se gostar, assine o plano <span className="text-[#33b864] font-bold">True Signal Pro</span> por apenas R$ 47,90/mês.
+                Se gostar, assine o plano <span className="text-[#33b864] font-bold">True Signal Prime</span> por apenas R$ 47,90/mês.
               </p>
               <p className="text-sm text-gray-400 mt-4">
                 Sem compromisso. Cancele quando quiser.

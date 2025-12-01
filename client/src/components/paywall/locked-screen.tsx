@@ -71,7 +71,7 @@ export function LockedScreen() {
             <div className="text-center mb-6">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500/20 to-red-600/20 border border-red-500/40 rounded-full mb-4 animate-pulse">
                 <Sparkles className="w-4 h-4 text-red-400" />
-                <span className="text-sm text-red-400 font-black uppercase tracking-wider">TRUE SIGNAL PRO</span>
+                <span className="text-sm text-red-400 font-black uppercase tracking-wider">TRUE SIGNAL PRIME</span>
               </div>
               
               <div className="flex items-center justify-center gap-3 mb-2">
@@ -114,7 +114,7 @@ export function LockedScreen() {
               data-testid="button-subscribe-premium"
             >
               <button className="w-full bg-[#33b864] hover:bg-[#2ea558] text-black font-black py-5 rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 text-lg touch-manipulation">
-                ASSINAR TRUE SIGNAL PRO - R$ 47,90/MÊS
+                ASSINAR TRUE SIGNAL PRIME - R$ 47,90/MÊS
               </button>
             </a>
             
