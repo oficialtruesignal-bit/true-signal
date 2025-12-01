@@ -7,6 +7,7 @@ import { BenefitsGrid } from '@/components/landing/benefits-grid';
 import { SocialProof } from '@/components/landing/social-proof';
 import { OfferPack } from '@/components/landing/offer-pack';
 import { FinalCTA } from '@/components/landing/final-cta';
+import { Logo } from '@/components/logo';
 import { Link } from 'wouter';
 import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
@@ -76,9 +77,9 @@ function Footer() {
         <div className="grid md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
           <div>
-            <h4 className="text-[#33b864] font-black text-2xl mb-4 tracking-[0.15em]" style={{ fontFamily: 'Sora, sans-serif' }}>
-              TRUE SIGNAL
-            </h4>
+            <div className="mb-4">
+              <Logo size="lg" />
+            </div>
             <p className="text-gray-400 text-sm leading-relaxed">
               Inteligência artificial aplicada ao mercado esportivo.
             </p>
