@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { initMercadoPago, CardPayment } from '@mercadopago/sdk-react';
 import { analytics, fbPixel, ga4 } from "@/lib/analytics";
+import { Logo } from "@/components/logo";
 
 // Memoized CardPayment wrapper to prevent re-renders
 const MemoizedCardPayment = memo(function MemoizedCardPayment({
@@ -486,6 +487,11 @@ export default function CheckoutPage() {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto">
+        {/* Logo */}
+        <div className="flex justify-center mb-8">
+          <Logo size="lg" />
+        </div>
+
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#33b864]/10 rounded-full border border-[#33b864]/20 mb-4">
