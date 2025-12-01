@@ -653,32 +653,22 @@ export default function CheckoutPage() {
 
   return (
     <Layout>
-      {/* Floating Security Header - Compact */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-black via-[#0a1f0a] to-black backdrop-blur-lg border-b border-[#33b864]/40">
-        <div className="max-w-7xl mx-auto px-4 py-2">
-          <div className="flex items-center justify-center gap-3 md:gap-6 flex-wrap">
-            <div className="flex items-center gap-1.5 text-[#33b864]">
-              <Lock className="w-4 h-4" />
-              <span className="text-xs font-semibold">Checkout Seguro</span>
-            </div>
-            <div className="hidden md:flex items-center gap-1.5 text-[#33b864]">
-              <Shield className="w-4 h-4" />
-              <span className="text-xs font-semibold">SSL 256-bit</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[#33b864]">
-              <CheckCircle2 className="w-4 h-4" />
-              <span className="text-xs font-semibold">7 Dias de Garantia</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="pt-14 pb-8">
+      <div className="pt-4 pb-8">
         <div className="max-w-7xl mx-auto px-4">
           {/* Hero Section */}
           <div className="text-center mb-10">
-            <div className="flex justify-center mb-6">
+            <div className="flex justify-center mb-2">
               <Logo size="lg" />
+            </div>
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <div className="flex items-center gap-1.5 text-[#33b864]">
+                <Lock className="w-4 h-4" />
+                <span className="text-xs font-semibold">Checkout Seguro</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[#33b864]">
+                <CheckCircle2 className="w-4 h-4" />
+                <span className="text-xs font-semibold">7 Dias de Garantia</span>
+              </div>
             </div>
             
             {/* Urgency Banner - Full Width */}
