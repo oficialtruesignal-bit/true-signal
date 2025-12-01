@@ -63,7 +63,7 @@ export class MercadoPagoService {
 
   /**
    * Create a subscription plan for True Signal Pro
-   * BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF) with 15-day trial
+   * BLACK FRIDAY: R$ 99,87 → R$ 47,90 (52% OFF) with 5-day trial
    */
   async createSubscriptionPlan(): Promise<any> {
     if (!this.isConfigured()) {
@@ -78,7 +78,7 @@ export class MercadoPagoService {
         transaction_amount: 47.90,
         currency_id: 'BRL',
         free_trial: {
-          frequency: 15,
+          frequency: 5,
           frequency_type: 'days',
         },
       },

@@ -1,8 +1,8 @@
 import { useAuth } from './use-auth';
 import { differenceInCalendarDays, differenceInHours } from 'date-fns';
 
-const TRIAL_DAYS = 15;
-const TRIAL_HOURS = TRIAL_DAYS * 24; // 360 hours = 15 full days
+const TRIAL_DAYS = 5;
+const TRIAL_HOURS = TRIAL_DAYS * 24; // 120 hours = 5 full days
 
 export function useAccessControl() {
   const { user } = useAuth();

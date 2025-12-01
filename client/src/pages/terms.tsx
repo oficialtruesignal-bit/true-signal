@@ -49,7 +49,7 @@ export default function TermsPage() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">3. Período de Teste (Trial)</h2>
             <p>
-              Novos usuários têm direito a <strong className="text-white">15 dias de acesso limitado gratuito</strong> a partir do cadastro. Durante o período de teste:
+              Novos usuários têm direito a <strong className="text-white">5 dias de acesso gratuito</strong> a partir do cadastro. Durante o período de teste:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>Acesso limitado a <strong className="text-white">1 bilhete por dia</strong> (bilhetes adicionais ficam bloqueados);</li>
@@ -59,7 +59,7 @@ export default function TermsPage() {
             </ul>
             <div className="bg-[#33b864]/10 border border-[#33b864]/30 rounded-xl p-6 mt-4">
               <p className="text-[#33b864] font-semibold">
-                Após os 15 dias, o acesso total requer assinatura do plano True Signal Pro (R$ 2,00/mês).
+                Após os 5 dias, o acesso total requer assinatura do plano True Signal Pro (R$ 47,90/mês).
               </p>
             </div>
           </section>
@@ -70,9 +70,9 @@ export default function TermsPage() {
               A assinatura <strong className="text-white">True Signal Pro</strong> oferece acesso ilimitado a todos os bilhetes e recursos premium. Condições:
             </p>
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
-              <li>Cobrança mensal recorrente de <strong className="text-white">R$ 2,00</strong>;</li>
+              <li>Cobrança mensal recorrente de <strong className="text-white">R$ 47,90</strong>;</li>
               <li>Renovação automática até cancelamento;</li>
-              <li>Garantia de reembolso de 15 dias (primeira assinatura);</li>
+              <li>Garantia de reembolso de 7 dias (primeira assinatura);</li>
               <li>Pagamento processado via gateway seguro (PCI DSS).</li>
             </ul>
           </section>
@@ -85,8 +85,8 @@ export default function TermsPage() {
             <ul className="list-disc list-inside space-y-2 mt-4 ml-4">
               <li>O acesso permanece ativo até o fim do ciclo pago;</li>
               <li>Não haverá cobrança no próximo ciclo;</li>
-              <li>Reembolso disponível apenas nos <strong className="text-white">primeiros 15 dias</strong> da primeira assinatura;</li>
-              <li>Cancelamentos após 15 dias não geram reembolso proporcional.</li>
+              <li>Reembolso disponível apenas nos <strong className="text-white">primeiros 7 dias</strong> da primeira assinatura;</li>
+              <li>Cancelamentos após 7 dias não geram reembolso proporcional.</li>
             </ul>
           </section>
 
