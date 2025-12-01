@@ -686,13 +686,19 @@ export default function CheckoutPage() {
             </div>
             
             {/* Urgency Banner */}
-            <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-full border border-red-500/40 mb-5">
-              <div className="flex items-center gap-1.5">
-                <Zap className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm font-bold text-white">PROMOÇÃO DE FIM DE ANO</span>
+            <div className="inline-flex items-center gap-4 px-6 py-3 bg-gradient-to-r from-red-500/20 to-orange-500/20 rounded-2xl border border-red-500/40 mb-5">
+              <div className="flex items-center gap-2">
+                <Zap className="w-5 h-5 text-yellow-400" />
+                <div className="text-left">
+                  <span className="text-xs font-bold text-yellow-400 block">PROMOÇÃO</span>
+                  <span className="text-sm font-bold text-white">DE FIM DE ANO</span>
+                </div>
               </div>
-              <div className="h-4 w-px bg-white/20"></div>
-              <span className="text-sm font-bold text-red-400 animate-pulse">52% OFF - ATÉ 31/12</span>
+              <div className="h-10 w-px bg-white/20"></div>
+              <div className="text-center">
+                <span className="text-lg font-bold text-red-400 block animate-pulse">52% OFF</span>
+                <span className="text-xs font-medium text-gray-300">Até 31/12</span>
+              </div>
             </div>
             
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-sora font-bold text-white mb-4 leading-tight">
