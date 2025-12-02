@@ -314,7 +314,7 @@ function calculateFavoritismProfile(
   };
 }
 
-// Estratégia: Bot Fator Casa Favorito
+// Estratégia: Bot Fator Casa Favorito (Dados Expandidos)
 const homeFavoriteBot: BotStrategy = {
   id: 'home_favorite',
   name: 'Fator Casa Favorito',
@@ -330,11 +330,33 @@ const homeFavoriteBot: BotStrategy = {
     const possessionDelta = homeStats.possession - awayStats.possession;
     if (possessionDelta < thresholds.minPossessionDelta) return null;
     
-    // Calcular confiança
+    // ═══════════════════════════════════════════════════════════════
+    // ANÁLISE COM DADOS EXPANDIDOS DA API-FOOTBALL
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Usar xG calculado (mais preciso que chutes)
+    const xGDelta = homeStats.xG - awayStats.xG;
+    const xGBonus = Math.min(10, xGDelta * 8);
+    
+    // Analisar qualidade das chances (chutes dentro da área)
+    const shotsQuality = homeStats.shotsInsideBox / Math.max(1, homeStats.shotsTotal);
+    const qualityBonus = Math.min(8, shotsQuality * 15);
+    
+    // Analisar controle do jogo (precisão de passes)
+    const passControlBonus = Math.min(5, (homeStats.passesAccuracy - awayStats.passesAccuracy) * 0.2);
+    
+    // Pressão intensa (usar métrica calculada)
+    const pressureIntensityBonus = Math.min(8, homeStats.pressureIntensity * 0.1);
+    
+    // Calcular confiança com dados expandidos
     const confidence = Math.min(95, 
-      (homeProfile.favoritismScore * 0.3) +
-      (homePressure.pressureIndex * 0.4) +
-      (homePressure.goalProbability * 0.3)
+      (homeProfile.favoritismScore * 0.25) +
+      (homePressure.pressureIndex * 0.30) +
+      (homePressure.goalProbability * 0.25) +
+      xGBonus +
+      qualityBonus +
+      passControlBonus +
+      pressureIntensityBonus
     );
     
     if (confidence < 75) return null;
@@ -349,12 +371,12 @@ const homeFavoriteBot: BotStrategy = {
       pressureIndex: homePressure.pressureIndex,
       goalProbability: homePressure.goalProbability,
       suggestedMarket: `Próximo Gol: ${fixture.teams.home.name}`,
-      reasoning: `Casa favorita (${homeProfile.favoritismScore.toFixed(0)}%) dominando com ${homeStats.possession}% posse e pressão ${homePressure.pressureIndex.toFixed(0)}%`,
+      reasoning: `Casa favorita (${homeProfile.favoritismScore.toFixed(0)}%) | xG: ${homeStats.xG.toFixed(2)} vs ${awayStats.xG.toFixed(2)} | Chutes área: ${homeStats.shotsInsideBox} | Pressão: ${homePressure.pressureIndex.toFixed(0)}%`,
     };
   },
 };
 
-// Estratégia: Bot Visitante Superior
+// Estratégia: Bot Visitante Superior (Dados Expandidos)
 const awayDominantBot: BotStrategy = {
   id: 'away_dominant',
   name: 'Visitante Superior',
@@ -367,19 +389,38 @@ const awayDominantBot: BotStrategy = {
     if (awayPressure.pressureIndex < thresholds.minPressure) return null;
     if (awayPressure.goalProbability < thresholds.minGoalProb) return null;
     
-    // Visitante precisa ter grande vantagem de xG
-    const awayXG = awayStats.shotsOnTarget * 0.35 + (awayStats.shotsTotal - awayStats.shotsOnTarget) * 0.08;
-    const homeXG = homeStats.shotsOnTarget * 0.35 + (homeStats.shotsTotal - homeStats.shotsOnTarget) * 0.08;
-    const xGDelta = awayXG - homeXG;
+    // ═══════════════════════════════════════════════════════════════
+    // ANÁLISE COM xG REAL DA API-FOOTBALL
+    // ═══════════════════════════════════════════════════════════════
     
+    // Usar xG já calculado (modelo preciso baseado em dados reais)
+    const xGDelta = awayStats.xG - homeStats.xG;
     if (xGDelta < thresholds.minXGDelta) return null;
     
-    // Calcular confiança
+    // Análise adicional: qualidade de finalização
+    const awayFinishingQuality = awayStats.shotsOnTarget / Math.max(1, awayStats.shotsTotal);
+    const homeFinishingQuality = homeStats.shotsOnTarget / Math.max(1, homeStats.shotsTotal);
+    const finishingBonus = Math.min(8, (awayFinishingQuality - homeFinishingQuality) * 30);
+    
+    // Visitante com chutes dentro da área (mais perigosos)
+    const areaPresence = awayStats.shotsInsideBox > homeStats.shotsInsideBox ? 5 : 0;
+    
+    // Pressão intensa do visitante (raro mas poderoso)
+    const pressureBonus = Math.min(10, (awayStats.pressureIntensity - homeStats.pressureIntensity) * 0.15);
+    
+    // Escanteios também indicam domínio
+    const cornersBonus = awayStats.corners > homeStats.corners + 2 ? 5 : 0;
+    
+    // Calcular confiança com dados expandidos
     const confidence = Math.min(95, 
-      (awayProfile.favoritismScore * 0.25) +
-      (awayPressure.pressureIndex * 0.35) +
-      (awayPressure.goalProbability * 0.25) +
-      (Math.min(20, xGDelta * 10) * 0.15)
+      (awayProfile.favoritismScore * 0.20) +
+      (awayPressure.pressureIndex * 0.25) +
+      (awayPressure.goalProbability * 0.20) +
+      (Math.min(15, xGDelta * 10)) +
+      finishingBonus +
+      areaPresence +
+      pressureBonus +
+      cornersBonus
     );
     
     if (confidence < 75) return null;
@@ -394,12 +435,12 @@ const awayDominantBot: BotStrategy = {
       pressureIndex: awayPressure.pressureIndex,
       goalProbability: awayPressure.goalProbability,
       suggestedMarket: `Próximo Gol: ${fixture.teams.away.name}`,
-      reasoning: `Visitante dominante com xG +${xGDelta.toFixed(2)} e ${awayStats.shotsOnTarget} chutes no gol`,
+      reasoning: `Visitante dominante | xG: ${awayStats.xG.toFixed(2)} vs ${homeStats.xG.toFixed(2)} (+${xGDelta.toFixed(2)}) | Chutes gol: ${awayStats.shotsOnTarget} | Área: ${awayStats.shotsInsideBox}`,
     };
   },
 };
 
-// Estratégia: Bot Favorito do Mercado
+// Estratégia: Bot Favorito do Mercado (Dados Expandidos + Odds)
 const marketFavoriteBot: BotStrategy = {
   id: 'market_favorite',
   name: 'Favorito do Mercado',
@@ -407,7 +448,7 @@ const marketFavoriteBot: BotStrategy = {
   evaluate: (fixture, homeStats, awayStats, homePressure, awayPressure, homeProfile, awayProfile, matchMinute) => {
     const thresholds = BOT_THRESHOLDS.market_favorite;
     
-    // Determinar qual time é o grande favorito
+    // Determinar qual time é o grande favorito (inclui odds pré-jogo)
     const isBigHomeFavorite = homeProfile.favoritismScore >= thresholds.minFavoritism;
     const isBigAwayFavorite = awayProfile.favoritismScore >= thresholds.minFavoritism;
     
@@ -415,17 +456,44 @@ const marketFavoriteBot: BotStrategy = {
     
     const favoriteProfile = isBigHomeFavorite ? homeProfile : awayProfile;
     const favoritePressure = isBigHomeFavorite ? homePressure : awayPressure;
+    const favoriteStats = isBigHomeFavorite ? homeStats : awayStats;
+    const opponentStats = isBigHomeFavorite ? awayStats : homeStats;
     const favoriteTeam = isBigHomeFavorite ? fixture.teams.home : fixture.teams.away;
     const teamSide: 'home' | 'away' = isBigHomeFavorite ? 'home' : 'away';
     
     if (favoritePressure.pressureIndex < thresholds.minPressure) return null;
     if (favoritePressure.goalProbability < thresholds.minGoalProb) return null;
     
-    // Calcular confiança
+    // ═══════════════════════════════════════════════════════════════
+    // ANÁLISE COM DADOS EXPANDIDOS + ODDS
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Bônus por implied odds alto (vindo das casas de apostas)
+    const impliedOddsBonus = Math.min(10, (favoriteProfile.impliedOdds - 50) * 0.2);
+    
+    // xG dominance
+    const xGDelta = favoriteStats.xG - opponentStats.xG;
+    const xGBonus = Math.min(8, xGDelta * 6);
+    
+    // Controle territorial (passes + pressão)
+    const passControl = favoriteStats.passesAccuracy > opponentStats.passesAccuracy ? 4 : 0;
+    const pressureControl = favoriteStats.pressureIntensity > opponentStats.pressureIntensity ? 4 : 0;
+    
+    // Perigo ofensivo (chutes dentro da área + defesas do goleiro adversário)
+    const shotsDanger = Math.min(6, favoriteStats.shotsInsideBox * 1.5);
+    const savesForced = Math.min(5, opponentStats.saves * 1.2); // Goleiro adversário trabalhando
+    
+    // Calcular confiança com dados expandidos
     const confidence = Math.min(95, 
-      (favoriteProfile.favoritismScore * 0.35) +
-      (favoritePressure.pressureIndex * 0.35) +
-      (favoritePressure.goalProbability * 0.30)
+      (favoriteProfile.favoritismScore * 0.25) +
+      (favoritePressure.pressureIndex * 0.25) +
+      (favoritePressure.goalProbability * 0.20) +
+      impliedOddsBonus +
+      xGBonus +
+      passControl +
+      pressureControl +
+      shotsDanger +
+      savesForced
     );
     
     if (confidence < 78) return null;
@@ -440,12 +508,12 @@ const marketFavoriteBot: BotStrategy = {
       pressureIndex: favoritePressure.pressureIndex,
       goalProbability: favoritePressure.goalProbability,
       suggestedMarket: `${favoriteTeam.name} Vence ou Empata`,
-      reasoning: `Grande favorito (${favoriteProfile.favoritismScore.toFixed(0)}%) com pressão alta e probabilidade de gol ${favoritePressure.goalProbability.toFixed(0)}%`,
+      reasoning: `Favorito mercado (${favoriteProfile.impliedOdds.toFixed(0)}% odds) | xG: ${favoriteStats.xG.toFixed(2)} | Chutes área: ${favoriteStats.shotsInsideBox} | Defesas forçadas: ${opponentStats.saves}`,
     };
   },
 };
 
-// Estratégia: Bot Explosão de Pressão
+// Estratégia: Bot Explosão de Pressão (Dados Expandidos)
 const pressureSurgeBot: BotStrategy = {
   id: 'pressure_surge',
   name: 'Explosão de Pressão',
@@ -460,6 +528,8 @@ const pressureSurgeBot: BotStrategy = {
     if (!homeSurge && !awaySurge) return null;
     
     const surgingPressure = homeSurge ? homePressure : awayPressure;
+    const surgingStats = homeSurge ? homeStats : awayStats;
+    const opponentStats = homeSurge ? awayStats : homeStats;
     const surgingTeam = homeSurge ? fixture.teams.home : fixture.teams.away;
     const teamSide: 'home' | 'away' = homeSurge ? 'home' : 'away';
     const surgingProfile = homeSurge ? homeProfile : awayProfile;
@@ -467,13 +537,40 @@ const pressureSurgeBot: BotStrategy = {
     if (surgingPressure.pressureIndex < thresholds.minPressure) return null;
     if (surgingPressure.goalProbability < thresholds.minGoalProb) return null;
     
-    // Calcular confiança baseada no surge
+    // ═══════════════════════════════════════════════════════════════
+    // ANÁLISE DE SURGE COM DADOS EXPANDIDOS
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Calcular surge baseado em múltiplas métricas
     const surgeBonus = Math.min(15, (surgingPressure.pressureDelta - thresholds.minSurge) * 1.5);
+    
+    // Verificar se o surge é suportado por métricas ofensivas
+    const xGRecent = surgingStats.xG; // xG acumulado (proxy para momento)
+    const shotsRecentBonus = Math.min(8, surgingStats.shotsOnTarget * 2);
+    
+    // Chutes dentro da área indicam perigo real
+    const areaPresenceBonus = Math.min(6, surgingStats.shotsInsideBox * 2);
+    
+    // Escanteios recentes indicam pressão territorial
+    const cornersBonus = surgingStats.corners > opponentStats.corners + 1 ? 4 : 0;
+    
+    // Ataques perigosos vs normais
+    const dangerRatio = surgingStats.dangerousAttacks / Math.max(1, surgingStats.attacks);
+    const dangerBonus = Math.min(5, dangerRatio * 10);
+    
+    // Pressão intensa crescente
+    const pressureIntensityBonus = Math.min(6, surgingStats.pressureIntensity * 0.08);
+    
     const confidence = Math.min(95, 
-      (surgingPressure.pressureIndex * 0.35) +
-      (surgingPressure.goalProbability * 0.35) +
+      (surgingPressure.pressureIndex * 0.25) +
+      (surgingPressure.goalProbability * 0.25) +
       surgeBonus +
-      (surgingProfile.favoritismScore * 0.15)
+      (surgingProfile.favoritismScore * 0.10) +
+      shotsRecentBonus +
+      areaPresenceBonus +
+      cornersBonus +
+      dangerBonus +
+      pressureIntensityBonus
     );
     
     if (confidence < 75) return null;
@@ -488,7 +585,7 @@ const pressureSurgeBot: BotStrategy = {
       pressureIndex: surgingPressure.pressureIndex,
       goalProbability: surgingPressure.goalProbability,
       suggestedMarket: `Próximo Gol em 5min`,
-      reasoning: `Surge de +${surgingPressure.pressureDelta.toFixed(0)}% em pressão! ${surgingTeam.name} atacando intensamente`,
+      reasoning: `🔥 SURGE +${surgingPressure.pressureDelta.toFixed(0)}% | xG: ${surgingStats.xG.toFixed(2)} | Chutes gol: ${surgingStats.shotsOnTarget} | Área: ${surgingStats.shotsInsideBox} | Corners: ${surgingStats.corners}`,
     };
   },
 };
