@@ -228,6 +228,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [hasFetchedFromAPI, setHasFetchedFromAPI] = useState(false);
+  const [isComboExpanded, setIsComboExpanded] = useState(false);
   
   const userBet = getBet(signal.id);
   const userHasEntered = hasEntered(signal.id);
@@ -764,56 +765,124 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           </div>
         </div>
 
-        {/* Times com logos pequenos */}
-        <div className="flex items-center pt-4 mt-4 border-t border-white/10">
-          {/* Time Casa */}
-          <div className="flex items-center gap-2 flex-1">
-            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
-              {homeTeamLogo ? (
-                <img src={homeTeamLogo} alt={signal.homeTeam} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
-                  {signal.homeTeam.charAt(0)}
-                </div>
-              )}
+        {/* Botão para expandir combo - só aparece se for combo */}
+        {isComboTip && parsedLegs.length > 0 && (
+          <button
+            onClick={() => setIsComboExpanded(!isComboExpanded)}
+            className="w-full flex items-center justify-between pt-4 mt-2 border-t border-white/10 hover:bg-white/5 rounded-lg px-2 py-2 transition-colors"
+            data-testid={`expand-combo-${signal.id}`}
+          >
+            <div className="flex items-center gap-2">
+              <div className="w-5 h-5 rounded-full bg-[#33b864]/20 flex items-center justify-center">
+                <span className="text-[10px] font-bold text-[#33b864]">{parsedLegs.length}</span>
+              </div>
+              <span className="text-gray-300 text-sm font-medium">Ver seleções do combo</span>
             </div>
-            <span className="text-white text-sm font-medium">{signal.homeTeam}</span>
-          </div>
+            <ChevronDown className={cn(
+              "w-5 h-5 text-[#33b864] transition-transform duration-200",
+              isComboExpanded && "rotate-180"
+            )} />
+          </button>
+        )}
 
-          {/* X central */}
-          <span className="text-gray-500 font-bold text-sm px-3">X</span>
-
-          {/* Time Fora */}
-          <div className="flex items-center gap-2 flex-1 justify-end">
-            <span className="text-white text-sm font-medium">{signal.awayTeam}</span>
-            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
-              {awayTeamLogo ? (
-                <img src={awayTeamLogo} alt={signal.awayTeam} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
-                  {signal.awayTeam.charAt(0)}
+        {/* Legs do combo expandidas */}
+        {isComboTip && isComboExpanded && parsedLegs.length > 0 && (
+          <div className="mt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
+            {parsedLegs.map((leg, idx) => (
+              <div 
+                key={idx} 
+                className="bg-white/5 rounded-lg p-3 border border-white/10"
+              >
+                {/* Header da leg com times e logos */}
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    {leg.homeTeamLogo && (
+                      <img src={leg.homeTeamLogo} alt={leg.homeTeam} className="w-5 h-5 rounded-full" />
+                    )}
+                    <span className="text-white text-xs font-medium">{leg.homeTeam}</span>
+                    <span className="text-gray-500 text-xs">vs</span>
+                    <span className="text-white text-xs font-medium">{leg.awayTeam}</span>
+                    {leg.awayTeamLogo && (
+                      <img src={leg.awayTeamLogo} alt={leg.awayTeam} className="w-5 h-5 rounded-full" />
+                    )}
+                  </div>
+                  <span className="text-[#33b864] font-bold text-sm">@{leg.odd?.toFixed(2)}</span>
                 </div>
-              )}
+                {/* Mercado e outcome */}
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <span className="text-gray-400 text-[10px] uppercase tracking-wide">{leg.market}</span>
+                    <p className="text-white text-xs mt-0.5">{leg.outcome}</p>
+                  </div>
+                  {leg.probability && (
+                    <span className="text-xs text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">
+                      {leg.probability.toFixed(0)}%
+                    </span>
+                  )}
+                </div>
+                {/* Liga */}
+                <div className="mt-2 pt-2 border-t border-white/5">
+                  <span className="text-[#33b864] text-[10px]">{leg.league}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Times com logos pequenos - só mostra para apostas simples */}
+        {!isComboTip && (
+          <div className="flex items-center pt-4 mt-4 border-t border-white/10">
+            {/* Time Casa */}
+            <div className="flex items-center gap-2 flex-1">
+              <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+                {homeTeamLogo ? (
+                  <img src={homeTeamLogo} alt={signal.homeTeam} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                    {signal.homeTeam.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <span className="text-white text-sm font-medium">{signal.homeTeam}</span>
+            </div>
+
+            {/* X central */}
+            <span className="text-gray-500 font-bold text-sm px-3">X</span>
+
+            {/* Time Fora */}
+            <div className="flex items-center gap-2 flex-1 justify-end">
+              <span className="text-white text-sm font-medium">{signal.awayTeam}</span>
+              <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+                {awayTeamLogo ? (
+                  <img src={awayTeamLogo} alt={signal.awayTeam} className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                    {signal.awayTeam.charAt(0)}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        )}
         
-        {/* Campeonato + Data e Hora do Jogo */}
-        <div className="text-center mt-3 pt-3 border-t border-white/5">
-          <div className="text-[#33b864] text-xs font-medium mb-1">{officialLeague}</div>
-          {officialMatchTime && (
-            <span className="text-gray-400 text-xs">
-              {(() => {
-                const date = new Date(officialMatchTime);
-                const day = date.getDate().toString().padStart(2, '0');
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const hours = date.getHours().toString().padStart(2, '0');
-                const minutes = date.getMinutes().toString().padStart(2, '0');
-                return `${day}/${month} às ${hours}:${minutes}`;
-              })()}
-            </span>
-          )}
-        </div>
+        {/* Campeonato + Data e Hora do Jogo - só para apostas simples */}
+        {!isComboTip && (
+          <div className="text-center mt-3 pt-3 border-t border-white/5">
+            <div className="text-[#33b864] text-xs font-medium mb-1">{officialLeague}</div>
+            {officialMatchTime && (
+              <span className="text-gray-400 text-xs">
+                {(() => {
+                  const date = new Date(officialMatchTime);
+                  const day = date.getDate().toString().padStart(2, '0');
+                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                  const hours = date.getHours().toString().padStart(2, '0');
+                  const minutes = date.getMinutes().toString().padStart(2, '0');
+                  return `${day}/${month} às ${hours}:${minutes}`;
+                })()}
+              </span>
+            )}
+          </div>
+        )}
         
         {/* Entrada Recomendada com EV à esquerda e Análise à direita */}
         <div className="mt-3 pt-3 border-t border-white/5">
