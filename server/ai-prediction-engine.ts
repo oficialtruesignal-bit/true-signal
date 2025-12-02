@@ -1273,8 +1273,8 @@ class AIPredictionEngine {
       
       console.log(`[AI Engine] Analyzing ${filteredFixtures.length} major league fixtures`);
       
-      // FILET MIGNON: Limitar a 15 jogos de alta qualidade
-      const MAX_FIXTURES = 15;
+      // META DIÁRIA: Analisar mais jogos para gerar 6-8 bilhetes/dia
+      const MAX_FIXTURES = 25; // Aumentado para gerar mais bilhetes
       let totalPredictions = 0;
       
       for (const fixture of filteredFixtures.slice(0, MAX_FIXTURES)) {
@@ -1326,12 +1326,12 @@ class AIPredictionEngine {
     homeStats: any;
     awayStats: any;
   }>): Promise<number> {
-    const MIN_TOTAL_ODD = 1.50;
-    const MIN_INDIVIDUAL_ODD = 1.35; // Filtrar odds premium (abaixado de 1.40 para 1.35)
-    const MIN_CONFIDENCE = 75; // Abaixado de 85% para 75% - mais combos
-    const MAX_LEGS = 3;
+    const MIN_TOTAL_ODD = 1.45; // Reduzido para gerar mais combos
+    const MIN_INDIVIDUAL_ODD = 1.30; // Reduzido para 1.30
+    const MIN_CONFIDENCE = 70; // Reduzido para 70% - meta 6-8 bilhetes/dia
+    const MAX_LEGS = 4; // Aumentado para 4 linhas máx
     
-    // Filtrar previsões PREMIUM (confiança >= 85%, odd >= 1.45) - FILET MIGNON ONLY
+    // Filtrar previsões válidas (confiança >= 70%, odd >= 1.30)
     const validPredictions = predictions.filter(p => 
       p.confidence >= MIN_CONFIDENCE && 
       p.suggestedOdd >= MIN_INDIVIDUAL_ODD
