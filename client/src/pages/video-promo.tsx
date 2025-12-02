@@ -36,7 +36,7 @@ import logoFinal from '@assets/generated_videos/shield_pulse_logo_true_gray_sign
 import logoBillion from '@assets/generated_videos/elegant_billion_style_logo_true_signal.mp4';
 import greenMatrix from '@assets/generated_videos/matrix_style_professional_green_celebration.mp4';
 import redFrustration from '@assets/generated_videos/red_frustration_hollywood_disappointment_moment.mp4';
-import socialProof from '@assets/generated_videos/social_proof_stats_87%_assertividade_premium.mp4';
+import socialProof from '@assets/generated_videos/social_proof_stats_87_assertividade_premium.mp4';
 import urgencyTimer from '@assets/generated_videos/urgency_countdown_ultimas_vagas_timer.mp4';
 import matchMatrix from '@assets/generated_videos/football_match_matrix_algorithm_tracking.mp4';
 import playerData from '@assets/generated_videos/sportsman_running_matrix_data_overlay.mp4';
