@@ -1227,7 +1227,74 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
       </div>
 
       {/* --- FOOTER: Botão de Ação --- */}
-      <div className="px-4 pb-4">
+      <div className="px-4 pb-4 space-y-2">
+        {/* Botão Copiar Bilhete */}
+        <button
+          onClick={() => {
+            // Gerar texto formatado com bolinhas
+            const lines = signal.market.split('\n').filter(line => line.trim());
+            const isCombo = lines.length > 1 || signal.isCombo;
+            
+            let text = `🎯 TRUE SIGNAL\n`;
+            text += `━━━━━━━━━━━━━━━━\n\n`;
+            
+            if (isCombo && parsedLegs.length > 0) {
+              text += `📋 COMBO ${parsedLegs.length} SELEÇÕES\n\n`;
+              parsedLegs.forEach((leg, idx) => {
+                text += `⚫ ${leg.homeTeam} vs ${leg.awayTeam}\n`;
+                text += `   📊 ${leg.market}: ${leg.outcome}\n`;
+                text += `   💰 Odd: @${leg.odd?.toFixed(2)}\n`;
+                if (leg.league) text += `   🏆 ${leg.league}\n`;
+                text += `\n`;
+              });
+              text += `━━━━━━━━━━━━━━━━\n`;
+              text += `💎 ODD TOTAL: @${totalOdd.toFixed(2)}\n`;
+            } else {
+              text += `⚽ ${signal.homeTeam} vs ${signal.awayTeam}\n`;
+              text += `🏆 ${officialLeague}\n\n`;
+              lines.forEach(line => {
+                text += `⚫ ${line.trim()}\n`;
+              });
+              text += `\n━━━━━━━━━━━━━━━━\n`;
+              text += `💎 ODD: @${totalOdd.toFixed(2)}\n`;
+            }
+            
+            text += `📈 Entrada: ${(signal.stake || 1).toFixed(1)}u`;
+            if (unitValue && unitValue > 0) {
+              text += ` = R$ ${((signal.stake || 1) * unitValue).toFixed(2).replace('.', ',')}`;
+            }
+            text += `\n`;
+            
+            if (signal.expectedValue && signal.expectedValue > 0) {
+              text += `✅ EV: +${signal.expectedValue.toFixed(1)}%\n`;
+            }
+            if (signal.confidence) {
+              text += `🔒 Confiança: ${signal.confidence.toFixed(0)}%\n`;
+            }
+            
+            text += `\n━━━━━━━━━━━━━━━━\n`;
+            text += `🔗 Powered by TRUE SIGNAL`;
+            
+            navigator.clipboard.writeText(text);
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+          }}
+          className="w-full bg-white/5 hover:bg-white/10 border border-white/10 h-10 rounded-xl flex items-center justify-center gap-2 transition-all"
+          data-testid={`button-copy-${signal.id}`}
+        >
+          {isCopied ? (
+            <>
+              <Check className="w-4 h-4 text-[#33b864]" />
+              <span className="text-[#33b864] font-medium text-sm">Bilhete Copiado!</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-4 h-4 text-gray-400" />
+              <span className="text-gray-300 font-medium text-sm">Copiar Bilhete</span>
+            </>
+          )}
+        </button>
+        
         {/* Usuário já marcou resultado próprio */}
         {userBet?.result === 'green' ? (
           <div className="w-full bg-[#33b864] h-12 rounded-xl flex items-center justify-center gap-2">
