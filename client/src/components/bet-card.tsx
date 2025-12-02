@@ -1,5 +1,5 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users, Pencil, Trash2, Heart, Brain, TrendingUp, Info, ChevronDown, ChevronUp } from "lucide-react";
+import { Copy, Users, Pencil, Trash2, Heart, Brain, TrendingUp, Info, ChevronDown, ChevronUp, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useQueryClient } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import { useFavorites } from "@/hooks/use-favorites";
+import { useUserBets } from "@/hooks/use-user-bets";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,6 +87,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const { isFavorite, toggleFavorite, isPending: isFavoritesPending } = useFavorites();
+  const { hasEntered, getBet, enterBet, markResult, isEntering, isMarkingResult } = useUserBets();
   const isAdmin = user?.role === 'admin';
   const [currentStatus, setCurrentStatus] = useState<Signal["status"]>(signal.status);
   const [officialLeague, setOfficialLeague] = useState<string>(signal.league);
@@ -95,6 +97,9 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const [isCopied, setIsCopied] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [hasFetchedFromAPI, setHasFetchedFromAPI] = useState(false);
+  
+  const userBet = getBet(signal.id);
+  const userHasEntered = hasEntered(signal.id);
   
   // Use backend-normalized legs (already parsed as array)
   const parsedLegs = (() => {
@@ -259,6 +264,57 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
         title: "Erro ao copiar",
         description: "Tente novamente",
         className: "bg-red-500/10 border-red-500/20 text-red-500",
+      });
+    }
+  };
+
+  const handleEnterBet = async () => {
+    if (!user) {
+      toast({
+        title: "Faça login",
+        description: "Entre na sua conta para registrar suas entradas",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      await enterBet(signal.id, String(signal.stake || '1'), String(totalOdd));
+      
+      // Também copia o bilhete
+      await handleCopy();
+      
+      toast({
+        title: "Entrada registrada! 🎯",
+        description: "Agora você pode marcar o resultado depois do jogo",
+        className: "bg-primary/10 border-primary/20 text-primary",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível registrar a entrada",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleMarkResult = async (result: 'green' | 'red') => {
+    try {
+      await markResult(signal.id, result);
+      toast({
+        title: result === 'green' ? "Parabéns! 🎉" : "Acontece... 💪",
+        description: result === 'green' 
+          ? "Resultado marcado como GANHOU!" 
+          : "Resultado marcado como PERDEU. Vamos recuperar!",
+        className: result === 'green' 
+          ? "bg-green-500/10 border-green-500/20 text-green-500"
+          : "bg-red-500/10 border-red-500/20 text-red-500",
+      });
+    } catch (error) {
+      toast({
+        title: "Erro",
+        description: "Não foi possível marcar o resultado",
+        variant: "destructive",
       });
     }
   };
@@ -728,30 +784,69 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
 
       {/* --- FOOTER: Botão de Ação --- */}
       <div className="px-4 pb-4">
-        {currentStatus === 'green' ? (
-          <div 
-            className="w-full bg-[#33b864] h-12 rounded-xl flex items-center justify-center gap-2"
-          >
+        {/* Usuário já marcou resultado próprio */}
+        {userBet?.result === 'green' ? (
+          <div className="w-full bg-[#33b864] h-12 rounded-xl flex items-center justify-center gap-2">
+            <Check className="w-5 h-5 text-black" />
+            <span className="text-black font-bold text-sm tracking-wide">
+              VOCÊ GANHOU!
+            </span>
+          </div>
+        ) : userBet?.result === 'red' ? (
+          <div className="w-full bg-red-500 h-12 rounded-xl flex items-center justify-center gap-2">
+            <X className="w-5 h-5 text-white" />
+            <span className="text-white font-bold text-sm tracking-wide">
+              VOCÊ PERDEU
+            </span>
+          </div>
+        ) : userHasEntered ? (
+          /* Usuário entrou mas ainda não marcou resultado - mostrar botões de resultado */
+          <div className="space-y-2">
+            <p className="text-[10px] text-gray-400 text-center">Qual foi o resultado?</p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleMarkResult('green')}
+                disabled={isMarkingResult}
+                data-testid={`button-mark-green-${signal.id}`}
+                className="flex-1 bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] disabled:opacity-50 transition-all h-12 rounded-xl flex items-center justify-center gap-2"
+              >
+                <Check className="w-5 h-5 text-black" />
+                <span className="text-black font-bold text-sm">GANHOU</span>
+              </button>
+              <button
+                onClick={() => handleMarkResult('red')}
+                disabled={isMarkingResult}
+                data-testid={`button-mark-red-${signal.id}`}
+                className="flex-1 bg-red-500 hover:bg-red-600 active:scale-[0.98] disabled:opacity-50 transition-all h-12 rounded-xl flex items-center justify-center gap-2"
+              >
+                <X className="w-5 h-5 text-white" />
+                <span className="text-white font-bold text-sm">PERDEU</span>
+              </button>
+            </div>
+          </div>
+        ) : currentStatus === 'green' ? (
+          /* Bilhete já foi marcado como ganhou pelo admin - mostrar apenas status */
+          <div className="w-full bg-[#33b864] h-12 rounded-xl flex items-center justify-center gap-2">
             <span className="text-black font-bold text-sm tracking-wide">
               ✓ GANHOU
             </span>
           </div>
         ) : currentStatus === 'red' ? (
-          <div 
-            className="w-full bg-red-500 h-12 rounded-xl flex items-center justify-center gap-2"
-          >
+          <div className="w-full bg-red-500 h-12 rounded-xl flex items-center justify-center gap-2">
             <span className="text-white font-bold text-sm tracking-wide">
               ✗ PERDIDA
             </span>
           </div>
         ) : (
+          /* Status pendente - mostrar botão de entrada */
           <button 
-            onClick={handleCopy}
-            data-testid={`button-copy-${signal.id}`}
-            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] transition-all h-12 rounded-xl flex items-center justify-center gap-2"
+            onClick={handleEnterBet}
+            disabled={isEntering}
+            data-testid={`button-enter-${signal.id}`}
+            className="w-full bg-[#33b864] hover:bg-[#289a54] active:scale-[0.98] disabled:opacity-50 transition-all h-12 rounded-xl flex items-center justify-center gap-2"
           >
             <span className="text-black font-bold text-sm tracking-wide">
-              {isCopied ? "✓ COPIADO" : "COPIAR BILHETE"}
+              {isEntering ? "REGISTRANDO..." : isCopied ? "✓ COPIADO" : "ENTRAR NESSA"}
             </span>
           </button>
         )}
