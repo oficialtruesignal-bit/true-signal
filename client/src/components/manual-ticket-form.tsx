@@ -14,6 +14,18 @@ interface BetLeg {
   market: string;
 }
 
+interface StructuredLeg {
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo?: string;
+  awayTeamLogo?: string;
+  league: string;
+  market: string;
+  outcome?: string;
+  odd: number;
+  time?: string;
+}
+
 interface ManualTicketFormProps {
   onSubmit: (data: {
     homeTeam: string;
@@ -27,6 +39,9 @@ interface ManualTicketFormProps {
     homeTeamLogo?: string;
     awayTeamLogo?: string;
     fixtureId?: string;
+    isCombo?: boolean;
+    legs?: StructuredLeg[];
+    totalOdd?: number;
   }) => void;
   isSubmitting?: boolean;
 }
@@ -136,10 +151,24 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
     // Combinar mercados com quebra de linha
     const marketText = legs.map(leg => leg.market.trim()).filter(m => m).join('\n');
     const oddValue = parseFloat(totalOdd);
-
     const stakeValue = parseFloat(stake) || 1.0;
+    const isComboTicket = legs.length > 1;
+    
+    // Calcular odd individual aproximada para cada leg (dividida igualmente)
+    const oddPerLeg = legs.length > 1 ? Math.pow(oddValue, 1 / legs.length) : oddValue;
 
     if (isManualMode) {
+      // Construir array de legs estruturado para modo manual
+      const structuredLegs: StructuredLeg[] = legs.map(leg => ({
+        homeTeam: manualData.homeTeam.trim(),
+        awayTeam: manualData.awayTeam.trim(),
+        league: manualData.league.trim(),
+        market: leg.market.trim(),
+        outcome: leg.market.trim(),
+        odd: oddPerLeg,
+        time: manualData.matchTime.trim(),
+      }));
+
       // Enviar dados manuais
       onSubmit({
         homeTeam: manualData.homeTeam.trim(),
@@ -150,6 +179,9 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         odd: oddValue,
         stake: stakeValue,
         betLink: betLink,
+        isCombo: isComboTicket,
+        legs: isComboTicket ? structuredLegs : undefined,
+        totalOdd: isComboTicket ? oddValue : undefined,
       });
 
       // Reset
@@ -164,6 +196,19 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
       const minutes = matchDate.getMinutes().toString().padStart(2, '0');
       const matchTime = `${day}/${month} às ${hours}:${minutes}`;
 
+      // Construir array de legs estruturado para jogo da API
+      const structuredLegs: StructuredLeg[] = legs.map(leg => ({
+        homeTeam: selectedMatch.teams.home.name,
+        awayTeam: selectedMatch.teams.away.name,
+        homeTeamLogo: selectedMatch.teams.home.logo,
+        awayTeamLogo: selectedMatch.teams.away.logo,
+        league: selectedMatch.league.name,
+        market: leg.market.trim(),
+        outcome: leg.market.trim(),
+        odd: oddPerLeg,
+        time: matchTime,
+      }));
+
       onSubmit({
         homeTeam: selectedMatch.teams.home.name,
         awayTeam: selectedMatch.teams.away.name,
@@ -176,6 +221,9 @@ export function ManualTicketForm({ onSubmit, isSubmitting }: ManualTicketFormPro
         homeTeamLogo: selectedMatch.teams.home.logo,
         awayTeamLogo: selectedMatch.teams.away.logo,
         fixtureId: selectedMatch.fixture.id.toString(),
+        isCombo: isComboTicket,
+        legs: isComboTicket ? structuredLegs : undefined,
+        totalOdd: isComboTicket ? oddValue : undefined,
       });
 
       // Reset

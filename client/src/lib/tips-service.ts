@@ -23,31 +23,47 @@ export const tipsService = {
       
       // Map backend tip format to frontend Signal format
       // Supports both Drizzle camelCase and legacy snake_case
-      return tips.map((tip: any) => ({
-        id: tip.id,
-        league: tip.league || '',
-        homeTeam: tip.homeTeam || tip.home_team || '',
-        awayTeam: tip.awayTeam || tip.away_team || '',
-        homeTeamLogo: tip.homeTeamLogo || tip.home_team_logo || undefined,
-        awayTeamLogo: tip.awayTeamLogo || tip.away_team_logo || undefined,
-        matchTime: tip.matchTime || tip.match_time || undefined,
-        market: tip.market,
-        odd: Number(tip.odd) || 0,
-        stake: Number(tip.stake) || 1.0,
-        status: tip.status,
-        timestamp: tip.createdAt || tip.created_at,
-        betLink: tip.betLink || tip.bet_link || undefined,
-        isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
-        fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
-        imageUrl: tip.imageUrl || tip.image_url || undefined,
-        // AI Analysis fields
-        analysisRationale: tip.analysisRationale || tip.analysis_rationale || undefined,
-        analysisSummary: tip.analysisSummary || tip.analysis_summary || undefined,
-        confidence: tip.confidence ? Number(tip.confidence) : undefined,
-        probability: tip.probability ? Number(tip.probability) : undefined,
-        expectedValue: tip.expectedValue ? Number(tip.expectedValue) : (tip.expected_value ? Number(tip.expected_value) : undefined),
-        aiSourceId: tip.aiSourceId || tip.ai_source_id || undefined,
-      }));
+      return tips.map((tip: any) => {
+        // Parse legs JSON if it's a string
+        let parsedLegs = undefined;
+        if (tip.legs) {
+          try {
+            parsedLegs = typeof tip.legs === 'string' ? JSON.parse(tip.legs) : tip.legs;
+          } catch {
+            parsedLegs = undefined;
+          }
+        }
+        
+        return {
+          id: tip.id,
+          league: tip.league || '',
+          homeTeam: tip.homeTeam || tip.home_team || '',
+          awayTeam: tip.awayTeam || tip.away_team || '',
+          homeTeamLogo: tip.homeTeamLogo || tip.home_team_logo || undefined,
+          awayTeamLogo: tip.awayTeamLogo || tip.away_team_logo || undefined,
+          matchTime: tip.matchTime || tip.match_time || undefined,
+          market: tip.market,
+          odd: Number(tip.odd) || 0,
+          stake: Number(tip.stake) || 1.0,
+          status: tip.status,
+          timestamp: tip.createdAt || tip.created_at,
+          betLink: tip.betLink || tip.bet_link || undefined,
+          isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
+          fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
+          imageUrl: tip.imageUrl || tip.image_url || undefined,
+          // Combo support
+          isCombo: tip.isCombo || tip.is_combo || false,
+          totalOdd: tip.totalOdd ? Number(tip.totalOdd) : (tip.total_odd ? Number(tip.total_odd) : undefined),
+          legs: parsedLegs,
+          // AI Analysis fields
+          analysisRationale: tip.analysisRationale || tip.analysis_rationale || undefined,
+          analysisSummary: tip.analysisSummary || tip.analysis_summary || undefined,
+          confidence: tip.confidence ? Number(tip.confidence) : undefined,
+          probability: tip.probability ? Number(tip.probability) : undefined,
+          expectedValue: tip.expectedValue ? Number(tip.expectedValue) : (tip.expected_value ? Number(tip.expected_value) : undefined),
+          aiSourceId: tip.aiSourceId || tip.ai_source_id || undefined,
+        };
+      });
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
     }
@@ -73,11 +89,26 @@ export const tipsService = {
         fixtureId: tip.fixtureId || null,
         imageUrl: tip.imageUrl || null,
         analysisSummary: tip.analysisSummary || null,
+        // Combo support
+        isCombo: tip.isCombo || false,
+        legs: tip.legs ? JSON.stringify(tip.legs) : null,
+        totalOdd: tip.totalOdd ? tip.totalOdd.toString() : null,
         adminEmail: email, // SECURITY: Send admin email + userId
         adminUserId: userId,
       });
       
       const data = response.data.tip;
+      
+      // Parse legs JSON if it's a string
+      let parsedLegs = undefined;
+      if (data.legs) {
+        try {
+          parsedLegs = typeof data.legs === 'string' ? JSON.parse(data.legs) : data.legs;
+        } catch {
+          parsedLegs = undefined;
+        }
+      }
+      
       return {
         id: data.id,
         league: data.league || '',
@@ -95,6 +126,10 @@ export const tipsService = {
         isLive: data.isLive,
         fixtureId: data.fixtureId,
         imageUrl: data.imageUrl || undefined,
+        // Combo support
+        isCombo: data.isCombo || false,
+        totalOdd: data.totalOdd ? Number(data.totalOdd) : undefined,
+        legs: parsedLegs,
       };
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao criar tip');
