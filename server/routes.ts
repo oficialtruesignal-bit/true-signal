@@ -50,7 +50,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { date } = req.params;
       const response = await axios.get("https://v3.football.api-sports.io/fixtures", {
-        params: { date },
+        params: { 
+          date,
+          timezone: 'America/Sao_Paulo' // Usar timezone brasileiro para filtrar corretamente
+        },
         headers: {
           "x-apisports-key": FOOTBALL_API_KEY,
         },
