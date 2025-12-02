@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { profiles, tips, favorites, type InsertProfile, type Profile, type InsertTip, type Tip, type Favorite, type InsertFavorite } from "@shared/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { profiles, tips, favorites, userBets, type InsertProfile, type Profile, type InsertTip, type Tip, type Favorite, type InsertFavorite, type UserBet, type InsertUserBet } from "@shared/schema";
+import { eq, desc, and, gte, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
 export interface IStorage {
@@ -44,6 +44,13 @@ export interface IStorage {
   addFavorite(userId: string, tipId: string): Promise<Favorite>;
   removeFavorite(userId: string, tipId: string): Promise<void>;
   isFavorite(userId: string, tipId: string): Promise<boolean>;
+  
+  // User Bets methods (individual tracking)
+  getUserBets(userId: string): Promise<UserBet[]>;
+  getUserBetByTip(userId: string, tipId: string): Promise<UserBet | undefined>;
+  createUserBet(data: { userId: string; tipId: string; stakeUsed: string; oddAtEntry: string }): Promise<UserBet>;
+  updateUserBetResult(userId: string, tipId: string, result: 'green' | 'red'): Promise<UserBet | undefined>;
+  getUserMonthlyStats(userId: string): Promise<{ greens: number; reds: number; pending: number; profit: number; totalBets: number }>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -280,6 +287,81 @@ export class DatabaseStorage implements IStorage {
       and(eq(favorites.userId, userId), eq(favorites.tipId, tipId))
     );
     return !!existing;
+  }
+
+  // User Bets methods (individual tracking)
+  async getUserBets(userId: string): Promise<UserBet[]> {
+    return await db.select().from(userBets).where(eq(userBets.userId, userId)).orderBy(desc(userBets.enteredAt));
+  }
+
+  async getUserBetByTip(userId: string, tipId: string): Promise<UserBet | undefined> {
+    const [bet] = await db.select().from(userBets).where(
+      and(eq(userBets.userId, userId), eq(userBets.tipId, tipId))
+    );
+    return bet;
+  }
+
+  async createUserBet(data: { userId: string; tipId: string; stakeUsed: string; oddAtEntry: string }): Promise<UserBet> {
+    const [bet] = await db
+      .insert(userBets)
+      .values({
+        userId: data.userId,
+        tipId: data.tipId,
+        stakeUsed: data.stakeUsed,
+        oddAtEntry: data.oddAtEntry,
+        result: 'pending',
+      })
+      .returning();
+    return bet;
+  }
+
+  async updateUserBetResult(userId: string, tipId: string, result: 'green' | 'red'): Promise<UserBet | undefined> {
+    const bet = await this.getUserBetByTip(userId, tipId);
+    if (!bet) return undefined;
+
+    const odd = parseFloat(bet.oddAtEntry || '1');
+    const stake = parseFloat(bet.stakeUsed || '1');
+    const profit = result === 'green' ? (odd - 1) * stake : -stake;
+
+    const [updated] = await db
+      .update(userBets)
+      .set({ 
+        result, 
+        resultMarkedAt: new Date(),
+        profit: profit.toFixed(2)
+      })
+      .where(and(eq(userBets.userId, userId), eq(userBets.tipId, tipId)))
+      .returning();
+    return updated;
+  }
+
+  async getUserMonthlyStats(userId: string): Promise<{ greens: number; reds: number; pending: number; profit: number; totalBets: number }> {
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    const bets = await db.select().from(userBets).where(
+      and(
+        eq(userBets.userId, userId),
+        gte(userBets.enteredAt, startOfMonth)
+      )
+    );
+
+    let greens = 0;
+    let reds = 0;
+    let pending = 0;
+    let profit = 0;
+
+    for (const bet of bets) {
+      if (bet.result === 'green') greens++;
+      else if (bet.result === 'red') reds++;
+      else pending++;
+      
+      if (bet.profit) {
+        profit += parseFloat(bet.profit);
+      }
+    }
+
+    return { greens, reds, pending, profit, totalBets: bets.length };
   }
 }
 
