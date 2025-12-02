@@ -1,0 +1,47 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: PRODUÇÃO CINEMATOGRÁFICA "DRONE VIEW" 🟢
+
+Para criar vídeos que passem a sensação de "Tecnologia de Bilhões" aplicada ao futebol, precisamos unir o Realismo Cinematográfico (luzes de estádio, gramado 4K) com a Realidade Aumentada (HUD).
+
+O segredo aqui é pedir para a IA gerar a filmagem de drone JÁ COM os elementos gráficos futuristas integrados na cena, como se fosse um videogame de última geração (FIFA/EAFC) mas com texturas de vida real.
+
+Aqui estão 3 Prompts de Elite para IAs de vídeo (recomendo Kling AI ou Runway Gen-3) para gerar esses takes específicos da Bundesliga.
+
+🎥 VÍDEO 1: A "TEIA" DE POSSE DE BOLA (Visão Tática Superior)
+Foco: Mostrar como a IA enxerga as conexões e a posse antes do passe acontecer.
+
+THE PROMPT:
+
+"High-angle drone shot looking down at a professional soccer match at night (Bundesliga style atmosphere). The camera floats smoothly above the midfield. Players in yellow and black kits are passing the ball in a triangle formation.
+
+VFX / AUGMENTED REALITY: As the ball moves, glowing neon green lines (#33b864) connect the players, forming a geometric web on the grass. Floating text tracks the ball: 'POSSESSION: 68%'. The grass is hyper-realistic 4k. The lighting is dramatic stadium floodlights with lens flares. Cinematic, broadcast quality, futuristic sports analysis."
+
+🎥 VÍDEO 2: O ATAQUE DE PRECISÃO (Tracking Shot de Velocidade)
+Foco: Acompanhar a corrida de um atacante e mostrar as estatísticas individuais dele em tempo real.
+
+THE PROMPT:
+
+"Low-altitude dynamic drone tracking shot, following a fast striker in a red kit sprinting down the wing with the ball. The background is a blur of stadium lights and cheering fans.
+
+VFX / AUGMENTED REALITY: A digital HUD (Heads Up Display) floats next to the player, tracking his movement. A speedometer bar fills up in neon green showing '34 km/h'. A target reticle locks onto the goal ahead with the text 'PRECISION PROBABILITY: 94%'. The visual style is high-tech military intelligence meets elite sports. Slow-motion ramp at the end."
+
+🎥 VÍDEO 3: A ZONA DE PRESSÃO (Mapa de Calor ao Vivo)
+Foco: Mostrar a defesa sendo pressionada e a IA calculando o risco de gol.
+
+THE PROMPT:
+
+"Cinematic orbiting drone shot hovering over the penalty box during a corner kick situation. Intense crowding of players.
+
+VFX / AUGMENTED REALITY: The grass beneath the defensive line glows with a dynamic heat map (shifting from yellow to red). A holographic dome overlay covers the area with the text 'PRESSURE INDEX: CRITICAL'. Floating percentages appear above the heads of the jumping players. The aesthetic is dark, moody, and ultra-technological, like a sci-fi scanner analyzing a battlefield. 4k resolution."
+
+💡 Dica de Diretor (Pós-Produção)
+Essas IAs vão gerar vídeos incríveis, mas os textos (como "POSSESSION: 68%") podem vir meio borrados ou com letras estranhas ("AI Gibberish").
+
+Para ficar nível "Bilhão":
+
+Gere o vídeo na IA focado na AÇÃO e nos ELEMENTOS GRÁFICOS (linhas, brilhos, barras).
+
+Leve para um editor (CapCut ou Premiere).
+
+Coloque um texto nítido com a fonte SORA por cima dos borrões da IA.
+
+Isso garante que a leitura seja perfeita e profissional.

@@ -44,8 +44,32 @@ import fanStadium from '@assets/generated_videos/fan_in_stadium_checking_phone_g
 import pushNotif from '@assets/generated_videos/smartphone_push_notification_green_alert.mp4';
 import floatingCard from '@assets/generated_videos/person_with_floating_notification_card_face.mp4';
 import stadiumPOV from '@assets/generated_videos/stadium_pov_phone_screen_visible_overlay_ready.mp4';
+import dronePossession from '@assets/generated_videos/drone_possession_web_tactical_green_lines.mp4';
+import droneStriker from '@assets/generated_videos/drone_striker_tracking_hud_speed_metrics.mp4';
+import droneHeatmap from '@assets/generated_videos/drone_corner_kick_heat_map_pressure_zone.mp4';
 
 const videos = [
+  { 
+    src: dronePossession, 
+    title: "🚁 DRONE TEIA: Posse de Bola Tática", 
+    description: "Vista aérea com linhas verdes conectando jogadores",
+    filename: "drone_teia_posse.mp4",
+    category: "final"
+  },
+  { 
+    src: droneStriker, 
+    title: "🚁 DRONE VELOCIDADE: Atacante + HUD", 
+    description: "Tracking shot com velocímetro e métricas",
+    filename: "drone_velocidade_hud.mp4",
+    category: "final"
+  },
+  { 
+    src: droneHeatmap, 
+    title: "🚁 DRONE PRESSÃO: Mapa de Calor", 
+    description: "Escanteio com zona de pressão crítica",
+    filename: "drone_pressao_heatmap.mp4",
+    category: "final"
+  },
   { 
     src: stadiumPOV, 
     title: "📱 ESTÁDIO POV: Celular na Mão", 
@@ -417,7 +441,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (17)
+            ⭐ Essencial (20)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
