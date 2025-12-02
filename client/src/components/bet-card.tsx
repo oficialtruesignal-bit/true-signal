@@ -287,12 +287,14 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   const displayHomeLogo = isComboTip ? parsedLegs[0]?.homeTeamLogo : homeTeamLogo;
   const displayAwayLogo = isComboTip ? parsedLegs[0]?.awayTeamLogo : awayTeamLogo;
   const displayLeague = isComboTip ? parsedLegs[0]?.league || signal.league : officialLeague;
-  const displayTime = isComboTip ? parsedLegs[0]?.time : (() => {
+  const displayDateTime = isComboTip ? parsedLegs[0]?.time : (() => {
     if (officialMatchTime) {
       const date = new Date(officialMatchTime);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
       const hours = date.getHours().toString().padStart(2, '0');
       const minutes = date.getMinutes().toString().padStart(2, '0');
-      return `${hours}:${minutes}`;
+      return `${day}/${month} • ${hours}:${minutes}`;
     }
     return null;
   })();
@@ -382,7 +384,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                 {displayHomeTeam} <span className="text-gray-500 font-normal">x</span> {displayAwayTeam}
               </p>
               <p className="text-gray-500 text-xs mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
-                {displayLeague}{displayTime ? ` • ${displayTime}` : ''}
+                {displayLeague}{displayDateTime ? ` • ${displayDateTime}` : ''}
               </p>
             </div>
             
