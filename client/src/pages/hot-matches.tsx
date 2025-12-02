@@ -184,17 +184,6 @@ export default function HotMatchesPage() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <Switch
-                id="auto-refresh"
-                checked={autoRefresh}
-                onCheckedChange={setAutoRefresh}
-              />
-              <label htmlFor="auto-refresh" className="text-sm text-zinc-400">
-                Auto-refresh
-              </label>
-            </div>
-
             <Button
               variant="outline"
               size="sm"
@@ -205,48 +194,17 @@ export default function HotMatchesPage() {
               <RefreshCw className="w-4 h-4 mr-2" />
               Atualizar
             </Button>
-
-            {isAdmin && (
-              <Button
-                variant={isMonitorRunning ? "destructive" : "default"}
-                size="sm"
-                onClick={() => isMonitorRunning ? stopMonitor.mutate() : startMonitor.mutate()}
-                disabled={startMonitor.isPending || stopMonitor.isPending}
-                className={!isMonitorRunning ? "bg-[#33b864] hover:bg-[#2da558]" : ""}
-                data-testid="button-toggle-monitor"
-              >
-                {isMonitorRunning ? (
-                  <>
-                    <Square className="w-4 h-4 mr-2" />
-                    Parar Monitor
-                  </>
-                ) : (
-                  <>
-                    <Play className="w-4 h-4 mr-2" />
-                    Iniciar Monitor
-                  </>
-                )}
-              </Button>
-            )}
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={cn(
-            "flex items-center gap-2 px-3 py-1.5 rounded-full text-sm",
-            isMonitorRunning 
-              ? "bg-green-500/20 text-green-400 border border-green-500/50" 
-              : "bg-zinc-800 text-zinc-400 border border-zinc-700"
-          )}>
-            <div className={cn(
-              "w-2 h-2 rounded-full",
-              isMonitorRunning ? "bg-green-500 animate-pulse" : "bg-zinc-600"
-            )} />
-            {isMonitorRunning ? "Monitor Ativo" : "Monitor Inativo"}
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/50">
+            <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+            Monitor Ativo 24/7
           </div>
 
           <Badge variant="outline" className="border-zinc-700">
-            {hotMatches.length} jogos monitorados
+            {hotMatches.length} jogos ao vivo
           </Badge>
         </div>
 
