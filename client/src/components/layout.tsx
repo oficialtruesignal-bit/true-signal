@@ -203,6 +203,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <span className="font-medium">{item.label}</span>
             </Link>
           ))}
+          
+          {/* Botão Sair - ao lado de Configurações */}
+          <button 
+            onClick={logout}
+            className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group border w-full text-gray-400 border-white/5 hover:text-red-400 hover:bg-red-500/10 hover:border-red-500/20"
+          >
+            <div className="p-2 rounded-lg transition-all bg-white/5 group-hover:bg-red-500/15">
+              <LogOut className="w-5 h-5 transition-all text-gray-400 group-hover:text-red-400" />
+            </div>
+            <span className="font-medium">{t.nav.logout}</span>
+          </button>
         </nav>
 
         <div className="mt-auto space-y-2">
@@ -224,16 +235,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
             >
               {t.nav.activateNow}
             </Button>
-          </div>
-
-          <div className="flex items-center gap-2 px-2">
-            <button 
-              onClick={logout}
-              className="flex items-center gap-3 px-4 py-3 text-muted-foreground hover:text-red-400 transition-colors flex-1 text-left rounded-lg hover:bg-destructive/10"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="font-medium">{t.nav.logout}</span>
-            </button>
           </div>
         </div>
       </aside>
