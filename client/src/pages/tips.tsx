@@ -128,49 +128,50 @@ export default function TipsPage() {
         <span className="text-sm">Voltar</span>
       </button>
 
-      {/* Header de Autoridade */}
+      {/* Header Profissional */}
       <div className="w-full mb-6">
         
-        {/* Título Principal com Ícone */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 bg-[#33b864]/10 rounded-lg border border-[#33b864]/20">
-            <Ticket className="w-6 h-6 text-[#33b864]" />
+        {/* Título Principal */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#33b864] to-[#28a054] rounded-xl flex items-center justify-center shadow-lg shadow-[#33b864]/20">
+              <Ticket className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-white">
+                Bilhetes do Dia
+              </h1>
+              <p className="text-gray-500 text-xs">
+                Análises profissionais com alto índice de acerto
+              </p>
+            </div>
           </div>
-          <h1 
-            className="text-2xl md:text-3xl font-bold text-white tracking-[0.2em]"
-            style={{ fontFamily: "Sora, sans-serif" }}
-          >
-            {t.tips.title}
-          </h1>
-        </div>
-
-        {/* Banner de Credibilidade */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-[#121212] to-[#0a0a0a] border border-[#33b864]/20 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-lg shadow-[#33b864]/5">
           
-          {/* Efeito de Luz Decorativo */}
-          <div className="absolute top-0 left-0 w-1 h-full bg-[#33b864]"></div>
-          
-          {/* Texto de Assertividade */}
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2 mb-1">
+          {/* Badge de Performance */}
+          <div className="hidden sm:flex items-center gap-2 bg-[#1a1a1a] px-4 py-2 rounded-xl border border-[#333]">
+            <div className="flex items-center gap-1.5">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#33b864]"></span>
               </span>
-              <span className="text-[#33b864] font-bold text-xs uppercase tracking-wider">{t.tips.performanceLabel}</span>
+              <span className="text-[#33b864] font-bold text-sm">83%</span>
             </div>
-            <p className="text-gray-300 text-sm font-inter">
-              {t.tips.performanceText} <span className="text-white font-bold font-sora">83%</span> {t.tips.performanceTickets}
-            </p>
+            <span className="text-gray-400 text-xs">assertividade</span>
           </div>
-
-          {/* Selo de Especialista */}
-          <div className="flex items-center gap-2 bg-[#33b864]/10 px-3 py-1.5 rounded-full border border-[#33b864]/20">
-            <ShieldCheck className="w-4 h-4 text-[#33b864]" />
-            <span className="text-[10px] font-bold text-[#33b864] uppercase">{t.tips.expertBadge}</span>
-          </div>
-
         </div>
+
+        {/* Performance Mobile */}
+        <div className="sm:hidden flex items-center justify-center gap-3 bg-[#1a1a1a] py-2.5 px-4 rounded-xl border border-[#333] mb-4">
+          <div className="flex items-center gap-1.5">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#33b864] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#33b864]"></span>
+            </span>
+            <span className="text-[#33b864] font-bold">83%</span>
+          </div>
+          <span className="text-gray-400 text-sm">de assertividade nos últimos 30 dias</span>
+        </div>
+
       </div>
 
       {isLoading && (
