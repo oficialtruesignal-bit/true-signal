@@ -528,7 +528,7 @@ export function AiDraftsPanel() {
             ) : (
               <>
                 <Target className="w-4 h-4" />
-                Analisar Oportunidades (10 jogos)
+                Analisar Oportunidades
               </>
             )}
           </Button>
