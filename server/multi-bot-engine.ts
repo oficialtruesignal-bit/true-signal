@@ -20,126 +20,33 @@ export interface BotStrategyConfig {
   parameters: Record<string, any>;
 }
 
-// Default bot strategies
+// Default bot strategies - PROMPT MESTRE CONDITIONS
 export const DEFAULT_BOT_STRATEGIES: BotStrategyConfig[] = [
+  // --- 1. CARDS SPECIALIST (2º Tempo) ---
   {
-    code: "home_favorite",
-    name: "🏠 Fator Casa",
-    description: "Identifica times mandantes dominantes com alta pressão em casa. Foco em Over 0.5/1.5 quando o time da casa pressiona.",
-    icon: "Home",
-    color: "#33b864",
+    code: "cards_specialist",
+    name: "🟨 Cards Specialist",
+    description: "Jogo quente! Detecta alta probabilidade de mais cartões ou expulsão no 2º tempo.",
+    icon: "CreditCard",
+    color: "#eab308",
     type: "live_ft",
-    minMinute: 45,
+    minMinute: 60,
     maxMinute: 90,
-    minPressure: 72,
-    minConfidence: 75,
+    minPressure: 45,
+    minConfidence: 68,
     parameters: {
-      minPossession: 58, // Casa deve ter > 58% posse
-      minShotsOnTarget: 4, // Mínimo 4 chutes no gol
-      minDangerousAttacks: 45, // Mínimo 45 ataques perigosos
-      minPressureSustained: 3, // 3 snapshots consecutivos
-      preferredMarkets: ["Over 0.5 FT", "Over 1.5 FT", "Gol Casa"]
+      minYellowCards: 4, // Jogo já está pegado (4+ amarelos)
+      scoreDiffMax: 1, // Jogo disputado (Empate ou diferença de 1 gol)
+      foulsMin: 20, // Muitas faltas
+      preferredMarkets: ["Over 4.5 Cards", "Over 5.5 Cards", "Cartão Vermelho"]
     }
   },
-  {
-    code: "away_dominant",
-    name: "✈️ Visitante Favorito",
-    description: "Detecta visitantes dominando a partida. Útil quando o favorito joga fora e está pressionando.",
-    icon: "Plane",
-    color: "#3b82f6",
-    type: "live_ft",
-    minMinute: 50,
-    maxMinute: 85,
-    minPressure: 75,
-    minConfidence: 78,
-    parameters: {
-      minPossession: 55, // Visitante > 55% posse
-      minShotsOnTarget: 5,
-      minDangerousAttacks: 40,
-      awayPressureRatio: 1.4, // Pressão fora 40% maior que casa
-      preferredMarkets: ["Over 0.5 FT", "Over 1.5 FT", "Gol Fora"]
-    }
-  },
-  {
-    code: "late_pressure",
-    name: "⏰ Pressão Final 75-90",
-    description: "Sinais nos últimos 15 minutos quando há pressão extrema de um time. Alta conversão histórica.",
-    icon: "Clock",
-    color: "#f59e0b",
-    type: "live_late",
-    minMinute: 75,
-    maxMinute: 90,
-    minPressure: 78,
-    minConfidence: 80,
-    parameters: {
-      minPressureSurge: 20, // Aumento de 20% na pressão
-      requireScoreDifferential: false, // Funciona em qualquer placar
-      minShotsLast15: 4, // Mínimo 4 chutes nos últimos 15 min
-      urgencyFactor: true, // Time perdendo = mais urgência
-      preferredMarkets: ["Over 0.5 FT", "Próximo Gol"]
-    }
-  },
-  {
-    code: "post_red_card",
-    name: "🟥 Pós Cartão Vermelho",
-    description: "Oportunidades após expulsões. Time com 11 vs 10 tende a dominar e criar chances.",
-    icon: "AlertTriangle",
-    color: "#ef4444",
-    type: "special",
-    minMinute: null,
-    maxMinute: null,
-    minPressure: 65,
-    minConfidence: 72,
-    parameters: {
-      waitMinutesAfterRed: 5, // Esperar 5 min após vermelho
-      advantageTeamMinPossession: 60,
-      advantageTeamMinShots: 3,
-      timeRemainingMin: 15, // Pelo menos 15 min restantes
-      preferredMarkets: ["Over 0.5 FT", "Gol Time com Vantagem"]
-    }
-  },
-  {
-    code: "ht_scorer",
-    name: "🥅 Gol no 1º Tempo",
-    description: "Identifica jogos com alta probabilidade de gol antes do intervalo baseado em pressão inicial.",
-    icon: "Target",
-    color: "#8b5cf6",
-    type: "live_ht",
-    minMinute: 15,
-    maxMinute: 45,
-    minPressure: 70,
-    minConfidence: 75,
-    parameters: {
-      minCombinedShots: 8, // Total de chutes dos 2 times
-      minPossessionSwing: false, // Não precisa de swing
-      checkForm: true, // Verificar forma dos times
-      minOver05Historical: 75, // Times com histórico de gol
-      preferredMarkets: ["Over 0.5 HT", "Gol HT"]
-    }
-  },
-  {
-    code: "btts_hunter",
-    name: "⚽⚽ BTTS Hunter",
-    description: "Busca jogos onde ambos os times marcaram ou têm alta probabilidade de marcar.",
-    icon: "Crosshair",
-    color: "#ec4899",
-    type: "live_ft",
-    minMinute: 55,
-    maxMinute: 85,
-    minPressure: 60,
-    minConfidence: 72,
-    parameters: {
-      minBTTSHistorical: 65, // Histórico > 65%
-      bothTeamsMinShots: 2, // Ambos com pelo menos 2 chutes
-      oneTeamAlreadyScored: true, // Pelo menos 1 já marcou
-      requireBalancedPressure: true, // Pressão equilibrada
-      preferredMarkets: ["BTTS Sim", "Over 1.5 FT"]
-    }
-  },
+
+  // --- 2. CORNERS MASTER (2º Tempo) ---
   {
     code: "corners_master",
     name: "🚩 Corners Master",
-    description: "Especialista em escanteios. Analisa padrão de jogo e pressão para prever corners.",
+    description: "Pressão total! Goleiro espalmando. Chance de canto iminente.",
     icon: "Flag",
     color: "#06b6d4",
     type: "live_ft",
@@ -148,30 +55,128 @@ export const DEFAULT_BOT_STRATEGIES: BotStrategyConfig[] = [
     minPressure: 55,
     minConfidence: 70,
     parameters: {
-      minCurrentCorners: 4, // Já deve ter 4+ corners
-      cornersPerMinuteRate: 0.12, // Taxa de corners/min
-      minDangerousAttacks: 30,
-      preferCornersMarkets: true,
-      preferredMarkets: ["Over 8.5 Corners", "Over 9.5 Corners", "Próximo Corner"]
+      minAttacksPerMin: 1.5, // Pressão insana
+      minShotsOnTarget: 5, // Goleiro trabalhando
+      scoreLosingTeamPressure: true, // Time perdendo está atacando
+      preferredMarkets: ["Over 8.5 Corners", "Over 9.5 Corners", "Próximo Corner Casa/Fora"]
     }
   },
+
+  // --- 3. FATOR CASA (2º Tempo) ---
   {
-    code: "cards_specialist",
-    name: "🃏 Cards Specialist",
-    description: "Prevê cartões baseado no ritmo do jogo, faltas e estilo do árbitro.",
-    icon: "CreditCard",
-    color: "#eab308",
+    code: "home_favorite",
+    name: "🏠 Fator Casa",
+    description: "O dono da casa acordou! Pressão pelo resultado.",
+    icon: "Home",
+    color: "#33b864",
     type: "live_ft",
-    minMinute: 30,
+    minMinute: 45,
     maxMinute: 80,
-    minPressure: 45,
-    minConfidence: 68,
+    minPressure: 72,
+    minConfidence: 75,
     parameters: {
-      minCurrentCards: 2, // Já deve ter 2+ cartões
-      cardsPerMinuteRate: 0.08,
-      highIntensityMatch: true, // Jogo intenso
-      foulsRatio: 0.4, // Razão faltas/posse
-      preferredMarkets: ["Over 3.5 Cards", "Over 4.5 Cards"]
+      homeTeamLosingOrDraw: true, // Casa empatando ou perdendo
+      homePossessionMin: 60, // Casa dominando a posse
+      homeAttacksAdvantage: 20, // Casa tem 20+ ataques perigosos que o rival
+      preferredMarkets: ["Over 0.5 FT", "Gol Casa", "Over 1.5 FT"]
+    }
+  },
+
+  // --- 4. GOL NO 1º TEMPO (HT) ---
+  {
+    code: "ht_scorer",
+    name: "🥅 Gol no 1º Tempo",
+    description: "0x0 Mentiroso! O gol está maduro para sair no HT.",
+    icon: "Target",
+    color: "#8b5cf6",
+    type: "live_ht",
+    minMinute: 15,
+    maxMinute: 38, // Janela de ouro do HT
+    minPressure: 70,
+    minConfidence: 75,
+    parameters: {
+      requireZeroZero: true, // Tem que estar 0x0
+      minShotsTotal: 6, // Jogo movimentado
+      preferredMarkets: ["Over 0.5 HT", "Gol HT"]
+    }
+  },
+
+  // --- 5. PÓS CARTÃO VERMELHO (Especial) ---
+  {
+    code: "post_red_card",
+    name: "🚨 Pós Cartão Vermelho",
+    description: "Expulsão detectada! Aproveite a desorganização tática.",
+    icon: "AlertTriangle",
+    color: "#ef4444",
+    type: "special",
+    minMinute: null,
+    maxMinute: null,
+    minPressure: 65,
+    minConfidence: 72,
+    parameters: {
+      hasRedCard: true, // Alguém foi expulso
+      minTimeSinceRed: 5, // 5 minutos depois da expulsão (mercado ajustou)
+      requireScoreDraw: true, // Jogo empatado
+      timeRemainingMin: 15,
+      preferredMarkets: ["Over 0.5 FT", "Próximo Gol", "Gol Time 11 jogadores"]
+    }
+  },
+
+  // --- 6. PRESSÃO FINAL 75-90 ---
+  {
+    code: "late_pressure",
+    name: "🔥 Pressão Final 75-90",
+    description: "Blitz Final! O gol vai sair nos acréscimos.",
+    icon: "Clock",
+    color: "#f59e0b",
+    type: "live_late",
+    minMinute: 75,
+    maxMinute: 90,
+    minPressure: 78,
+    minConfidence: 80,
+    parameters: {
+      scoreDiffMax: 1, // Jogo aberto
+      attacksLast10Min: 15, // Blitz nos últimos 10 min
+      urgencyFactor: true, // Time perdendo = mais urgência
+      preferredMarkets: ["Over 0.5 FT", "Próximo Gol", "Gol Acréscimos"]
+    }
+  },
+
+  // --- 7. BTTS HUNTER (Ambas Marcam) ---
+  {
+    code: "btts_hunter",
+    name: "⚽⚽ BTTS Hunter",
+    description: "O empate vem aí! Tendência forte de Ambas Marcam.",
+    icon: "Crosshair",
+    color: "#ec4899",
+    type: "live_ft",
+    minMinute: 55,
+    maxMinute: 80,
+    minPressure: 60,
+    minConfidence: 72,
+    parameters: {
+      goalsTotal: 1, // Jogo está 1x0 ou 0x1
+      losingTeamShotsOnTarget: 3, // Time que tá perdendo tá chutando
+      preferredMarkets: ["BTTS Sim", "Over 1.5 FT", "Empate"]
+    }
+  },
+
+  // --- 8. VISITANTE FAVORITO ---
+  {
+    code: "away_dominant",
+    name: "✈️ Visitante Favorito",
+    description: "Favorito perdendo fora de casa. Oportunidade de valor.",
+    icon: "Plane",
+    color: "#3b82f6",
+    type: "live_ft",
+    minMinute: 45,
+    maxMinute: 80,
+    minPressure: 75,
+    minConfidence: 78,
+    parameters: {
+      awayOddPreLive: 1.80, // Era favorito antes do jogo
+      awayLosingOrDraw: true, // Está perdendo ou empatando
+      preferredMarkets: ["Gol Fora", "Over 0.5 FT", "Vitória Fora"]
     }
   }
 ];
@@ -368,16 +373,18 @@ export class MultiBotEngine {
     return signals;
   }
 
-  // Analyze a single match with a specific strategy
+  // Analyze a single match with a specific strategy - PROMPT MESTRE CONDITIONS
   private async analyzeMatchWithStrategy(match: any, strategy: any): Promise<any | null> {
     const params = JSON.parse(strategy.parameters || "{}");
     const minute = Number(match.matchMinute || match.elapsed || 0);
     
-    // Check timing constraints
-    if (strategy.minMinute && minute < Number(strategy.minMinute)) return null;
-    if (strategy.maxMinute && minute > Number(strategy.maxMinute)) return null;
+    // Check timing constraints (skip for special strategies like red card)
+    if (strategy.strategyCode !== "post_red_card") {
+      if (strategy.minMinute && minute < Number(strategy.minMinute)) return null;
+      if (strategy.maxMinute && minute > Number(strategy.maxMinute)) return null;
+    }
     
-    // Get pressure metrics from match data
+    // Extract all match data
     const homePressure = Number(match.homePressureIndex || match.home_pressure || 50);
     const awayPressure = Number(match.awayPressureIndex || match.away_pressure || 50);
     const homePossession = Number(match.homePossession || match.home_possession || 50);
@@ -386,6 +393,26 @@ export class MultiBotEngine {
     const awayShotsOnTarget = Number(match.awayShotsOnTarget || match.away_shots_on_target || 0);
     const homeScore = Number(match.homeScore || match.home_score || 0);
     const awayScore = Number(match.awayScore || match.away_score || 0);
+    const homeCorners = Number(match.homeCorners || match.home_corners || 0);
+    const awayCorners = Number(match.awayCorners || match.away_corners || 0);
+    const homeCards = Number(match.homeCards || match.home_cards || 0);
+    const awayCards = Number(match.awayCards || match.away_cards || 0);
+    const homeFouls = Number(match.homeFouls || match.home_fouls || 0);
+    const awayFouls = Number(match.awayFouls || match.away_fouls || 0);
+    const homeDangerousAttacks = Number(match.homeDangerousAttacks || match.home_dangerous_attacks || 0);
+    const awayDangerousAttacks = Number(match.awayDangerousAttacks || match.away_dangerous_attacks || 0);
+    const homeAttacks = Number(match.homeAttacks || match.home_attacks || 0);
+    const awayAttacks = Number(match.awayAttacks || match.away_attacks || 0);
+    const hasRedCard = Boolean(match.hasRedCard || match.has_red_card || (match.events && match.events.some((e: any) => e.type === 'red_card')));
+    const redCardMinute = Number(match.redCardMinute || match.red_card_minute || 0);
+    
+    const scoreDiff = Math.abs(homeScore - awayScore);
+    const totalGoals = homeScore + awayScore;
+    const totalShots = homeShotsOnTarget + awayShotsOnTarget;
+    const totalCards = homeCards + awayCards;
+    const totalFouls = homeFouls + awayFouls;
+    const totalCorners = homeCorners + awayCorners;
+    const totalAttacks = homeAttacks + awayAttacks;
     
     let confidence = 0;
     let probability = 0;
@@ -394,141 +421,200 @@ export class MultiBotEngine {
     let analysisData: any = {};
     
     switch (strategy.strategyCode) {
-      case "home_favorite":
-        if (homePressure >= Number(strategy.minPressureThreshold) && 
-            homePossession >= params.minPossession &&
-            homeShotsOnTarget >= params.minShotsOnTarget) {
-          confidence = Math.min(95, 50 + (homePressure - 60) * 0.8 + (homePossession - 50) * 0.5);
-          probability = Math.min(90, confidence * 0.95);
-          market = params.preferredMarkets[0];
+      // --- 1. CARDS SPECIALIST (2º Tempo) ---
+      case "cards_specialist": {
+        const meetsYellowCards = totalCards >= params.minYellowCards;
+        const meetsScoreDiff = scoreDiff <= params.scoreDiffMax;
+        const meetsFouls = totalFouls >= params.foulsMin;
+        
+        if (meetsYellowCards && meetsScoreDiff && meetsFouls) {
+          const cardsRate = minute > 0 ? totalCards / minute : 0;
+          const projectedCards = totalCards + (90 - minute) * cardsRate;
+          confidence = Math.min(92, 55 + totalCards * 5 + (totalFouls / 5));
+          probability = Math.min(85, confidence * 0.92);
+          market = projectedCards >= 6 ? "Over 5.5 Cards" : "Over 4.5 Cards";
           outcome = "Sim";
           analysisData = {
-            trigger: "Pressão casa dominante",
-            homePressure,
+            trigger: "🟨 Jogo quente! Alta tendência de cartões",
+            totalCards,
+            totalFouls,
+            scoreDiff,
+            projectedCards: projectedCards.toFixed(1),
+            message: params.preferredMarkets[0]
+          };
+        }
+        break;
+      }
+
+      // --- 2. CORNERS MASTER (2º Tempo) ---
+      case "corners_master": {
+        const attacksPerMin = minute > 0 ? totalAttacks / minute : 0;
+        const isLosingTeamPressing = (homeScore < awayScore && homeDangerousAttacks > awayDangerousAttacks) ||
+                                     (awayScore < homeScore && awayDangerousAttacks > homeDangerousAttacks);
+        
+        if (attacksPerMin >= params.minAttacksPerMin && 
+            totalShots >= params.minShotsOnTarget &&
+            isLosingTeamPressing) {
+          const cornersRate = minute > 0 ? totalCorners / minute : 0;
+          const projectedCorners = totalCorners + (90 - minute) * cornersRate * 1.3; // Boost due to pressure
+          confidence = Math.min(90, 55 + attacksPerMin * 15 + totalShots * 3);
+          probability = Math.min(85, confidence * 0.9);
+          market = projectedCorners >= 10 ? "Over 9.5 Corners" : "Over 8.5 Corners";
+          outcome = "Sim";
+          analysisData = {
+            trigger: "🚩 Pressão total! Goleiro trabalhando",
+            attacksPerMin: attacksPerMin.toFixed(2),
+            totalShots,
+            isLosingTeamPressing,
+            projectedCorners: projectedCorners.toFixed(1),
+            message: "Chance de canto iminente"
+          };
+        }
+        break;
+      }
+
+      // --- 3. FATOR CASA (2º Tempo) ---
+      case "home_favorite": {
+        const homeLosingOrDraw = homeScore <= awayScore;
+        const homePossessionOk = homePossession >= params.homePossessionMin;
+        const homeAttacksAdvantage = homeDangerousAttacks - awayDangerousAttacks;
+        
+        if (homeLosingOrDraw && homePossessionOk && homeAttacksAdvantage >= params.homeAttacksAdvantage) {
+          confidence = Math.min(93, 55 + (homePossession - 50) * 0.8 + homeAttacksAdvantage * 0.5);
+          probability = Math.min(88, confidence * 0.92);
+          market = totalGoals === 0 ? "Over 0.5 FT" : "Gol Casa";
+          outcome = "Sim";
+          analysisData = {
+            trigger: "🏠 O dono da casa acordou!",
             homePossession,
-            homeShotsOnTarget
+            homeAttacksAdvantage,
+            homeScore,
+            awayScore,
+            message: "Pressão pelo resultado"
           };
         }
         break;
+      }
+
+      // --- 4. GOL NO 1º TEMPO (HT) ---
+      case "ht_scorer": {
+        const matchStatus = match.matchStatus || match.status || "";
+        const isFirstHalf = matchStatus === "1H" || minute < 46;
+        const isZeroZero = homeScore === 0 && awayScore === 0;
+        const hasEnoughShots = totalShots >= params.minShotsTotal;
         
-      case "away_dominant":
-        if (awayPressure >= Number(strategy.minPressureThreshold) &&
-            awayPossession >= params.minPossession &&
-            awayShotsOnTarget >= params.minShotsOnTarget) {
-          confidence = Math.min(95, 50 + (awayPressure - 60) * 0.8 + (awayPossession - 50) * 0.5);
-          probability = Math.min(90, confidence * 0.95);
-          market = params.preferredMarkets[0];
+        if (isFirstHalf && isZeroZero && hasEnoughShots) {
+          confidence = Math.min(90, 55 + totalShots * 4 + Math.max(homePressure, awayPressure) * 0.3);
+          probability = Math.min(85, confidence * 0.9);
+          market = "Over 0.5 HT";
           outcome = "Sim";
           analysisData = {
-            trigger: "Visitante dominando",
+            trigger: "🥅 0x0 Mentiroso!",
+            totalShots,
+            minute,
+            homePressure,
             awayPressure,
-            awayPossession,
-            awayShotsOnTarget
+            message: "O gol está maduro para sair no HT"
           };
         }
         break;
+      }
+
+      // --- 5. PÓS CARTÃO VERMELHO (Especial) ---
+      case "post_red_card": {
+        const timeSinceRed = minute - redCardMinute;
+        const isDraw = homeScore === awayScore;
+        const timeRemaining = 90 - minute;
         
-      case "late_pressure":
+        if (hasRedCard && 
+            timeSinceRed >= params.minTimeSinceRed && 
+            isDraw && 
+            timeRemaining >= params.timeRemainingMin) {
+          confidence = Math.min(88, 60 + timeSinceRed * 1.5 + timeRemaining * 0.3);
+          probability = Math.min(82, confidence * 0.88);
+          market = "Over 0.5 FT";
+          outcome = "Sim";
+          analysisData = {
+            trigger: "🚨 Expulsão detectada!",
+            timeSinceRed,
+            timeRemaining,
+            isDraw,
+            message: "Aproveite a desorganização tática"
+          };
+        }
+        break;
+      }
+
+      // --- 6. PRESSÃO FINAL 75-90 ---
+      case "late_pressure": {
         const maxPressure = Math.max(homePressure, awayPressure);
         const pressingTeam = homePressure > awayPressure ? "home" : "away";
         const isLosingTeam = (pressingTeam === "home" && homeScore < awayScore) ||
                             (pressingTeam === "away" && awayScore < homeScore);
+        const isGameOpen = scoreDiff <= params.scoreDiffMax;
         
-        if (maxPressure >= Number(strategy.minPressureThreshold)) {
-          confidence = Math.min(95, 55 + (maxPressure - 70) * 0.7);
-          if (isLosingTeam) confidence += 8; // Urgency bonus
-          probability = Math.min(88, confidence * 0.9);
+        if (maxPressure >= Number(strategy.minPressureThreshold) && isGameOpen) {
+          confidence = Math.min(95, 60 + (maxPressure - 70) * 0.8);
+          if (isLosingTeam) confidence += 10; // Urgency bonus
+          probability = Math.min(90, confidence * 0.92);
           market = "Over 0.5 FT";
           outcome = "Sim";
           analysisData = {
-            trigger: "Pressão final intensa",
+            trigger: "🔥 Blitz Final!",
             pressingTeam,
             maxPressure,
             isLosingTeam,
-            minute
-          };
-        }
-        break;
-        
-      case "ht_scorer":
-        const combinedShots = homeShotsOnTarget + awayShotsOnTarget;
-        const matchStatus = match.matchStatus || match.status || "";
-        
-        if ((matchStatus === "1H" || minute < 46) &&
-            combinedShots >= params.minCombinedShots &&
-            Math.max(homePressure, awayPressure) >= Number(strategy.minPressureThreshold)) {
-          confidence = Math.min(92, 50 + combinedShots * 3 + (Math.max(homePressure, awayPressure) - 60) * 0.5);
-          probability = Math.min(85, confidence * 0.92);
-          market = "Over 0.5 HT";
-          outcome = "Sim";
-          analysisData = {
-            trigger: "Alta atividade 1º tempo",
-            combinedShots,
             minute,
-            maxPressure: Math.max(homePressure, awayPressure)
+            message: "O gol vai sair nos acréscimos"
           };
         }
         break;
+      }
+
+      // --- 7. BTTS HUNTER (Ambas Marcam) ---
+      case "btts_hunter": {
+        const is1x0or0x1 = totalGoals === 1 && scoreDiff === 1;
+        const losingTeamShotsOnTarget = homeScore < awayScore ? homeShotsOnTarget : awayShotsOnTarget;
         
-      case "btts_hunter":
-        const hasGoal = homeScore > 0 || awayScore > 0;
-        const bothHaveShots = homeShotsOnTarget >= params.bothTeamsMinShots && 
-                             awayShotsOnTarget >= params.bothTeamsMinShots;
-        
-        if (hasGoal && bothHaveShots) {
-          confidence = Math.min(90, 55 + (homeShotsOnTarget + awayShotsOnTarget) * 2);
-          if (homeScore > 0 && awayScore === 0) confidence += 5; // One team already scored
-          if (awayScore > 0 && homeScore === 0) confidence += 5;
+        if (is1x0or0x1 && losingTeamShotsOnTarget >= params.losingTeamShotsOnTarget) {
+          confidence = Math.min(88, 55 + losingTeamShotsOnTarget * 6 + totalShots * 2);
           probability = Math.min(82, confidence * 0.88);
           market = "BTTS Sim";
           outcome = "Sim";
           analysisData = {
-            trigger: "Ambos times atacando",
+            trigger: "⚽⚽ O empate vem aí!",
             homeScore,
             awayScore,
-            homeShotsOnTarget,
-            awayShotsOnTarget
+            losingTeamShotsOnTarget,
+            totalShots,
+            message: "Tendência forte de Ambas Marcam"
           };
         }
         break;
+      }
+
+      // --- 8. VISITANTE FAVORITO ---
+      case "away_dominant": {
+        const awayLosingOrDraw = awayScore <= homeScore;
+        const awayOddPreLive = Number(match.awayOdd || match.away_odd || 2.0);
+        const wasFavorite = awayOddPreLive <= params.awayOddPreLive;
         
-      case "corners_master":
-        const totalCorners = Number(match.homeCorners || 0) + Number(match.awayCorners || 0);
-        const cornersRate = minute > 0 ? totalCorners / minute : 0;
-        
-        if (totalCorners >= params.minCurrentCorners && cornersRate >= params.cornersPerMinuteRate) {
-          const projectedCorners = totalCorners + (90 - minute) * cornersRate;
-          confidence = Math.min(88, 50 + (projectedCorners - 8) * 4);
-          probability = Math.min(80, confidence * 0.85);
-          market = projectedCorners >= 10 ? "Over 9.5 Corners" : "Over 8.5 Corners";
+        if (awayLosingOrDraw && wasFavorite && awayPressure >= Number(strategy.minPressureThreshold)) {
+          confidence = Math.min(90, 55 + (awayPressure - 60) * 0.8 + awayShotsOnTarget * 4);
+          probability = Math.min(85, confidence * 0.9);
+          market = totalGoals === 0 ? "Gol Fora" : "Over 0.5 FT";
           outcome = "Sim";
           analysisData = {
-            trigger: "Alta taxa de corners",
-            totalCorners,
-            cornersRate: cornersRate.toFixed(3),
-            projectedCorners: projectedCorners.toFixed(1)
+            trigger: "✈️ Favorito perdendo fora de casa",
+            awayOddPreLive,
+            awayPressure,
+            awayScore,
+            homeScore,
+            message: "Oportunidade de valor"
           };
         }
         break;
-        
-      case "cards_specialist":
-        const totalCards = Number(match.homeCards || 0) + Number(match.awayCards || 0);
-        const cardsRate = minute > 0 ? totalCards / minute : 0;
-        
-        if (totalCards >= params.minCurrentCards && cardsRate >= params.cardsPerMinuteRate) {
-          const projectedCards = totalCards + (90 - minute) * cardsRate;
-          confidence = Math.min(85, 50 + (projectedCards - 4) * 5);
-          probability = Math.min(75, confidence * 0.82);
-          market = projectedCards >= 5 ? "Over 4.5 Cards" : "Over 3.5 Cards";
-          outcome = "Sim";
-          analysisData = {
-            trigger: "Jogo intenso - cartões",
-            totalCards,
-            cardsRate: cardsRate.toFixed(3),
-            projectedCards: projectedCards.toFixed(1)
-          };
-        }
-        break;
+      }
     }
     
     // Check minimum confidence

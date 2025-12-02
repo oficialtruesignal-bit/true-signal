@@ -1,0 +1,156 @@
+PROMPT MESTRE: CONFIGURAÇÃO DE ESTRATÉGIAS (BOT BRAIN)
+ROLE: Senior Algorithmic Trader & Backend Developer.
+
+TASK: Configurar a lógica de disparo para os 8 Bots do Ocean Signal. PROBLEMA: Os bots estão ativos na interface, mas não enviam sinais porque não possuem critérios definidos. SOLUÇÃO: Implementar o array BOT_STRATEGIES com as condições matemáticas para cada bot específico mostrado nos prints.
+
+1. ARQUIVO DE ESTRATÉGIA (src/config/strategies.ts)
+Substitua ou crie este arquivo com o seguinte conteúdo:
+
+TypeScript
+
+export const BOT_STRATEGIES = [
+  // --- 1. CARDS SPECIALIST (2º Tempo) ---
+  {
+    id: "cards_specialist",
+    name: "Cards Specialist",
+    active: true,
+    conditions: {
+      min_time: 60, // A partir dos 60 min
+      max_time: 90,
+      min_yellow_cards: 4, // Jogo já está pegado (4+ amarelos)
+      score_diff_max: 1, // Jogo disputado (Empate ou diferença de 1 gol)
+      fouls_min: 20 // Muitas faltas
+    },
+    message_template: "🟨 Jogo quente! Tendência alta de mais cartões ou expulsão."
+  },
+
+  // --- 2. CORNERS MASTER (2º Tempo) ---
+  {
+    id: "corners_master",
+    name: "Corners Master",
+    active: true,
+    conditions: {
+      min_time: 50,
+      max_time: 85,
+      min_attacks_per_min: 1.5, // Pressão insana
+      min_shots_on_target: 5,   // Goleiro trabalhando
+      score_losing_team_pressure: true // Time perdendo está atacando
+    },
+    message_template: "🚩 Pressão total! Goleiro espalmando. Chance de canto iminente."
+  },
+
+  // --- 3. FATOR CASA (2º Tempo) ---
+  {
+    id: "fator_casa",
+    name: "Fator Casa",
+    active: true,
+    conditions: {
+      min_time: 45,
+      max_time: 80,
+      home_team_losing_or_draw: true, // Casa empatando ou perdendo
+      home_possession_min: 60, // Casa dominando a posse
+      home_attacks_advantage: 20 // Casa tem 20+ ataques perigosos que o rival
+    },
+    message_template: "🏠 O dono da casa acordou! Pressão pelo resultado."
+  },
+
+  // --- 4. GOL NO 1º TEMPO (HT) ---
+  {
+    id: "gol_ht",
+    name: "Gol no 1º Tempo",
+    active: true,
+    conditions: {
+      min_time: 15,
+      max_time: 38, // Janela de ouro do HT
+      score_home: 0, // Tem que estar 0x0
+      score_away: 0,
+      min_shots_total: 6 // Jogo movimentado
+    },
+    message_template: "⚽ 0x0 Mentiroso! O gol está maduro para sair no HT."
+  },
+
+  // --- 5. PÓS CARTÃO VERMELHO (Especial) ---
+  {
+    id: "red_card_opportunity",
+    name: "Pós Cartão Vermelho",
+    active: true,
+    conditions: {
+      has_red_card: true, // Alguém foi expulso
+      min_time_since_red: 5, // 5 minutos depois da expulsão (mercado ajustou)
+      score_draw: true // Jogo empatado
+    },
+    message_template: "🚨 Expulsão detectada! Aproveite a desorganização tática."
+  },
+
+  // --- 6. PRESSÃO FINAL 75-90 ---
+  {
+    id: "pressao_final",
+    name: "Pressão Final 75-90",
+    active: true,
+    conditions: {
+      min_time: 75,
+      max_time: 90,
+      score_diff_max: 1, // Jogo aberto
+      attacks_last_10_min: 15 // Blitz nos últimos 10 min
+    },
+    message_template: "🔥 Blitz Final! O gol vai sair nos acréscimos."
+  },
+
+  // --- 7. BTTS HUNTER (Ambas Marcam) ---
+  {
+    id: "btts_hunter",
+    name: "BTTS Hunter",
+    active: true,
+    conditions: {
+      min_time: 55,
+      max_time: 80,
+      goals_total: 1, // Jogo está 1x0 ou 0x1
+      losing_team_shots_on_target: 3 // Time que tá perdendo tá chutando
+    },
+    message_template: "🥅 O empate vem aí! Tendência forte de Ambas Marcam."
+  },
+
+  // --- 8. VISITANTE FAVORITO ---
+  {
+    id: "visitante_fav",
+    name: "Visitante Favorito",
+    active: true,
+    conditions: {
+      min_time: 45,
+      max_time: 80,
+      away_odd_pre_live: 1.80, // Era favorito antes do jogo
+      score_home: 1, // Está perdendo ou empatando
+      score_away: 0 // (Exemplo de cenário zebra momentânea)
+    },
+    message_template: "✈️ Favorito perdendo fora de casa. Oportunidade de valor."
+  }
+];
+2. A LÓGICA DE EXECUÇÃO (LiveScanner.ts)
+Agora, certifique-se de que o seu Scanner (o arquivo que roda a cada minuto) está lendo essas condições.
+
+Passo A: Receba os dados do jogo da API.
+
+Passo B: Para cada jogo, percorra o array BOT_STRATEGIES.
+
+Passo C (O Comparador):
+
+TypeScript
+
+// Exemplo de lógica simplificada para o Agente
+const checkStrategy = (game, strategy) => {
+    const c = strategy.conditions;
+
+    // Verifica Tempo
+    if (game.time < c.min_time || game.time > c.max_time) return false;
+
+    // Verifica Placar
+    if (c.score_home !== undefined && game.score.home !== c.score_home) return false;
+    if (c.score_diff_max !== undefined && Math.abs(game.score.home - game.score.away) > c.score_diff_max) return false;
+
+    // Verifica Estatísticas (Pressão)
+    if (c.min_attacks_per_min && (game.stats.attacks / game.time) < c.min_attacks_per_min) return false;
+    if (c.has_red_card && !game.events.some(e => e.type === 'red_card')) return false;
+
+    return true; // Bateu todas as condições!
+};
+COMANDO: Atualize o arquivo de estratégias com esses critérios detalhados. Agora, quando um jogo atingir 75 minutos com pressão insana, o bot "Pressão Final" vai acordar e mandar o sinal.
