@@ -104,6 +104,8 @@ export const tips = pgTable("tips", {
   confidence: decimal("confidence", { precision: 5, scale: 2 }), // 0-100%
   probability: decimal("probability", { precision: 5, scale: 2 }), // Calculated probability
   expectedValue: decimal("expected_value", { precision: 6, scale: 2 }), // EV percentage
+  homeGoalsAvg: decimal("home_goals_avg", { precision: 4, scale: 2 }), // Home team avg goals
+  awayGoalsAvg: decimal("away_goals_avg", { precision: 4, scale: 2 }), // Away team avg goals
   aiSourceId: uuid("ai_source_id"), // Reference to ai_tickets.id
   // Settlement fields
   settledAt: timestamp("settled_at"), // When result was verified

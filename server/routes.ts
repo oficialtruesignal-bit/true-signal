@@ -1638,6 +1638,20 @@ REGRAS IMPORTANTES:
         return summary;
       };
       
+      // Extract goal averages from team stats
+      const extractGoalsAvg = (statsJson: string | null, field: string = 'goalsScored'): string | null => {
+        if (!statsJson) return null;
+        try {
+          const stats = typeof statsJson === 'string' ? JSON.parse(statsJson) : statsJson;
+          return stats[field]?.toString() || null;
+        } catch {
+          return null;
+        }
+      };
+      
+      const homeGoalsAvg = extractGoalsAvg(draft.homeTeamStats);
+      const awayGoalsAvg = extractGoalsAvg(draft.awayTeamStats);
+      
       if (isCombo && legsArray && legsArray.length > 0) {
         // Use centralized combo metadata derivation
         const comboData = deriveComboMetadata(legsArray, formattedTime);
@@ -1654,6 +1668,8 @@ REGRAS IMPORTANTES:
             confidence: draft.confidence,
             probability: draft.probability,
             expectedValue: draft.expectedValue,
+            homeGoalsAvg: homeGoalsAvg,
+            awayGoalsAvg: awayGoalsAvg,
             aiSourceId: draft.id,
           };
         } else {
@@ -1683,6 +1699,8 @@ REGRAS IMPORTANTES:
           confidence: draft.confidence,
           probability: draft.probability,
           expectedValue: draft.expectedValue,
+          homeGoalsAvg: homeGoalsAvg,
+          awayGoalsAvg: awayGoalsAvg,
           aiSourceId: draft.id,
         };
       }
