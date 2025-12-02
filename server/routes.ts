@@ -1396,6 +1396,32 @@ REGRAS IMPORTANTES:
       
       let tipData: any;
       
+      // Generate AI analysis summary for users
+      const generateAnalysisSummary = (draft: any): string => {
+        const confidence = parseFloat(draft.confidence || '0');
+        const probability = parseFloat(draft.probability || '0');
+        const ev = parseFloat(draft.expectedValue || '0');
+        
+        let summary = `Analisando o confronto entre ${draft.homeTeam} e ${draft.awayTeam}, `;
+        
+        if (confidence >= 85) {
+          summary += `percebi que ambos os times apresentam padrões consistentes. `;
+        } else if (confidence >= 75) {
+          summary += `identifiquei tendências interessantes nos últimos jogos. `;
+        } else {
+          summary += `observei alguns indicadores relevantes. `;
+        }
+        
+        summary += `Com base em tudo isso, a probabilidade calculada ficou em ${probability.toFixed(0)}%, `;
+        summary += `o que me dá ${confidence.toFixed(0)}% de confiança. `;
+        
+        if (ev > 0) {
+          summary += `O valor esperado é positivo (+${ev.toFixed(1)}%), indicando vantagem matemática a longo prazo.`;
+        }
+        
+        return summary;
+      };
+      
       if (isCombo && legsArray && legsArray.length > 0) {
         // Use centralized combo metadata derivation
         const comboData = deriveComboMetadata(legsArray, formattedTime);
@@ -1406,6 +1432,13 @@ REGRAS IMPORTANTES:
             stake: adjustedStake || draft.suggestedStake,
             status: 'pending',
             isLive: false,
+            // AI Analysis fields
+            analysisRationale: draft.analysisRationale,
+            analysisSummary: generateAnalysisSummary(draft),
+            confidence: draft.confidence,
+            probability: draft.probability,
+            expectedValue: draft.expectedValue,
+            aiSourceId: draft.id,
           };
         } else {
           return res.status(400).json({ error: "Combo inválido: legs vazios ou malformados" });
@@ -1428,6 +1461,13 @@ REGRAS IMPORTANTES:
           isCombo: false,
           totalOdd: null,
           legs: null,
+          // AI Analysis fields
+          analysisRationale: draft.analysisRationale,
+          analysisSummary: generateAnalysisSummary(draft),
+          confidence: draft.confidence,
+          probability: draft.probability,
+          expectedValue: draft.expectedValue,
+          aiSourceId: draft.id,
         };
       }
       

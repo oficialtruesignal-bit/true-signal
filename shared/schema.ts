@@ -77,6 +77,16 @@ export const tips = pgTable("tips", {
   isCombo: boolean("is_combo").notNull().default(false),
   totalOdd: decimal("total_odd", { precision: 6, scale: 2 }),
   legs: text("legs"), // JSON array of BetLeg for combo bets
+  // AI Analysis fields (from AI prediction engine)
+  analysisRationale: text("analysis_rationale"), // JSON with detailed reasoning
+  analysisSummary: text("analysis_summary"), // Short summary text
+  confidence: decimal("confidence", { precision: 5, scale: 2 }), // 0-100%
+  probability: decimal("probability", { precision: 5, scale: 2 }), // Calculated probability
+  expectedValue: decimal("expected_value", { precision: 6, scale: 2 }), // EV percentage
+  aiSourceId: uuid("ai_source_id"), // Reference to ai_tickets.id
+  // Settlement fields
+  settledAt: timestamp("settled_at"), // When result was verified
+  resultProfit: decimal("result_profit", { precision: 8, scale: 2 }), // Profit/loss from this tip
   createdBy: uuid("created_by").references(() => profiles.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
