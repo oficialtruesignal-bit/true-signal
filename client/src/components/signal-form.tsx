@@ -32,6 +32,7 @@ const formSchema = z.object({
   }),
   betLink: z.string().url().optional().or(z.literal('')),
   imageUrl: z.string().optional().nullable(),
+  analysisSummary: z.string().optional().nullable(),
 });
 
 interface SignalFormProps {
@@ -215,6 +216,7 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
       imageUrl: uploadedImageUrl?.startsWith('http') ? uploadedImageUrl : undefined,
       status: "pending" as const,
       isLive: false,
+      analysisSummary: values.analysisSummary || undefined,
     };
     
     onAdd(newSignal);
@@ -405,6 +407,27 @@ export function SignalForm({ onAdd, initialData }: SignalFormProps) {
                       className="bg-black/40 border-primary/20 text-white focus-visible:ring-primary h-9 text-sm" 
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="analysisSummary"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-white text-xs">Justificativa da Entrada (Opcional)</FormLabel>
+                  <FormControl>
+                    <textarea 
+                      placeholder="Ex: Newcastle jogando em casa tem 85% de aproveitamento nos últimos 5 jogos. Tottenham vem de derrota e está sem seu principal atacante."
+                      {...field} 
+                      value={field.value || ''}
+                      rows={3}
+                      className="w-full bg-black/40 border border-primary/20 text-white focus-visible:ring-primary text-sm rounded-md px-3 py-2 resize-none placeholder:text-gray-500" 
+                    />
+                  </FormControl>
+                  <p className="text-[10px] text-gray-500 mt-1">Explique o motivo da entrada para os usuários</p>
                   <FormMessage />
                 </FormItem>
               )}

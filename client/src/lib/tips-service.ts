@@ -40,6 +40,13 @@ export const tipsService = {
         isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
         fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
         imageUrl: tip.imageUrl || tip.image_url || undefined,
+        // AI Analysis fields
+        analysisRationale: tip.analysisRationale || tip.analysis_rationale || undefined,
+        analysisSummary: tip.analysisSummary || tip.analysis_summary || undefined,
+        confidence: tip.confidence ? Number(tip.confidence) : undefined,
+        probability: tip.probability ? Number(tip.probability) : undefined,
+        expectedValue: tip.expectedValue ? Number(tip.expectedValue) : (tip.expected_value ? Number(tip.expected_value) : undefined),
+        aiSourceId: tip.aiSourceId || tip.ai_source_id || undefined,
       }));
     } catch (error: any) {
       throw new Error(error.response?.data?.error || 'Erro ao carregar tips');
@@ -65,6 +72,7 @@ export const tipsService = {
         isLive: tip.isLive || false,
         fixtureId: tip.fixtureId || null,
         imageUrl: tip.imageUrl || null,
+        analysisSummary: tip.analysisSummary || null,
         adminEmail: email, // SECURITY: Send admin email + userId
         adminUserId: userId,
       });
