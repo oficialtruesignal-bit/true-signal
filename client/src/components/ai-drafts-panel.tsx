@@ -88,6 +88,7 @@ export function AiDraftsPanel() {
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
   const [selectedDrafts, setSelectedDrafts] = useState<Set<string>>(new Set());
   const [activeFilter, setActiveFilter] = useState<MarketFilter>('all');
+  const [editedCombos, setEditedCombos] = useState<Record<string, BetLeg[]>>({});
 
   const { data: drafts = [], isLoading: loadingDrafts, refetch: refetchDrafts } = useQuery<AiDraft[]>({
     queryKey: ['ai-drafts'],
@@ -207,6 +208,42 @@ export function AiDraftsPanel() {
       .filter(d => parseFloat(d.confidence) >= 85)
       .map(d => d.id);
     setSelectedDrafts(new Set(highConfidenceIds));
+  };
+
+  // Função para remover uma linha do combo
+  const removeComboLeg = async (draftId: string, legIndex: number, currentLegs: BetLeg[]) => {
+    if (currentLegs.length <= 1) {
+      toast.error("Combo precisa ter pelo menos 1 linha. Rejeite o bilhete se não quiser publicar.");
+      return;
+    }
+
+    const newLegs = currentLegs.filter((_, idx) => idx !== legIndex);
+    
+    // Recalcular odd total e probabilidade combinada
+    const newTotalOdd = newLegs.reduce((acc, leg) => acc * leg.odd, 1);
+    const newCombinedProbability = newLegs.reduce((acc, leg) => acc * ((leg.probability || 50) / 100), 1) * 100;
+    const newAvgConfidence = newLegs.reduce((acc, leg) => acc + (leg.confidence || 85), 0) / newLegs.length;
+
+    try {
+      const response = await axios.patch(`/api/ai/drafts/${draftId}/update-legs`, {
+        legs: newLegs,
+        totalOdd: newTotalOdd,
+        probability: newCombinedProbability,
+        confidence: newAvgConfidence,
+        adminEmail: user?.email,
+        adminUserId: user?.id,
+      });
+
+      if (response.data.success) {
+        toast.success(`Linha removida! Combo agora tem ${newLegs.length} seleções`);
+        // Atualizar estado local para refletir a mudança
+        setEditedCombos(prev => ({ ...prev, [draftId]: newLegs }));
+        refetchDrafts();
+        queryClient.invalidateQueries({ queryKey: ['ai-stats'] });
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || "Erro ao remover linha do combo");
+    }
   };
 
   const getConfidenceColor = (confidence: number) => {
@@ -541,21 +578,31 @@ export function AiDraftsPanel() {
                   {isCombo && legs.length > 0 ? (
                     <div className="space-y-2 mb-4">
                       {legs.map((leg, idx) => (
-                        <div key={idx} className="bg-gradient-to-r from-background/80 to-background/40 rounded-lg p-3 border border-white/5">
-                          <div className="flex items-center gap-3">
+                        <div key={idx} className="bg-gradient-to-r from-background/80 to-background/40 rounded-lg p-3 border border-white/5 group">
+                          <div className="flex items-center gap-2">
+                            {/* Remove Button */}
+                            <button
+                              onClick={() => removeComboLeg(draft.id, idx, legs)}
+                              className="w-6 h-6 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all"
+                              title="Remover esta linha"
+                              data-testid={`btn-remove-leg-${draft.id}-${idx}`}
+                            >
+                              <X className="w-3 h-3 text-red-400" />
+                            </button>
+                            
                             {/* Index Badge */}
-                            <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
                               <span className="text-xs font-bold text-primary">{idx + 1}</span>
                             </div>
                             
                             {/* Team Logos */}
                             <div className="flex items-center gap-1 flex-shrink-0">
                               {leg.homeTeamLogo && (
-                                <img src={leg.homeTeamLogo} alt="" className="w-6 h-6" />
+                                <img src={leg.homeTeamLogo} alt="" className="w-5 h-5" />
                               )}
                               <span className="text-gray-500 text-[10px]">vs</span>
                               {leg.awayTeamLogo && (
-                                <img src={leg.awayTeamLogo} alt="" className="w-6 h-6" />
+                                <img src={leg.awayTeamLogo} alt="" className="w-5 h-5" />
                               )}
                             </div>
                             

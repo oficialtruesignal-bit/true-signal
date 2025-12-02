@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertTipSchema, insertProfileSchema, tips } from "@shared/schema";
+import { insertTipSchema, insertProfileSchema, tips, aiTickets } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import axios from "axios";
 import { mercadoPagoService } from "./mercadopago-service";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -1467,6 +1468,43 @@ REGRAS IMPORTANTES:
     } catch (error: any) {
       console.error("[AI Engine] Error rejecting draft:", error);
       return res.status(500).json({ error: "Erro ao rejeitar previsão" });
+    }
+  });
+
+  // Update combo legs (remove lines from combo)
+  app.patch("/api/ai/drafts/:id/update-legs", async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { legs, totalOdd, probability, confidence, adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      if (!legs || !Array.isArray(legs)) {
+        return res.status(400).json({ error: "Legs inválidas" });
+      }
+      
+      // Update the draft with new legs
+      await db.update(aiTickets)
+        .set({
+          legs: JSON.stringify(legs),
+          totalOdd: String(totalOdd),
+          probability: String(probability),
+          confidence: String(confidence),
+          isCombo: legs.length > 1, // If only 1 leg left, it's no longer a combo
+        })
+        .where(eq(aiTickets.id, id));
+      
+      console.log(`✏️ [AI Engine] Updated combo ${id}: ${legs.length} legs, odd ${totalOdd.toFixed(2)}, prob ${probability.toFixed(1)}%`);
+      
+      return res.json({
+        success: true,
+        message: `Combo atualizado com ${legs.length} seleções`
+      });
+    } catch (error: any) {
+      console.error("[AI Engine] Error updating combo legs:", error);
+      return res.status(500).json({ error: "Erro ao atualizar combo" });
     }
   });
 
