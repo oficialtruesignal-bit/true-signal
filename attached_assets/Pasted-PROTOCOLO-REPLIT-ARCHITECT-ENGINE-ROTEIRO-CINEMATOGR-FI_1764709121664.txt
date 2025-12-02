@@ -1,0 +1,80 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: ROTEIRO CINEMATOGRÁFICO PARA VÍDEO ADS (HIGH CONVERSION) 🟢
+
+Entendido. Para anúncios no Meta (Instagram/Facebook/Reels), a estrutura precisa ser Rápida e Hipnótica.
+
+Não vamos fazer um filme linear chato. Vamos criar 5 BLOCOS VISUAIS que você pode montar em qualquer ordem, mas que juntos contam a história: Caos (Jogo) -> Ordem (Escritório) -> Entrega (Celular) -> Ação (Notificação) -> Vitória (Lucro).
+
+Aqui está o Mega Prompt Narrativo para você gerar esses takes. Ele está desenhado para IAs de vídeo (Kling, Runway, Luma) entenderem a estética "Dark/Tech" da True Signal.
+
+PROMPT MESTRE: VÍDEO NARRATIVO PARA ADS (TRUE SIGNAL)
+ESTILO VISUAL GERAL: Cinematográfico, Publicidade de Alto Padrão (Nike encontra Bloomberg). Iluminação dramática, contraste alto, paleta de cores Dark (Preto/Cinza) com acentos em Verde Neon (#33b864). Movimentos de câmera suaves e intencionais.
+
+TAKE 1: A VISÃO ALÉM DO ALCANCE (O Campo de Futebol com Dados)
+Objetivo: Mostrar que não vemos o jogo como torcedores, mas como analistas de dados.
+
+Prompt Visual:
+
+"Cinematic slow-motion shot of a professional soccer match at night, raining, stadium lights flaring. As the player runs with the ball, digital HUD overlays appear: glowing green tactical lines on the grass, floating percentages above players heads (e.g., 'Possession 62%', 'Attack Pressure: High'). The visual style is like a futuristic sports analysis or a video game interface. Matrix style data streams in the background."
+
+TAKE 2: A "WAR ROOM" (A Autoridade dos Especialistas)
+Objetivo: Provar que existe uma equipe real trabalhando.
+
+Prompt Visual:
+
+"Interior of a high-tech trading operations center ('The War Room'). Dim lighting, sleek modern furniture. A team of focused analysts (mixed gender, professional attire) are looking at a massive wall of LED screens showing multiple soccer matches and stock market-style graphs. A man in the foreground points at a screen where a green graph is spiking up. Atmosphere of intense focus and intelligence. 4k resolution, photorealistic."
+
+TAKE 3: O PRODUTO NA MÃO (O Celular "Hero")
+Objetivo: Mostrar o App rodando (espaço para você editar e colocar a gravação de tela real depois).
+
+Prompt Visual:
+
+"Close-up macro shot of a hand holding a premium black smartphone. The background is a blurred dark office with neon green bokeh lights. The phone screen is facing the camera perfectly. The thumb performs a smooth scroll gesture. (Important: Keep the screen surface non-reflective or solid black to allow for easy screen replacement in post-production). The movement is fluid and elegant."
+
+TAKE 4: O GATILHO (A Notificação Push)
+Objetivo: A urgência. O momento que o dinheiro chama.
+
+Prompt Visual:
+
+"A smartphone lying on a dark wooden table next to a cup of coffee. The screen suddenly lights up with a bright notification. The notification banner is green and clearly readable. The camera does a quick snap-zoom or focus pull onto the notification. It feels urgent and valuable. The notification glows in the dark room."
+
+TAKE 5: A SIMPLICIDADE (O Dedo no Botão "Copiar")
+Objetivo: A promessa de facilidade (Copy & Paste).
+
+Prompt Visual:
+
+"Extreme close-up of a thumb hovering over a glowing green button on a smartphone screen. The button says 'COPIAR'. The thumb presses the button firmly. Immediately after the press, the screen pulses with a subtle green light indicating success. This represents the 'One-Click' action. Satisfying and tactile."
+
+📝 ROTEIRO SUGERIDO (VOICEOVER / TEXTO NA TELA)
+Se você for editar isso no CapCut ou Premiere, siga esta ordem de áudio/texto para conversão máxima:
+
+00:00 - 00:03 (Take 1 - Campo com Dados)
+
+Texto na tela: "Você vê um jogo. Nós vemos dados."
+
+Áudio: Som de estádio abafado + Som digital de processamento.
+
+00:03 - 00:07 (Take 2 - War Room)
+
+Texto na tela: "20 Especialistas + IA monitorando 1.400 ligas."
+
+Áudio: "Nossa infraestrutura trabalha 24 horas..."
+
+00:07 - 00:10 (Take 4 - Notificação)
+
+Texto na tela: "O sinal chega pronto no seu celular."
+
+Áudio: Som de notificação "Ding" (satisfatório). "...para te entregar a oportunidade pronta."
+
+00:10 - 00:13 (Take 5 - Botão Copiar)
+
+Texto na tela: "É só Copiar e Colar."
+
+Áudio: "Sem análise. Sem dúvida. Apenas execução."
+
+00:13 - 00:15 (Take 3 - Celular com App)
+
+Texto na tela: "Teste 5 Dias Grátis. Link na Bio."
+
+Áudio: "Garanta seu acesso ao True Signal agora."
+
+Essa estrutura ataca: Curiosidade -> Autoridade -> Facilidade -> Ação.
