@@ -860,70 +860,124 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                     </button>
                   </PopoverTrigger>
                   <PopoverContent 
-                    className="w-80 p-4 bg-[#0d0d0d] border border-white/10 rounded-xl"
+                    className="w-[340px] p-0 bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden"
                     side="top"
                     align="end"
                   >
-                    {/* Texto da análise */}
-                    {signal.analysisSummary && (
-                      <div className="mb-3">
-                        <p className="text-sm text-gray-200 leading-relaxed pl-3 border-l-2 border-[#33b864]">
-                          "{signal.analysisSummary}"
-                        </p>
+                    {/* Header com gradiente */}
+                    <div className="bg-gradient-to-r from-[#33b864]/20 to-blue-500/20 px-4 py-3 border-b border-white/10">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-[#33b864]/20 flex items-center justify-center">
+                            <Brain className="w-4 h-4 text-[#33b864]" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-white">TRUE SIGNAL IA</p>
+                            <p className="text-[10px] text-gray-400">Análise Preditiva</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {signal.confidence && (
+                            <span className={cn(
+                              "px-2 py-1 rounded text-[10px] font-bold",
+                              signal.confidence >= 85 ? "bg-green-500/20 text-green-400" :
+                              signal.confidence >= 75 ? "bg-yellow-500/20 text-yellow-400" : "bg-orange-500/20 text-orange-400"
+                            )}>
+                              {signal.confidence.toFixed(0)}% Confiança
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    </div>
                     
-                    {/* Dados utilizados */}
-                    <div className="mb-3">
-                      <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-wide">Dados utilizados:</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {signal.homeTeam && (
-                          <span className="px-2 py-0.5 text-[9px] bg-white/5 text-gray-400 rounded border border-white/10">
-                            {signal.homeTeam}: {signal.homeGoalsAvg?.toFixed(2) || '0.00'} gols/jogo
-                          </span>
-                        )}
-                        {signal.awayTeam && (
-                          <span className="px-2 py-0.5 text-[9px] bg-white/5 text-gray-400 rounded border border-white/10">
-                            {signal.awayTeam}: {signal.awayGoalsAvg?.toFixed(2) || '0.00'} gols/jogo
-                          </span>
-                        )}
-                        {signal.probability && (
-                          <span className="px-2 py-0.5 text-[9px] bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">
-                            Prob: {signal.probability.toFixed(1)}%
-                          </span>
-                        )}
-                        {signal.odd && (
-                          <span className="px-2 py-0.5 text-[9px] bg-yellow-500/10 text-yellow-400 rounded border border-yellow-500/20">
-                            Odd: {parseFloat(String(signal.odd)).toFixed(2)}
-                          </span>
-                        )}
+                    <div className="p-4 space-y-4">
+                      {/* Resumo da análise */}
+                      {signal.analysisSummary && (
+                        <div className="bg-white/5 rounded-lg p-3">
+                          <p className="text-[11px] text-gray-300 leading-relaxed">
+                            "{signal.analysisSummary}"
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Estatísticas dos Times */}
+                      <div>
+                        <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-wide font-medium">Estatísticas</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* Time Casa */}
+                          <div className="bg-white/5 rounded-lg p-2.5">
+                            <p className="text-[10px] text-gray-400 mb-1">{signal.homeTeam}</p>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-lg font-bold text-white">{signal.homeGoalsAvg?.toFixed(2) || '0.00'}</span>
+                              <span className="text-[10px] text-gray-500">gols/jogo</span>
+                            </div>
+                          </div>
+                          {/* Time Fora */}
+                          <div className="bg-white/5 rounded-lg p-2.5">
+                            <p className="text-[10px] text-gray-400 mb-1">{signal.awayTeam}</p>
+                            <div className="flex items-baseline gap-1">
+                              <span className="text-lg font-bold text-white">{signal.awayGoalsAvg?.toFixed(2) || '0.00'}</span>
+                              <span className="text-[10px] text-gray-500">gols/jogo</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Indicadores Chave */}
+                      <div>
+                        <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-wide font-medium">Indicadores</p>
+                        <div className="space-y-2">
+                          {/* Probabilidade */}
+                          {signal.probability && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-gray-400">Probabilidade calculada</span>
+                              <div className="flex items-center gap-2">
+                                <div className="w-20 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                  <div 
+                                    className="h-full bg-blue-500 rounded-full"
+                                    style={{ width: `${Math.min(signal.probability, 100)}%` }}
+                                  />
+                                </div>
+                                <span className="text-[11px] font-bold text-blue-400">{signal.probability.toFixed(1)}%</span>
+                              </div>
+                            </div>
+                          )}
+                          {/* Odd */}
+                          {signal.odd && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-gray-400">Odd Bet365</span>
+                              <span className="text-[11px] font-bold text-yellow-400">@{parseFloat(String(signal.odd)).toFixed(2)}</span>
+                            </div>
+                          )}
+                          {/* Expected Value */}
+                          {signal.expectedValue && signal.expectedValue > 0 && (
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-gray-400">Valor Esperado (EV)</span>
+                              <span className="text-[11px] font-bold text-green-400">+{signal.expectedValue.toFixed(1)}%</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      
+                      {/* Justificativa da Entrada */}
+                      <div className="bg-gradient-to-r from-green-500/10 to-transparent rounded-lg p-3 border-l-2 border-green-500">
+                        <p className="text-[10px] text-gray-500 mb-1 uppercase tracking-wide">Por que entrar?</p>
+                        <p className="text-[11px] text-gray-300">
+                          {signal.expectedValue && signal.expectedValue > 10 
+                            ? `EV de +${signal.expectedValue.toFixed(1)}% indica alta vantagem matemática. A odd está subvalorizada pelo mercado.`
+                            : signal.expectedValue && signal.expectedValue > 5
+                            ? `EV positivo de +${signal.expectedValue.toFixed(1)}% mostra valor na aposta. Probabilidade real supera a implícita.`
+                            : `Análise estatística favorável com ${signal.confidence?.toFixed(0) || 0}% de confiança nos dados históricos.`
+                          }
+                        </p>
                       </div>
                     </div>
                     
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-5 h-5 rounded-full bg-[#33b864]/20 flex items-center justify-center">
-                          <Brain className="w-2.5 h-2.5 text-[#33b864]" />
-                        </div>
-                        <span className="text-[10px] font-bold text-white">TRUE SIGNAL IA</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        {signal.confidence && (
-                          <span className={cn(
-                            "text-[10px] font-bold",
-                            signal.confidence >= 85 ? "text-green-400" :
-                            signal.confidence >= 75 ? "text-yellow-400" : "text-orange-400"
-                          )}>
-                            {signal.confidence.toFixed(0)}%
-                          </span>
-                        )}
-                        {signal.expectedValue && signal.expectedValue > 0 && (
-                          <span className="text-[10px] font-bold text-green-400">
-                            EV +{signal.expectedValue.toFixed(1)}%
-                          </span>
-                        )}
-                      </div>
+                    <div className="px-4 py-2 bg-white/5 border-t border-white/5">
+                      <p className="text-[9px] text-gray-500 text-center">
+                        Análise baseada nos últimos 10 jogos de cada time
+                      </p>
                     </div>
                   </PopoverContent>
                 </Popover>
