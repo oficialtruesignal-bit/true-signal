@@ -816,35 +816,21 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           
           {/* Para COMBO: mostrar cada leg como linha simples */}
           {isComboTip && parsedLegs.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {parsedLegs.map((leg, idx) => (
                 <div key={idx} className="relative flex items-start gap-3">
                   {/* Bolinha verde sólida */}
                   <div className="absolute -left-5 top-1.5 w-3 h-3 rounded-full bg-[#33b864] flex items-center justify-center">
                     <Check className="w-2 h-2 text-black" />
                   </div>
-                  {/* Conteúdo da seleção */}
+                  {/* Conteúdo da seleção - APENAS mercado/outcome */}
                   <div className="flex-1 ml-1">
-                    {/* Mercado/Outcome - O QUE VAI ACONTECER */}
                     <p className="text-white font-medium text-sm">
-                      {leg.outcome || leg.market}
+                      {leg.market}: {leg.outcome || ''}
                     </p>
-                    {/* Linha técnica: market + odd */}
                     <p className="text-gray-500 text-[11px]">
-                      {leg.market} • @{leg.odd?.toFixed(2)}
+                      @{leg.odd?.toFixed(2)}
                     </p>
-                    {/* Times: quem está jogando */}
-                    <div className="flex items-center gap-2 mt-1.5">
-                      {leg.homeTeamLogo && (
-                        <img src={leg.homeTeamLogo} alt="" className="w-4 h-4 rounded-full" />
-                      )}
-                      <span className="text-gray-400 text-xs">
-                        {leg.homeTeam} x {leg.awayTeam}
-                      </span>
-                      {leg.awayTeamLogo && (
-                        <img src={leg.awayTeamLogo} alt="" className="w-4 h-4 rounded-full" />
-                      )}
-                    </div>
                   </div>
                 </div>
               ))}
@@ -868,60 +854,70 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           )}
         </div>
 
-        {/* Times com logos pequenos - só mostra para apostas simples */}
-        {!isComboTip && (
-          <div className="flex items-center pt-4 mt-4 border-t border-white/10">
-            {/* Time Casa */}
-            <div className="flex items-center gap-2 flex-1">
-              <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
-                {homeTeamLogo ? (
-                  <img src={homeTeamLogo} alt={signal.homeTeam} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
-                    {signal.homeTeam.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <span className="text-white text-sm font-medium">{signal.homeTeam}</span>
+        {/* Times com logos pequenos - para apostas simples E combos */}
+        <div className="flex items-center pt-4 mt-4 border-t border-white/10">
+          {/* Time Casa */}
+          <div className="flex items-center gap-2 flex-1">
+            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+              {(isComboTip ? parsedLegs[0]?.homeTeamLogo : homeTeamLogo) ? (
+                <img 
+                  src={isComboTip ? parsedLegs[0]?.homeTeamLogo : homeTeamLogo} 
+                  alt={isComboTip ? parsedLegs[0]?.homeTeam : signal.homeTeam} 
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                  {(isComboTip ? parsedLegs[0]?.homeTeam : signal.homeTeam)?.charAt(0)}
+                </div>
+              )}
             </div>
+            <span className="text-white text-sm font-medium">
+              {isComboTip ? parsedLegs[0]?.homeTeam : signal.homeTeam}
+            </span>
+          </div>
 
-            {/* X central */}
-            <span className="text-gray-500 font-bold text-sm px-3">X</span>
+          {/* X central */}
+          <span className="text-gray-500 font-bold text-sm px-3">X</span>
 
-            {/* Time Fora */}
-            <div className="flex items-center gap-2 flex-1 justify-end">
-              <span className="text-white text-sm font-medium">{signal.awayTeam}</span>
-              <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
-                {awayTeamLogo ? (
-                  <img src={awayTeamLogo} alt={signal.awayTeam} className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
-                    {signal.awayTeam.charAt(0)}
-                  </div>
-                )}
-              </div>
+          {/* Time Fora */}
+          <div className="flex items-center gap-2 flex-1 justify-end">
+            <span className="text-white text-sm font-medium">
+              {isComboTip ? parsedLegs[0]?.awayTeam : signal.awayTeam}
+            </span>
+            <div className="w-6 h-6 rounded-full overflow-hidden bg-white/5 flex-shrink-0">
+              {(isComboTip ? parsedLegs[0]?.awayTeamLogo : awayTeamLogo) ? (
+                <img 
+                  src={isComboTip ? parsedLegs[0]?.awayTeamLogo : awayTeamLogo} 
+                  alt={isComboTip ? parsedLegs[0]?.awayTeam : signal.awayTeam} 
+                  className="w-full h-full object-cover" 
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-[#33b864] text-xs font-bold">
+                  {(isComboTip ? parsedLegs[0]?.awayTeam : signal.awayTeam)?.charAt(0)}
+                </div>
+              )}
             </div>
           </div>
-        )}
+        </div>
         
-        {/* Campeonato + Data e Hora do Jogo - só para apostas simples */}
-        {!isComboTip && (
-          <div className="text-center mt-3 pt-3 border-t border-white/5">
-            <div className="text-[#33b864] text-xs font-medium mb-1">{officialLeague}</div>
-            {officialMatchTime && (
-              <span className="text-gray-400 text-xs">
-                {(() => {
-                  const date = new Date(officialMatchTime);
-                  const day = date.getDate().toString().padStart(2, '0');
-                  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                  const hours = date.getHours().toString().padStart(2, '0');
-                  const minutes = date.getMinutes().toString().padStart(2, '0');
-                  return `${day}/${month} às ${hours}:${minutes}`;
-                })()}
-              </span>
-            )}
+        {/* Campeonato + Data e Hora do Jogo */}
+        <div className="text-center mt-3 pt-3 border-t border-white/5">
+          <div className="text-[#33b864] text-xs font-medium mb-1">
+            {isComboTip ? parsedLegs[0]?.league || signal.league : officialLeague}
           </div>
-        )}
+          {(isComboTip ? parsedLegs[0]?.time : officialMatchTime) && (
+            <span className="text-gray-400 text-xs">
+              {isComboTip ? parsedLegs[0]?.time : (() => {
+                const date = new Date(officialMatchTime!);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month} às ${hours}:${minutes}`;
+              })()}
+            </span>
+          )}
+        </div>
         
         {/* Entrada Recomendada - Layout Responsivo Mobile/Desktop */}
         <div className="mt-4 pt-4 border-t border-white/10">
