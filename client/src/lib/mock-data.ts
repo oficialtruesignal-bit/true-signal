@@ -30,9 +30,18 @@ export interface Signal {
   isHot?: boolean;
   betLink?: string;
   isLive?: boolean;
+  isCombo?: boolean; // Whether this is a combo/accumulator bet
+  totalOdd?: number; // Total combined odd for combos
   legs?: BetLeg[]; // Multiple selections for combo bets
   fixtureId?: string; // ID from API-Football to fetch official data
   imageUrl?: string; // URL of uploaded bet slip image
+  // AI Analysis fields
+  analysisRationale?: string; // JSON with detailed reasoning
+  analysisSummary?: string; // Short summary text for users
+  confidence?: number; // AI confidence 0-100%
+  probability?: number; // Calculated probability 0-100%
+  expectedValue?: number; // Expected value percentage
+  aiSourceId?: string; // Reference to ai_tickets.id
 }
 
 export interface LiveGame {

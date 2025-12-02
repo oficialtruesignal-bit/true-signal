@@ -9,6 +9,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { aiPredictionEngine } from "./ai-prediction-engine";
 import { db } from "./db";
 import { deriveComboMetadata, parseLegs, normalizeTipForResponse } from "./combo-utils";
+import { resultChecker } from "./result-checker";
+import { sql } from "drizzle-orm";
 
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -2103,6 +2105,182 @@ REGRAS IMPORTANTES:
     } catch (error: any) {
       console.error("[Multi-Bot] Error getting bot stats:", error);
       return res.status(500).json({ error: "Erro ao buscar estatísticas" });
+    }
+  });
+
+  // =====================================================
+  // RESULT CHECKER & STATISTICS ENDPOINTS
+  // =====================================================
+
+  // Start the result checker (runs every 10 minutes)
+  resultChecker.start(10);
+
+  // Manual trigger to check results
+  app.post("/api/tips/check-results", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      const result = await resultChecker.checkPendingTips();
+      
+      return res.json({
+        success: true,
+        ...result,
+        message: `Verificado ${result.checked} tips, ${result.updated} atualizados`
+      });
+    } catch (error: any) {
+      console.error("[Result Checker] Error:", error);
+      return res.status(500).json({ error: "Erro ao verificar resultados" });
+    }
+  });
+
+  // Get monthly statistics (assertivity, profit, etc)
+  app.get("/api/tips/stats", async (req, res) => {
+    try {
+      const { month, year } = req.query;
+      
+      const targetMonth = month ? parseInt(String(month)) : new Date().getMonth() + 1;
+      const targetYear = year ? parseInt(String(year)) : new Date().getFullYear();
+      
+      // Get all tips for the month
+      const startDate = new Date(targetYear, targetMonth - 1, 1);
+      const endDate = new Date(targetYear, targetMonth, 0, 23, 59, 59);
+      
+      const monthTips = await db.select()
+        .from(tips)
+        .where(
+          sql`${tips.createdAt} >= ${startDate} AND ${tips.createdAt} <= ${endDate}`
+        );
+      
+      // Calculate stats
+      const totalTips = monthTips.length;
+      const greenTips = monthTips.filter(t => t.status === 'green').length;
+      const redTips = monthTips.filter(t => t.status === 'red').length;
+      const pendingTips = monthTips.filter(t => t.status === 'pending').length;
+      const settledTips = greenTips + redTips;
+      
+      // Assertivity (only counts settled tips)
+      const assertivity = settledTips > 0 ? (greenTips / settledTips) * 100 : 0;
+      
+      // Calculate profit/loss
+      let totalProfit = 0;
+      for (const tip of monthTips) {
+        if (tip.resultProfit) {
+          totalProfit += parseFloat(String(tip.resultProfit));
+        } else if (tip.status === 'green') {
+          const odd = parseFloat(String(tip.odd));
+          const stake = parseFloat(String(tip.stake || '1'));
+          totalProfit += (odd - 1) * stake;
+        } else if (tip.status === 'red') {
+          const stake = parseFloat(String(tip.stake || '1'));
+          totalProfit -= stake;
+        }
+      }
+      
+      // ROI (Return on Investment)
+      const totalStaked = monthTips
+        .filter(t => t.status !== 'pending')
+        .reduce((sum, t) => sum + parseFloat(String(t.stake || '1')), 0);
+      const roi = totalStaked > 0 ? (totalProfit / totalStaked) * 100 : 0;
+      
+      // Average odd of green tips
+      const avgOddGreen = greenTips > 0
+        ? monthTips.filter(t => t.status === 'green').reduce((sum, t) => sum + parseFloat(String(t.odd)), 0) / greenTips
+        : 0;
+      
+      // Current streak
+      const sortedTips = monthTips
+        .filter(t => t.status !== 'pending')
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      let currentStreak = { wins: 0, losses: 0, type: 'none' as 'win' | 'loss' | 'none' };
+      if (sortedTips.length > 0) {
+        const lastStatus = sortedTips[0].status;
+        let count = 0;
+        for (const tip of sortedTips) {
+          if (tip.status === lastStatus) {
+            count++;
+          } else {
+            break;
+          }
+        }
+        currentStreak = {
+          wins: lastStatus === 'green' ? count : 0,
+          losses: lastStatus === 'red' ? count : 0,
+          type: lastStatus === 'green' ? 'win' : 'loss'
+        };
+      }
+      
+      return res.json({
+        month: targetMonth,
+        year: targetYear,
+        totalTips,
+        greenTips,
+        redTips,
+        pendingTips,
+        settledTips,
+        assertivity: parseFloat(assertivity.toFixed(1)),
+        totalProfit: parseFloat(totalProfit.toFixed(2)),
+        roi: parseFloat(roi.toFixed(1)),
+        avgOddGreen: parseFloat(avgOddGreen.toFixed(2)),
+        currentStreak,
+        lastUpdated: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error("[Stats] Error fetching stats:", error);
+      return res.status(500).json({ error: "Erro ao buscar estatísticas" });
+    }
+  });
+
+  // Get daily stats for chart
+  app.get("/api/tips/stats/daily", async (req, res) => {
+    try {
+      const { days = 30 } = req.query;
+      const numDays = parseInt(String(days));
+      
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - numDays);
+      
+      const allTips = await db.select()
+        .from(tips)
+        .where(sql`${tips.createdAt} >= ${startDate}`);
+      
+      // Group by day
+      const dailyStats: Record<string, { date: string; green: number; red: number; profit: number }> = {};
+      
+      for (let i = 0; i <= numDays; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateKey = date.toISOString().split('T')[0];
+        dailyStats[dateKey] = { date: dateKey, green: 0, red: 0, profit: 0 };
+      }
+      
+      for (const tip of allTips) {
+        const dateKey = new Date(tip.createdAt).toISOString().split('T')[0];
+        if (dailyStats[dateKey]) {
+          if (tip.status === 'green') {
+            dailyStats[dateKey].green++;
+            const odd = parseFloat(String(tip.odd));
+            const stake = parseFloat(String(tip.stake || '1'));
+            dailyStats[dateKey].profit += (odd - 1) * stake;
+          } else if (tip.status === 'red') {
+            dailyStats[dateKey].red++;
+            const stake = parseFloat(String(tip.stake || '1'));
+            dailyStats[dateKey].profit -= stake;
+          }
+        }
+      }
+      
+      // Convert to array sorted by date
+      const result = Object.values(dailyStats).sort((a, b) => a.date.localeCompare(b.date));
+      
+      return res.json(result);
+    } catch (error: any) {
+      console.error("[Stats] Error fetching daily stats:", error);
+      return res.status(500).json({ error: "Erro ao buscar estatísticas diárias" });
     }
   });
 

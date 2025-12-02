@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { tipsService } from '@/lib/tips-service';
+import { apiRequest } from '@/lib/queryClient';
 
 export interface SimulatedTip {
   id: string;
@@ -13,6 +14,29 @@ export interface SimulatedTip {
   profit: number;
 }
 
+export interface MonthlyStats {
+  month: number;
+  year: number;
+  totalTips: number;
+  greenTips: number;
+  redTips: number;
+  pendingTips: number;
+  settledTips: number;
+  assertivity: number;
+  totalProfit: number;
+  roi: number;
+  avgOddGreen: number;
+  currentStreak: { wins: number; losses: number; type: 'win' | 'loss' | 'none' };
+  lastUpdated: string;
+}
+
+export interface DailyStats {
+  date: string;
+  green: number;
+  red: number;
+  profit: number;
+}
+
 export interface DashboardStats {
   balance: number;
   winRate: number;
@@ -20,6 +44,9 @@ export interface DashboardStats {
   currentStreak: number;
   profitHistory: { time: string; profit: number }[];
   recentTips: SimulatedTip[];
+  monthlyStats: MonthlyStats | null;
+  dailyStats: DailyStats[];
+  isLoading: boolean;
 }
 
 const INITIAL_BALANCE = 1000;
@@ -108,24 +135,48 @@ export function useDashboardData(): DashboardStats {
   const [simulatedTips, setSimulatedTips] = useState<SimulatedTip[]>([]);
   const [currentBalance, setCurrentBalance] = useState(INITIAL_BALANCE);
   
-  // Fetch real tips from Supabase
+  // Fetch real tips from API
   const { data: realTips = [] } = useQuery({
     queryKey: ['tips'],
     queryFn: tipsService.getAll,
   });
 
-  // Initialize simulation on mount
-  useEffect(() => {
-    const historical = generateHistoricalTips(100);
-    setSimulatedTips(historical);
-    
-    // Calculate balance from historical
-    const totalProfit = historical.reduce((sum, tip) => sum + tip.profit, 0);
-    setCurrentBalance(INITIAL_BALANCE + totalProfit);
-  }, []);
+  // Fetch real monthly stats from API
+  const { data: monthlyStats, isLoading: isLoadingMonthly } = useQuery<MonthlyStats>({
+    queryKey: ['tips-stats'],
+    queryFn: async () => {
+      const response = await fetch('/api/tips/stats');
+      if (!response.ok) throw new Error('Failed to fetch stats');
+      return response.json();
+    },
+    refetchInterval: 60000, // Refresh every minute
+  });
 
-  // Add new simulated tip every 20 minutes (for demo, every 30 seconds)
+  // Fetch daily stats for chart
+  const { data: dailyStats = [], isLoading: isLoadingDaily } = useQuery<DailyStats[]>({
+    queryKey: ['tips-stats-daily'],
+    queryFn: async () => {
+      const response = await fetch('/api/tips/stats/daily?days=30');
+      if (!response.ok) throw new Error('Failed to fetch daily stats');
+      return response.json();
+    },
+    refetchInterval: 60000,
+  });
+
+  // Initialize simulation only if no real data
   useEffect(() => {
+    if (realTips.length === 0) {
+      const historical = generateHistoricalTips(100);
+      setSimulatedTips(historical);
+      const totalProfit = historical.reduce((sum, tip) => sum + tip.profit, 0);
+      setCurrentBalance(INITIAL_BALANCE + totalProfit);
+    }
+  }, [realTips.length]);
+
+  // Add new simulated tip every 30 seconds (only if no real data)
+  useEffect(() => {
+    if (realTips.length > 0) return;
+    
     const interval = setInterval(() => {
       setSimulatedTips((prev) => {
         const newTipIndex = prev.length + 1;
@@ -152,42 +203,73 @@ export function useDashboardData(): DashboardStats {
         
         return [...prev, newTip];
       });
-    }, 30000); // Every 30 seconds for demo (change to 1200000 for real 20min)
+    }, 30000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [realTips.length]);
 
-  // Calculate stats (SIMULATION ONLY - for demo purposes)
-  // Note: Real tips appear in the activity list but don't affect KPIs
-  const simulatedGreenCount = simulatedTips.filter((t) => t.status === 'green').length;
-  const winRate = simulatedTips.length > 0 ? (simulatedGreenCount / simulatedTips.length) * 100 : 0;
-  const totalTips = simulatedTips.length; // Only count simulated for consistency
+  // Use REAL stats if available, otherwise fallback to simulation
+  const hasRealData = monthlyStats && monthlyStats.settledTips > 0;
   
-  // Current streak (count consecutive greens from end)
+  const winRate = hasRealData 
+    ? monthlyStats.assertivity 
+    : simulatedTips.length > 0 
+      ? (simulatedTips.filter((t) => t.status === 'green').length / simulatedTips.length) * 100 
+      : 0;
+  
+  const totalTips = hasRealData 
+    ? monthlyStats.totalTips 
+    : simulatedTips.length;
+  
+  // Current streak from real data or simulation
   let currentStreak = 0;
-  for (let i = simulatedTips.length - 1; i >= 0; i--) {
-    if (simulatedTips[i].status === 'green') {
-      currentStreak++;
-    } else {
-      break;
+  if (hasRealData) {
+    currentStreak = monthlyStats.currentStreak.type === 'win' 
+      ? monthlyStats.currentStreak.wins 
+      : 0;
+  } else {
+    for (let i = simulatedTips.length - 1; i >= 0; i--) {
+      if (simulatedTips[i].status === 'green') {
+        currentStreak++;
+      } else {
+        break;
+      }
     }
   }
 
-  // Profit history for chart (last 72 tips or all if less)
-  const historyStartIndex = Math.max(0, simulatedTips.length - 72);
-  const profitHistory = simulatedTips.slice(historyStartIndex).map((tip, index) => {
-    const absoluteIndex = historyStartIndex + index;
-    const cumulativeProfit = simulatedTips
-      .slice(0, absoluteIndex + 1)
-      .reduce((sum, t) => sum + t.profit, 0);
-    
-    return {
-      time: tip.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      profit: INITIAL_BALANCE + cumulativeProfit,
-    };
-  });
+  // Profit history: use daily stats if available, otherwise simulation
+  let profitHistory: { time: string; profit: number }[] = [];
+  
+  if (dailyStats.length > 0) {
+    let cumulativeProfit = INITIAL_BALANCE;
+    profitHistory = dailyStats.map((day) => {
+      cumulativeProfit += day.profit;
+      return {
+        time: new Date(day.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+        profit: cumulativeProfit,
+      };
+    });
+  } else {
+    const historyStartIndex = Math.max(0, simulatedTips.length - 72);
+    profitHistory = simulatedTips.slice(historyStartIndex).map((tip, index) => {
+      const absoluteIndex = historyStartIndex + index;
+      const cumulativeProfit = simulatedTips
+        .slice(0, absoluteIndex + 1)
+        .reduce((sum, t) => sum + t.profit, 0);
+      
+      return {
+        time: tip.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        profit: INITIAL_BALANCE + cumulativeProfit,
+      };
+    });
+  }
 
-  // Recent tips (hybrid: real tips on top, then simulated)
+  // Balance: use real profit if available
+  const balance = hasRealData 
+    ? INITIAL_BALANCE + monthlyStats.totalProfit 
+    : currentBalance;
+
+  // Recent tips: prioritize real tips
   const recentTips: SimulatedTip[] = [
     ...realTips.map((tip) => ({
       id: tip.id,
@@ -203,11 +285,14 @@ export function useDashboardData(): DashboardStats {
   ];
 
   return {
-    balance: currentBalance,
+    balance,
     winRate,
     totalTips,
     currentStreak,
     profitHistory,
     recentTips: recentTips.slice(0, 30),
+    monthlyStats: monthlyStats || null,
+    dailyStats,
+    isLoading: isLoadingMonthly || isLoadingDaily,
   };
 }

@@ -1,6 +1,6 @@
 import { Layout } from "@/components/layout";
 import { useDashboardData } from "@/hooks/use-dashboard-data";
-import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight } from "lucide-react";
+import { TrendingUp, Target, Zap, Flame, Activity, Bot, Sparkles, ArrowRight, BarChart2, DollarSign } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { LiveMetricsBar } from "@/components/live-metrics-bar";
 import { InstallAppBanner } from "@/components/install-app-banner";
@@ -139,68 +139,96 @@ export default function Dashboard() {
         <>
           {/* Bento Grid Layout - Full Dashboard */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* KPI Cards - Top (3 cards now - removed Banca) */}
-        <div className="lg:col-span-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* KPI Cards - Top (4 cards with real stats) */}
+        <div className="lg:col-span-12 grid grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Assertividade */}
           <div 
-            className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
+            className="bg-card border border-primary/10 rounded-2xl p-5 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
             data-testid="kpi-winrate"
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <Target className="w-5 h-5 text-primary" />
-              <span className="text-[10px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
-                ELITE
+              <span className="text-[9px] font-bold bg-emerald-500/10 text-emerald-500 px-2 py-1 rounded border border-emerald-500/20">
+                {stats.monthlyStats?.settledTips ? 'REAL' : 'DEMO'}
               </span>
             </div>
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground font-medium">Taxa de Acerto</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
                 {stats.winRate.toFixed(1)}%
               </p>
-              <p className="text-[10px] text-muted-foreground">
-                Precisão Institucional
+              <p className="text-[9px] text-muted-foreground">
+                {stats.monthlyStats ? `${stats.monthlyStats.greenTips}W / ${stats.monthlyStats.redTips}L` : 'Precisão Institucional'}
+              </p>
+            </div>
+          </div>
+
+          {/* ROI (Return on Investment) */}
+          <div 
+            className="bg-card border border-primary/10 rounded-2xl p-5 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
+            data-testid="kpi-roi"
+          >
+            <div className="flex items-center justify-between mb-2">
+              <BarChart2 className="w-5 h-5 text-primary" />
+              <span className={`text-[9px] font-bold px-2 py-1 rounded border ${
+                stats.monthlyStats?.roi && stats.monthlyStats.roi > 0 
+                  ? 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20' 
+                  : 'bg-red-500/10 text-red-500 border-red-500/20'
+              }`}>
+                ROI
+              </span>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground font-medium">Retorno</p>
+              <p className={`text-2xl font-bold font-mono ${
+                stats.monthlyStats?.roi && stats.monthlyStats.roi > 0 ? 'text-emerald-500' : 'text-red-500'
+              }`}>
+                {stats.monthlyStats?.roi ? `${stats.monthlyStats.roi > 0 ? '+' : ''}${stats.monthlyStats.roi.toFixed(1)}%` : '+0.0%'}
+              </p>
+              <p className="text-[9px] text-muted-foreground">
+                Lucro: {stats.monthlyStats?.totalProfit ? `${stats.monthlyStats.totalProfit > 0 ? '+' : ''}${stats.monthlyStats.totalProfit.toFixed(2)}u` : '0.00u'}
               </p>
             </div>
           </div>
 
           {/* Tips Enviadas */}
           <div 
-            className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
+            className="bg-card border border-primary/10 rounded-2xl p-5 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
             data-testid="kpi-total"
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <Zap className="w-5 h-5 text-primary" />
               <Activity className="w-4 h-4 text-primary animate-pulse" />
             </div>
             <div className="space-y-1">
-              <p className="text-xs text-muted-foreground font-medium">Sinais Enviados</p>
-              <p className="text-3xl font-bold text-slate-900 dark:text-white font-mono">
+              <p className="text-xs text-muted-foreground font-medium">Sinais do Mês</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white font-mono">
                 {stats.totalTips.toLocaleString('pt-BR')}
               </p>
-              <p className="text-[10px] text-muted-foreground">
-                Volume Acumulado
+              <p className="text-[9px] text-muted-foreground">
+                {stats.monthlyStats?.pendingTips ? `${stats.monthlyStats.pendingTips} pendentes` : 'Volume Acumulado'}
               </p>
             </div>
           </div>
 
           {/* Sequência Atual */}
           <div 
-            className="bg-card border border-primary/10 rounded-2xl p-6 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
+            className="bg-card border border-primary/10 rounded-2xl p-5 shadow-[0_0_30px_rgba(51,184,100,0.08)] hover:shadow-[0_0_40px_rgba(51,184,100,0.15)] transition-all duration-300"
             data-testid="kpi-streak"
           >
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-2">
               <Flame className="w-5 h-5 text-orange-500" />
-              <span className="text-[10px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded border border-orange-500/20 animate-pulse">
+              <span className="text-[9px] font-bold bg-orange-500/10 text-orange-500 px-2 py-1 rounded border border-orange-500/20 animate-pulse">
                 HOT
               </span>
             </div>
             <div className="space-y-1">
               <p className="text-xs text-muted-foreground font-medium">Sequência Verde</p>
-              <p className="text-3xl font-bold text-orange-500 font-mono flex items-center gap-2">
+              <p className="text-2xl font-bold text-orange-500 font-mono flex items-center gap-2">
                 {stats.currentStreak} 
-                <Flame className="w-6 h-6 animate-pulse" />
+                <Flame className="w-5 h-5 animate-pulse" />
               </p>
-              <p className="text-[10px] text-muted-foreground">
+              <p className="text-[9px] text-muted-foreground">
                 Greens Consecutivos
               </p>
             </div>
