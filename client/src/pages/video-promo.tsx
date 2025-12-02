@@ -35,13 +35,37 @@ import logoOriginal from '@assets/generated_videos/true_signal_shield_pulse_logo
 import logoFinal from '@assets/generated_videos/shield_pulse_logo_true_gray_signal_white.mp4';
 import logoBillion from '@assets/generated_videos/elegant_billion_style_logo_true_signal.mp4';
 import greenMatrix from '@assets/generated_videos/matrix_style_professional_green_celebration.mp4';
+import redFrustration from '@assets/generated_videos/red_frustration_hollywood_disappointment_moment.mp4';
+import socialProof from '@assets/generated_videos/social_proof_stats_87%_assertividade_premium.mp4';
+import urgencyTimer from '@assets/generated_videos/urgency_countdown_ultimas_vagas_timer.mp4';
 
 const videos = [
+  { 
+    src: redFrustration, 
+    title: "😤 DOR/RED: Frustração Hollywood", 
+    description: "Momento de derrota elegante - Contraste pro GREEN",
+    filename: "red_frustration_hollywood.mp4",
+    category: "final"
+  },
   { 
     src: greenMatrix, 
     title: "🎬 GREEN MATRIX: Celebração Hollywood", 
     description: "Vitória elegante estilo Matrix - Meta Ads Ready",
     filename: "green_matrix_hollywood.mp4",
+    category: "final"
+  },
+  { 
+    src: socialProof, 
+    title: "📊 PROVA SOCIAL: 87% Assertividade", 
+    description: "Estatísticas premium estilo Bloomberg/Matrix",
+    filename: "prova_social_stats.mp4",
+    category: "final"
+  },
+  { 
+    src: urgencyTimer, 
+    title: "⏰ URGÊNCIA: Últimas Vagas", 
+    description: "Countdown elegante com escassez",
+    filename: "urgencia_countdown.mp4",
     category: "final"
   },
   { 
@@ -345,7 +369,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (8)
+            ⭐ Essencial (11)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
