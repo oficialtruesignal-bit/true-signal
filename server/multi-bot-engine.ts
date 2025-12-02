@@ -42,23 +42,53 @@ export const DEFAULT_BOT_STRATEGIES: BotStrategyConfig[] = [
     }
   },
 
-  // --- 2. CORNERS MASTER (2º Tempo) ---
+  // --- 2. CORNER PRO BOT (Inteligência Avançada) ---
+  // Baseado em análise de dados profissionais: Premier League 10.5 corners/game, 
+  // Bundesliga 9.9, últimos 10 minutos = 1.5x mais corners
   {
     code: "corners_master",
-    name: "🚩 Corners Master",
-    description: "Pressão total! Goleiro espalmando. Chance de canto iminente.",
+    name: "🚩 Corner PRO Bot",
+    description: "Algoritmo profissional: Last 10min Value, 1H Over, Handicap Analysis",
     icon: "Flag",
     color: "#06b6d4",
     type: "live_ft",
-    minMinute: 50,
-    maxMinute: 85,
-    minPressure: 55,
-    minConfidence: 70,
+    minMinute: 15,
+    maxMinute: 90,
+    minPressure: 40,
+    minConfidence: 68,
     parameters: {
-      minAttacksPerMin: 1.5, // Pressão insana
-      minShotsOnTarget: 5, // Goleiro trabalhando
-      scoreLosingTeamPressure: true, // Time perdendo está atacando
-      preferredMarkets: ["Over 8.5 Corners", "Over 9.5 Corners", "Próximo Corner Casa/Fora"]
+      // Estratégia 1: Last 10 Minutes Value Bet
+      last10MinEnabled: true,
+      last10MinWindow: [80, 90],
+      last10MinTrailingTeamBonus: 1.5, // 1.5x mais corners quando perdendo
+      // Estratégia 2: First Half Over Exploitation
+      firstHalfEnabled: true,
+      firstHalfWindow: [15, 45],
+      highCornerLeagues: ["Premier League", "Bundesliga", "Eredivisie", "Scottish Premiership"],
+      leagueCornerAverages: {
+        "Premier League": 10.5,
+        "Bundesliga": 9.9,
+        "Serie A": 9.5,
+        "La Liga": 9.3,
+        "Ligue 1": 9.2,
+        "Brasileirão": 9.0,
+        "Eredivisie": 10.2,
+        "Scottish Premiership": 10.8
+      },
+      // Estratégia 3: Live Under After High 1H
+      underAfterHigh1HEnabled: true,
+      high1HThreshold: 7, // Se 1H tem 7+ corners
+      // Estratégia 4: Team Corner Handicap
+      dominantTeamEnabled: true,
+      dominantTeamCornersMin: 7.0, // Média de corners/jogo
+      // Limiares de qualidade
+      minCurrentCorners: 3,
+      minCornersRate: 0.10, // corners/minuto mínimo
+      minDangerousAttacks: 25,
+      minShotsTotal: 6,
+      // Projeção e mercados
+      projectionBoostFinal10: 1.5, // Boost de 50% nos últimos 10 min
+      preferredMarkets: ["Over 8.5 Corners", "Over 9.5 Corners", "Over 10.5 Corners", "Corner Handicap -1.5"]
     }
   },
 
@@ -446,28 +476,147 @@ export class MultiBotEngine {
         break;
       }
 
-      // --- 2. CORNERS MASTER (2º Tempo) ---
+      // --- 2. CORNER PRO BOT (Inteligência Avançada) ---
       case "corners_master": {
-        const attacksPerMin = minute > 0 ? totalAttacks / minute : 0;
-        const isLosingTeamPressing = (homeScore < awayScore && homeDangerousAttacks > awayDangerousAttacks) ||
-                                     (awayScore < homeScore && awayDangerousAttacks > homeDangerousAttacks);
+        const cornersRate = minute > 0 ? totalCorners / minute : 0;
+        const matchStatus = match.matchStatus || match.status || "";
+        const isFirstHalf = matchStatus === "1H" || matchStatus === "HT" || minute <= 45;
+        const isSecondHalf = minute > 45;
+        const isLast10Min = minute >= 80;
+        const league = match.league || match.leagueName || "";
         
-        if (attacksPerMin >= params.minAttacksPerMin && 
-            totalShots >= params.minShotsOnTarget &&
-            isLosingTeamPressing) {
-          const cornersRate = minute > 0 ? totalCorners / minute : 0;
-          const projectedCorners = totalCorners + (90 - minute) * cornersRate * 1.3; // Boost due to pressure
-          confidence = Math.min(90, 55 + attacksPerMin * 15 + totalShots * 3);
-          probability = Math.min(85, confidence * 0.9);
-          market = projectedCorners >= 10 ? "Over 9.5 Corners" : "Over 8.5 Corners";
+        // Get league average corners
+        const leagueAverages: Record<string, number> = params.leagueCornerAverages || {};
+        const leagueAvg = leagueAverages[league] || 9.5;
+        const expectedCornersPerMin = leagueAvg / 90;
+        
+        // Check if team is trailing (more aggressive for corners)
+        const isHomeTrailing = homeScore < awayScore;
+        const isAwayTrailing = awayScore < homeScore;
+        const hasTrailingTeam = isHomeTrailing || isAwayTrailing;
+        
+        // Dangerous attacks indicator
+        const totalDangerousAttacks = homeDangerousAttacks + awayDangerousAttacks;
+        
+        let strategyTriggered = "";
+        let projectedCorners = 0;
+        let confidenceBonus = 0;
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ESTRATÉGIA 1: LAST 10 MINUTES VALUE BET (80-90 min)
+        // Times perdendo atacam intensamente, corners 1.5x mais frequentes
+        // ═══════════════════════════════════════════════════════════════
+        if (isLast10Min && params.last10MinEnabled && hasTrailingTeam) {
+          const trailingTeamAttacks = isHomeTrailing ? homeDangerousAttacks : awayDangerousAttacks;
+          const last10MinBoost = params.last10MinTrailingTeamBonus || 1.5;
+          
+          // Projeção com boost dos últimos 10 min
+          const boostedRate = cornersRate * last10MinBoost;
+          projectedCorners = totalCorners + (90 - minute) * boostedRate;
+          
+          if (trailingTeamAttacks >= 20 && totalCorners >= 5) {
+            strategyTriggered = "LAST_10_MIN_VALUE";
+            confidenceBonus = 15; // Boost alto para últimos 10 min
+            confidence = Math.min(92, 60 + confidenceBonus + (projectedCorners - 8) * 3);
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ESTRATÉGIA 2: FIRST HALF OVER EXPLOITATION (15-45 min)
+        // Ligas de alto corner produzem mais no 1º tempo
+        // ═══════════════════════════════════════════════════════════════
+        if (!strategyTriggered && isFirstHalf && params.firstHalfEnabled && minute >= 15 && minute <= 45) {
+          const highCornerLeagues = params.highCornerLeagues || [];
+          const isHighCornerLeague = highCornerLeagues.some((l: string) => 
+            league.toLowerCase().includes(l.toLowerCase())
+          );
+          
+          if (isHighCornerLeague || cornersRate >= expectedCornersPerMin * 1.2) {
+            // 1º tempo geralmente tem mais corners que bookmakers preveem
+            projectedCorners = totalCorners + (45 - minute) * cornersRate * 1.15;
+            const expectedHalfCorners = (leagueAvg / 2) + 0.5; // Ligas altas têm mais no 1H
+            
+            if (projectedCorners >= expectedHalfCorners && totalCorners >= 2) {
+              strategyTriggered = "1H_OVER_EXPLOITATION";
+              confidenceBonus = isHighCornerLeague ? 12 : 8;
+              confidence = Math.min(88, 55 + confidenceBonus + (projectedCorners - 4) * 4);
+            }
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ESTRATÉGIA 3: LIVE PRESSURE STANDARD (50-85 min)
+        // Pressão constante gera corners naturalmente
+        // ═══════════════════════════════════════════════════════════════
+        if (!strategyTriggered && isSecondHalf && minute >= 50 && minute <= 85) {
+          const minRate = params.minCornersRate || 0.10;
+          const minDangerous = params.minDangerousAttacks || 25;
+          const minShots = params.minShotsTotal || 6;
+          
+          if (cornersRate >= minRate && totalDangerousAttacks >= minDangerous && totalShots >= minShots) {
+            projectedCorners = totalCorners + (90 - minute) * cornersRate * 1.2;
+            strategyTriggered = "LIVE_PRESSURE";
+            confidenceBonus = 10;
+            confidence = Math.min(88, 55 + confidenceBonus + (projectedCorners - 8) * 3 + (totalDangerousAttacks / 10));
+          }
+        }
+        
+        // ═══════════════════════════════════════════════════════════════
+        // ESTRATÉGIA 4: DOMINANT TEAM HANDICAP
+        // Times dominantes (City, Liverpool) excedem 8-10 corners
+        // ═══════════════════════════════════════════════════════════════
+        if (!strategyTriggered && minute >= 30) {
+          const homeDominance = homeDangerousAttacks - awayDangerousAttacks;
+          const awayDominance = awayDangerousAttacks - homeDangerousAttacks;
+          const dominantTeamAdvantage = Math.max(homeDominance, awayDominance);
+          
+          if (dominantTeamAdvantage >= 15 && cornersRate >= 0.08) {
+            const dominantTeamCorners = homeDominance > awayDominance ? homeCorners : awayCorners;
+            projectedCorners = totalCorners + (90 - minute) * cornersRate * 1.25;
+            
+            if (dominantTeamCorners >= 3) {
+              strategyTriggered = "DOMINANT_TEAM";
+              confidenceBonus = 8;
+              confidence = Math.min(85, 50 + confidenceBonus + dominantTeamAdvantage * 0.5 + dominantTeamCorners * 3);
+            }
+          }
+        }
+        
+        // Determinar mercado baseado na projeção
+        if (strategyTriggered && confidence >= Number(strategy.minConfidenceThreshold)) {
+          probability = Math.min(88, confidence * 0.92);
+          
+          // Escolher mercado baseado em projeção e minuto
+          if (isFirstHalf) {
+            market = projectedCorners >= 5 ? "Over 4.5 Corners HT" : "Over 3.5 Corners HT";
+          } else if (projectedCorners >= 11) {
+            market = "Over 10.5 Corners";
+          } else if (projectedCorners >= 10) {
+            market = "Over 9.5 Corners";
+          } else {
+            market = "Over 8.5 Corners";
+          }
+          
           outcome = "Sim";
           analysisData = {
-            trigger: "🚩 Pressão total! Goleiro trabalhando",
-            attacksPerMin: attacksPerMin.toFixed(2),
-            totalShots,
-            isLosingTeamPressing,
+            trigger: `🚩 Corner PRO: ${strategyTriggered}`,
+            strategy: strategyTriggered,
+            totalCorners,
+            cornersRate: cornersRate.toFixed(3),
             projectedCorners: projectedCorners.toFixed(1),
-            message: "Chance de canto iminente"
+            leagueAverage: leagueAvg,
+            minute,
+            isLast10Min,
+            hasTrailingTeam,
+            totalDangerousAttacks,
+            confidenceBonus,
+            message: strategyTriggered === "LAST_10_MIN_VALUE" 
+              ? "🔥 Últimos 10min - 1.5x mais corners!" 
+              : strategyTriggered === "1H_OVER_EXPLOITATION"
+              ? "📊 Liga de alto corner - 1H Over Value"
+              : strategyTriggered === "DOMINANT_TEAM"
+              ? "💪 Time dominante - Handicap favorável"
+              : "📈 Pressão constante gerando corners"
           };
         }
         break;
