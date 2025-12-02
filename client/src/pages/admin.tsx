@@ -455,12 +455,13 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                     <CardDescription>Análise de pressão em tempo real com IA calibrada</CardDescription>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" onClick={() => refetchLive()} disabled={!isMonitorRunning}>
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/50">
+                      <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
+                      Ativo 24/7
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => refetchLive()}>
                       <RefreshCw className={`w-4 h-4 mr-2 ${isLoadingLive ? 'animate-spin' : ''}`} />
                       Atualizar
-                    </Button>
-                    <Button onClick={toggleMonitor} className={isMonitorRunning ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}>
-                      {isMonitorRunning ? <><Pause className="w-4 h-4 mr-2" />Pausar</> : <><Play className="w-4 h-4 mr-2" />Iniciar</>}
                     </Button>
                   </div>
                 </div>
@@ -485,12 +486,7 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                   </div>
                 </div>
 
-                {!isMonitorRunning ? (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Flame className="w-12 h-12 mx-auto mb-3 opacity-30" />
-                    <p>Clique em "Iniciar" para começar a monitorar jogos ao vivo</p>
-                  </div>
-                ) : hotMatches.length === 0 ? (
+                {hotMatches.length === 0 ? (
                   <div className="text-center py-12 text-muted-foreground">
                     <Activity className="w-12 h-12 mx-auto mb-3 opacity-30 animate-pulse" />
                     <p>Monitorando... Nenhum jogo quente no momento</p>
