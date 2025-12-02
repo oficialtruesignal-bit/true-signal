@@ -1,0 +1,48 @@
+PROMPT MESTRE: AI PREDICTIVE FIX (TIMEZONE & DATA PARSING)
+ROLE: Senior Backend Engineer & AI Integration Specialist.
+
+TASK: Corrigir a lógica de datas e o retorno da IA Preditiva. PROBLEMAS:
+
+Fuso Horário: A IA está gerando jogos do dia seguinte (UTC) quando solicitada "hoje" à noite.
+
+Dados Faltantes: A resposta da IA não está trazendo ou exibindo data e hora do jogo.
+
+1. AJUSTE DE DATA (TIMEZONE AWARENESS)
+No backend (footballService.ts ou onde chama a API), force o fuso horário para o Brasil antes de pedir os jogos.
+
+TypeScript
+
+// Lógica de Data Correta (Force Brazil Time)
+const today = new Date();
+// Ajusta para -3h manualmente se o servidor for UTC
+today.setHours(today.getHours() - 3); 
+const dateString = today.toISOString().split('T')[0]; // YYYY-MM-DD correto do Brasil
+Ação: Use essa dateString para filtrar os jogos da API antes de mandar para a IA. Não deixe a IA escolher a data. Você entrega a lista de jogos do dia correto e diz: "Analise estes".
+
+2. REFINAMENTO DO PROMPT DA IA (SYSTEM INSTRUCTION)
+Atualize o prompt que é enviado para o Gemini/OpenAI. Ele precisa ser Estrito sobre o formato de saída.
+
+Novo Prompt de Sistema:
+
+"Você é um Analista de Futebol Especialista. Analise a lista de jogos fornecida (JSON). Retorne APENAS um JSON válido com as melhores oportunidades. OBRIGATÓRIO: Para cada jogo, inclua os campos:
+
+match_date: Data no formato DD/MM/YYYY.
+
+match_time: Hora no formato HH:MM.
+
+home_team: Nome do time da casa.
+
+away_team: Nome do time visitante.
+
+reason: Breve explicação técnica (PT-BR).
+
+confidence: Alta, Média ou Baixa."
+
+3. CORREÇÃO NO FRONTEND (EXIBIÇÃO)
+No componente que renderiza a resposta da IA (provavelmente um Modal ou Lista):
+
+Verifique se você está lendo item.match_time e item.match_date.
+
+Se a data vier no formato ISO, use new Date(item.date).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }).
+
+COMANDO: Implemente a correção de fuso horário (-3h) na busca de jogos e force a IA a retornar data/hora estruturada no JSON.

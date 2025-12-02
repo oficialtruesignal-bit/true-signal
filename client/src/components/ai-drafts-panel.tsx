@@ -409,13 +409,40 @@ export function AiDraftsPanel() {
 
   const filteredDrafts = filterDrafts(drafts);
 
+  // Formatar data/hora no timezone brasileiro
   const formatMatchTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const dateFormatted = date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    });
+    const timeFormatted = date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    });
+    return `${dateFormatted} às ${timeFormatted}`;
+  };
+
+  // Formatar apenas a hora
+  const formatMatchHour = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      timeZone: 'America/Sao_Paulo'
+    });
+  };
+
+  // Formatar apenas a data
+  const formatMatchDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
+      year: 'numeric',
+      timeZone: 'America/Sao_Paulo'
     });
   };
 
@@ -929,6 +956,18 @@ export function AiDraftsPanel() {
                   ) : (
                     /* Single Bet - REDESIGNED CLEAN LAYOUT */
                     <div className="space-y-4">
+                      {/* Date/Time Header - PROMINENT */}
+                      <div className="flex items-center justify-between bg-slate-800/50 rounded-lg px-3 py-2">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-semibold text-white">{formatMatchDate(draft.matchTime)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-primary" />
+                          <span className="text-sm font-bold text-primary">{formatMatchHour(draft.matchTime)}</span>
+                        </div>
+                      </div>
+                      
                       {/* Teams Row - Full Width Clear */}
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2 flex-1">
@@ -942,7 +981,6 @@ export function AiDraftsPanel() {
                         <div className="flex items-center gap-2 flex-1 justify-end text-right">
                           <div>
                             <p className="font-bold text-white text-base">{draft.awayTeam}</p>
-                            <p className="text-xs text-gray-500">{formatMatchTime(draft.matchTime)}</p>
                           </div>
                           {draft.awayTeamLogo && <img src={draft.awayTeamLogo} alt="" className="w-10 h-10" />}
                         </div>
