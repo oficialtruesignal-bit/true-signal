@@ -91,7 +91,13 @@ type MarketFilter = 'all' | 'over25' | 'btts' | 'highConfidence' | 'corners' | '
 export function AiDraftsPanel() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isScanningPatterns, setIsScanningPatterns] = useState(false);
   const [patternOpportunities, setPatternOpportunities] = useState<any[]>([]);
