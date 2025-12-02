@@ -195,7 +195,8 @@ class AIPredictionEngine {
 
       // Cache for 2 hours (odds change frequently)
       await this.setCachedData(cacheKey, 'odds', markets, 2);
-      console.log(`[AI Engine] Fetched Bet365 odds for fixture ${fixtureId}:`, Object.keys(markets).join(', '));
+      console.log(`[AI Engine] Fetched Bet365 odds for fixture ${fixtureId}:`);
+      console.log(`[AI Engine] Available markets:`, JSON.stringify(markets, null, 2));
       return markets;
     } catch (error) {
       console.error(`[AI Engine] Failed to fetch Bet365 odds for fixture ${fixtureId}:`, error);
