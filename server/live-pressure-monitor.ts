@@ -37,15 +37,61 @@ interface LiveFixture {
 }
 
 interface LiveStatistics {
+  // Posse e controle
   possession: number;
+  passesTotal: number;
+  passesAccuracy: number;
+  
+  // Finalizações
   shotsTotal: number;
   shotsOnTarget: number;
-  corners: number;
+  shotsOffTarget: number;
+  shotsBlocked: number;
+  shotsInsideBox: number;
+  shotsOutsideBox: number;
+  
+  // Pressão e ataques
   dangerousAttacks: number;
   attacks: number;
+  
+  // Escanteios e bolas paradas
+  corners: number;
+  freeKicks: number;
+  throwIns: number;
+  goalKicks: number;
+  
+  // Defesa
+  saves: number;
+  offsides: number;
+  
+  // Faltas e cartões
   fouls: number;
   yellowCards: number;
   redCards: number;
+  
+  // Calculados/Estimados
+  xG: number;                    // Expected Goals estimado
+  pressureIntensity: number;     // Intensidade de pressão (0-100)
+}
+
+interface MatchEvent {
+  time: number;
+  type: 'goal' | 'card' | 'subst' | 'var' | 'penalty';
+  teamId: number;
+  playerId?: number;
+  playerName?: string;
+  assistId?: number;
+  assistName?: string;
+  detail?: string;  // 'Yellow Card', 'Red Card', 'Normal Goal', 'Penalty', etc.
+}
+
+interface OddsData {
+  homeWin: number;
+  draw: number;
+  awayWin: number;
+  over15: number;
+  over25: number;
+  bttsYes: number;
 }
 
 interface PressureCalculation {
@@ -170,39 +216,89 @@ const BOT_THRESHOLDS = {
   },
 };
 
-// Calcular perfil de favoritismo baseado em dados disponíveis
+// Calcular perfil de favoritismo usando TODOS os dados da API-Football
 function calculateFavoritismProfile(
   teamId: number,
   teamName: string,
   isHome: boolean,
   stats: LiveStatistics,
-  opponentStats: LiveStatistics
+  opponentStats: LiveStatistics,
+  odds?: OddsData | null
 ): FavoritismProfile {
-  // Calcular forma baseada em estatísticas do jogo atual
-  const shotsRatio = stats.shotsOnTarget / Math.max(1, stats.shotsOnTarget + opponentStats.shotsOnTarget);
-  const possessionAdvantage = stats.possession - 50;
-  const attackDominance = stats.dangerousAttacks / Math.max(1, stats.dangerousAttacks + opponentStats.dangerousAttacks);
+  // ═══════════════════════════════════════════════════════════════
+  // ANÁLISE COMPLETA COM DADOS EXPANDIDOS DA API-FOOTBALL
+  // ═══════════════════════════════════════════════════════════════
   
-  // Form score (0-100) baseado no desempenho atual
+  // 1. Análise de finalizações (peso alto - correlação direta com gols)
+  const shotsOnTargetRatio = stats.shotsOnTarget / Math.max(1, stats.shotsOnTarget + opponentStats.shotsOnTarget);
+  const shotsInsideBoxRatio = stats.shotsInsideBox / Math.max(1, stats.shotsInsideBox + opponentStats.shotsInsideBox);
+  const totalShotsRatio = stats.shotsTotal / Math.max(1, stats.shotsTotal + opponentStats.shotsTotal);
+  
+  // 2. Análise de xG (Expected Goals)
+  const xGDelta = stats.xG - opponentStats.xG;
+  const xGAdvantage = Math.min(100, Math.max(0, 50 + (xGDelta * 30)));
+  
+  // 3. Análise de posse e controle
+  const possessionAdvantage = stats.possession - 50;
+  const passAccuracyAdvantage = stats.passesAccuracy - opponentStats.passesAccuracy;
+  
+  // 4. Análise de pressão e ataques
+  const attackDominance = stats.dangerousAttacks / Math.max(1, stats.dangerousAttacks + opponentStats.dangerousAttacks);
+  const pressureAdvantage = stats.pressureIntensity - opponentStats.pressureIntensity;
+  const cornersRatio = stats.corners / Math.max(1, stats.corners + opponentStats.corners);
+  
+  // 5. Análise defensiva
+  const opponentShotsBlocked = opponentStats.shotsBlocked;
+  const savesRatio = opponentStats.saves / Math.max(1, stats.shotsOnTarget); // Quantos chutes o goleiro adversário defendeu
+  const defensiveScore = Math.min(100, 100 - (opponentStats.shotsOnTarget * 6) + (opponentShotsBlocked * 3));
+  
+  // ═══════════════════════════════════════════════════════════════
+  // CÁLCULO DE SCORES COMPOSTOS
+  // ═══════════════════════════════════════════════════════════════
+  
+  // Form score (0-100) - Desempenho ofensivo atual
   const formScore = Math.min(100, Math.max(0,
-    (shotsRatio * 40) + 
-    (possessionAdvantage * 0.8 + 50) * 0.3 + 
-    (attackDominance * 100 * 0.3)
+    (shotsOnTargetRatio * 25) +           // Chutes no gol
+    (shotsInsideBoxRatio * 20) +          // Chutes dentro da área
+    (xGAdvantage * 0.25) +                // Vantagem de xG
+    (possessionAdvantage * 0.4 + 40) * 0.15 + // Posse de bola
+    (attackDominance * 100 * 0.15)        // Dominância de ataques
   ));
   
-  // Strength score baseado em métricas ofensivas
-  const offensiveStrength = Math.min(100, (stats.shotsOnTarget * 8) + (stats.dangerousAttacks * 0.8));
-  const defensiveStrength = Math.min(100, 100 - (opponentStats.shotsOnTarget * 8));
-  const strengthScore = (offensiveStrength * 0.6) + (defensiveStrength * 0.4);
+  // Strength score (0-100) - Força geral do time
+  const offensiveStrength = Math.min(100, 
+    (stats.shotsOnTarget * 6) + 
+    (stats.shotsInsideBox * 4) +
+    (stats.dangerousAttacks * 0.6) +
+    (stats.xG * 20)
+  );
+  const strengthScore = (offensiveStrength * 0.55) + (defensiveScore * 0.45);
   
-  // Home advantage: +15 para casa, -10 para visitante
-  const homeAdvantage = isHome ? 15 : -10;
+  // Pressure dominance (0-100) - Quem está pressionando
+  const pressureDominance = Math.min(100, Math.max(0,
+    50 + (pressureAdvantage * 0.5) + (cornersRatio * 30 - 15)
+  ));
   
-  // Favoritismo final
+  // Home advantage: +18 para casa, -8 para visitante (ajustado)
+  const homeAdvantage = isHome ? 18 : -8;
+  
+  // Implied odds from pre-match (se disponível)
+  let impliedOdds = 50;
+  if (odds) {
+    const teamOdd = isHome ? odds.homeWin : odds.awayWin;
+    impliedOdds = Math.round((1 / teamOdd) * 100);
+  }
+  
+  // ═══════════════════════════════════════════════════════════════
+  // FAVORITISMO FINAL (Modelo Composto)
+  // ═══════════════════════════════════════════════════════════════
   const favoritismScore = Math.min(100, Math.max(0,
-    (formScore * 0.4) + 
-    (strengthScore * 0.4) + 
-    homeAdvantage + 20
+    (formScore * 0.30) +              // 30% - Forma atual no jogo
+    (strengthScore * 0.25) +          // 25% - Força geral
+    (pressureDominance * 0.20) +      // 20% - Dominância de pressão
+    (impliedOdds * 0.15) +            // 15% - Odds pré-jogo (se disponível)
+    homeAdvantage +                    // Bônus/penalidade casa/fora
+    10                                 // Base
   ));
   
   return {
@@ -213,7 +309,7 @@ function calculateFavoritismProfile(
     formScore,
     strengthScore,
     tablePositionDelta: 0, // Seria preenchido com dados da tabela real
-    impliedOdds: 50, // Seria preenchido com odds reais
+    impliedOdds,
     homeAdvantage,
   };
 }
@@ -581,14 +677,27 @@ class LivePressureMonitorService {
   private parseStatistics(statsArray: LiveFixture['statistics'], teamId: number): LiveStatistics {
     const defaultStats: LiveStatistics = {
       possession: 50,
+      passesTotal: 0,
+      passesAccuracy: 0,
       shotsTotal: 0,
       shotsOnTarget: 0,
-      corners: 0,
+      shotsOffTarget: 0,
+      shotsBlocked: 0,
+      shotsInsideBox: 0,
+      shotsOutsideBox: 0,
       dangerousAttacks: 0,
       attacks: 0,
+      corners: 0,
+      freeKicks: 0,
+      throwIns: 0,
+      goalKicks: 0,
+      saves: 0,
+      offsides: 0,
       fouls: 0,
       yellowCards: 0,
       redCards: 0,
+      xG: 0,
+      pressureIntensity: 0,
     };
 
     if (!statsArray) return defaultStats;
@@ -603,17 +712,143 @@ class LivePressureMonitorService {
       return isNaN(val) ? 0 : val;
     };
 
+    // Extrair TODOS os dados disponíveis da API-Football
+    const shotsOnTarget = getValue('shots on goal');
+    const shotsOffTarget = getValue('shots off goal');
+    const shotsBlocked = getValue('blocked shots');
+    const shotsInsideBox = getValue('shots insidebox');
+    const shotsOutsideBox = getValue('shots outsidebox');
+    const dangerousAttacks = getValue('dangerous') || getValue('attacks') * 0.3;
+    const attacks = getValue('attacks');
+    const corners = getValue('corner');
+    const passesTotal = getValue('total passes');
+    const passesAccuracy = getValue('passes %') || getValue('passes accurate');
+    
+    // Calcular xG estimado baseado em chutes
+    // Modelo simplificado: chute na área = 0.12 xG, fora = 0.04 xG, no gol = 0.35 xG
+    const xG = (shotsOnTarget * 0.35) + 
+               (shotsInsideBox * 0.12) + 
+               (shotsOutsideBox * 0.04) -
+               (shotsOnTarget * 0.12); // Evitar contagem dupla
+    
+    // Calcular intensidade de pressão (0-100)
+    const pressureIntensity = Math.min(100, 
+      (dangerousAttacks * 1.5) + 
+      (shotsOnTarget * 8) + 
+      (corners * 3) +
+      (attacks * 0.5)
+    );
+
     return {
       possession: getValue('possession') || 50,
-      shotsTotal: getValue('total shots') || getValue('shots on goal') + getValue('shots off goal'),
-      shotsOnTarget: getValue('shots on goal'),
-      corners: getValue('corner'),
-      dangerousAttacks: getValue('dangerous') || getValue('attacks') * 0.3,
-      attacks: getValue('attacks'),
+      passesTotal,
+      passesAccuracy,
+      shotsTotal: getValue('total shots') || shotsOnTarget + shotsOffTarget,
+      shotsOnTarget,
+      shotsOffTarget,
+      shotsBlocked,
+      shotsInsideBox,
+      shotsOutsideBox,
+      dangerousAttacks,
+      attacks,
+      corners,
+      freeKicks: getValue('free kicks') || 0,
+      throwIns: getValue('throw') || 0,
+      goalKicks: getValue('goal kicks') || getValue('goalkeeper') || 0,
+      saves: getValue('goalkeeper saves') || getValue('saves') || 0,
+      offsides: getValue('offsides') || 0,
       fouls: getValue('fouls'),
       yellowCards: getValue('yellow'),
       redCards: getValue('red'),
+      xG: Math.round(xG * 100) / 100,
+      pressureIntensity,
     };
+  }
+
+  // Buscar eventos do jogo (gols, cartões, substituições)
+  private async fetchFixtureEvents(fixtureId: number): Promise<MatchEvent[]> {
+    if (!API_FOOTBALL_KEY) return [];
+
+    try {
+      const response = await axios.get(`${API_FOOTBALL_BASE_URL}/fixtures/events`, {
+        params: { fixture: fixtureId },
+        headers: { 'x-apisports-key': API_FOOTBALL_KEY },
+        timeout: 10000,
+      });
+
+      const events = response.data?.response || [];
+      return events.map((e: any) => ({
+        time: e.time?.elapsed || 0,
+        type: this.mapEventType(e.type),
+        teamId: e.team?.id || 0,
+        playerId: e.player?.id,
+        playerName: e.player?.name,
+        assistId: e.assist?.id,
+        assistName: e.assist?.name,
+        detail: e.detail,
+      }));
+    } catch (error: any) {
+      console.error(`[LIVE MONITOR] Failed to fetch events for fixture ${fixtureId}:`, error.message);
+      return [];
+    }
+  }
+
+  private mapEventType(type: string): MatchEvent['type'] {
+    const lower = type?.toLowerCase() || '';
+    if (lower.includes('goal')) return 'goal';
+    if (lower.includes('card')) return 'card';
+    if (lower.includes('subst')) return 'subst';
+    if (lower.includes('var')) return 'var';
+    if (lower.includes('penalty')) return 'penalty';
+    return 'goal';
+  }
+
+  // Buscar odds pré-jogo
+  private async fetchFixtureOdds(fixtureId: number): Promise<OddsData | null> {
+    if (!API_FOOTBALL_KEY) return null;
+
+    try {
+      const response = await axios.get(`${API_FOOTBALL_BASE_URL}/odds`, {
+        params: { fixture: fixtureId },
+        headers: { 'x-apisports-key': API_FOOTBALL_KEY },
+        timeout: 10000,
+      });
+
+      const oddsData = response.data?.response?.[0]?.bookmakers?.[0]?.bets || [];
+      
+      // Extrair Match Winner (1X2)
+      const matchWinner = oddsData.find((b: any) => b.name === 'Match Winner')?.values || [];
+      const homeOdd = parseFloat(matchWinner.find((v: any) => v.value === 'Home')?.odd || '2.0');
+      const drawOdd = parseFloat(matchWinner.find((v: any) => v.value === 'Draw')?.odd || '3.0');
+      const awayOdd = parseFloat(matchWinner.find((v: any) => v.value === 'Away')?.odd || '2.0');
+
+      // Extrair Over/Under 2.5
+      const overUnder = oddsData.find((b: any) => b.name === 'Goals Over/Under')?.values || [];
+      const over25 = parseFloat(overUnder.find((v: any) => v.value === 'Over 2.5')?.odd || '1.9');
+      const over15 = parseFloat(overUnder.find((v: any) => v.value === 'Over 1.5')?.odd || '1.4');
+
+      // Extrair BTTS
+      const btts = oddsData.find((b: any) => b.name === 'Both Teams Score')?.values || [];
+      const bttsYes = parseFloat(btts.find((v: any) => v.value === 'Yes')?.odd || '1.8');
+
+      return {
+        homeWin: homeOdd,
+        draw: drawOdd,
+        awayWin: awayOdd,
+        over15,
+        over25,
+        bttsYes,
+      };
+    } catch (error: any) {
+      console.error(`[LIVE MONITOR] Failed to fetch odds for fixture ${fixtureId}:`, error.message);
+      return null;
+    }
+  }
+
+  // Converter odds para probabilidade implícita (0-100)
+  private oddsToImpliedProbability(odd: number): number {
+    if (odd <= 1) return 100;
+    return Math.round((1 / odd) * 100);
   }
 
   private calculatePressure(
@@ -788,20 +1023,30 @@ class LivePressureMonitorService {
       return;
     }
 
-    // Calcular perfis de favoritismo para os bots
+    // Buscar odds pré-jogo para cálculo de favoritismo (cache: 1x por jogo)
+    let odds: OddsData | null = null;
+    try {
+      odds = await this.fetchFixtureOdds(fixture.fixture.id);
+    } catch (e) {
+      // Odds não disponíveis, continuar sem
+    }
+
+    // Calcular perfis de favoritismo para os bots (com dados estendidos)
     const homeProfile = calculateFavoritismProfile(
       fixture.teams.home.id,
       fixture.teams.home.name,
       true,
       homeStats,
-      awayStats
+      awayStats,
+      odds
     );
     const awayProfile = calculateFavoritismProfile(
       fixture.teams.away.id,
       fixture.teams.away.name,
       false,
       awayStats,
-      homeStats
+      homeStats,
+      odds
     );
 
     // ==================== MULTI-BOT ORCHESTRATOR ====================
