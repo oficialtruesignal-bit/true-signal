@@ -43,8 +43,16 @@ import playerData from '@assets/generated_videos/sportsman_running_matrix_data_o
 import fanStadium from '@assets/generated_videos/fan_in_stadium_checking_phone_green_glow.mp4';
 import pushNotif from '@assets/generated_videos/smartphone_push_notification_green_alert.mp4';
 import floatingCard from '@assets/generated_videos/person_with_floating_notification_card_face.mp4';
+import stadiumPOV from '@assets/generated_videos/stadium_pov_phone_screen_visible_overlay_ready.mp4';
 
 const videos = [
+  { 
+    src: stadiumPOV, 
+    title: "📱 ESTÁDIO POV: Celular na Mão", 
+    description: "Vista do estádio com tela do celular visível - pronto pra overlay",
+    filename: "estadio_pov_celular.mp4",
+    category: "final"
+  },
   { 
     src: matchMatrix, 
     title: "⚽ JOGO AO VIVO: Algoritmo Matrix", 
@@ -409,7 +417,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (16)
+            ⭐ Essencial (17)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
