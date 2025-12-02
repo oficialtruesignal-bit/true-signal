@@ -816,21 +816,35 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           
           {/* Para COMBO: mostrar cada leg como linha simples */}
           {isComboTip && parsedLegs.length > 0 ? (
-            <div className="space-y-3">
+            <div className="space-y-4">
               {parsedLegs.map((leg, idx) => (
                 <div key={idx} className="relative flex items-start gap-3">
                   {/* Bolinha verde sólida */}
                   <div className="absolute -left-5 top-1.5 w-3 h-3 rounded-full bg-[#33b864] flex items-center justify-center">
                     <Check className="w-2 h-2 text-black" />
                   </div>
-                  {/* Texto simples da seleção */}
+                  {/* Conteúdo da seleção */}
                   <div className="flex-1 ml-1">
+                    {/* Mercado/Outcome - O QUE VAI ACONTECER */}
                     <p className="text-white font-medium text-sm">
-                      {leg.homeTeam} - {leg.outcome}
+                      {leg.outcome || leg.market}
                     </p>
+                    {/* Linha técnica: market + odd */}
                     <p className="text-gray-500 text-[11px]">
                       {leg.market} • @{leg.odd?.toFixed(2)}
                     </p>
+                    {/* Times: quem está jogando */}
+                    <div className="flex items-center gap-2 mt-1.5">
+                      {leg.homeTeamLogo && (
+                        <img src={leg.homeTeamLogo} alt="" className="w-4 h-4 rounded-full" />
+                      )}
+                      <span className="text-gray-400 text-xs">
+                        {leg.homeTeam} x {leg.awayTeam}
+                      </span>
+                      {leg.awayTeamLogo && (
+                        <img src={leg.awayTeamLogo} alt="" className="w-4 h-4 rounded-full" />
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}
