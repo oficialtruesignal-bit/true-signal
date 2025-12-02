@@ -1815,6 +1815,488 @@ class AIPredictionEngine {
       return { matches: [], totalAnalyzed: 0 };
     }
   }
+
+  // =====================================================
+  // ANÁLISE COMPLETA COM EV
+  // =====================================================
+  
+  /**
+   * Gera análise completa para um jogo, incluindo:
+   * - Probabilidades de gols
+   * - Análise de escanteios  
+   * - Confrontos diretos (H2H)
+   * - Insights táticos
+   * - Recomendações de mercado com EV calculado
+   */
+  async generateFullAnalysis(fixtureId: number): Promise<{
+    goalsAnalysis: any;
+    cornersAnalysis: any;
+    h2hAnalysis: any;
+    climateAnalysis: any;
+    tacticalInsights: any[];
+    finalRecommendation: string;
+    marketRecommendations: any[];
+  } | null> {
+    try {
+      console.log(`[AI Analysis] Gerando análise completa para fixture ${fixtureId}`);
+      
+      // 1. Buscar dados do jogo
+      const cacheKey = `fixture_${fixtureId}`;
+      let fixtureData = await this.getCachedData(cacheKey);
+      
+      if (!fixtureData) {
+        const response = await axios.get(`${API_BASE_URL}/fixtures`, {
+          headers: this.apiHeaders,
+          params: { id: fixtureId }
+        });
+        
+        if (!response.data?.response?.[0]) {
+          console.error('[AI Analysis] Fixture não encontrado');
+          return null;
+        }
+        
+        fixtureData = response.data.response[0];
+        await this.setCachedData(cacheKey, 'fixture', fixtureData, 1);
+      }
+      
+      const homeTeamId = fixtureData.teams.home.id;
+      const awayTeamId = fixtureData.teams.away.id;
+      const season = fixtureData.league.season;
+      
+      // 2. Buscar últimos jogos de ambos os times
+      const [homeMatches, awayMatches, h2hData, bet365Odds] = await Promise.all([
+        this.fetchTeamLastMatches(homeTeamId, season),
+        this.fetchTeamLastMatches(awayTeamId, season),
+        this.fetchH2H(homeTeamId, awayTeamId),
+        this.fetchBet365Odds(fixtureId)
+      ]);
+      
+      if (homeMatches.length < 5 || awayMatches.length < 5) {
+        console.log('[AI Analysis] Dados insuficientes para análise completa');
+        return null;
+      }
+      
+      // 3. Calcular estatísticas de cada time
+      const allFixtureIds = Array.from(new Set([
+        ...homeMatches.map(m => m.fixture.id),
+        ...awayMatches.map(m => m.fixture.id)
+      ]));
+      
+      const statsMap = await this.fetchMultipleFixtureStatistics(allFixtureIds);
+      const homeStats = this.calculateTeamStats(homeMatches, homeTeamId, statsMap);
+      const awayStats = this.calculateTeamStats(awayMatches, awayTeamId, statsMap);
+      
+      // 4. Gerar análise de GOLS
+      const homeExpectedGoals = (homeStats.goalsScoredHome + awayStats.goalsConcededAway) / 2;
+      const awayExpectedGoals = (awayStats.goalsScoredAway + homeStats.goalsConcededHome) / 2;
+      const totalExpectedGoals = homeExpectedGoals + awayExpectedGoals;
+      
+      const poissonProbs = this.calculateGoalProbabilities(homeExpectedGoals, awayExpectedGoals);
+      
+      const goalsAnalysis = {
+        over15Pct: Math.round(poissonProbs.over15),
+        over25Pct: Math.round(poissonProbs.over25),
+        over35Pct: Math.round(poissonProbs.over35),
+        avgGoalsHome: Number(homeStats.goalsScoredHome.toFixed(2)),
+        avgGoalsAway: Number(awayStats.goalsScoredAway.toFixed(2)),
+        avgGoalsTotal: Number(totalExpectedGoals.toFixed(2)),
+        reasoning: `As probabilidades indicam que jogos com ${totalExpectedGoals < 2.5 ? 'poucos' : 'muitos'} gols são esperados. ` +
+          `A chance de mais de 2.5 gols é de apenas ${poissonProbs.over25.toFixed(0)}%, ` +
+          `enquanto mais de 1.5 gols é de ${poissonProbs.over15.toFixed(0)}%.`
+      };
+      
+      // 5. Gerar análise de ESCANTEIOS
+      const avgCornersTotal = homeStats.avgCorners + awayStats.avgCorners;
+      const over85CornersChance = Math.min(95, ((homeStats.cornersOver45Pct + awayStats.cornersOver45Pct) / 2) + 20);
+      const over95CornersChance = Math.min(90, ((homeStats.cornersOver55Pct + awayStats.cornersOver55Pct) / 2) + 10);
+      const over105CornersChance = Math.min(85, (homeStats.cornersOver65Pct + awayStats.cornersOver65Pct) / 2);
+      
+      const cornersAnalysis = {
+        over85Pct: Math.round(over85CornersChance),
+        over95Pct: Math.round(over95CornersChance),
+        over105Pct: Math.round(over105CornersChance),
+        avgCornersHome: Number(homeStats.avgCorners.toFixed(1)),
+        avgCornersAway: Number(awayStats.avgCorners.toFixed(1)),
+        avgCornersTotal: Number(avgCornersTotal.toFixed(1)),
+        reasoning: `A probabilidade de mais de 8.5 escanteios é de ${over85CornersChance.toFixed(0)}%, ` +
+          `sugerindo um jogo com ${avgCornersTotal > 10 ? 'quantidade razoável' : 'poucos'} escanteios.`
+      };
+      
+      // 6. Gerar análise de H2H
+      let h2hAnalysis = {
+        totalMatches: 0,
+        homeWins: 0,
+        awayWins: 0,
+        draws: 0,
+        avgGoals: 0,
+        avgCorners: 0,
+        trends: [] as string[],
+        reasoning: 'Não há histórico de confrontos diretos suficiente para análise.'
+      };
+      
+      if (h2hData && h2hData.totalGames > 0) {
+        h2hAnalysis = {
+          totalMatches: h2hData.totalGames,
+          homeWins: h2hData.homeWins,
+          awayWins: h2hData.awayWins,
+          draws: h2hData.draws,
+          avgGoals: h2hData.avgGoals,
+          avgCorners: h2hData.avgCorners,
+          trends: this.generateH2HTrends(h2hData),
+          reasoning: this.generateH2HReasoning(h2hData, fixtureData.teams.home.name, fixtureData.teams.away.name)
+        };
+      }
+      
+      // 7. Clima (placeholder - API não fornece)
+      const climateAnalysis = {
+        impact: 'none' as const,
+        reasoning: 'Não foram fornecidas informações sobre as condições climáticas para o dia do jogo. Portanto, não é possível avaliar o impacto climático.'
+      };
+      
+      // 8. Gerar INSIGHTS TÁTICOS
+      const tacticalInsights = this.generateTacticalInsights(homeStats, awayStats, h2hData, totalExpectedGoals);
+      
+      // 9. Gerar RECOMENDAÇÕES DE MERCADO com EV
+      const marketRecommendations = this.generateMarketRecommendationsWithEV(
+        homeStats, 
+        awayStats, 
+        poissonProbs, 
+        bet365Odds,
+        fixtureData.teams.home.name,
+        fixtureData.teams.away.name
+      );
+      
+      // 10. Gerar RECOMENDAÇÃO FINAL
+      const finalRecommendation = this.generateFinalRecommendation(
+        goalsAnalysis,
+        cornersAnalysis,
+        marketRecommendations
+      );
+      
+      return {
+        goalsAnalysis,
+        cornersAnalysis,
+        h2hAnalysis,
+        climateAnalysis,
+        tacticalInsights,
+        finalRecommendation,
+        marketRecommendations
+      };
+      
+    } catch (error: any) {
+      console.error('[AI Analysis] Erro:', error.message);
+      return null;
+    }
+  }
+  
+  private generateH2HTrends(h2h: any): string[] {
+    const trends: string[] = [];
+    
+    if (h2h.avgGoals > 2.5) {
+      trends.push('Histórico de jogos com muitos gols');
+    } else if (h2h.avgGoals < 2) {
+      trends.push('Histórico de jogos com poucos gols');
+    }
+    
+    if (h2h.draws / h2h.totalGames > 0.35) {
+      trends.push('Alta tendência a empates nos confrontos diretos');
+    }
+    
+    if (h2h.avgCorners > 10) {
+      trends.push('Média alta de escanteios no H2H');
+    }
+    
+    return trends;
+  }
+  
+  private generateH2HReasoning(h2h: any, homeTeam: string, awayTeam: string): string {
+    if (h2h.totalGames === 0) {
+      return 'Não há histórico de confrontos diretos entre as equipes.';
+    }
+    
+    const winRate = h2h.homeWins / h2h.totalGames * 100;
+    const drawRate = h2h.draws / h2h.totalGames * 100;
+    
+    let reasoning = `Nos últimos ${h2h.totalGames} confrontos: `;
+    reasoning += `${homeTeam} venceu ${h2h.homeWins}x, ${awayTeam} venceu ${h2h.awayWins}x, `;
+    reasoning += `${h2h.draws} empates. Média de ${h2h.avgGoals.toFixed(1)} gols por jogo.`;
+    
+    if (drawRate > 35) {
+      reasoning += ` Alta tendência a empates (${drawRate.toFixed(0)}%).`;
+    }
+    
+    return reasoning;
+  }
+  
+  private generateTacticalInsights(
+    homeStats: TeamStats, 
+    awayStats: TeamStats, 
+    h2h: any,
+    expectedGoals: number
+  ): any[] {
+    const insights: any[] = [];
+    
+    // Equilíbrio e Cautela
+    const homeDrawPct = homeStats.formDraws / 5 * 100;
+    const awayDrawPct = awayStats.formDraws / 5 * 100;
+    
+    if (homeDrawPct > 30 || awayDrawPct > 30 || expectedGoals < 2.3) {
+      insights.push({
+        title: 'Equilíbrio e Cautela',
+        description: 'Ambos os times apresentam um padrão de muitos empates e poucos gols em seus últimos jogos. ' +
+          'Isso sugere uma abordagem tática cautelosa, focada na defesa e na minimização de riscos.',
+        highlighted: true,
+        sentiment: 'neutral'
+      });
+    }
+    
+    // Dificuldade Ofensiva
+    if (homeStats.goalsScoredHome < 1.2 && awayStats.goalsScoredAway < 1.0) {
+      insights.push({
+        title: 'Dificuldade Ofensiva',
+        description: 'A falta de gols marcados em muitos dos jogos recentes para ambos os times indica ' +
+          'uma possível dificuldade na criação de chances claras de gol ou na conversão das mesmas.',
+        highlighted: false,
+        sentiment: 'negative'
+      });
+    }
+    
+    // Paridade
+    if (Math.abs(homeStats.formPoints - awayStats.formPoints) <= 3) {
+      insights.push({
+        title: 'Paridade',
+        description: `Ambos os times têm formas recentes similares (${homeStats.formWins}V/${homeStats.formDraws}E/${homeStats.formLosses}D vs ` +
+          `${awayStats.formWins}V/${awayStats.formDraws}E/${awayStats.formLosses}D). ` +
+          'Isso contribui para a alta probabilidade de empate e jogos equilibrados.',
+        highlighted: false,
+        sentiment: 'neutral'
+      });
+    }
+    
+    // Estratégia de Meio-Campo
+    if (expectedGoals < 2.5 && homeStats.avgShotsOnTarget < 4 && awayStats.avgShotsOnTarget < 4) {
+      insights.push({
+        title: 'Estratégia de Meio-Campo',
+        description: 'Com a expectativa de poucos gols, o controle de meio-campo e a solidez defensiva serão cruciais. ' +
+          'É provável que o jogo seja disputado, com poucas oportunidades de contra-ataque.',
+        highlighted: false,
+        sentiment: 'neutral'
+      });
+    }
+    
+    // Potencial Ofensivo
+    if (expectedGoals > 2.8) {
+      insights.push({
+        title: 'Alto Potencial Ofensivo',
+        description: `Com média esperada de ${expectedGoals.toFixed(2)} gols, este confronto tem grande potencial para um jogo aberto. ` +
+          `${homeStats.teamName} marca ${homeStats.goalsScoredHome.toFixed(2)} em casa e ` +
+          `${awayStats.teamName} sofre ${awayStats.goalsConcededAway.toFixed(2)} fora.`,
+        highlighted: true,
+        sentiment: 'positive'
+      });
+    }
+    
+    return insights;
+  }
+  
+  private generateMarketRecommendationsWithEV(
+    homeStats: TeamStats,
+    awayStats: TeamStats,
+    poissonProbs: any,
+    bet365Odds: Record<string, Record<string, number>> | null,
+    homeTeam: string,
+    awayTeam: string
+  ): any[] {
+    const recommendations: any[] = [];
+    
+    const calculateEV = (probability: number, odd: number): number => {
+      return ((probability / 100) * odd - 1) * 100;
+    };
+    
+    const getEvRating = (ev: number): string => {
+      if (ev < -5) return 'negative';
+      if (ev < 5) return 'neutral';
+      if (ev < 15) return 'positive';
+      return 'excellent';
+    };
+    
+    const getKellyStake = (probability: number, odd: number): number => {
+      // Kelly Criterion: (bp - q) / b, where b = odd - 1, p = probability, q = 1 - p
+      const b = odd - 1;
+      const p = probability / 100;
+      const q = 1 - p;
+      const kelly = (b * p - q) / b;
+      return Math.max(0, Math.min(5, kelly * 100)); // Cap at 5 units
+    };
+    
+    // OVER 1.5 GOLS
+    const over15Prob = poissonProbs.over15;
+    const over15Odd = bet365Odds ? this.getBet365OddForMarket(bet365Odds, 'Over 1.5 Gols', 'Over 1.5') || (100 / over15Prob) : (100 / over15Prob);
+    const over15EV = calculateEV(over15Prob, over15Odd);
+    
+    if (over15Prob >= 65) {
+      recommendations.push({
+        marketType: 'over_15',
+        marketLabel: 'Mais de 1.5 Gols',
+        selection: 'Over 1.5',
+        bookmakerOdd: over15Odd.toFixed(2),
+        modelProbability: over15Prob.toFixed(1),
+        fairOdd: (100 / over15Prob).toFixed(2),
+        evPercent: over15EV.toFixed(2),
+        evRating: getEvRating(over15EV),
+        suggestedStake: '1.0',
+        kellyStake: getKellyStake(over15Prob, over15Odd).toFixed(2),
+        rationale: [
+          `Probabilidade matemática: ${over15Prob.toFixed(1)}%`,
+          `${homeTeam} marca ${homeStats.goalsScoredHome.toFixed(2)} gols/jogo em casa`,
+          `${awayTeam} sofre ${awayStats.goalsConcededAway.toFixed(2)} gols/jogo fora`
+        ],
+        confidenceLevel: over15Prob >= 80 ? 'high' : 'medium',
+        isMainPick: false,
+        isValueBet: over15EV > 5
+      });
+    }
+    
+    // OVER 2.5 GOLS
+    const over25Prob = poissonProbs.over25;
+    const over25Odd = bet365Odds ? this.getBet365OddForMarket(bet365Odds, 'Over 2.5 Gols', 'Over 2.5') || (100 / over25Prob) : (100 / over25Prob);
+    const over25EV = calculateEV(over25Prob, over25Odd);
+    
+    if (over25Prob >= 50) {
+      recommendations.push({
+        marketType: 'over_25',
+        marketLabel: 'Mais de 2.5 Gols',
+        selection: 'Over 2.5',
+        bookmakerOdd: over25Odd.toFixed(2),
+        modelProbability: over25Prob.toFixed(1),
+        fairOdd: (100 / over25Prob).toFixed(2),
+        evPercent: over25EV.toFixed(2),
+        evRating: getEvRating(over25EV),
+        suggestedStake: over25EV > 10 ? '2.0' : '1.0',
+        kellyStake: getKellyStake(over25Prob, over25Odd).toFixed(2),
+        rationale: [
+          `Probabilidade matemática: ${over25Prob.toFixed(1)}%`,
+          `Histórico Over 2.5: ${homeTeam} ${homeStats.over25Pct}%, ${awayTeam} ${awayStats.over25Pct}%`
+        ],
+        confidenceLevel: over25Prob >= 65 ? 'high' : 'medium',
+        isMainPick: over25EV > 10,
+        isValueBet: over25EV > 5
+      });
+    }
+    
+    // UNDER 2.5 GOLS
+    const under25Prob = 100 - poissonProbs.over25;
+    const under25Odd = bet365Odds ? this.getBet365OddForMarket(bet365Odds, 'Under 2.5 Gols', 'Under 2.5') || (100 / under25Prob) : (100 / under25Prob);
+    const under25EV = calculateEV(under25Prob, under25Odd);
+    
+    if (under25Prob >= 55) {
+      recommendations.push({
+        marketType: 'under_25',
+        marketLabel: 'Menos de 2.5 Gols',
+        selection: 'Under 2.5',
+        bookmakerOdd: under25Odd.toFixed(2),
+        modelProbability: under25Prob.toFixed(1),
+        fairOdd: (100 / under25Prob).toFixed(2),
+        evPercent: under25EV.toFixed(2),
+        evRating: getEvRating(under25EV),
+        suggestedStake: '1.0',
+        kellyStake: getKellyStake(under25Prob, under25Odd).toFixed(2),
+        rationale: [
+          `Probabilidade matemática: ${under25Prob.toFixed(1)}%`,
+          'Baixa média de gols esperados neste confronto'
+        ],
+        confidenceLevel: under25Prob >= 65 ? 'high' : 'medium',
+        isMainPick: under25EV > 10,
+        isValueBet: under25EV > 5
+      });
+    }
+    
+    // BTTS
+    const bttsProb = poissonProbs.btts;
+    const bttsOdd = bet365Odds ? this.getBet365OddForMarket(bet365Odds, 'Ambas Marcam', 'Sim') || (100 / bttsProb) : (100 / bttsProb);
+    const bttsEV = calculateEV(bttsProb, bttsOdd);
+    
+    if (bttsProb >= 50) {
+      recommendations.push({
+        marketType: 'btts_yes',
+        marketLabel: 'Ambas Marcam - Sim',
+        selection: 'BTTS Yes',
+        bookmakerOdd: bttsOdd.toFixed(2),
+        modelProbability: bttsProb.toFixed(1),
+        fairOdd: (100 / bttsProb).toFixed(2),
+        evPercent: bttsEV.toFixed(2),
+        evRating: getEvRating(bttsEV),
+        suggestedStake: '1.0',
+        kellyStake: getKellyStake(bttsProb, bttsOdd).toFixed(2),
+        rationale: [
+          `Probabilidade BTTS: ${bttsProb.toFixed(1)}%`,
+          `${homeTeam} BTTS histórico: ${homeStats.bttsPct.toFixed(0)}%`,
+          `${awayTeam} BTTS histórico: ${awayStats.bttsPct.toFixed(0)}%`
+        ],
+        confidenceLevel: bttsProb >= 60 ? 'high' : 'medium',
+        isMainPick: false,
+        isValueBet: bttsEV > 5
+      });
+    }
+    
+    // EMPATE
+    const drawProb = poissonProbs.draw;
+    const drawOdd = bet365Odds ? this.getBet365OddForMarket(bet365Odds, 'Resultado Final', 'Empate') || (100 / drawProb) : (100 / drawProb);
+    const drawEV = calculateEV(drawProb, drawOdd);
+    
+    if (drawProb >= 28) {
+      recommendations.push({
+        marketType: 'draw',
+        marketLabel: 'Empate',
+        selection: 'Draw',
+        bookmakerOdd: drawOdd.toFixed(2),
+        modelProbability: drawProb.toFixed(1),
+        fairOdd: (100 / drawProb).toFixed(2),
+        evPercent: drawEV.toFixed(2),
+        evRating: getEvRating(drawEV),
+        suggestedStake: '0.5',
+        kellyStake: getKellyStake(drawProb, drawOdd).toFixed(2),
+        rationale: [
+          `Probabilidade de empate: ${drawProb.toFixed(1)}%`,
+          'Paridade entre os times'
+        ],
+        confidenceLevel: drawProb >= 35 ? 'high' : 'medium',
+        isMainPick: false,
+        isValueBet: drawEV > 5
+      });
+    }
+    
+    // Ordenar por EV (melhor valor primeiro)
+    return recommendations.sort((a, b) => parseFloat(b.evPercent) - parseFloat(a.evPercent));
+  }
+  
+  private generateFinalRecommendation(
+    goalsAnalysis: any,
+    cornersAnalysis: any,
+    marketRecommendations: any[]
+  ): string {
+    const valueBets = marketRecommendations.filter(m => m.isValueBet);
+    const topPick = marketRecommendations[0];
+    
+    let recommendation = `Recomendação Final: `;
+    
+    if (goalsAnalysis.avgGoalsTotal < 2.3) {
+      recommendation += `Dada a paridade e a baixa média de gols esperada, o mercado de "Menos de 2.5 Gols" ou "Empate" `;
+      recommendation += `(se as odds forem favoráveis) podem ser considerados, embora o empate seja de alto risco sem probabilidades específicas. `;
+    } else {
+      recommendation += `Com expectativa de ${goalsAnalysis.avgGoalsTotal.toFixed(2)} gols, mercados de "Mais de 1.5 Gols" ou "Mais de 2.5 Gols" `;
+      recommendation += `são mais atrativos. `;
+    }
+    
+    if (valueBets.length > 0) {
+      const bestValue = valueBets[0];
+      recommendation += `O mercado de "${bestValue.marketLabel}" apresenta EV positivo de ${bestValue.evPercent}% e pode ser a aposta mais segura.`;
+    } else if (topPick) {
+      recommendation += `O mercado de "${topPick.marketLabel}" apresenta a melhor probabilidade de acerto.`;
+    }
+    
+    return recommendation;
+  }
 }
 
 export const aiPredictionEngine = new AIPredictionEngine();
