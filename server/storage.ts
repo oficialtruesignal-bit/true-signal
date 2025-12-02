@@ -1,5 +1,10 @@
 import { db } from "./db";
-import { profiles, tips, favorites, userBets, type InsertProfile, type Profile, type InsertTip, type Tip, type Favorite, type InsertFavorite, type UserBet, type InsertUserBet } from "@shared/schema";
+import { 
+  profiles, tips, favorites, userBets, tipAnalyses, tipMarketRecommendations,
+  type InsertProfile, type Profile, type InsertTip, type Tip, type Favorite, type InsertFavorite, 
+  type UserBet, type InsertUserBet, type TipAnalysis, type InsertTipAnalysis,
+  type TipMarketRecommendation, type InsertTipMarketRecommendation
+} from "@shared/schema";
 import { eq, desc, and, gte, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";
 
@@ -51,6 +56,17 @@ export interface IStorage {
   createUserBet(data: { userId: string; tipId: string; stakeUsed: string; oddAtEntry: string }): Promise<UserBet>;
   updateUserBetResult(userId: string, tipId: string, result: 'green' | 'red'): Promise<UserBet | undefined>;
   getUserMonthlyStats(userId: string): Promise<{ greens: number; reds: number; pending: number; profit: number; totalBets: number }>;
+  
+  // Tip Analysis methods
+  getTipAnalysis(tipId: string): Promise<TipAnalysis | undefined>;
+  createTipAnalysis(data: InsertTipAnalysis): Promise<TipAnalysis>;
+  updateTipAnalysis(tipId: string, data: Partial<InsertTipAnalysis>): Promise<TipAnalysis | undefined>;
+  deleteTipAnalysis(tipId: string): Promise<void>;
+  
+  // Tip Market Recommendations methods
+  getTipMarketRecommendations(tipId: string): Promise<TipMarketRecommendation[]>;
+  createTipMarketRecommendation(data: InsertTipMarketRecommendation): Promise<TipMarketRecommendation>;
+  deleteTipMarketRecommendations(tipId: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -362,6 +378,54 @@ export class DatabaseStorage implements IStorage {
     }
 
     return { greens, reds, pending, profit, totalBets: bets.length };
+  }
+
+  // =====================================================
+  // TIP ANALYSIS METHODS
+  // =====================================================
+  
+  async getTipAnalysis(tipId: string): Promise<TipAnalysis | undefined> {
+    const [analysis] = await db.select().from(tipAnalyses).where(eq(tipAnalyses.tipId, tipId));
+    return analysis;
+  }
+
+  async createTipAnalysis(data: InsertTipAnalysis): Promise<TipAnalysis> {
+    const [analysis] = await db.insert(tipAnalyses).values(data).returning();
+    return analysis;
+  }
+
+  async updateTipAnalysis(tipId: string, data: Partial<InsertTipAnalysis>): Promise<TipAnalysis | undefined> {
+    const [updated] = await db
+      .update(tipAnalyses)
+      .set({ ...data, updatedAt: new Date() })
+      .where(eq(tipAnalyses.tipId, tipId))
+      .returning();
+    return updated;
+  }
+
+  async deleteTipAnalysis(tipId: string): Promise<void> {
+    await db.delete(tipAnalyses).where(eq(tipAnalyses.tipId, tipId));
+  }
+
+  // =====================================================
+  // TIP MARKET RECOMMENDATIONS METHODS
+  // =====================================================
+  
+  async getTipMarketRecommendations(tipId: string): Promise<TipMarketRecommendation[]> {
+    return await db
+      .select()
+      .from(tipMarketRecommendations)
+      .where(eq(tipMarketRecommendations.tipId, tipId))
+      .orderBy(desc(tipMarketRecommendations.evPercent));
+  }
+
+  async createTipMarketRecommendation(data: InsertTipMarketRecommendation): Promise<TipMarketRecommendation> {
+    const [recommendation] = await db.insert(tipMarketRecommendations).values(data).returning();
+    return recommendation;
+  }
+
+  async deleteTipMarketRecommendations(tipId: string): Promise<void> {
+    await db.delete(tipMarketRecommendations).where(eq(tipMarketRecommendations.tipId, tipId));
   }
 }
 
