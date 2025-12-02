@@ -1713,7 +1713,11 @@ REGRAS IMPORTANTES:
           return res.status(400).json({ error: "Combo inválido: legs vazios ou malformados" });
         }
       } else {
-        // Single bet
+        // Single bet - avoid duplicating market name in output
+        const marketDisplay = draft.predictedOutcome && draft.predictedOutcome !== draft.market
+          ? `${draft.market}: ${draft.predictedOutcome}`
+          : draft.market;
+        
         tipData = {
           fixtureId: draft.fixtureId,
           league: draft.league,
@@ -1722,7 +1726,7 @@ REGRAS IMPORTANTES:
           homeTeamLogo: draft.homeTeamLogo,
           awayTeamLogo: draft.awayTeamLogo,
           matchTime: formattedTime,
-          market: `${draft.market}: ${draft.predictedOutcome}`,
+          market: marketDisplay,
           odd: numericOdd,
           stake: numericStake,
           status: 'pending',
@@ -1939,7 +1943,11 @@ REGRAS IMPORTANTES:
             continue;
           }
         } else {
-          // Single bet
+          // Single bet - avoid duplicating market name
+          const marketDisplay = draft.predictedOutcome && draft.predictedOutcome !== draft.market
+            ? `${draft.market}: ${draft.predictedOutcome}`
+            : draft.market;
+          
           tipData = {
             fixtureId: draft.fixtureId,
             league: draft.league,
@@ -1948,7 +1956,7 @@ REGRAS IMPORTANTES:
             homeTeamLogo: draft.homeTeamLogo,
             awayTeamLogo: draft.awayTeamLogo,
             matchTime: formattedTime,
-            market: `${draft.market}: ${draft.predictedOutcome}`,
+            market: marketDisplay,
             odd: numericOdd,
             stake: numericStake,
             status: 'pending',
