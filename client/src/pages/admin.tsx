@@ -461,45 +461,45 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                       
                       {/* Botões de ação - Touch-friendly */}
                       <div className="flex flex-col gap-3 pt-4 border-t border-white/10">
-                        {/* Linha 1: Status */}
-                        <div className="flex gap-2">
+                        {/* Linha 1: Status - Grid para não cortar */}
+                        <div className="grid grid-cols-3 gap-2">
                           <Button 
                             onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'green' })}
                             className={cn(
-                              "flex-1 h-12 rounded-xl font-bold",
+                              "h-11 rounded-xl font-bold text-sm px-2",
                               signal.status === 'green' 
                                 ? 'bg-green-500 text-white' 
                                 : 'bg-green-500/20 text-green-400 border border-green-500/50'
                             )}
                             data-testid={`button-status-green-${signal.id}`}
                           >
-                            <Trophy className="w-5 h-5 mr-2" />
+                            <Trophy className="w-4 h-4 mr-1" />
                             GREEN
                           </Button>
                           <Button 
                             onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'red' })}
                             className={cn(
-                              "flex-1 h-12 rounded-xl font-bold",
+                              "h-11 rounded-xl font-bold text-sm px-2",
                               signal.status === 'red' 
                                 ? 'bg-red-500 text-white' 
                                 : 'bg-red-500/20 text-red-400 border border-red-500/50'
                             )}
                             data-testid={`button-status-red-${signal.id}`}
                           >
-                            <XCircle className="w-5 h-5 mr-2" />
+                            <XCircle className="w-4 h-4 mr-1" />
                             RED
                           </Button>
                           <Button 
                             onClick={() => updateStatusMutation.mutate({ id: signal.id, status: 'pending' })}
                             className={cn(
-                              "flex-1 h-12 rounded-xl font-bold",
+                              "h-11 rounded-xl font-bold text-sm px-2",
                               signal.status === 'pending' 
                                 ? 'bg-yellow-500 text-black' 
                                 : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/50'
                             )}
                             data-testid={`button-status-pending-${signal.id}`}
                           >
-                            <Clock className="w-5 h-5 mr-2" />
+                            <Clock className="w-4 h-4 mr-1" />
                             PEND
                           </Button>
                         </div>
