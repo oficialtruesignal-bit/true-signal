@@ -1260,13 +1260,36 @@ class AIPredictionEngine {
     console.log(`[AI Engine] Starting analysis for fixtures on ${date}`);
     
     try {
-      const response = await axios.get(`${API_BASE_URL}/fixtures`, {
-        params: { date, status: 'NS' },
-        headers: this.apiHeaders
+      // Buscar jogos do dia selecionado e do próximo dia para garantir cobertura
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+      const nextDateStr = nextDate.toISOString().split('T')[0];
+      
+      const [response1, response2] = await Promise.all([
+        axios.get(`${API_BASE_URL}/fixtures`, {
+          params: { date },
+          headers: this.apiHeaders
+        }),
+        axios.get(`${API_BASE_URL}/fixtures`, {
+          params: { date: nextDateStr },
+          headers: this.apiHeaders
+        })
+      ]);
+      
+      const allFixtures: FixtureData[] = [
+        ...(response1.data?.response || []),
+        ...(response2.data?.response || [])
+      ];
+      
+      // Filtrar apenas jogos que ainda não começaram (NS = Not Started, TBD = To Be Defined)
+      const now = Date.now();
+      const fixtures = allFixtures.filter(f => {
+        const fixtureTime = f.fixture.timestamp * 1000;
+        const status = f.fixture.status.short;
+        return fixtureTime > now || status === 'NS' || status === 'TBD';
       });
       
-      const fixtures: FixtureData[] = response.data?.response || [];
-      console.log(`[AI Engine] Found ${fixtures.length} upcoming fixtures`);
+      console.log(`[AI Engine] Found ${fixtures.length} upcoming fixtures (from ${allFixtures.length} total)`);
       
       const majorLeagues = [39, 140, 78, 135, 61, 71, 72, 94, 88, 253, 2, 3, 848, 128, 13, 11, 144, 179, 40, 203, 307, 235, 262, 169, 119, 113, 103];
       const filteredFixtures = fixtures.filter(f => majorLeagues.includes(f.league.id));
