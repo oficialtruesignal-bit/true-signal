@@ -33,13 +33,21 @@ import manWinning from '@assets/generated_videos/man_genuine_celebration_winning
 import ctaFinal from '@assets/generated_videos/cta_final_5_dias_gratis_end_card.mp4';
 import logoOriginal from '@assets/generated_videos/true_signal_shield_pulse_logo_animation.mp4';
 import logoFinal from '@assets/generated_videos/shield_pulse_logo_true_gray_signal_white.mp4';
+import logoBillion from '@assets/generated_videos/elegant_billion_style_logo_true_signal.mp4';
 
 const videos = [
   { 
+    src: logoBillion, 
+    title: "🏆 LOGO BILLION: Estilo Premium", 
+    description: "Escudo + pulso + texto elegante sem sombras",
+    filename: "logo_billion_premium.mp4",
+    category: "final"
+  },
+  { 
     src: logoFinal, 
-    title: "🏆 LOGO FINAL: TRUE (cinza) SIGNAL (branco)", 
-    description: "Escudo + pulso + texto com cores oficiais da marca",
-    filename: "logo_final_true_signal.mp4",
+    title: "LOGO V2: Com sombra verde", 
+    description: "Versão com efeito glow no texto",
+    filename: "logo_v2_glow.mp4",
     category: "final"
   },
   { 
@@ -329,7 +337,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (6)
+            ⭐ Essencial (7)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
