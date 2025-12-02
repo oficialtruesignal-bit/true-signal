@@ -1135,38 +1135,124 @@ class AIPredictionEngine {
     
     const predictions = this.generatePredictions(homeStats, awayStats, h2hAnalysis, bet365Odds);
     
-    for (const prediction of predictions) {
-      await db.insert(aiTickets)
-        .values({
-          fixtureId: String(fixture.fixture.id),
-          league: fixture.league.name,
-          leagueId: String(fixture.league.id),
-          homeTeam: fixture.teams.home.name,
-          awayTeam: fixture.teams.away.name,
-          homeTeamId: String(homeTeamId),
-          awayTeamId: String(awayTeamId),
-          homeTeamLogo: fixture.teams.home.logo,
-          awayTeamLogo: fixture.teams.away.logo,
-          matchTime: new Date(fixture.fixture.timestamp * 1000),
-          market: prediction.market,
-          predictedOutcome: prediction.predictedOutcome,
-          suggestedOdd: String(prediction.suggestedOdd),
-          suggestedStake: String(prediction.suggestedStake),
-          confidence: String(prediction.confidence),
-          probability: String(prediction.probability),
-          expectedValue: String(((prediction.probability / 100) * prediction.suggestedOdd - 1) * 100),
-          analysisRationale: JSON.stringify(prediction.rationale),
-          homeTeamStats: JSON.stringify(homeStats),
-          awayTeamStats: JSON.stringify(awayStats),
-          h2hAnalysis: h2hAnalysis ? JSON.stringify(h2hAnalysis) : null,
-          formScore: String(((homeStats.formPoints + awayStats.formPoints) / 30) * 100),
-          goalTrendScore: String(((homeStats.goalsScored + awayStats.goalsScored) / 4) * 100),
-          h2hScore: h2hAnalysis ? String(50) : null,
-          status: 'draft'
-        });
+    // Filtrar previsões com alta confiança (>= 85%)
+    const highConfPredictions = predictions.filter(p => p.confidence >= 85 && p.suggestedOdd >= 1.40);
+    
+    // Se tiver 2+ linhas de alta confiança, criar bilhete combinado do mesmo jogo
+    if (highConfPredictions.length >= 2) {
+      // Ordenar por confiança e pegar até 4 linhas
+      highConfPredictions.sort((a, b) => b.confidence - a.confidence);
+      const legsForCombo = highConfPredictions.slice(0, 4);
+      
+      // Calcular odd total e probabilidade combinada
+      const totalOdd = legsForCombo.reduce((acc, p) => acc * p.suggestedOdd, 1);
+      const avgConfidence = legsForCombo.reduce((acc, p) => acc + p.confidence, 0) / legsForCombo.length;
+      
+      // Calcular probabilidade combinada real (multiplicar probabilidades em decimal, depois converter para %)
+      // Exemplo: 90% * 88% * 85% = 0.90 * 0.88 * 0.85 = 0.6732 = 67.32%
+      const combinedProbability = legsForCombo.reduce((acc, p) => acc * (p.probability / 100), 1) * 100;
+      
+      // Criar legs com detalhes de cada linha
+      const legs = legsForCombo.map(p => ({
+        homeTeam: fixture.teams.home.name,
+        awayTeam: fixture.teams.away.name,
+        homeTeamLogo: fixture.teams.home.logo,
+        awayTeamLogo: fixture.teams.away.logo,
+        league: fixture.league.name,
+        fixtureId: String(fixture.fixture.id),
+        market: p.market,
+        outcome: p.predictedOutcome,
+        odd: p.suggestedOdd,
+        probability: p.probability,
+        confidence: p.confidence,
+        rationale: p.rationale,
+        time: new Date(fixture.fixture.timestamp * 1000).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+      }));
+      
+      const comboDescription = legs.map(l => `${l.market} (${l.probability.toFixed(0)}%)`).join(' + ');
+      
+      // Inserir bilhete combinado
+      await db.insert(aiTickets).values({
+        fixtureId: String(fixture.fixture.id),
+        league: fixture.league.name,
+        leagueId: String(fixture.league.id),
+        homeTeam: fixture.teams.home.name,
+        awayTeam: fixture.teams.away.name,
+        homeTeamId: String(homeTeamId),
+        awayTeamId: String(awayTeamId),
+        homeTeamLogo: fixture.teams.home.logo,
+        awayTeamLogo: fixture.teams.away.logo,
+        matchTime: new Date(fixture.fixture.timestamp * 1000),
+        market: `Combo ${legs.length} Linhas`,
+        predictedOutcome: comboDescription,
+        suggestedOdd: String(totalOdd.toFixed(2)),
+        suggestedStake: '2.0',
+        isCombo: true,
+        legs: JSON.stringify(legs),
+        totalOdd: String(totalOdd.toFixed(2)),
+        confidence: String(avgConfidence.toFixed(0)),
+        probability: String(combinedProbability.toFixed(1)),
+        expectedValue: String(((combinedProbability / 100) * totalOdd - 1) * 100),
+        analysisRationale: JSON.stringify(legsForCombo.flatMap(p => p.rationale)),
+        homeTeamStats: JSON.stringify(homeStats),
+        awayTeamStats: JSON.stringify(awayStats),
+        h2hAnalysis: h2hAnalysis ? JSON.stringify(h2hAnalysis) : null,
+        formScore: String(avgConfidence),
+        status: 'draft'
+      });
+      
+      console.log(`[AI Engine] Created COMBO ${legs.length} legs (odd ${totalOdd.toFixed(2)}, prob ${combinedProbability.toFixed(1)}%): ${fixture.teams.home.name} vs ${fixture.teams.away.name}`);
+      console.log(`[AI Engine] Legs: ${legs.map(l => `${l.market} @${l.odd} (${l.probability.toFixed(0)}%)`).join(' | ')}`);
     }
     
-    console.log(`[AI Engine] Generated ${predictions.length} predictions for ${fixture.teams.home.name} vs ${fixture.teams.away.name}`);
+    // Criar entradas simples APENAS para previsões de alta confiança que NÃO estão no combo
+    // Isso evita duplicação e garante que só mostramos o melhor conteúdo
+    const usedInCombo = new Set(highConfPredictions.slice(0, 4).map(p => `${p.market}_${p.predictedOutcome}`));
+    
+    for (const prediction of predictions) {
+      // Só criar simples se:
+      // 1. Não tem combo para este jogo (< 2 previsões de alta confiança)
+      // 2. OU é uma previsão de confiança muito alta (>= 90%) que não está no combo
+      const isInCombo = usedInCombo.has(`${prediction.market}_${prediction.predictedOutcome}`);
+      const shouldCreateSingle = (
+        (highConfPredictions.length < 2 && prediction.confidence >= 85 && prediction.suggestedOdd >= 1.40) ||
+        (prediction.confidence >= 90 && prediction.suggestedOdd >= 1.40 && !isInCombo)
+      );
+      
+      if (shouldCreateSingle) {
+        await db.insert(aiTickets)
+          .values({
+            fixtureId: String(fixture.fixture.id),
+            league: fixture.league.name,
+            leagueId: String(fixture.league.id),
+            homeTeam: fixture.teams.home.name,
+            awayTeam: fixture.teams.away.name,
+            homeTeamId: String(homeTeamId),
+            awayTeamId: String(awayTeamId),
+            homeTeamLogo: fixture.teams.home.logo,
+            awayTeamLogo: fixture.teams.away.logo,
+            matchTime: new Date(fixture.fixture.timestamp * 1000),
+            market: prediction.market,
+            predictedOutcome: prediction.predictedOutcome,
+            suggestedOdd: String(prediction.suggestedOdd),
+            suggestedStake: String(prediction.suggestedStake),
+            confidence: String(prediction.confidence),
+            probability: String(prediction.probability),
+            expectedValue: String(((prediction.probability / 100) * prediction.suggestedOdd - 1) * 100),
+            analysisRationale: JSON.stringify(prediction.rationale),
+            homeTeamStats: JSON.stringify(homeStats),
+            awayTeamStats: JSON.stringify(awayStats),
+            h2hAnalysis: h2hAnalysis ? JSON.stringify(h2hAnalysis) : null,
+            formScore: String(((homeStats.formPoints + awayStats.formPoints) / 30) * 100),
+            goalTrendScore: String(((homeStats.goalsScored + awayStats.goalsScored) / 4) * 100),
+            h2hScore: h2hAnalysis ? String(50) : null,
+            status: 'draft'
+          });
+      }
+    }
+    
+    const combosCreated = highConfPredictions.length >= 2 ? 1 : 0;
+    console.log(`[AI Engine] Generated ${predictions.length} predictions (${combosCreated} combos) for ${fixture.teams.home.name} vs ${fixture.teams.away.name}`);
     return predictions;
   }
 

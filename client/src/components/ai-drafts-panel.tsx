@@ -31,6 +31,9 @@ interface BetLeg {
   market: string;
   outcome?: string;
   odd: number;
+  probability?: number;
+  confidence?: number;
+  rationale?: string[];
   time: string;
 }
 
@@ -534,37 +537,70 @@ export function AiDraftsPanel() {
                     </div>
                   )}
 
-                  {/* Combo Legs List */}
+                  {/* Combo Legs List - Show each line with probability */}
                   {isCombo && legs.length > 0 ? (
-                    <div className="space-y-3 mb-4">
+                    <div className="space-y-2 mb-4">
                       {legs.map((leg, idx) => (
-                        <div key={idx} className="flex items-center gap-3 bg-background/50 rounded-lg p-3">
-                          <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center">
-                            <span className="text-xs font-bold text-primary">{idx + 1}</span>
-                          </div>
-                          {/* Team Logos */}
-                          <div className="flex items-center gap-1">
-                            {leg.homeTeamLogo && (
-                              <img src={leg.homeTeamLogo} alt="" className="w-6 h-6" />
+                        <div key={idx} className="bg-gradient-to-r from-background/80 to-background/40 rounded-lg p-3 border border-white/5">
+                          <div className="flex items-center gap-3">
+                            {/* Index Badge */}
+                            <div className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-primary">{idx + 1}</span>
+                            </div>
+                            
+                            {/* Team Logos */}
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {leg.homeTeamLogo && (
+                                <img src={leg.homeTeamLogo} alt="" className="w-6 h-6" />
+                              )}
+                              <span className="text-gray-500 text-[10px]">vs</span>
+                              {leg.awayTeamLogo && (
+                                <img src={leg.awayTeamLogo} alt="" className="w-6 h-6" />
+                              )}
+                            </div>
+                            
+                            {/* Market Info */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-bold text-primary truncate">{leg.market}</p>
+                              {leg.outcome && <p className="text-xs text-gray-300 truncate">{leg.outcome}</p>}
+                            </div>
+                            
+                            {/* Probability Badge */}
+                            {leg.probability && (
+                              <div className={`px-2 py-1 rounded-lg flex-shrink-0 ${
+                                leg.probability >= 85 ? 'bg-green-500/20 text-green-400' : 
+                                leg.probability >= 75 ? 'bg-yellow-500/20 text-yellow-400' : 
+                                'bg-orange-500/20 text-orange-400'
+                              }`}>
+                                <p className="text-xs font-bold">{leg.probability.toFixed(0)}%</p>
+                              </div>
                             )}
-                            <span className="text-gray-500 text-[10px]">vs</span>
-                            {leg.awayTeamLogo && (
-                              <img src={leg.awayTeamLogo} alt="" className="w-6 h-6" />
-                            )}
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-semibold text-white">
-                              {leg.homeTeam} vs {leg.awayTeam}
-                            </p>
-                            <p className="text-xs text-gray-400">{leg.league} • {leg.time}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-bold text-primary">{leg.market}</p>
-                            {leg.outcome && <p className="text-xs text-gray-300">{leg.outcome}</p>}
-                            <p className="text-xs text-gray-400">Odd {leg.odd.toFixed(2)}</p>
+                            
+                            {/* Odd */}
+                            <div className="text-right flex-shrink-0">
+                              <p className="text-sm font-bold text-white">{leg.odd.toFixed(2)}</p>
+                              <p className="text-[10px] text-gray-500">odd</p>
+                            </div>
                           </div>
                         </div>
                       ))}
+                      
+                      {/* Combo Summary */}
+                      <div className="mt-3 pt-3 border-t border-primary/20 flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400">Probabilidade Combinada:</span>
+                          <span className={`text-sm font-bold ${
+                            parseFloat(draft.probability) >= 50 ? 'text-green-400' : 
+                            parseFloat(draft.probability) >= 30 ? 'text-yellow-400' : 'text-orange-400'
+                          }`}>
+                            {parseFloat(draft.probability).toFixed(1)}%
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-400">Odd Total:</span>
+                          <span className="text-lg font-bold text-primary">{displayOdd.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     /* Single Bet Row - Mobile Optimized */
