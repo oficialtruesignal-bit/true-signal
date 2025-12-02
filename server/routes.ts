@@ -1654,24 +1654,41 @@ REGRAS IMPORTANTES:
       const homeGoalsAvg = extractGoalsAvg(draft.homeTeamStats);
       const awayGoalsAvg = extractGoalsAvg(draft.awayTeamStats);
       
+      // CRITICAL: Convert all numeric fields to proper numbers to avoid NULL in database
+      const safeParseFloat = (val: any): number | null => {
+        if (val === null || val === undefined) return null;
+        const num = parseFloat(String(val));
+        return isNaN(num) ? null : num;
+      };
+      
+      const numericConfidence = safeParseFloat(draft.confidence);
+      const numericProbability = safeParseFloat(draft.probability);
+      const numericExpectedValue = safeParseFloat(draft.expectedValue);
+      const numericHomeGoalsAvg = safeParseFloat(homeGoalsAvg);
+      const numericAwayGoalsAvg = safeParseFloat(awayGoalsAvg);
+      const numericStake = safeParseFloat(adjustedStake || draft.suggestedStake) || 2.0;
+      const numericOdd = safeParseFloat(adjustedOdd || draft.suggestedOdd) || 1.5;
+      
+      console.log(`[AI Approve] Converting fields - confidence: ${draft.confidence} -> ${numericConfidence}, EV: ${draft.expectedValue} -> ${numericExpectedValue}, homeGoals: ${homeGoalsAvg} -> ${numericHomeGoalsAvg}`);
+      
       if (isCombo && legsArray && legsArray.length > 0) {
         // Use centralized combo metadata derivation
         const comboData = deriveComboMetadata(legsArray, formattedTime);
         if (comboData) {
           tipData = {
             ...comboData,
-            odd: adjustedOdd || comboData.odd,
-            stake: adjustedStake || draft.suggestedStake,
+            odd: numericOdd,
+            stake: numericStake,
             status: 'pending',
             isLive: false,
-            // AI Analysis fields
+            // AI Analysis fields - MUST be numbers
             analysisRationale: draft.analysisRationale,
             analysisSummary: generateAnalysisSummary(draft),
-            confidence: draft.confidence,
-            probability: draft.probability,
-            expectedValue: draft.expectedValue,
-            homeGoalsAvg: homeGoalsAvg,
-            awayGoalsAvg: awayGoalsAvg,
+            confidence: numericConfidence,
+            probability: numericProbability,
+            expectedValue: numericExpectedValue,
+            homeGoalsAvg: numericHomeGoalsAvg,
+            awayGoalsAvg: numericAwayGoalsAvg,
             aiSourceId: draft.id,
           };
         } else {
@@ -1688,21 +1705,21 @@ REGRAS IMPORTANTES:
           awayTeamLogo: draft.awayTeamLogo,
           matchTime: formattedTime,
           market: `${draft.market}: ${draft.predictedOutcome}`,
-          odd: adjustedOdd || draft.suggestedOdd,
-          stake: adjustedStake || draft.suggestedStake,
+          odd: numericOdd,
+          stake: numericStake,
           status: 'pending',
           isLive: false,
           isCombo: false,
           totalOdd: null,
           legs: null,
-          // AI Analysis fields
+          // AI Analysis fields - MUST be numbers
           analysisRationale: draft.analysisRationale,
           analysisSummary: generateAnalysisSummary(draft),
-          confidence: draft.confidence,
-          probability: draft.probability,
-          expectedValue: draft.expectedValue,
-          homeGoalsAvg: homeGoalsAvg,
-          awayGoalsAvg: awayGoalsAvg,
+          confidence: numericConfidence,
+          probability: numericProbability,
+          expectedValue: numericExpectedValue,
+          homeGoalsAvg: numericHomeGoalsAvg,
+          awayGoalsAvg: numericAwayGoalsAvg,
           aiSourceId: draft.id,
         };
       }
@@ -1839,6 +1856,13 @@ REGRAS IMPORTANTES:
         }
       };
       
+      // CRITICAL: Safe number conversion to avoid NULL in database
+      const safeParseFloat = (val: any): number | null => {
+        if (val === null || val === undefined) return null;
+        const num = parseFloat(String(val));
+        return isNaN(num) ? null : num;
+      };
+      
       for (const id of ids) {
         const draft = drafts.find((d: any) => d.id === id);
         if (!draft) continue;
@@ -1855,6 +1879,17 @@ REGRAS IMPORTANTES:
         const homeGoalsAvg = extractGoalsAvg(draft.homeTeamStats);
         const awayGoalsAvg = extractGoalsAvg(draft.awayTeamStats);
         
+        // CRITICAL: Convert all numeric fields properly
+        const numericConfidence = safeParseFloat(draft.confidence);
+        const numericProbability = safeParseFloat(draft.probability);
+        const numericExpectedValue = safeParseFloat(draft.expectedValue);
+        const numericHomeGoalsAvg = safeParseFloat(homeGoalsAvg);
+        const numericAwayGoalsAvg = safeParseFloat(awayGoalsAvg);
+        const numericStake = safeParseFloat(draft.suggestedStake) || 2.0;
+        const numericOdd = safeParseFloat(draft.suggestedOdd) || 1.5;
+        
+        console.log(`[Bulk Approve] ${draft.homeTeam} vs ${draft.awayTeam} - confidence: ${numericConfidence}, EV: ${numericExpectedValue}, homeGoals: ${numericHomeGoalsAvg}`);
+        
         // Handle combo (multiple legs) vs single bet
         const isCombo = draft.isCombo;
         const legsArray = parseLegs(draft.legs);
@@ -1867,17 +1902,17 @@ REGRAS IMPORTANTES:
           if (comboData) {
             tipData = {
               ...comboData,
-              stake: draft.suggestedStake,
+              stake: numericStake,
               status: 'pending',
               isLive: false,
-              // AI Analysis fields
+              // AI Analysis fields - MUST be numbers
               analysisRationale: draft.analysisRationale,
               analysisSummary: generateAnalysisSummary(draft),
-              confidence: draft.confidence,
-              probability: draft.probability,
-              expectedValue: draft.expectedValue,
-              homeGoalsAvg: homeGoalsAvg,
-              awayGoalsAvg: awayGoalsAvg,
+              confidence: numericConfidence,
+              probability: numericProbability,
+              expectedValue: numericExpectedValue,
+              homeGoalsAvg: numericHomeGoalsAvg,
+              awayGoalsAvg: numericAwayGoalsAvg,
               aiSourceId: draft.id,
             };
           } else {
@@ -1895,21 +1930,21 @@ REGRAS IMPORTANTES:
             awayTeamLogo: draft.awayTeamLogo,
             matchTime: formattedTime,
             market: `${draft.market}: ${draft.predictedOutcome}`,
-            odd: draft.suggestedOdd,
-            stake: draft.suggestedStake,
+            odd: numericOdd,
+            stake: numericStake,
             status: 'pending',
             isLive: false,
             isCombo: false,
             totalOdd: null,
             legs: null,
-            // AI Analysis fields
+            // AI Analysis fields - MUST be numbers
             analysisRationale: draft.analysisRationale,
             analysisSummary: generateAnalysisSummary(draft),
-            confidence: draft.confidence,
-            probability: draft.probability,
-            expectedValue: draft.expectedValue,
-            homeGoalsAvg: homeGoalsAvg,
-            awayGoalsAvg: awayGoalsAvg,
+            confidence: numericConfidence,
+            probability: numericProbability,
+            expectedValue: numericExpectedValue,
+            homeGoalsAvg: numericHomeGoalsAvg,
+            awayGoalsAvg: numericAwayGoalsAvg,
             aiSourceId: draft.id,
           };
         }
