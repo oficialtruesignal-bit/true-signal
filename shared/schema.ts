@@ -586,3 +586,151 @@ export const insertBotPerformanceStatsSchema = createInsertSchema(botPerformance
 
 export type InsertBotPerformanceStats = z.infer<typeof insertBotPerformanceStatsSchema>;
 export type BotPerformanceStats = typeof botPerformanceStats.$inferSelect;
+
+// =====================================================
+// TIP ANALYSIS & EV TABLES
+// =====================================================
+
+// Tip Analyses - Detailed analysis for each tip (1:1 with tips)
+export const tipAnalyses = pgTable("tip_analyses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tipId: uuid("tip_id").notNull().references(() => tips.id, { onDelete: "cascade" }),
+  fixtureId: text("fixture_id"),
+  
+  // Goals Analysis Section
+  goalsAnalysis: text("goals_analysis"), // JSON: { over15Pct, over25Pct, over35Pct, avgGoals, reasoning }
+  
+  // Corners Analysis Section
+  cornersAnalysis: text("corners_analysis"), // JSON: { over85Pct, over95Pct, avgCorners, reasoning }
+  
+  // H2H (Head-to-Head) Section
+  h2hAnalysis: text("h2h_analysis"), // JSON: { totalMatches, homeWins, awayWins, draws, avgGoals, trends, reasoning }
+  
+  // Climate/Weather Impact
+  climateAnalysis: text("climate_analysis"), // JSON: { temperature, humidity, windSpeed, condition, impact, reasoning }
+  
+  // Tactical Insights Section
+  tacticalInsights: text("tactical_insights"), // JSON array: [{ title, description, highlighted }]
+  
+  // Final Recommendation
+  finalRecommendation: text("final_recommendation"), // Summary text with market suggestions
+  
+  // Data Sources & Metadata
+  dataSources: text("data_sources"), // JSON array: ["API-Football", "Historical Data", etc]
+  analysisVersion: text("analysis_version").notNull().default("1.0"),
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const insertTipAnalysisSchema = createInsertSchema(tipAnalyses).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export type InsertTipAnalysis = z.infer<typeof insertTipAnalysisSchema>;
+export type TipAnalysis = typeof tipAnalyses.$inferSelect;
+
+// Tip Market Recommendations - Multiple EV-backed market suggestions per tip (1:N with tips)
+export const tipMarketRecommendations = pgTable("tip_market_recommendations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tipId: uuid("tip_id").notNull().references(() => tips.id, { onDelete: "cascade" }),
+  analysisId: uuid("analysis_id").references(() => tipAnalyses.id, { onDelete: "cascade" }),
+  
+  // Market Details
+  marketType: text("market_type").notNull(), // "over_25", "btts_yes", "home_win", "corners_over_85", etc
+  marketLabel: text("market_label").notNull(), // "Mais de 2.5 Gols", "Ambas Marcam - Sim", etc
+  selection: text("selection").notNull(), // The actual bet selection
+  
+  // Odds & Probabilities
+  bookmakerOdd: decimal("bookmaker_odd", { precision: 5, scale: 2 }).notNull(), // Odd from bookmaker (e.g., 1.85)
+  modelProbability: decimal("model_probability", { precision: 5, scale: 2 }).notNull(), // Our calculated probability (0-100)
+  fairOdd: decimal("fair_odd", { precision: 5, scale: 2 }).notNull(), // Fair odd = 100 / probability
+  
+  // Expected Value
+  evPercent: decimal("ev_percent", { precision: 6, scale: 2 }).notNull(), // EV% = ((prob/100 * odd) - 1) * 100
+  evRating: text("ev_rating", { enum: ["negative", "neutral", "positive", "excellent"] }).notNull().default("neutral"),
+  
+  // Stake Recommendation
+  suggestedStake: decimal("suggested_stake", { precision: 3, scale: 1 }).notNull().default("1.0"), // Units to stake
+  kellyStake: decimal("kelly_stake", { precision: 5, scale: 2 }), // Kelly criterion stake
+  
+  // Reasoning
+  rationale: text("rationale"), // JSON array: ["Strong home form", "H2H favors over", etc]
+  confidenceLevel: text("confidence_level", { enum: ["low", "medium", "high", "very_high"] }).notNull().default("medium"),
+  
+  // Status
+  isMainPick: boolean("is_main_pick").notNull().default(false), // Is this the primary recommendation?
+  isValueBet: boolean("is_value_bet").notNull().default(false), // EV > 5%?
+  
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const insertTipMarketRecommendationSchema = createInsertSchema(tipMarketRecommendations).omit({
+  id: true,
+  createdAt: true,
+});
+
+export type InsertTipMarketRecommendation = z.infer<typeof insertTipMarketRecommendationSchema>;
+export type TipMarketRecommendation = typeof tipMarketRecommendations.$inferSelect;
+
+// Zod schemas for JSON fields
+export const goalsAnalysisSchema = z.object({
+  over15Pct: z.number(),
+  over25Pct: z.number(),
+  over35Pct: z.number(),
+  avgGoalsHome: z.number(),
+  avgGoalsAway: z.number(),
+  avgGoalsTotal: z.number(),
+  reasoning: z.string(),
+});
+
+export const cornersAnalysisSchema = z.object({
+  over85Pct: z.number(),
+  over95Pct: z.number(),
+  over105Pct: z.number(),
+  avgCornersHome: z.number(),
+  avgCornersAway: z.number(),
+  avgCornersTotal: z.number(),
+  reasoning: z.string(),
+});
+
+export const h2hAnalysisSchema = z.object({
+  totalMatches: z.number(),
+  homeWins: z.number(),
+  awayWins: z.number(),
+  draws: z.number(),
+  avgGoals: z.number(),
+  avgCorners: z.number().optional(),
+  lastResults: z.array(z.object({
+    date: z.string(),
+    homeGoals: z.number(),
+    awayGoals: z.number(),
+    winner: z.enum(["home", "away", "draw"]),
+  })).optional(),
+  trends: z.array(z.string()),
+  reasoning: z.string(),
+});
+
+export const climateAnalysisSchema = z.object({
+  temperature: z.number().optional(),
+  humidity: z.number().optional(),
+  windSpeed: z.number().optional(),
+  condition: z.string().optional(),
+  impact: z.enum(["none", "low", "medium", "high"]),
+  reasoning: z.string(),
+});
+
+export const tacticalInsightSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  highlighted: z.boolean().optional(),
+  sentiment: z.enum(["positive", "negative", "neutral"]).optional(),
+});
+
+export type GoalsAnalysis = z.infer<typeof goalsAnalysisSchema>;
+export type CornersAnalysis = z.infer<typeof cornersAnalysisSchema>;
+export type H2HAnalysis = z.infer<typeof h2hAnalysisSchema>;
+export type ClimateAnalysis = z.infer<typeof climateAnalysisSchema>;
+export type TacticalInsight = z.infer<typeof tacticalInsightSchema>;
