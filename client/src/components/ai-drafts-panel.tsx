@@ -700,202 +700,170 @@ export function AiDraftsPanel() {
                     </div>
                   )}
 
-                  {/* Combo Legs List - Show each line with probability */}
+                  {/* Combo Legs List - REDESIGNED CLEAN LAYOUT */}
                   {isCombo && legs.length > 0 ? (
-                    <div className="space-y-2 mb-4">
+                    <div className="space-y-3">
                       {legs.map((leg, idx) => (
-                        <div key={idx} className="bg-gradient-to-r from-background/80 to-background/40 rounded-lg p-3 border border-white/5 group">
-                          <div className="flex items-center gap-2">
-                            {/* Remove Button */}
+                        <div key={idx} className="bg-slate-800/60 rounded-xl p-4 border border-white/10 group">
+                          {/* Line Number + Remove */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-2">
+                              <span className="w-7 h-7 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">
+                                {idx + 1}
+                              </span>
+                              <span className="text-xs text-gray-500">{leg.league}</span>
+                            </div>
                             <button
                               onClick={() => removeComboLeg(draft.id, idx, legs)}
-                              className="w-6 h-6 rounded-full bg-red-500/20 hover:bg-red-500/40 flex items-center justify-center flex-shrink-0 opacity-60 group-hover:opacity-100 transition-all"
-                              title="Remover esta linha"
+                              className="w-8 h-8 rounded-full bg-red-500/10 hover:bg-red-500/30 flex items-center justify-center transition-all"
+                              title="Remover"
                               data-testid={`btn-remove-leg-${draft.id}-${idx}`}
                             >
-                              <X className="w-3 h-3 text-red-400" />
+                              <X className="w-4 h-4 text-red-400" />
                             </button>
-                            
-                            {/* Index Badge */}
-                            <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-primary">{idx + 1}</span>
+                          </div>
+
+                          {/* Teams Row - Full Width */}
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="flex items-center gap-2 flex-1">
+                              {leg.homeTeamLogo && <img src={leg.homeTeamLogo} alt="" className="w-8 h-8" />}
+                              <span className="font-bold text-white text-base">{leg.homeTeam}</span>
                             </div>
-                            
-                            {/* Team Logos */}
-                            <div className="flex items-center gap-1 flex-shrink-0">
-                              {leg.homeTeamLogo && (
-                                <img src={leg.homeTeamLogo} alt="" className="w-5 h-5" />
-                              )}
-                              <span className="text-gray-500 text-[10px]">vs</span>
-                              {leg.awayTeamLogo && (
-                                <img src={leg.awayTeamLogo} alt="" className="w-5 h-5" />
-                              )}
+                            <span className="text-gray-500 text-sm">vs</span>
+                            <div className="flex items-center gap-2 flex-1 justify-end">
+                              <span className="font-bold text-white text-base">{leg.awayTeam}</span>
+                              {leg.awayTeamLogo && <img src={leg.awayTeamLogo} alt="" className="w-8 h-8" />}
                             </div>
-                            
-                            {/* Market Info */}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-bold text-primary truncate">{leg.market}</p>
-                              {leg.outcome && <p className="text-xs text-gray-300 truncate">{leg.outcome}</p>}
+                          </div>
+
+                          {/* Market + Outcome - Full Width Clear */}
+                          <div className="bg-primary/10 rounded-lg p-3 mb-3">
+                            <p className="text-primary font-bold text-base">{leg.market}</p>
+                            {leg.outcome && <p className="text-white text-sm mt-1">{leg.outcome}</p>}
+                          </div>
+
+                          {/* Stats Row */}
+                          <div className="flex items-center justify-between">
+                            <div className={`px-4 py-2 rounded-lg ${
+                              (leg.probability || 0) >= 85 ? 'bg-green-500/20 text-green-400' : 
+                              (leg.probability || 0) >= 75 ? 'bg-yellow-500/20 text-yellow-400' : 
+                              'bg-orange-500/20 text-orange-400'
+                            }`}>
+                              <span className="text-lg font-bold">{(leg.probability || 0).toFixed(0)}%</span>
+                              <span className="text-xs ml-1 opacity-70">prob</span>
                             </div>
-                            
-                            {/* Probability Badge */}
-                            {leg.probability && (
-                              <div className={`px-2 py-1 rounded-lg flex-shrink-0 ${
-                                leg.probability >= 85 ? 'bg-green-500/20 text-green-400' : 
-                                leg.probability >= 75 ? 'bg-yellow-500/20 text-yellow-400' : 
-                                'bg-orange-500/20 text-orange-400'
-                              }`}>
-                                <p className="text-xs font-bold">{leg.probability.toFixed(0)}%</p>
-                              </div>
-                            )}
-                            
-                            {/* Odd */}
-                            <div className="text-right flex-shrink-0">
-                              <p className="text-sm font-bold text-white">{leg.odd.toFixed(2)}</p>
-                              <p className="text-[10px] text-gray-500">odd</p>
+                            <div className="bg-white/10 rounded-lg px-4 py-2">
+                              <span className="text-xl font-bold text-white">{leg.odd.toFixed(2)}</span>
+                              <span className="text-xs ml-1 text-gray-400">odd</span>
                             </div>
                           </div>
                         </div>
                       ))}
                       
-                      {/* Combo Summary */}
-                      <div className="mt-3 pt-3 border-t border-primary/20 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400">Probabilidade Combinada:</span>
-                          <span className={`text-sm font-bold ${
-                            parseFloat(draft.probability) >= 50 ? 'text-green-400' : 
-                            parseFloat(draft.probability) >= 30 ? 'text-yellow-400' : 'text-orange-400'
-                          }`}>
-                            {parseFloat(draft.probability).toFixed(1)}%
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-400">Odd Total:</span>
-                          <span className="text-lg font-bold text-primary">{displayOdd.toFixed(2)}</span>
+                      {/* Combo Summary - Bigger and Clearer */}
+                      <div className="bg-gradient-to-r from-primary/20 to-primary/10 rounded-xl p-4 border border-primary/30">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-xs text-gray-400 mb-1">Probabilidade Combinada</p>
+                            <p className={`text-2xl font-bold ${
+                              parseFloat(draft.probability) >= 50 ? 'text-green-400' : 
+                              parseFloat(draft.probability) >= 30 ? 'text-yellow-400' : 'text-orange-400'
+                            }`}>
+                              {parseFloat(draft.probability).toFixed(1)}%
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-xs text-gray-400 mb-1">Odd Total</p>
+                            <p className="text-3xl font-bold text-primary">{displayOdd.toFixed(2)}</p>
+                          </div>
                         </div>
                       </div>
                     </div>
                   ) : (
-                    /* Single Bet Row - Mobile Optimized */
-                    <div className="space-y-3">
-                      {/* Row 1: Market + Confidence + Odd + Time */}
-                      <div className="flex items-center justify-between gap-2">
-                        {/* Market Badge */}
-                        <div className="flex-shrink-0">
-                          <span className="inline-block bg-primary/20 text-primary px-3 py-1 rounded-lg text-sm font-semibold">
-                            {draft.market}
-                          </span>
-                          {draft.predictedOutcome && (
-                            <span className="ml-2 text-xs text-gray-400">{draft.predictedOutcome}</span>
-                          )}
+                    /* Single Bet - REDESIGNED CLEAN LAYOUT */
+                    <div className="space-y-4">
+                      {/* Teams Row - Full Width Clear */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2 flex-1">
+                          {draft.homeTeamLogo && <img src={draft.homeTeamLogo} alt="" className="w-10 h-10" />}
+                          <div>
+                            <p className="font-bold text-white text-base">{draft.homeTeam}</p>
+                            <p className="text-xs text-gray-500">{draft.league}</p>
+                          </div>
                         </div>
-                        
-                        {/* Confidence */}
-                        <div className={`px-3 py-1.5 rounded-lg flex-shrink-0 ${getConfidenceColor(confidence)}`}>
-                          <p className="text-sm font-bold">{confidence.toFixed(0)}%</p>
+                        <span className="text-gray-500 font-bold">vs</span>
+                        <div className="flex items-center gap-2 flex-1 justify-end text-right">
+                          <div>
+                            <p className="font-bold text-white text-base">{draft.awayTeam}</p>
+                            <p className="text-xs text-gray-500">{formatMatchTime(draft.matchTime)}</p>
+                          </div>
+                          {draft.awayTeamLogo && <img src={draft.awayTeamLogo} alt="" className="w-10 h-10" />}
                         </div>
+                      </div>
 
-                        {/* Suggested Odd */}
-                        <div className="text-center flex-shrink-0">
-                          <p className="text-lg font-bold text-white">{displayOdd.toFixed(2)}</p>
-                          <p className="text-[10px] text-gray-500">ODD</p>
-                        </div>
+                      {/* Market + Outcome - Full Width Clear Box */}
+                      <div className="bg-primary/10 rounded-xl p-4 border border-primary/30">
+                        <p className="text-primary font-bold text-lg">{draft.market}</p>
+                        {draft.predictedOutcome && <p className="text-white text-sm mt-1">{draft.predictedOutcome}</p>}
+                      </div>
 
-                        {/* Match Time */}
-                        <div className="flex items-center gap-1 text-xs text-gray-400 flex-shrink-0">
-                          <Clock className="w-3 h-3" />
-                          {formatMatchTime(draft.matchTime)}
+                      {/* Stats Row - Big and Clear */}
+                      <div className="flex items-center justify-between gap-3">
+                        <div className={`flex-1 rounded-xl p-3 text-center ${getConfidenceColor(confidence)}`}>
+                          <p className="text-2xl font-bold">{confidence.toFixed(0)}%</p>
+                          <p className="text-xs opacity-70">Confiança</p>
                         </div>
-                        
-                        {/* Selection Checkbox */}
+                        <div className="flex-1 bg-white/10 rounded-xl p-3 text-center">
+                          <p className="text-2xl font-bold text-white">{displayOdd.toFixed(2)}</p>
+                          <p className="text-xs text-gray-400">Odd</p>
+                        </div>
                         <button
                           onClick={() => toggleDraftSelection(draft.id)}
-                          className={`w-8 h-8 rounded border-2 flex items-center justify-center transition-all flex-shrink-0 ${
+                          className={`w-14 h-14 rounded-xl border-2 flex items-center justify-center transition-all ${
                             isSelected 
                               ? 'bg-primary border-primary' 
                               : 'border-white/20 hover:border-primary/50'
                           }`}
                           data-testid={`checkbox-draft-${draft.id}`}
                         >
-                          {isSelected && <Check className="w-5 h-5 text-black" />}
+                          {isSelected && <Check className="w-6 h-6 text-black" />}
                         </button>
-                      </div>
-                      
-                      {/* Row 2: Team Logos + Match Info */}
-                      <div className="flex items-center gap-3">
-                        {/* Team Logos - Stacked */}
-                        <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
-                          {draft.homeTeamLogo && (
-                            <img src={draft.homeTeamLogo} alt="" className="w-7 h-7" />
-                          )}
-                          <span className="text-[8px] text-gray-600">vs</span>
-                          {draft.awayTeamLogo && (
-                            <img src={draft.awayTeamLogo} alt="" className="w-7 h-7" />
-                          )}
-                        </div>
-
-                        {/* Match Info */}
-                        <div className="flex-1 min-w-0">
-                          <p className="font-bold text-white text-sm truncate">
-                            {draft.homeTeam}
-                          </p>
-                          <p className="font-bold text-white text-sm truncate">
-                            {draft.awayTeam}
-                          </p>
-                          <p className="text-xs text-gray-400">{draft.league}</p>
-                        </div>
                       </div>
                     </div>
                   )}
 
-                  {/* Bet Link Input */}
-                  <div className="mt-3 pt-3 border-t border-white/5">
-                    <div className="flex items-center gap-2">
-                      <Link className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                  {/* Bet Link Input + Actions - Clean Row */}
+                  <div className="mt-4 pt-4 border-t border-white/10 space-y-3">
+                    {/* Bet Link */}
+                    <div className="flex items-center gap-2 bg-slate-800/50 rounded-lg p-2">
+                      <Link className="w-5 h-5 text-gray-400 flex-shrink-0" />
                       <Input
-                        placeholder="Cole o link do bilhete Bet365 aqui..."
+                        placeholder="Cole o link Bet365 aqui (opcional)"
                         value={betLinks[draft.id] || ''}
                         onChange={(e) => setBetLinks(prev => ({ ...prev, [draft.id]: e.target.value }))}
-                        className="h-9 text-sm bg-background/50 border-border/50"
+                        className="h-10 text-sm bg-transparent border-0 focus-visible:ring-0 placeholder:text-gray-500"
                         data-testid={`input-bet-link-${draft.id}`}
                       />
                     </div>
-                  </div>
 
-                  {/* Actions Row */}
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
-                    <div className="flex items-center gap-3">
-                      
-                      {/* Confidence */}
-                      <div className={`px-3 py-1.5 rounded-lg ${getConfidenceColor(confidence)}`}>
-                        <p className="text-sm font-bold">{confidence.toFixed(0)}%</p>
-                      </div>
-                      
-                      {/* Match Time */}
-                      <div className="flex items-center gap-1 text-xs text-gray-400">
-                        <Clock className="w-3 h-3" />
-                        {formatMatchTime(draft.matchTime)}
-                      </div>
-                    </div>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-2">
+                    {/* Action Buttons - Big and Clear */}
+                    <div className="flex gap-3">
                       <Button
-                        size="sm"
                         onClick={() => approveDraft(draft.id)}
-                        className="bg-green-600 hover:bg-green-700 text-white"
+                        className="flex-1 h-12 bg-green-600 hover:bg-green-700 text-white font-bold text-base gap-2"
                         data-testid={`button-approve-${draft.id}`}
                       >
-                        <Check className="w-4 h-4" />
+                        <Check className="w-5 h-5" />
+                        Aprovar
                       </Button>
                       <Button
-                        size="sm"
                         variant="outline"
                         onClick={() => rejectDraft(draft.id)}
-                        className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                        className="flex-1 h-12 border-red-500/50 text-red-400 hover:bg-red-500/10 font-bold text-base gap-2"
                         data-testid={`button-reject-${draft.id}`}
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-5 h-5" />
+                        Rejeitar
                       </Button>
                     </div>
                   </div>
