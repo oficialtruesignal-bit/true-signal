@@ -14,8 +14,32 @@ import videoAnalyst from '@assets/generated_videos/analyst_typing_dashboard_clos
 import videoManPhone from '@assets/generated_videos/man_using_app_on_phone_office.mp4';
 import videoWalkthrough from '@assets/generated_videos/office_walkthrough_team_working.mp4';
 import videoWoman from '@assets/generated_videos/woman_celebrating_app_win_smartphone.mp4';
+import videoDrone1 from '@assets/generated_videos/aerial_drone_soccer_field_ai_tracking.mp4';
+import videoDrone2 from '@assets/generated_videos/top-down_tactical_analysis_overlay.mp4';
+import videoDrone3 from '@assets/generated_videos/night_match_drone_ai_data_overlay.mp4';
 
 const videos = [
+  { 
+    src: videoDrone1, 
+    title: "DRONE - VISÃO AÉREA", 
+    description: "Vista aérea do campo com tracking de jogadores",
+    filename: "drone_visao_aerea.mp4",
+    category: "drone"
+  },
+  { 
+    src: videoDrone2, 
+    title: "DRONE - ANÁLISE TÁTICA", 
+    description: "Visão de cima com overlay de dados táticos",
+    filename: "drone_analise_tatica.mp4",
+    category: "drone"
+  },
+  { 
+    src: videoDrone3, 
+    title: "DRONE - JOGO NOTURNO", 
+    description: "Partida noturna com IA captando dados",
+    filename: "drone_jogo_noturno.mp4",
+    category: "drone"
+  },
   { 
     src: videoTeam, 
     title: "EQUIPE TRABALHANDO", 
@@ -98,7 +122,7 @@ const videos = [
 export default function VideoPromoPage() {
   const [, setLocation] = useLocation();
   const [selectedVideo, setSelectedVideo] = useState(0);
-  const [filter, setFilter] = useState<'todos' | 'realista' | 'cinematico'>('todos');
+  const [filter, setFilter] = useState<'todos' | 'drone' | 'realista' | 'cinematico'>('todos');
 
   const filteredVideos = filter === 'todos' 
     ? videos 
@@ -148,17 +172,25 @@ export default function VideoPromoPage() {
 
         <div className="text-center">
           <h1 className="text-3xl font-bold text-white mb-2">Vídeos Promocionais</h1>
-          <p className="text-gray-400">TRUE SIGNAL - 11 vídeos para sua campanha</p>
+          <p className="text-gray-400">TRUE SIGNAL - 14 vídeos para sua campanha</p>
         </div>
 
-        <div className="flex justify-center gap-2">
+        <div className="flex flex-wrap justify-center gap-2">
           <Button
             onClick={() => { setFilter('todos'); setSelectedVideo(0); }}
             variant={filter === 'todos' ? 'default' : 'outline'}
             className={filter === 'todos' ? 'bg-primary text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            Todos (11)
+            Todos (14)
+          </Button>
+          <Button
+            onClick={() => { setFilter('drone'); setSelectedVideo(0); }}
+            variant={filter === 'drone' ? 'default' : 'outline'}
+            className={filter === 'drone' ? 'bg-primary text-black' : 'border-white/20 text-white'}
+            size="sm"
+          >
+            Drone FX (3)
           </Button>
           <Button
             onClick={() => { setFilter('realista'); setSelectedVideo(0); }}
@@ -191,8 +223,13 @@ export default function VideoPromoPage() {
           />
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
             <div className="flex items-center gap-2 mb-1">
-              <span className={`text-xs px-2 py-0.5 rounded ${currentVideo?.category === 'realista' ? 'bg-blue-500/30 text-blue-300' : 'bg-purple-500/30 text-purple-300'}`}>
-                {currentVideo?.category === 'realista' ? 'EQUIPE REAL' : 'CINEMATOGRÁFICO'}
+              <span className={`text-xs px-2 py-0.5 rounded ${
+                currentVideo?.category === 'drone' ? 'bg-cyan-500/30 text-cyan-300' :
+                currentVideo?.category === 'realista' ? 'bg-blue-500/30 text-blue-300' : 
+                'bg-purple-500/30 text-purple-300'
+              }`}>
+                {currentVideo?.category === 'drone' ? 'DRONE FX' : 
+                 currentVideo?.category === 'realista' ? 'EQUIPE REAL' : 'CINEMATOGRÁFICO'}
               </span>
             </div>
             <h2 className="text-xl font-bold text-white">{currentVideo?.title}</h2>
@@ -244,10 +281,10 @@ export default function VideoPromoPage() {
 
         <div className="bg-white/5 rounded-xl p-4 text-center">
           <p className="text-gray-400 text-sm">
-            <span className="text-primary font-semibold">11 vídeos</span> • Formato MP4 • 8 segundos cada • Aspecto 9:16
+            <span className="text-primary font-semibold">14 vídeos</span> • Formato MP4 • 8 segundos cada • Aspecto 9:16
           </p>
           <p className="text-gray-500 text-xs mt-2">
-            5 vídeos realistas com equipe + 6 vídeos cinematográficos
+            3 vídeos Drone FX + 5 Equipe Real + 6 Cinematográficos
           </p>
         </div>
       </div>
