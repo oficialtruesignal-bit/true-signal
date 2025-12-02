@@ -1,0 +1,55 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: CINEMATOGRAFIA DE ALTA CONVERSÃO 🟢
+
+Para travar o scroll de um apostador experiente nos primeiros 3 segundos, não podemos mostrar "gente sorrindo". Temos que mostrar Tensão, Tecnologia ou Dinheiro.
+
+Ele precisa olhar e pensar: "Quem são esses caras? Isso parece sério."
+
+Aqui estão os Prompts de Elite para gerar esses vídeos nas IAs (Kling, Runway, Luma), divididos entre a Estrutura (Equipe) e o Gancho (Hook).
+
+🏢 CENÁRIO 1: A ESTRUTURA DE ELITE (WAR ROOM)
+Foco: Provar que existe uma empresa real, gigante e organizada por trás do app.
+
+PROMPT PARA IA DE VÍDEO (Copie e Cole):
+
+"Cinematic tracking shot inside a high-tech trading floor ('The War Room'). A team of 20 professional analysts are working intensely. They are all wearing elegant dark green polo shirts with a small shield logo on the chest.
+
+The room is filled with massive wall-sized LED screens showing live soccer matches, heatmaps, and real-time data charts.
+
+CRITICAL DETAIL: On the desktop monitors in front of them, we clearly see a dark-themed software dashboard with neon green graphs (The True Signal Interface).
+
+Lighting is moody and dramatic, with green ambient light reflecting on their focused faces. The camera moves smoothly between the desks. It looks like a scene from 'Billions' or a NASA control room. 4k resolution, photorealistic."
+
+🎣 CENÁRIO 2: OS "SCROLL STOPPERS" (GANCHOS DE 3 SEGUNDOS)
+Foco: Travar o dedo do apostador experiente gerando curiosidade imediata.
+
+OPÇÃO A: O "Olho de Deus" (Visualização de Dados) Ideia: Ver o campo como a máquina vê.
+
+"High-angle drone shot of a soccer stadium at night. Suddenly, the reality glitches and transforms into a digital wireframe. The players become glowing green data points. A holographic overlay appears with the text: 'ANALYSING 22 VARIABLES/SEC'. Fast, glitchy, high-tech sound design visual. Matrix style."
+
+OPÇÃO B: A Frustração do Amador (Espelho) Ideia: Mostrar a dor dele antes da solução.
+
+"Extreme close-up of a man's eye, looking stressed and tired, reflected in a smartphone screen late at night. The screen reflects chaotic red numbers and losing bet slips. He rubs his face in frustration. Rapid cut to a calm, professional analyst in a green polo shirt pressing a single button: 'EXECUTE'. The chaos stops."
+
+OPÇÃO C: A Notificação de Dopamina (Desejo) Ideia: O momento exato do lucro.
+
+"Macro shot of a premium smartphone lying on a dark executive desk. The screen is black. Suddenly, it pulses with a bright neon green notification: '✅ TRUE SIGNAL: Oportunidade Confirmada (94%)'. A hand in a luxury suit picks it up decisively. The movement is fast and urgent."
+
+⏳ CENÁRIO 3: A URGÊNCIA (FECHAMENTO)
+Foco: Mostrar que a porta está fechando.
+
+PROMPT PARA IA DE VÍDEO:
+
+"Cinematic shot of a massive server room door closing slowly. Inside, we see the green lights of the servers blinking rapidly. On the heavy metal door, a digital lock turns from Green to Red.
+
+Overlay text appears in 3D metallic font: 'ACESSO RESTRITO'. The camera pulls back, leaving the viewer outside. A feeling of exclusivity and missed opportunity. Dark, mysterious, high-end production."
+
+🎬 DICA DE EDIÇÃO (MONTAGEM)
+Para o anúncio perfeito no Meta Ads, monte assim:
+
+00:00 - 00:03: Use o Gancho (Opção A ou C). Pura tecnologia ou pura dopamina.
+
+00:03 - 00:08: Corte para a War Room (Cenário 1). Mostre a equipe de uniforme verde trabalhando. Isso valida a autoridade.
+
+00:08 - 00:15: Mostre a tela do Celular com o App (aquela gravação que você vai fazer ou o vídeo que geramos antes) rolando o feed de bilhetes.
+
+00:15 - FIM: Use o vídeo da Urgência (Cenário 3) ou a logo piscando com a frase: "Teste 5 Dias Grátis. Link na Bio."

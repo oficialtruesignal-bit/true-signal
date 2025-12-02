@@ -47,8 +47,48 @@ import stadiumPOV from '@assets/generated_videos/stadium_pov_phone_screen_visibl
 import dronePossession from '@assets/generated_videos/drone_possession_web_tactical_green_lines.mp4';
 import droneStriker from '@assets/generated_videos/drone_striker_tracking_hud_speed_metrics.mp4';
 import droneHeatmap from '@assets/generated_videos/drone_corner_kick_heat_map_pressure_zone.mp4';
+import warRoom from '@assets/generated_videos/war_room_analysts_green_screens_billions.mp4';
+import matrixGlitch from '@assets/generated_videos/stadium_matrix_wireframe_digital_glitch.mp4';
+import stressedEye from '@assets/generated_videos/stressed_eye_red_screen_frustration_defeat.mp4';
+import luxuryNotif from '@assets/generated_videos/phone_notification_green_luxury_suit_urgent.mp4';
+import serverDoor from '@assets/generated_videos/server_door_closing_access_restricted_vault.mp4';
 
 const videos = [
+  { 
+    src: warRoom, 
+    title: "🏢 WAR ROOM: Equipe Billions Style", 
+    description: "Sala de operações com 20 analistas e telas verdes",
+    filename: "war_room_billions.mp4",
+    category: "final"
+  },
+  { 
+    src: matrixGlitch, 
+    title: "👁️ GANCHO A: Olho de Deus Matrix", 
+    description: "Estádio virando wireframe digital - scroll stopper",
+    filename: "gancho_matrix_glitch.mp4",
+    category: "final"
+  },
+  { 
+    src: stressedEye, 
+    title: "😤 GANCHO B: Frustração do Amador", 
+    description: "Olho estressado refletindo tela vermelha de perdas",
+    filename: "gancho_frustracão_red.mp4",
+    category: "final"
+  },
+  { 
+    src: luxuryNotif, 
+    title: "💎 GANCHO C: Dopamina do Luxo", 
+    description: "Celular premium + mão de terno pegando notificação",
+    filename: "gancho_dopamina_luxo.mp4",
+    category: "final"
+  },
+  { 
+    src: serverDoor, 
+    title: "🚪 URGÊNCIA: Porta do Cofre Fechando", 
+    description: "Sala de servidores com acesso restrito",
+    filename: "urgencia_porta_cofre.mp4",
+    category: "final"
+  },
   { 
     src: dronePossession, 
     title: "🚁 DRONE TEIA: Posse de Bola Tática", 
@@ -441,7 +481,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (20)
+            ⭐ Essencial (25)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
