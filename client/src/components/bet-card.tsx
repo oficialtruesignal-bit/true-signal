@@ -318,7 +318,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   return (
     <>
       <div 
-        className="w-full bg-[#0a0a0a] border border-white/10 rounded-2xl overflow-hidden"
+        className="w-full bg-[#0a0a0a] border-2 border-[#33b864]/40 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/10"
         data-testid={`bet-card-${signal.id}`}
       >
         {/* BLOCO A: HEADER - Favoritar + Badges EV/ODD */}
