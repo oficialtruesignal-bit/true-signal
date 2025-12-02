@@ -93,6 +93,8 @@ export function AiDraftsPanel() {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isScanningPatterns, setIsScanningPatterns] = useState(false);
+  const [patternOpportunities, setPatternOpportunities] = useState<any[]>([]);
   const [expandedDraft, setExpandedDraft] = useState<string | null>(null);
   const [selectedDrafts, setSelectedDrafts] = useState<Set<string>>(new Set());
   const [activeFilter, setActiveFilter] = useState<MarketFilter>('all');
@@ -138,6 +140,38 @@ export function AiDraftsPanel() {
       toast.error(error.response?.data?.error || "Erro ao executar análise");
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const scanPatternOpportunities = async () => {
+    if (!user?.email || !user?.id) {
+      toast.error("Você precisa estar logado como admin");
+      return;
+    }
+
+    setIsScanningPatterns(true);
+    try {
+      const response = await axios.get('/api/ai/pattern-scanner', {
+        params: { date: selectedDate }
+      });
+
+      if (response.data.success) {
+        setPatternOpportunities(response.data.opportunities || []);
+        if (response.data.opportunities?.length > 0) {
+          toast.success(`${response.data.opportunities.length} oportunidades encontradas com ≥80% probabilidade!`);
+        } else {
+          toast.info("Nenhuma oportunidade com ≥80% encontrada para esta data.");
+        }
+      }
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.error || "Erro ao escanear padrões";
+      if (errorMsg.includes('limit') || errorMsg.includes('request')) {
+        toast.error("Limite de API atingido. Tente novamente amanhã.");
+      } else {
+        toast.error(errorMsg);
+      }
+    } finally {
+      setIsScanningPatterns(false);
     }
   };
 
@@ -479,6 +513,26 @@ export function AiDraftsPanel() {
             )}
           </Button>
 
+          <Button
+            onClick={scanPatternOpportunities}
+            disabled={isScanningPatterns}
+            variant="outline"
+            className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10 font-bold gap-2"
+            data-testid="button-scan-patterns"
+          >
+            {isScanningPatterns ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Escaneando...
+              </>
+            ) : (
+              <>
+                <Target className="w-4 h-4" />
+                Analisar Oportunidades (10 jogos)
+              </>
+            )}
+          </Button>
+
           {selectedDrafts.size > 0 && (
             <Button
               onClick={bulkApprove}
@@ -503,6 +557,65 @@ export function AiDraftsPanel() {
           )}
         </div>
       </div>
+
+      {/* Pattern Scanner Results */}
+      {patternOpportunities.length > 0 && (
+        <div className="bg-card border-2 border-blue-500/40 rounded-2xl overflow-hidden shadow-lg shadow-blue-500/10">
+          <div className="p-4 border-b border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-transparent flex justify-between items-center">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Target className="w-5 h-5 text-blue-400" />
+              Oportunidades (Regra dos 10 Jogos)
+            </h3>
+            <span className="text-xs bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full font-semibold">
+              {patternOpportunities.length} padrões ≥80%
+            </span>
+          </div>
+          <div className="divide-y divide-blue-500/10">
+            {patternOpportunities.slice(0, 10).map((opp, idx) => (
+              <div key={idx} className="p-4 hover:bg-blue-500/5 transition-colors">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="flex items-center gap-1">
+                    <img src={opp.homeTeamLogo} alt="" className="w-6 h-6" />
+                    <span className="text-sm font-bold text-white">{opp.homeTeam}</span>
+                  </div>
+                  <span className="text-xs text-gray-500">vs</span>
+                  <div className="flex items-center gap-1">
+                    <img src={opp.awayTeamLogo} alt="" className="w-6 h-6" />
+                    <span className="text-sm font-bold text-white">{opp.awayTeam}</span>
+                  </div>
+                  <span className="ml-auto text-xs text-gray-400">{opp.league}</span>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-bold text-blue-400">{opp.pattern}</span>
+                    <p className="text-xs text-gray-400 mt-1">{opp.patternDescription}</p>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-lg font-bold ${opp.probability >= 85 ? 'text-green-400' : 'text-yellow-400'}`}>
+                      {opp.probability.toFixed(0)}%
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      {opp.occurrences}/{opp.totalGames} jogos
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="mt-2 text-xs text-gray-400 space-y-1">
+                  {opp.rationale?.slice(0, 2).map((r: string, i: number) => (
+                    <p key={i}>• {r}</p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="p-3 border-t border-blue-500/10 bg-blue-500/5">
+            <p className="text-xs text-blue-400/70 text-center">
+              Dados baseados nos últimos 10 jogos de cada time. Threshold mínimo: 80%
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Drafts List */}
       <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/10">
