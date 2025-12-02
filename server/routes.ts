@@ -1583,7 +1583,7 @@ REGRAS IMPORTANTES:
   app.post("/api/ai/drafts/:id/approve", async (req, res) => {
     try {
       const { id } = req.params;
-      const { adminEmail, adminUserId, notes, adjustedOdd, adjustedStake } = req.body;
+      const { adminEmail, adminUserId, notes, adjustedOdd, adjustedStake, betLink } = req.body;
       
       if (!await verifyAdmin(adminEmail, adminUserId)) {
         return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
@@ -1681,6 +1681,7 @@ REGRAS IMPORTANTES:
             stake: numericStake,
             status: 'pending',
             isLive: false,
+            betLink: betLink || null,
             // AI Analysis fields - MUST be numbers
             analysisRationale: draft.analysisRationale,
             analysisSummary: generateAnalysisSummary(draft),
@@ -1712,6 +1713,7 @@ REGRAS IMPORTANTES:
           isCombo: false,
           totalOdd: null,
           legs: null,
+          betLink: betLink || null,
           // AI Analysis fields - MUST be numbers
           analysisRationale: draft.analysisRationale,
           analysisSummary: generateAnalysisSummary(draft),

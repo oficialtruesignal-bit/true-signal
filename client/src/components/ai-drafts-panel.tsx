@@ -19,8 +19,10 @@ import {
   Clock,
   BarChart3,
   CheckCircle2,
-  Info
+  Info,
+  Link
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -95,6 +97,7 @@ export function AiDraftsPanel() {
   const [selectedDrafts, setSelectedDrafts] = useState<Set<string>>(new Set());
   const [activeFilter, setActiveFilter] = useState<MarketFilter>('all');
   const [editedCombos, setEditedCombos] = useState<Record<string, BetLeg[]>>({});
+  const [betLinks, setBetLinks] = useState<Record<string, string>>({});
 
   const { data: drafts = [], isLoading: loadingDrafts, refetch: refetchDrafts } = useQuery<AiDraft[]>({
     queryKey: ['ai-drafts'],
@@ -145,6 +148,7 @@ export function AiDraftsPanel() {
       const response = await axios.post(`/api/ai/drafts/${id}/approve`, {
         adminEmail: user.email,
         adminUserId: user.id,
+        betLink: betLinks[id] || null,
       });
 
       if (response.data.success) {
@@ -152,6 +156,12 @@ export function AiDraftsPanel() {
         refetchDrafts();
         queryClient.invalidateQueries({ queryKey: ['tips'] });
         queryClient.invalidateQueries({ queryKey: ['ai-stats'] });
+        // Limpar o link após aprovar
+        setBetLinks(prev => {
+          const newLinks = { ...prev };
+          delete newLinks[id];
+          return newLinks;
+        });
       }
     } catch (error: any) {
       toast.error(error.response?.data?.error || "Erro ao aprovar previsão");
@@ -727,6 +737,20 @@ export function AiDraftsPanel() {
                       </div>
                     </div>
                   )}
+
+                  {/* Bet Link Input */}
+                  <div className="mt-3 pt-3 border-t border-white/5">
+                    <div className="flex items-center gap-2">
+                      <Link className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      <Input
+                        placeholder="Cole o link do bilhete Bet365 aqui..."
+                        value={betLinks[draft.id] || ''}
+                        onChange={(e) => setBetLinks(prev => ({ ...prev, [draft.id]: e.target.value }))}
+                        className="h-9 text-sm bg-background/50 border-border/50"
+                        data-testid={`input-bet-link-${draft.id}`}
+                      />
+                    </div>
+                  </div>
 
                   {/* Actions Row */}
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-white/5">
