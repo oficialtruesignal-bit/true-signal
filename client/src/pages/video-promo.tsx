@@ -32,13 +32,21 @@ import greenProfit from '@assets/generated_videos/green_profit_notification_cele
 import manWinning from '@assets/generated_videos/man_genuine_celebration_winning_reaction.mp4';
 import ctaFinal from '@assets/generated_videos/cta_final_5_dias_gratis_end_card.mp4';
 import logoOriginal from '@assets/generated_videos/true_signal_shield_pulse_logo_animation.mp4';
+import logoFinal from '@assets/generated_videos/shield_pulse_logo_true_gray_signal_white.mp4';
 
 const videos = [
   { 
+    src: logoFinal, 
+    title: "🏆 LOGO FINAL: TRUE (cinza) SIGNAL (branco)", 
+    description: "Escudo + pulso + texto com cores oficiais da marca",
+    filename: "logo_final_true_signal.mp4",
+    category: "final"
+  },
+  { 
     src: logoOriginal, 
-    title: "🏆 LOGO OFICIAL: ESCUDO + PULSO", 
-    description: "Recriação da logo TRUE SIGNAL com escudo e batimento",
-    filename: "logo_oficial_escudo_pulso.mp4",
+    title: "LOGO V1: ESCUDO + PULSO", 
+    description: "Versão anterior sem texto estilizado",
+    filename: "logo_v1_escudo_pulso.mp4",
     category: "final"
   },
   { 
@@ -321,7 +329,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (5)
+            ⭐ Essencial (6)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
