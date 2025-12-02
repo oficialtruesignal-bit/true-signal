@@ -31,8 +31,16 @@ import logoReveal from '@assets/generated_videos/logo_true_signal_animated_revea
 import greenProfit from '@assets/generated_videos/green_profit_notification_celebration.mp4';
 import manWinning from '@assets/generated_videos/man_genuine_celebration_winning_reaction.mp4';
 import ctaFinal from '@assets/generated_videos/cta_final_5_dias_gratis_end_card.mp4';
+import logoOriginal from '@assets/generated_videos/true_signal_shield_pulse_logo_animation.mp4';
 
 const videos = [
+  { 
+    src: logoOriginal, 
+    title: "🏆 LOGO OFICIAL: ESCUDO + PULSO", 
+    description: "Recriação da logo TRUE SIGNAL com escudo e batimento",
+    filename: "logo_oficial_escudo_pulso.mp4",
+    category: "final"
+  },
   { 
     src: logoReveal, 
     title: "ABERTURA: LOGO ANIMADA", 
@@ -313,7 +321,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (4)
+            ⭐ Essencial (5)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
