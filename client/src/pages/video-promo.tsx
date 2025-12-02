@@ -38,8 +38,48 @@ import greenMatrix from '@assets/generated_videos/matrix_style_professional_gree
 import redFrustration from '@assets/generated_videos/red_frustration_hollywood_disappointment_moment.mp4';
 import socialProof from '@assets/generated_videos/social_proof_stats_87%_assertividade_premium.mp4';
 import urgencyTimer from '@assets/generated_videos/urgency_countdown_ultimas_vagas_timer.mp4';
+import matchMatrix from '@assets/generated_videos/football_match_matrix_algorithm_tracking.mp4';
+import playerData from '@assets/generated_videos/sportsman_running_matrix_data_overlay.mp4';
+import fanStadium from '@assets/generated_videos/fan_in_stadium_checking_phone_green_glow.mp4';
+import pushNotif from '@assets/generated_videos/smartphone_push_notification_green_alert.mp4';
+import floatingCard from '@assets/generated_videos/person_with_floating_notification_card_face.mp4';
 
 const videos = [
+  { 
+    src: matchMatrix, 
+    title: "⚽ JOGO AO VIVO: Algoritmo Matrix", 
+    description: "Partida com análise de pressão e posse em tempo real",
+    filename: "jogo_algoritmo_matrix.mp4",
+    category: "final"
+  },
+  { 
+    src: playerData, 
+    title: "🏃 JOGADOR: Performance Matrix", 
+    description: "Atleta correndo com dados de velocidade e métricas",
+    filename: "jogador_performance_matrix.mp4",
+    category: "final"
+  },
+  { 
+    src: fanStadium, 
+    title: "🏟️ TORCEDOR: Estádio + Celular", 
+    description: "Fã na arquibancada vendo resultado - pronto pra overlay",
+    filename: "torcedor_estadio_celular.mp4",
+    category: "final"
+  },
+  { 
+    src: pushNotif, 
+    title: "📱 PUSH: Notificação no Celular", 
+    description: "Smartphone recebendo alerta verde",
+    filename: "push_notification_celular.mp4",
+    category: "final"
+  },
+  { 
+    src: floatingCard, 
+    title: "🔔 CARD: Notificação Flutuante", 
+    description: "Pessoa com card holográfico ao lado do rosto",
+    filename: "card_notificacao_flutuante.mp4",
+    category: "final"
+  },
   { 
     src: redFrustration, 
     title: "😤 DOR/RED: Frustração Hollywood", 
@@ -369,7 +409,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (11)
+            ⭐ Essencial (16)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
