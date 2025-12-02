@@ -669,9 +669,80 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
       data-testid={`bet-card-${signal.id}`}
     >
       {/* --- HEADER: ODD TOTAL + Controles Admin + Favorito --- */}
-      <div className="px-4 py-3 flex justify-between items-center border-b border-white/10">
+      {/* Mobile Header: Stacked layout */}
+      <div className="sm:hidden px-4 py-3 border-b border-white/10">
+        {/* Linha 1: ODD grande e centralizada */}
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <span className="text-gray-400 text-xs uppercase tracking-wide">Odd do Bilhete</span>
+          <span className="text-[#33b864] font-bold text-2xl">{totalOdd.toFixed(2)}</span>
+        </div>
+        {/* Linha 2: Ações */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => toggleFavorite(signal.id)}
+              disabled={isFavoritesPending}
+              className={cn(
+                "p-2 rounded-lg transition-all",
+                tipIsFavorited 
+                  ? "bg-red-500/20 text-red-500" 
+                  : "bg-white/5 text-gray-500 hover:text-red-400 hover:bg-red-500/10"
+              )}
+              data-testid={`button-favorite-mobile-${signal.id}`}
+            >
+              <Heart className={cn("w-4 h-4", tipIsFavorited && "fill-current")} />
+            </button>
+            {isAdmin && (
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={() => setShowDeleteDialog(true)}
+                  className="p-2 rounded-lg bg-white/5 hover:bg-red-500/10 transition-colors"
+                  data-testid="delete-signal-button-mobile"
+                >
+                  <Trash2 className="w-4 h-4 text-red-500" />
+                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button 
+                      className="p-2 rounded-lg bg-white/5 hover:bg-[#33b864]/10 transition-colors"
+                      data-testid="edit-status-button-mobile"
+                    >
+                      <Pencil className="w-4 h-4 text-[#33b864]" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="bg-[#121212] border-[#33b864]/30">
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('pending')}
+                      className="text-[#33b864] cursor-pointer hover:bg-[#33b864]/10"
+                    >
+                      ⏳ PENDENTE
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('green')}
+                      className="text-green-500 cursor-pointer hover:bg-green-500/10"
+                    >
+                      ✅ GANHOU
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleStatusChange('red')}
+                      className="text-red-500 cursor-pointer hover:bg-red-500/10"
+                    >
+                      ❌ PERDIDA
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
+          </div>
+          {isAdmin && (
+            <span className="text-[10px] text-gray-500">{dateOnly} às {timeOnly}</span>
+          )}
+        </div>
+      </div>
+      
+      {/* Desktop Header: Horizontal layout */}
+      <div className="hidden sm:flex px-4 py-3 justify-between items-center border-b border-white/10">
         <div className="flex items-center gap-2">
-          {/* Botão de Favoritar */}
           <button
             onClick={() => toggleFavorite(signal.id)}
             disabled={isFavoritesPending}
@@ -683,16 +754,12 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
             )}
             data-testid={`button-favorite-${signal.id}`}
           >
-            <Heart 
-              className={cn("w-4 h-4", tipIsFavorited && "fill-current")} 
-            />
+            <Heart className={cn("w-4 h-4", tipIsFavorited && "fill-current")} />
           </button>
-          
           {isAdmin && (
             <>
               <span className="text-[10px] text-gray-500">{dateOnly} às {timeOnly}</span>
               <div className="flex items-center gap-1">
-                {/* Botão Deletar */}
                 <button 
                   onClick={() => setShowDeleteDialog(true)}
                   className="p-1 rounded hover:bg-red-500/10 transition-colors"
@@ -700,7 +767,6 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                 >
                   <Trash2 className="w-3 h-3 text-red-500" />
                 </button>
-                {/* Menu de Status */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button 
@@ -884,9 +950,111 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           </div>
         )}
         
-        {/* Entrada Recomendada com EV à esquerda e Análise à direita */}
-        <div className="mt-3 pt-3 border-t border-white/5">
-          <div className="flex items-center justify-between gap-2">
+        {/* Entrada Recomendada - Layout Responsivo Mobile/Desktop */}
+        <div className="mt-4 pt-4 border-t border-white/10">
+          {/* Mobile: Layout vertical empilhado */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            {/* Linha 1: Entrada centralizada */}
+            <div className="flex justify-center">
+              <span className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
+                <span className="text-gray-400 text-xs">Entrada:</span>
+                <span className="text-[#33b864] font-bold text-sm">{(signal.stake || 1).toFixed(1)}u</span>
+                {unitValue && unitValue > 0 && (
+                  <>
+                    <span className="text-gray-500 mx-1">=</span>
+                    <span className="text-white font-bold text-sm">
+                      R$ {((signal.stake || 1) * unitValue).toFixed(2).replace('.', ',')}
+                    </span>
+                  </>
+                )}
+              </span>
+            </div>
+            
+            {/* Linha 2: EV e Análise lado a lado */}
+            <div className="flex items-center justify-center gap-3">
+              {/* EV Badge */}
+              {signal.expectedValue && signal.expectedValue > 0 ? (
+                <div className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/30">
+                  <TrendingUp className="w-3.5 h-3.5 text-green-400" />
+                  <span className="text-green-400 font-bold text-xs">
+                    EV +{signal.expectedValue.toFixed(1)}%
+                  </span>
+                </div>
+              ) : null}
+              
+              {/* Botão Análise */}
+              {(signal.analysisSummary || signal.confidence || signal.expectedValue) && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-colors"
+                      data-testid={`btn-analysis-mobile-${signal.id}`}
+                    >
+                      <Brain className="w-3.5 h-3.5 text-blue-400" />
+                      <span className="text-blue-400 font-medium text-xs">Análise</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent 
+                    className="w-[320px] p-0 bg-[#0a0a0a] border border-white/10 rounded-xl overflow-hidden"
+                    side="top"
+                    align="center"
+                  >
+                    {/* Header com gradiente */}
+                    <div className="bg-gradient-to-r from-[#33b864]/20 to-blue-500/20 px-4 py-3 border-b border-white/10">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-[#33b864]/20 flex items-center justify-center">
+                            <Brain className="w-4 h-4 text-[#33b864]" />
+                          </div>
+                          <div>
+                            <p className="text-xs font-bold text-white">TRUE SIGNAL IA</p>
+                            <p className="text-[10px] text-gray-400">Análise Preditiva</p>
+                          </div>
+                        </div>
+                        {signal.confidence && (
+                          <span className={cn(
+                            "px-2 py-1 rounded text-[10px] font-bold",
+                            signal.confidence >= 85 ? "bg-green-500/20 text-green-400" :
+                            signal.confidence >= 75 ? "bg-yellow-500/20 text-yellow-400" : "bg-orange-500/20 text-orange-400"
+                          )}>
+                            {signal.confidence.toFixed(0)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="p-3 space-y-3 max-h-[300px] overflow-y-auto">
+                      {signal.analysisSummary && (
+                        <div className="bg-white/5 rounded-lg p-2.5">
+                          <p className="text-[11px] text-gray-300 leading-relaxed">
+                            "{signal.analysisSummary}"
+                          </p>
+                        </div>
+                      )}
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-white/5 rounded-lg p-2">
+                          <p className="text-[10px] text-gray-400 mb-1">{signal.homeTeam}</p>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-base font-bold text-white">{signal.homeGoalsAvg ? parseFloat(String(signal.homeGoalsAvg)).toFixed(2) : '0.00'}</span>
+                            <span className="text-[9px] text-gray-500">gols/jogo</span>
+                          </div>
+                        </div>
+                        <div className="bg-white/5 rounded-lg p-2">
+                          <p className="text-[10px] text-gray-400 mb-1">{signal.awayTeam}</p>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-base font-bold text-white">{signal.awayGoalsAvg ? parseFloat(String(signal.awayGoalsAvg)).toFixed(2) : '0.00'}</span>
+                            <span className="text-[9px] text-gray-500">gols/jogo</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              )}
+            </div>
+          </div>
+          
+          {/* Desktop: Layout horizontal original */}
+          <div className="hidden sm:flex items-center justify-between gap-2">
             {/* EV Badge - Esquerda */}
             <div className="flex-shrink-0">
               {signal.expectedValue && signal.expectedValue > 0 ? (
