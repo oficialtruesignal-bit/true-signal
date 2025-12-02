@@ -559,6 +559,91 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ============================================
+  // User Bets Routes (Individual Tracking)
+  // ============================================
+  
+  // Get user's monthly stats
+  app.get("/api/user-bets/stats/:userId", async (req, res) => {
+    try {
+      const stats = await storage.getUserMonthlyStats(req.params.userId);
+      const assertivity = stats.greens + stats.reds > 0 
+        ? ((stats.greens / (stats.greens + stats.reds)) * 100).toFixed(1)
+        : '0';
+      return res.json({ 
+        ...stats, 
+        assertivity: parseFloat(assertivity),
+        monthName: new Date().toLocaleString('pt-BR', { month: 'long' })
+      });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get all user bets
+  app.get("/api/user-bets/:userId", async (req, res) => {
+    try {
+      const bets = await storage.getUserBets(req.params.userId);
+      return res.json({ bets });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Check if user entered a specific bet
+  app.get("/api/user-bets/:userId/:tipId", async (req, res) => {
+    try {
+      const bet = await storage.getUserBetByTip(req.params.userId, req.params.tipId);
+      return res.json({ bet, hasEntered: !!bet });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Mark user as entering a bet
+  app.post("/api/user-bets", async (req, res) => {
+    try {
+      const { userId, tipId, stakeUsed, oddAtEntry } = req.body;
+      if (!userId || !tipId) {
+        return res.status(400).json({ error: "userId and tipId are required" });
+      }
+      
+      // Check if already entered
+      const existing = await storage.getUserBetByTip(userId, tipId);
+      if (existing) {
+        return res.json({ success: true, bet: existing, alreadyExists: true });
+      }
+      
+      const bet = await storage.createUserBet({
+        userId,
+        tipId,
+        stakeUsed: stakeUsed || '1.0',
+        oddAtEntry: oddAtEntry || '1.0'
+      });
+      return res.json({ success: true, bet });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Update bet result (green/red)
+  app.patch("/api/user-bets/:userId/:tipId", async (req, res) => {
+    try {
+      const { result } = req.body;
+      if (!result || !['green', 'red'].includes(result)) {
+        return res.status(400).json({ error: "result must be 'green' or 'red'" });
+      }
+      
+      const bet = await storage.updateUserBetResult(req.params.userId, req.params.tipId, result);
+      if (!bet) {
+        return res.status(404).json({ error: "Bet not found" });
+      }
+      return res.json({ success: true, bet });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Tips Routes
   app.get("/api/tips", async (req, res) => {
     try {
