@@ -1268,7 +1268,7 @@ class AIPredictionEngine {
       const fixtures: FixtureData[] = response.data?.response || [];
       console.log(`[AI Engine] Found ${fixtures.length} upcoming fixtures`);
       
-      const majorLeagues = [39, 140, 78, 135, 61, 71, 94, 88, 253, 2, 3, 848];
+      const majorLeagues = [39, 140, 78, 135, 61, 71, 72, 94, 88, 253, 2, 3, 848, 128, 13, 11, 144, 179, 40, 203, 307, 235, 262, 169, 119, 113, 103];
       const filteredFixtures = fixtures.filter(f => majorLeagues.includes(f.league.id));
       
       console.log(`[AI Engine] Analyzing ${filteredFixtures.length} major league fixtures`);
@@ -1555,14 +1555,26 @@ class AIPredictionEngine {
     { id: 61, name: 'Ligue 1', tier: 1 },
     { id: 2, name: 'Champions League', tier: 1 },
     { id: 3, name: 'Europa League', tier: 1 },
-    { id: 71, name: 'Brasileirão', tier: 2 },
+    { id: 848, name: 'Conference League', tier: 1 },
+    { id: 71, name: 'Brasileirão Série A', tier: 2 },
+    { id: 72, name: 'Brasileirão Série B', tier: 2 },
     { id: 94, name: 'Primeira Liga', tier: 2 },
     { id: 88, name: 'Eredivisie', tier: 2 },
-    { id: 128, name: 'Argentina', tier: 2 },
+    { id: 128, name: 'Argentina Primera', tier: 2 },
     { id: 13, name: 'Libertadores', tier: 2 },
+    { id: 11, name: 'Copa Sudamericana', tier: 2 },
+    { id: 144, name: 'Belgium Pro League', tier: 2 },
+    { id: 179, name: 'Scottish Premiership', tier: 2 },
     { id: 40, name: 'Championship', tier: 3 },
     { id: 203, name: 'Süper Lig', tier: 3 },
     { id: 307, name: 'Saudi Pro League', tier: 3 },
+    { id: 235, name: 'Russia Premier', tier: 3 },
+    { id: 253, name: 'MLS', tier: 3 },
+    { id: 262, name: 'Mexico Liga MX', tier: 3 },
+    { id: 169, name: 'Chinese Super League', tier: 3 },
+    { id: 119, name: 'Denmark Superliga', tier: 3 },
+    { id: 113, name: 'Sweden Allsvenskan', tier: 3 },
+    { id: 103, name: 'Norway Eliteserien', tier: 3 },
   ];
 
   // Ligas a excluir (baixa qualidade de dados ou liquidez)
