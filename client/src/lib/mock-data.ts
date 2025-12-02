@@ -42,6 +42,9 @@ export interface Signal {
   probability?: number; // Calculated probability 0-100%
   expectedValue?: number; // Expected value percentage
   aiSourceId?: string; // Reference to ai_tickets.id
+  // Team statistics for analysis display
+  homeGoalsAvg?: number; // Home team average goals
+  awayGoalsAvg?: number; // Away team average goals
 }
 
 export interface LiveGame {

@@ -24,10 +24,6 @@ interface FixtureResult {
     halftime: { home: number | null; away: number | null };
     fulltime: { home: number | null; away: number | null };
   };
-  statistics?: Array<{
-    team: { id: number; name: string };
-    statistics: Array<{ type: string; value: number | string | null }>;
-  }>;
 }
 
 export class ResultChecker {
@@ -41,8 +37,6 @@ export class ResultChecker {
     }
 
     console.log('[Result Checker] Starting check for pending tips...');
-    
-    const now = new Date();
     
     const pendingTips = await db.select()
       .from(tips)
@@ -64,10 +58,13 @@ export class ResultChecker {
         checked++;
         
         if (result !== null) {
+          const tipOdd = parseFloat(String(tip.totalOdd || tip.odd || 1));
+          const stake = parseFloat(String(tip.stake || '1'));
           const profit = result === 'green' 
-            ? (parseFloat(String(tip.odd)) - 1) * parseFloat(String(tip.stake || '1'))
-            : -parseFloat(String(tip.stake || '1'));
+            ? (tipOdd - 1) * stake
+            : -stake;
           
+          // Update tip status
           await db.update(tips)
             .set({
               status: result,
@@ -78,12 +75,17 @@ export class ResultChecker {
             .where(eq(tips.id, tip.id));
           
           console.log(`[Result Checker] Updated tip ${tip.id}: ${result} (profit: ${profit.toFixed(2)}u)`);
+          
+          // Sync user bets with canonical result
+          await this.syncUserBetsWithResult(tip.id, result, tipOdd);
+          
           updated++;
         }
       } catch (error) {
         console.error(`[Result Checker] Error checking tip ${tip.id}:`, error);
       }
       
+      // Rate limiting: 500ms between API calls
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
@@ -91,16 +93,236 @@ export class ResultChecker {
     return { checked, updated };
   }
 
+  /**
+   * Sync all user bets for a tip with the canonical result
+   */
+  private async syncUserBetsWithResult(tipId: string, result: 'green' | 'red', tipOdd: number): Promise<void> {
+    try {
+      // Get all user bets for this tip
+      const bets = await db.select()
+        .from(userBets)
+        .where(eq(userBets.tipId, tipId));
+      
+      if (bets.length === 0) return;
+      
+      console.log(`[Result Checker] Syncing ${bets.length} user bets for tip ${tipId}`);
+      
+      for (const bet of bets) {
+        const stakeUsed = parseFloat(bet.stakeUsed || '1');
+        const oddAtEntry = parseFloat(bet.oddAtEntry || String(tipOdd));
+        const profit = result === 'green' 
+          ? (oddAtEntry - 1) * stakeUsed
+          : -stakeUsed;
+        
+        await db.update(userBets)
+          .set({
+            result,
+            resultMarkedAt: new Date(),
+            profit: String(profit.toFixed(2))
+          })
+          .where(eq(userBets.id, bet.id));
+      }
+      
+      console.log(`[Result Checker] Synced ${bets.length} user bets to ${result}`);
+    } catch (error) {
+      console.error(`[Result Checker] Error syncing user bets for tip ${tipId}:`, error);
+    }
+  }
+
   private async checkTipResult(tip: any): Promise<'green' | 'red' | null> {
     if (!tip.fixtureId) return null;
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/fixtures`, {
-        params: { id: tip.fixtureId },
-        headers: { 'x-apisports-key': FOOTBALL_API_KEY }
-      });
+      // Fetch fixture data with statistics
+      const [fixtureResponse, statsResponse] = await Promise.all([
+        axios.get(`${API_BASE_URL}/fixtures`, {
+          params: { id: tip.fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        }),
+        axios.get(`${API_BASE_URL}/fixtures/statistics`, {
+          params: { fixture: tip.fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        })
+      ]);
 
-      const fixture = response.data.response?.[0] as FixtureResult | undefined;
+      const fixture = fixtureResponse.data.response?.[0] as FixtureResult | undefined;
+      if (!fixture) return null;
+
+      const status = fixture.fixture.status.short;
+      
+      // Only settle finished matches
+      if (!['FT', 'AET', 'PEN'].includes(status)) {
+        return null;
+      }
+
+      // Extract match data including statistics
+      const statistics = statsResponse.data.response || [];
+      const matchData = extractMatchData(fixture, statistics);
+      
+      // Check if it's a combo/multi-leg bet
+      if (tip.isCombo && tip.legs) {
+        return this.resolveComboTip(tip, tip.fixtureId);
+      }
+      
+      // Single bet - use market resolver
+      const resolution = resolveMarket(tip.market, matchData, tip.homeTeam, tip.awayTeam);
+      
+      if (resolution) {
+        console.log(`[Result Checker] Market "${tip.market}" resolved: ${resolution.result} (actual: ${resolution.actualValue ?? 'N/A'})`);
+        return resolution.result;
+      }
+      
+      console.log(`[Result Checker] Could not resolve market: ${tip.market}`);
+      return null;
+
+    } catch (error) {
+      console.error(`[Result Checker] API error for fixture ${tip.fixtureId}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Resolve a combo/multi-leg bet
+   * ALL legs must win for the combo to win
+   * Each leg fetches its own fixture data to ensure correct resolution
+   */
+  private async resolveComboTip(tip: any, primaryFixtureId: string): Promise<'green' | 'red' | null> {
+    try {
+      let legs: any[];
+      try {
+        legs = typeof tip.legs === 'string' ? JSON.parse(tip.legs) : tip.legs;
+      } catch {
+        return null;
+      }
+      
+      if (!Array.isArray(legs) || legs.length === 0) return null;
+      
+      console.log(`[Result Checker] Resolving combo with ${legs.length} legs`);
+      
+      // Build a map of fixtureId -> matchData for all unique fixtures
+      const fixtureIds = new Set<string>();
+      for (const leg of legs) {
+        if (leg.fixtureId) {
+          fixtureIds.add(String(leg.fixtureId));
+        }
+      }
+      // Add primary fixture if exists
+      if (primaryFixtureId) {
+        fixtureIds.add(String(primaryFixtureId));
+      }
+      
+      // Fetch all fixture data in parallel
+      const matchDataMap = new Map<string, MatchData>();
+      const fetchPromises = Array.from(fixtureIds).map(async (fixtureId) => {
+        const data = await this.fetchFixtureMatchData(fixtureId);
+        if (data) {
+          matchDataMap.set(fixtureId, data.matchData);
+          return { fixtureId, finished: data.finished };
+        }
+        return { fixtureId, finished: false };
+      });
+      
+      const results = await Promise.all(fetchPromises);
+      
+      // Check if all fixtures are finished
+      const allFinished = results.every(r => r.finished);
+      if (!allFinished) {
+        console.log('[Result Checker] Some fixtures in combo not finished yet');
+        return null;
+      }
+      
+      // Now resolve each leg using its specific fixture data
+      for (const leg of legs) {
+        // Each leg MUST have its own fixtureId - do not fallback to primary
+        if (!leg.fixtureId) {
+          console.log(`[Result Checker] Leg missing fixtureId: ${leg.homeTeam} vs ${leg.awayTeam} - cannot settle`);
+          return null; // Cannot settle combo with missing fixture binding
+        }
+        
+        const legFixtureId = String(leg.fixtureId);
+        const matchData = matchDataMap.get(legFixtureId);
+        
+        if (!matchData) {
+          console.log(`[Result Checker] No match data for leg fixture ${legFixtureId}`);
+          return null;
+        }
+        
+        const resolution = resolveMarket(leg.market, matchData, leg.homeTeam, leg.awayTeam);
+        
+        if (!resolution) {
+          console.log(`[Result Checker] Could not resolve leg market: ${leg.market}`);
+          return null;
+        }
+        
+        if (resolution.result === 'red') {
+          console.log(`[Result Checker] Leg lost: ${leg.homeTeam} vs ${leg.awayTeam} - ${leg.market}`);
+          return 'red'; // One loss = entire combo loses
+        }
+        
+        console.log(`[Result Checker] Leg won: ${leg.homeTeam} vs ${leg.awayTeam} - ${leg.market}`);
+      }
+      
+      console.log('[Result Checker] All legs won - combo GREEN!');
+      return 'green';
+      
+    } catch (error) {
+      console.error('[Result Checker] Error resolving combo:', error);
+      return null;
+    }
+  }
+  
+  /**
+   * Fetch match data for a specific fixture
+   */
+  private async fetchFixtureMatchData(fixtureId: string): Promise<{ matchData: MatchData; finished: boolean } | null> {
+    try {
+      const [fixtureResponse, statsResponse] = await Promise.all([
+        axios.get(`${API_BASE_URL}/fixtures`, {
+          params: { id: fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        }),
+        axios.get(`${API_BASE_URL}/fixtures/statistics`, {
+          params: { fixture: fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        })
+      ]);
+
+      const fixture = fixtureResponse.data.response?.[0];
+      if (!fixture) return null;
+
+      const status = fixture.fixture.status.short;
+      const finished = ['FT', 'AET', 'PEN'].includes(status);
+      
+      const statistics = statsResponse.data.response || [];
+      const matchData = extractMatchData(fixture, statistics);
+      
+      return { matchData, finished };
+      
+    } catch (error) {
+      console.error(`[Result Checker] Error fetching fixture ${fixtureId}:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Check result for a single leg in a combo
+   */
+  private async checkLegResult(leg: any): Promise<'green' | 'red' | null> {
+    if (!leg.fixtureId) return null;
+    
+    try {
+      const [fixtureResponse, statsResponse] = await Promise.all([
+        axios.get(`${API_BASE_URL}/fixtures`, {
+          params: { id: leg.fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        }),
+        axios.get(`${API_BASE_URL}/fixtures/statistics`, {
+          params: { fixture: leg.fixtureId },
+          headers: { 'x-apisports-key': FOOTBALL_API_KEY }
+        })
+      ]);
+
+      const fixture = fixtureResponse.data.response?.[0];
       if (!fixture) return null;
 
       const status = fixture.fixture.status.short;
@@ -108,166 +330,14 @@ export class ResultChecker {
         return null;
       }
 
-      const homeGoals = fixture.goals.home ?? 0;
-      const awayGoals = fixture.goals.away ?? 0;
-      const totalGoals = homeGoals + awayGoals;
-      const homeHT = fixture.score.halftime.home ?? 0;
-      const awayHT = fixture.score.halftime.away ?? 0;
-      const totalGoalsHT = homeHT + awayHT;
-
-      const market = tip.market.toLowerCase();
-
-      const isGoalMarket = market.includes('gol') || market.includes('goal') || 
-                           market.includes('ft') || market.includes('full time') ||
-                           (!market.includes('corner') && !market.includes('card') && 
-                            !market.includes('escanteio') && !market.includes('cartão') &&
-                            !market.includes('shot') && !market.includes('chute'));
+      const statistics = statsResponse.data.response || [];
+      const matchData = extractMatchData(fixture, statistics);
       
-      const is2HTMarket = market.includes('2º tempo') || market.includes('segundo tempo') ||
-                          market.includes('second half') || market.includes('2nd half') ||
-                          /\b2h(t)?\b/.test(market) || market.includes('h2') ||
-                          (market.includes('2') && market.includes('half'));
+      const resolution = resolveMarket(leg.market, matchData, leg.homeTeam, leg.awayTeam);
+      return resolution?.result ?? null;
       
-      const isHTMarket = !is2HTMarket && (
-                         /\bh(t|alf\s*time)\b/.test(market) || 
-                         /\b1h(t)?\b/.test(market) ||
-                         market.includes('1º tempo') || 
-                         market.includes('primeiro tempo') || 
-                         market.includes('first half') ||
-                         market.includes('1st half') || 
-                         market.includes('h1') ||
-                         (market.includes('1') && market.includes('half')));
-      
-      const goalsSecondHalf = totalGoals - totalGoalsHT;
-
-      const isFTMarket = !isHTMarket && !is2HTMarket;
-
-      if (market.includes('over 0.5') && isGoalMarket && isFTMarket) {
-        return totalGoals > 0 ? 'green' : 'red';
-      }
-      if (market.includes('over 1.5') && isGoalMarket && isFTMarket) {
-        return totalGoals > 1 ? 'green' : 'red';
-      }
-      if (market.includes('over 2.5') && isGoalMarket && isFTMarket) {
-        return totalGoals > 2 ? 'green' : 'red';
-      }
-      if (market.includes('over 3.5') && isGoalMarket && isFTMarket) {
-        return totalGoals > 3 ? 'green' : 'red';
-      }
-      if (market.includes('over 4.5') && isGoalMarket && isFTMarket) {
-        return totalGoals > 4 ? 'green' : 'red';
-      }
-
-      if (market.includes('under 0.5') && isGoalMarket && isFTMarket) {
-        return totalGoals < 1 ? 'green' : 'red';
-      }
-      if (market.includes('under 1.5') && isGoalMarket && isFTMarket) {
-        return totalGoals < 2 ? 'green' : 'red';
-      }
-      if (market.includes('under 2.5') && isGoalMarket && isFTMarket) {
-        return totalGoals < 3 ? 'green' : 'red';
-      }
-      if (market.includes('under 3.5') && isGoalMarket && isFTMarket) {
-        return totalGoals < 4 ? 'green' : 'red';
-      }
-
-      if (isHTMarket && isGoalMarket) {
-        if (market.includes('over 0.5')) {
-          return totalGoalsHT > 0 ? 'green' : 'red';
-        }
-        if (market.includes('over 1.5')) {
-          return totalGoalsHT > 1 ? 'green' : 'red';
-        }
-        if (market.includes('over 2.5')) {
-          return totalGoalsHT > 2 ? 'green' : 'red';
-        }
-        if (market.includes('under 0.5')) {
-          return totalGoalsHT < 1 ? 'green' : 'red';
-        }
-        if (market.includes('under 1.5')) {
-          return totalGoalsHT < 2 ? 'green' : 'red';
-        }
-        if (market.includes('under 2.5')) {
-          return totalGoalsHT < 3 ? 'green' : 'red';
-        }
-      }
-
-      if (is2HTMarket && isGoalMarket) {
-        if (market.includes('over 0.5')) {
-          return goalsSecondHalf > 0 ? 'green' : 'red';
-        }
-        if (market.includes('over 1.5')) {
-          return goalsSecondHalf > 1 ? 'green' : 'red';
-        }
-        if (market.includes('over 2.5')) {
-          return goalsSecondHalf > 2 ? 'green' : 'red';
-        }
-        if (market.includes('under 0.5')) {
-          return goalsSecondHalf < 1 ? 'green' : 'red';
-        }
-        if (market.includes('under 1.5')) {
-          return goalsSecondHalf < 2 ? 'green' : 'red';
-        }
-        if (market.includes('under 2.5')) {
-          return goalsSecondHalf < 3 ? 'green' : 'red';
-        }
-      }
-
-      if (market.includes('btts') || market.includes('ambas marcam') || market.includes('ambos marcam') || market.includes('both teams')) {
-        const bttsYes = homeGoals > 0 && awayGoals > 0;
-        if (market.includes('não') || market.includes('no')) {
-          return !bttsYes ? 'green' : 'red';
-        }
-        return bttsYes ? 'green' : 'red';
-      }
-
-      if (market.includes('vitória') || market.includes('vitoria') || market.includes('vencer') || 
-          market.includes('win') || market.includes('home') || market.includes('away')) {
-        if (market.includes('casa') || market.includes('home') || market.includes(tip.homeTeam?.toLowerCase() || '')) {
-          return homeGoals > awayGoals ? 'green' : 'red';
-        }
-        if (market.includes('fora') || market.includes('away') || market.includes(tip.awayTeam?.toLowerCase() || '')) {
-          return awayGoals > homeGoals ? 'green' : 'red';
-        }
-      }
-
-      if (market.includes('1x2') || market.includes('resultado') || market.includes('match result') || market.includes('winner')) {
-        const selection1Patterns = ['- 1', '(1)', ': 1', 'home win', 'vitória casa', '1 @'];
-        const selectionXPatterns = ['- x', '(x)', ': x', '- draw', 'draw', 'empate'];
-        const selection2Patterns = ['- 2', '(2)', ': 2', 'away win', 'vitória fora', '2 @'];
-        
-        if (selection1Patterns.some(p => market.includes(p)) || market.endsWith(' 1')) {
-          return homeGoals > awayGoals ? 'green' : 'red';
-        }
-        if (selectionXPatterns.some(p => market.includes(p)) || market.endsWith(' x')) {
-          return homeGoals === awayGoals ? 'green' : 'red';
-        }
-        if (selection2Patterns.some(p => market.includes(p)) || market.endsWith(' 2')) {
-          return awayGoals > homeGoals ? 'green' : 'red';
-        }
-      }
-
-      if (market.includes('empate') || market.includes('draw')) {
-        return homeGoals === awayGoals ? 'green' : 'red';
-      }
-
-      if (market.includes('dupla chance') || market.includes('double chance')) {
-        if (market.includes('1x') || market.includes('casa ou empate') || market.includes('home or draw')) {
-          return homeGoals >= awayGoals ? 'green' : 'red';
-        }
-        if (market.includes('x2') || market.includes('empate ou fora') || market.includes('draw or away')) {
-          return awayGoals >= homeGoals ? 'green' : 'red';
-        }
-        if (market.includes('12') || market.includes('home or away')) {
-          return homeGoals !== awayGoals ? 'green' : 'red';
-        }
-      }
-
-      console.log(`[Result Checker] Unknown market format: ${tip.market}`);
-      return null;
-
     } catch (error) {
-      console.error(`[Result Checker] API error for fixture ${tip.fixtureId}:`, error);
+      console.error(`[Result Checker] Error checking leg fixture ${leg.fixtureId}:`, error);
       return null;
     }
   }
@@ -281,8 +351,10 @@ export class ResultChecker {
     this.isRunning = true;
     console.log(`[Result Checker] Starting with ${intervalMinutes} minute interval`);
 
+    // Run immediately on start
     this.checkPendingTips();
 
+    // Then run at interval
     this.intervalId = setInterval(() => {
       this.checkPendingTips();
     }, intervalMinutes * 60 * 1000);
