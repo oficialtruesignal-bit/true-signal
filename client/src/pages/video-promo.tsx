@@ -53,13 +53,21 @@ import stressedEye from '@assets/generated_videos/stressed_eye_red_screen_frustr
 import luxuryNotif from '@assets/generated_videos/phone_notification_green_luxury_suit_urgent.mp4';
 import serverDoor from '@assets/generated_videos/server_door_closing_access_restricted_vault.mp4';
 import moneyShot from '@assets/generated_videos/money_shot_phone_holographic_cards_dataverse.mp4';
+import moneyShotV2 from '@assets/generated_videos/phone_holographic_cards_with_stats_content.mp4';
 
 const videos = [
   { 
+    src: moneyShotV2, 
+    title: "💰 MONEY SHOT V2: Cards com Conteúdo", 
+    description: "Precisão 94% | Análise | Assertividade 84% | 20 Traders",
+    filename: "money_shot_v2_stats.mp4",
+    category: "final"
+  },
+  { 
     src: moneyShot, 
-    title: "💰 MONEY SHOT: The Data Stream", 
-    description: "Celular flutuante + cards holográficos - Iron Man HUD",
-    filename: "money_shot_dataverse.mp4",
+    title: "💰 MONEY SHOT V1: Data Stream", 
+    description: "Versão anterior - celular + cards holográficos",
+    filename: "money_shot_v1.mp4",
     category: "final"
   },
   { 
@@ -489,7 +497,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (26)
+            ⭐ Essencial (27)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
