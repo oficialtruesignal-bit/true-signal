@@ -1240,7 +1240,7 @@ class AIPredictionEngine {
     awayStats: any;
   }>): Promise<number> {
     const MIN_TOTAL_ODD = 1.50;
-    const MIN_INDIVIDUAL_ODD = 1.45; // Filtrar apenas odds premium (filet mignon)
+    const MIN_INDIVIDUAL_ODD = 1.40; // Filtrar apenas odds premium (filet mignon)
     const MIN_CONFIDENCE = 85; // Apenas alta confiança (85%+)
     const MAX_LEGS = 3;
     
