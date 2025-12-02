@@ -3,7 +3,7 @@ import { db } from './db';
 import { livePressureSnapshots, liveAlerts, liveMonitorSettings, type InsertLivePressureSnapshot, type InsertLiveAlert } from '@shared/schema';
 import { eq, desc, and, gte, sql } from 'drizzle-orm';
 
-const API_FOOTBALL_KEY = process.env.API_FOOTBALL_KEY;
+const API_FOOTBALL_KEY = process.env.FOOTBALL_API_KEY || process.env.API_FOOTBALL_KEY;
 const API_FOOTBALL_BASE_URL = 'https://v3.football.api-sports.io';
 
 interface LiveFixture {

@@ -1860,6 +1860,17 @@ REGRAS IMPORTANTES:
     }
   })();
   
+  // Auto-start Live Pressure Monitor on server start (poll every 20 seconds)
+  (async () => {
+    try {
+      const { livePressureMonitor } = await import("./live-pressure-monitor");
+      await livePressureMonitor.start(20000); // 20 segundos
+      console.log("[Live Monitor] Auto-started with 20s interval");
+    } catch (error) {
+      console.error("[Live Monitor] Failed to auto-start:", error);
+    }
+  })();
+  
   // Get all bot strategies
   app.get("/api/multibot/strategies", async (req, res) => {
     try {
