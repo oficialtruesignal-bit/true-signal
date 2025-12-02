@@ -807,57 +807,47 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
         </div>
       </div>
 
-      {/* --- BODY: Linhas do bilhete com timeline --- */}
+      {/* --- BODY: Linhas do bilhete com timeline estilo Bet365 --- */}
       <div className="p-4">
-        {/* Timeline vertical com bolinhas */}
-        <div className="relative pl-6">
-          {/* Linha vertical conectora */}
-          <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-[#33b864]/30"></div>
+        {/* Timeline vertical com bolinhas verdes */}
+        <div className="relative pl-5">
+          {/* Linha vertical verde conectora */}
+          <div className="absolute left-[6px] top-2 bottom-2 w-[2px] bg-[#33b864]"></div>
           
-          {/* Para COMBO: mostrar cada leg na timeline */}
+          {/* Para COMBO: mostrar cada leg como linha simples */}
           {isComboTip && parsedLegs.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {parsedLegs.map((leg, idx) => (
-                <div key={idx} className="relative flex items-start">
-                  {/* Bolinha verde */}
-                  <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-[#33b864] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#33b864]"></div>
+                <div key={idx} className="relative flex items-start gap-3">
+                  {/* Bolinha verde sólida */}
+                  <div className="absolute -left-5 top-1.5 w-3 h-3 rounded-full bg-[#33b864] flex items-center justify-center">
+                    <Check className="w-2 h-2 text-black" />
                   </div>
-                  {/* Conteúdo da leg */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      {leg.homeTeamLogo && (
-                        <img src={leg.homeTeamLogo} alt={leg.homeTeam} className="w-4 h-4 rounded-full" />
-                      )}
-                      <span className="text-white text-xs font-medium">{leg.homeTeam}</span>
-                      <span className="text-gray-500 text-[10px]">vs</span>
-                      <span className="text-white text-xs font-medium">{leg.awayTeam}</span>
-                      {leg.awayTeamLogo && (
-                        <img src={leg.awayTeamLogo} alt={leg.awayTeam} className="w-4 h-4 rounded-full" />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-300 text-sm">{leg.outcome}</span>
-                      <span className="text-[#33b864] font-bold text-sm">@{leg.odd?.toFixed(2)}</span>
-                    </div>
-                    <span className="text-gray-500 text-[10px]">{leg.market} • {leg.league}</span>
+                  {/* Texto simples da seleção */}
+                  <div className="flex-1 ml-1">
+                    <p className="text-white font-medium text-sm">
+                      {leg.homeTeam} - {leg.outcome}
+                    </p>
+                    <p className="text-gray-500 text-[11px]">
+                      {leg.market} • @{leg.odd?.toFixed(2)}
+                    </p>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             /* Para aposta simples: mostrar linhas do market */
-            <div className="space-y-4">
+            <div className="space-y-3">
               {signal.market.split('\n').filter(line => line.trim()).map((line, idx) => (
-                <div key={idx} className="relative flex items-start">
-                  {/* Bolinha */}
-                  <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-[#33b864] flex items-center justify-center">
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#33b864]"></div>
+                <div key={idx} className="relative flex items-start gap-3">
+                  {/* Bolinha verde sólida */}
+                  <div className="absolute -left-5 top-1.5 w-3 h-3 rounded-full bg-[#33b864] flex items-center justify-center">
+                    <Check className="w-2 h-2 text-black" />
                   </div>
                   {/* Texto da linha */}
-                  <span className="text-white font-medium text-sm leading-relaxed">
+                  <p className="text-white font-medium text-sm leading-relaxed ml-1">
                     {line.trim()}
-                  </span>
+                  </p>
                 </div>
               ))}
             </div>
