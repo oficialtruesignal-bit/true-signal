@@ -653,7 +653,7 @@ class AIPredictionEngine {
     bet365Odds: Record<string, Record<string, number>> | null = null
   ): PredictionResult[] {
     const predictions: PredictionResult[] = [];
-    const CONFIDENCE_THRESHOLD = 80;
+    const CONFIDENCE_THRESHOLD = 75; // Abaixado de 80 para 75 - mais jogos
     const MIN_EV_THRESHOLD = 0; // Só aceitar EV >= 0 (positivo ou neutro)
     const SAFETY_MARGIN_SHOTS = 0.60;
     const SAFETY_MARGIN_CORNERS = 0.55;
@@ -1136,7 +1136,7 @@ class AIPredictionEngine {
     const predictions = this.generatePredictions(homeStats, awayStats, h2hAnalysis, bet365Odds);
     
     // Filtrar previsões com alta confiança (>= 85%)
-    const highConfPredictions = predictions.filter(p => p.confidence >= 85 && p.suggestedOdd >= 1.40);
+    const highConfPredictions = predictions.filter(p => p.confidence >= 75 && p.suggestedOdd >= 1.35);
     
     // Se tiver 2+ linhas de alta confiança, criar bilhete combinado do mesmo jogo
     if (highConfPredictions.length >= 2) {
@@ -1215,8 +1215,8 @@ class AIPredictionEngine {
       // 2. OU é uma previsão de confiança muito alta (>= 90%) que não está no combo
       const isInCombo = usedInCombo.has(`${prediction.market}_${prediction.predictedOutcome}`);
       const shouldCreateSingle = (
-        (highConfPredictions.length < 2 && prediction.confidence >= 85 && prediction.suggestedOdd >= 1.40) ||
-        (prediction.confidence >= 90 && prediction.suggestedOdd >= 1.40 && !isInCombo)
+        (highConfPredictions.length < 2 && prediction.confidence >= 75 && prediction.suggestedOdd >= 1.35) ||
+        (prediction.confidence >= 85 && prediction.suggestedOdd >= 1.35 && !isInCombo)
       );
       
       if (shouldCreateSingle) {
@@ -1327,8 +1327,8 @@ class AIPredictionEngine {
     awayStats: any;
   }>): Promise<number> {
     const MIN_TOTAL_ODD = 1.50;
-    const MIN_INDIVIDUAL_ODD = 1.40; // Filtrar apenas odds premium (filet mignon)
-    const MIN_CONFIDENCE = 85; // Apenas alta confiança (85%+)
+    const MIN_INDIVIDUAL_ODD = 1.35; // Filtrar odds premium (abaixado de 1.40 para 1.35)
+    const MIN_CONFIDENCE = 75; // Abaixado de 85% para 75% - mais combos
     const MAX_LEGS = 3;
     
     // Filtrar previsões PREMIUM (confiança >= 85%, odd >= 1.45) - FILET MIGNON ONLY
