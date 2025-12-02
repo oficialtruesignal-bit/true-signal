@@ -1864,7 +1864,7 @@ class AIPredictionEngine {
       const season = fixtureData.league.season;
       
       // 2. Buscar últimos jogos de ambos os times
-      const [homeMatches, awayMatches, h2hData, bet365Odds] = await Promise.all([
+      const [homeMatches, awayMatches, h2hMatches, bet365Odds] = await Promise.all([
         this.fetchTeamLastMatches(homeTeamId, season),
         this.fetchTeamLastMatches(awayTeamId, season),
         this.fetchH2H(homeTeamId, awayTeamId),
@@ -1879,12 +1879,49 @@ class AIPredictionEngine {
       // 3. Calcular estatísticas de cada time
       const allFixtureIds = Array.from(new Set([
         ...homeMatches.map(m => m.fixture.id),
-        ...awayMatches.map(m => m.fixture.id)
+        ...awayMatches.map(m => m.fixture.id),
+        ...h2hMatches.map(m => m.fixture.id)
       ]));
       
       const statsMap = await this.fetchMultipleFixtureStatistics(allFixtureIds);
       const homeStats = this.calculateTeamStats(homeMatches, homeTeamId, statsMap);
       const awayStats = this.calculateTeamStats(awayMatches, awayTeamId, statsMap);
+      
+      // Processar H2H matches em análise estruturada
+      let h2hData: { totalGames: number; homeWins: number; awayWins: number; draws: number; avgGoals: number; avgCorners: number } | null = null;
+      if (h2hMatches.length >= 1) {
+        let homeWins = 0, draws = 0, awayWins = 0, totalGoals = 0, totalCorners = 0;
+        
+        for (const match of h2hMatches) {
+          const hGoals = match.goals.home ?? 0;
+          const aGoals = match.goals.away ?? 0;
+          totalGoals += hGoals + aGoals;
+          
+          const matchStats = statsMap.get(match.fixture.id);
+          if (matchStats) {
+            totalCorners += matchStats.homeStats.corners + matchStats.awayStats.corners;
+          }
+          
+          if (match.teams.home.id === homeTeamId) {
+            if (hGoals > aGoals) homeWins++;
+            else if (hGoals === aGoals) draws++;
+            else awayWins++;
+          } else {
+            if (aGoals > hGoals) homeWins++;
+            else if (hGoals === aGoals) draws++;
+            else awayWins++;
+          }
+        }
+        
+        h2hData = {
+          totalGames: h2hMatches.length,
+          homeWins,
+          draws,
+          awayWins,
+          avgGoals: totalGoals / h2hMatches.length,
+          avgCorners: totalCorners / h2hMatches.length
+        };
+      }
       
       // 4. Gerar análise de GOLS
       const homeExpectedGoals = (homeStats.goalsScoredHome + awayStats.goalsConcededAway) / 2;

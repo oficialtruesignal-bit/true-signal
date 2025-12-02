@@ -668,6 +668,126 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // ============================================
+  // TIP ANALYSIS & EV ENDPOINTS
+  // ============================================
+  
+  // Get full analysis for a tip (by tipId)
+  app.get("/api/tips/:tipId/analysis", async (req, res) => {
+    try {
+      const { tipId } = req.params;
+      
+      // 1. Check if analysis already exists
+      const existingAnalysis = await storage.getTipAnalysis(tipId);
+      const existingRecommendations = await storage.getTipMarketRecommendations(tipId);
+      
+      if (existingAnalysis) {
+        return res.json({
+          success: true,
+          analysis: {
+            goalsAnalysis: existingAnalysis.goalsAnalysis ? JSON.parse(existingAnalysis.goalsAnalysis) : null,
+            cornersAnalysis: existingAnalysis.cornersAnalysis ? JSON.parse(existingAnalysis.cornersAnalysis) : null,
+            h2hAnalysis: existingAnalysis.h2hAnalysis ? JSON.parse(existingAnalysis.h2hAnalysis) : null,
+            climateAnalysis: existingAnalysis.climateAnalysis ? JSON.parse(existingAnalysis.climateAnalysis) : null,
+            tacticalInsights: existingAnalysis.tacticalInsights ? JSON.parse(existingAnalysis.tacticalInsights) : [],
+            finalRecommendation: existingAnalysis.finalRecommendation,
+          },
+          marketRecommendations: existingRecommendations
+        });
+      }
+      
+      // 2. Get the tip to find fixtureId
+      const tip = await storage.getTipById(tipId);
+      if (!tip) {
+        return res.status(404).json({ error: "Tip not found" });
+      }
+      
+      if (!tip.fixtureId) {
+        return res.status(400).json({ error: "Tip has no fixture ID for analysis" });
+      }
+      
+      // 3. Generate analysis using AI engine
+      const fullAnalysis = await aiPredictionEngine.generateFullAnalysis(parseInt(tip.fixtureId));
+      
+      if (!fullAnalysis) {
+        return res.status(503).json({ error: "Could not generate analysis - insufficient data" });
+      }
+      
+      // 4. Store analysis for future use
+      const savedAnalysis = await storage.createTipAnalysis({
+        tipId,
+        fixtureId: tip.fixtureId,
+        goalsAnalysis: JSON.stringify(fullAnalysis.goalsAnalysis),
+        cornersAnalysis: JSON.stringify(fullAnalysis.cornersAnalysis),
+        h2hAnalysis: JSON.stringify(fullAnalysis.h2hAnalysis),
+        climateAnalysis: JSON.stringify(fullAnalysis.climateAnalysis),
+        tacticalInsights: JSON.stringify(fullAnalysis.tacticalInsights),
+        finalRecommendation: fullAnalysis.finalRecommendation,
+        dataSources: JSON.stringify(["API-Football", "Bet365 Odds"]),
+      });
+      
+      // 5. Store market recommendations
+      for (const rec of fullAnalysis.marketRecommendations) {
+        await storage.createTipMarketRecommendation({
+          tipId,
+          analysisId: savedAnalysis.id,
+          marketType: rec.marketType,
+          marketLabel: rec.marketLabel,
+          selection: rec.selection,
+          bookmakerOdd: rec.bookmakerOdd,
+          modelProbability: rec.modelProbability,
+          fairOdd: rec.fairOdd,
+          evPercent: rec.evPercent,
+          evRating: rec.evRating as any,
+          suggestedStake: rec.suggestedStake,
+          kellyStake: rec.kellyStake,
+          rationale: JSON.stringify(rec.rationale),
+          confidenceLevel: rec.confidenceLevel as any,
+          isMainPick: rec.isMainPick,
+          isValueBet: rec.isValueBet,
+        });
+      }
+      
+      return res.json({
+        success: true,
+        analysis: fullAnalysis,
+        marketRecommendations: fullAnalysis.marketRecommendations
+      });
+      
+    } catch (error: any) {
+      console.error('[API] Error getting tip analysis:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+  
+  // Generate analysis for a fixture (without tip - for preview)
+  app.get("/api/fixtures/:fixtureId/analysis", async (req, res) => {
+    try {
+      const fixtureId = parseInt(req.params.fixtureId);
+      
+      if (isNaN(fixtureId)) {
+        return res.status(400).json({ error: "Invalid fixture ID" });
+      }
+      
+      const fullAnalysis = await aiPredictionEngine.generateFullAnalysis(fixtureId);
+      
+      if (!fullAnalysis) {
+        return res.status(503).json({ error: "Could not generate analysis - insufficient data" });
+      }
+      
+      return res.json({
+        success: true,
+        fixtureId,
+        analysis: fullAnalysis,
+        marketRecommendations: fullAnalysis.marketRecommendations
+      });
+      
+    } catch (error: any) {
+      console.error('[API] Error generating fixture analysis:', error);
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // ============================================
   // AI Bet Slip Scanner (Google Gemini Vision)
   // ============================================
   app.post("/api/scan-ticket", async (req, res) => {
