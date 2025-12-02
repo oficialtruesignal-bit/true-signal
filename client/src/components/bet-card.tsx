@@ -812,88 +812,57 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
         {/* Timeline vertical com bolinhas */}
         <div className="relative pl-6">
           {/* Linha vertical conectora */}
-          <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-gray-700"></div>
+          <div className="absolute left-[7px] top-2 bottom-2 w-[2px] bg-[#33b864]/30"></div>
           
-          {/* Cada linha do mercado */}
-          <div className="space-y-4">
-            {signal.market.split('\n').filter(line => line.trim()).map((line, idx, arr) => (
-              <div key={idx} className="relative flex items-start">
-                {/* Bolinha */}
-                <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#242424] border-2 border-gray-500 flex items-center justify-center">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gray-500"></div>
-                </div>
-                {/* Texto da linha */}
-                <span className="text-white font-medium text-sm leading-relaxed">
-                  {line.trim()}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Botão para expandir combo - só aparece se for combo */}
-        {isComboTip && parsedLegs.length > 0 && (
-          <button
-            onClick={() => setIsComboExpanded(!isComboExpanded)}
-            className="w-full flex items-center justify-between pt-4 mt-2 border-t border-white/10 hover:bg-white/5 rounded-lg px-2 py-2 transition-colors"
-            data-testid={`expand-combo-${signal.id}`}
-          >
-            <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full bg-[#33b864]/20 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-[#33b864]">{parsedLegs.length}</span>
-              </div>
-              <span className="text-gray-300 text-sm font-medium">Ver seleções do combo</span>
-            </div>
-            <ChevronDown className={cn(
-              "w-5 h-5 text-[#33b864] transition-transform duration-200",
-              isComboExpanded && "rotate-180"
-            )} />
-          </button>
-        )}
-
-        {/* Legs do combo expandidas */}
-        {isComboTip && isComboExpanded && parsedLegs.length > 0 && (
-          <div className="mt-3 space-y-3 animate-in slide-in-from-top-2 duration-200">
-            {parsedLegs.map((leg, idx) => (
-              <div 
-                key={idx} 
-                className="bg-white/5 rounded-lg p-3 border border-white/10"
-              >
-                {/* Header da leg com times e logos */}
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    {leg.homeTeamLogo && (
-                      <img src={leg.homeTeamLogo} alt={leg.homeTeam} className="w-5 h-5 rounded-full" />
-                    )}
-                    <span className="text-white text-xs font-medium">{leg.homeTeam}</span>
-                    <span className="text-gray-500 text-xs">vs</span>
-                    <span className="text-white text-xs font-medium">{leg.awayTeam}</span>
-                    {leg.awayTeamLogo && (
-                      <img src={leg.awayTeamLogo} alt={leg.awayTeam} className="w-5 h-5 rounded-full" />
-                    )}
+          {/* Para COMBO: mostrar cada leg na timeline */}
+          {isComboTip && parsedLegs.length > 0 ? (
+            <div className="space-y-4">
+              {parsedLegs.map((leg, idx) => (
+                <div key={idx} className="relative flex items-start">
+                  {/* Bolinha verde */}
+                  <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-[#33b864] flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#33b864]"></div>
                   </div>
-                  <span className="text-[#33b864] font-bold text-sm">@{leg.odd?.toFixed(2)}</span>
-                </div>
-                {/* Mercado e outcome */}
-                <div className="flex items-center justify-between">
+                  {/* Conteúdo da leg */}
                   <div className="flex-1">
-                    <span className="text-gray-400 text-[10px] uppercase tracking-wide">{leg.market}</span>
-                    <p className="text-white text-xs mt-0.5">{leg.outcome}</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      {leg.homeTeamLogo && (
+                        <img src={leg.homeTeamLogo} alt={leg.homeTeam} className="w-4 h-4 rounded-full" />
+                      )}
+                      <span className="text-white text-xs font-medium">{leg.homeTeam}</span>
+                      <span className="text-gray-500 text-[10px]">vs</span>
+                      <span className="text-white text-xs font-medium">{leg.awayTeam}</span>
+                      {leg.awayTeamLogo && (
+                        <img src={leg.awayTeamLogo} alt={leg.awayTeam} className="w-4 h-4 rounded-full" />
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-300 text-sm">{leg.outcome}</span>
+                      <span className="text-[#33b864] font-bold text-sm">@{leg.odd?.toFixed(2)}</span>
+                    </div>
+                    <span className="text-gray-500 text-[10px]">{leg.market} • {leg.league}</span>
                   </div>
-                  {leg.probability && (
-                    <span className="text-xs text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded">
-                      {leg.probability.toFixed(0)}%
-                    </span>
-                  )}
                 </div>
-                {/* Liga */}
-                <div className="mt-2 pt-2 border-t border-white/5">
-                  <span className="text-[#33b864] text-[10px]">{leg.league}</span>
+              ))}
+            </div>
+          ) : (
+            /* Para aposta simples: mostrar linhas do market */
+            <div className="space-y-4">
+              {signal.market.split('\n').filter(line => line.trim()).map((line, idx) => (
+                <div key={idx} className="relative flex items-start">
+                  {/* Bolinha */}
+                  <div className="absolute -left-6 top-1 w-4 h-4 rounded-full bg-[#1a1a1a] border-2 border-[#33b864] flex items-center justify-center">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#33b864]"></div>
+                  </div>
+                  {/* Texto da linha */}
+                  <span className="text-white font-medium text-sm leading-relaxed">
+                    {line.trim()}
+                  </span>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Times com logos pequenos - só mostra para apostas simples */}
         {!isComboTip && (
