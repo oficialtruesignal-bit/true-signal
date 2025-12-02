@@ -127,12 +127,12 @@ function AnalysisSection({ signal }: { signal: Signal }) {
             <div className="flex flex-wrap gap-2">
               {signal.homeTeam && (
                 <span className="px-2 py-1 text-[10px] bg-white/5 text-gray-400 rounded border border-white/10">
-                  {signal.homeTeam} gols: {signal.homeGoalsAvg?.toFixed(2) || '0.00'} média
+                  {signal.homeTeam} gols: {signal.homeGoalsAvg ? parseFloat(String(signal.homeGoalsAvg)).toFixed(2) : '0.00'} média
                 </span>
               )}
               {signal.awayTeam && (
                 <span className="px-2 py-1 text-[10px] bg-white/5 text-gray-400 rounded border border-white/10">
-                  {signal.awayTeam} gols: {signal.awayGoalsAvg?.toFixed(2) || '0.00'} média
+                  {signal.awayTeam} gols: {signal.awayGoalsAvg ? parseFloat(String(signal.awayGoalsAvg)).toFixed(2) : '0.00'} média
                 </span>
               )}
               {signal.probability && (
@@ -908,7 +908,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                           <div className="bg-white/5 rounded-lg p-2.5">
                             <p className="text-[10px] text-gray-400 mb-1">{signal.homeTeam}</p>
                             <div className="flex items-baseline gap-1">
-                              <span className="text-lg font-bold text-white">{signal.homeGoalsAvg?.toFixed(2) || '0.00'}</span>
+                              <span className="text-lg font-bold text-white">{signal.homeGoalsAvg ? parseFloat(String(signal.homeGoalsAvg)).toFixed(2) : '0.00'}</span>
                               <span className="text-[10px] text-gray-500">gols/jogo</span>
                             </div>
                           </div>
@@ -916,7 +916,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                           <div className="bg-white/5 rounded-lg p-2.5">
                             <p className="text-[10px] text-gray-400 mb-1">{signal.awayTeam}</p>
                             <div className="flex items-baseline gap-1">
-                              <span className="text-lg font-bold text-white">{signal.awayGoalsAvg?.toFixed(2) || '0.00'}</span>
+                              <span className="text-lg font-bold text-white">{signal.awayGoalsAvg ? parseFloat(String(signal.awayGoalsAvg)).toFixed(2) : '0.00'}</span>
                               <span className="text-[10px] text-gray-500">gols/jogo</span>
                             </div>
                           </div>
