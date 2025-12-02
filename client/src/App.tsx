@@ -28,6 +28,7 @@ const SubscriptionPage = React.lazy(() => import("@/pages/subscription"));
 const ComingSoonPage = React.lazy(() => import("@/pages/coming-soon"));
 const GestaoPage = React.lazy(() => import("@/pages/gestao"));
 const HotMatchesPage = React.lazy(() => import("@/pages/hot-matches"));
+const VideoPromoPage = React.lazy(() => import("@/pages/video-promo"));
 const NotFound = React.lazy(() => import("@/pages/not-found"));
 
 // Import access control and paywall
@@ -95,6 +96,7 @@ function Router() {
       <Route path="/privacy" component={PrivacyPage} />
       <Route path="/risk-disclaimer" component={RiskDisclaimerPage} />
       <Route path="/pricing" component={PricingPage} />
+      <Route path="/video-promo" component={VideoPromoPage} />
       
       {/* Protected Routes */}
       <Route path="/app">
