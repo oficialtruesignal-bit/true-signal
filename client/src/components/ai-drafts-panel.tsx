@@ -18,8 +18,14 @@ import {
   Calendar,
   Clock,
   BarChart3,
-  CheckCircle2
+  CheckCircle2,
+  Info
 } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface BetLeg {
   homeTeam: string;
@@ -871,7 +877,41 @@ export function AiDraftsPanel() {
                               {confidence.toFixed(0)}% confiança
                             </p>
                             {draft.expectedValue && parseFloat(draft.expectedValue) > 0 && (
-                              <p className="text-xs text-green-400">+{parseFloat(draft.expectedValue).toFixed(1)}% EV</p>
+                              <div className="flex items-center gap-1">
+                                <p className="text-xs text-green-400">+{parseFloat(draft.expectedValue).toFixed(1)}% EV</p>
+                                <Popover>
+                                  <PopoverTrigger asChild>
+                                    <button className="w-4 h-4 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors">
+                                      <Info className="w-2.5 h-2.5 text-gray-400" />
+                                    </button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-80 bg-background/95 backdrop-blur-sm border border-white/10 p-4" side="left">
+                                    <div className="space-y-3">
+                                      <h4 className="font-bold text-white flex items-center gap-2">
+                                        <TrendingUp className="w-4 h-4 text-green-400" />
+                                        O que é EV (Valor Esperado)?
+                                      </h4>
+                                      <p className="text-xs text-gray-300 leading-relaxed">
+                                        O <span className="text-green-400 font-semibold">EV positivo</span> indica que a odd oferecida pela casa é <span className="text-white">maior do que deveria ser</span>, dando vantagem matemática a você.
+                                      </p>
+                                      <div className="bg-white/5 rounded-lg p-3 space-y-2">
+                                        <p className="text-xs text-gray-400">
+                                          <span className="text-white font-semibold">Exemplo:</span> Se a probabilidade é 67% e a odd é 1.65
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                          EV = (67% × 1.65) - 100% = <span className="text-green-400 font-bold">+10.5%</span>
+                                        </p>
+                                      </div>
+                                      <div className="border-t border-white/10 pt-3">
+                                        <p className="text-xs text-yellow-400 font-semibold mb-1">⚠️ Importante:</p>
+                                        <p className="text-xs text-gray-400 leading-relaxed">
+                                          EV positivo <span className="text-white">não garante ganhar esse jogo específico</span>. Significa que fazendo muitas apostas com EV+, você tende a ter <span className="text-green-400">lucro no longo prazo</span>.
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </PopoverContent>
+                                </Popover>
+                              </div>
                             )}
                           </div>
                         </div>
