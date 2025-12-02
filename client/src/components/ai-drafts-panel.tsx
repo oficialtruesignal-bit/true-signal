@@ -20,7 +20,10 @@ import {
   BarChart3,
   CheckCircle2,
   Info,
-  Link
+  Link,
+  ArrowUpDown,
+  ArrowDown,
+  ArrowUp
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -87,6 +90,8 @@ interface AiStats {
 }
 
 type MarketFilter = 'all' | 'over25' | 'btts' | 'highConfidence' | 'corners' | 'cards' | 'shots';
+type SortOrder = 'desc' | 'asc' | 'none';
+type SortField = 'probability' | 'confidence' | 'odd';
 
 export function AiDraftsPanel() {
   const queryClient = useQueryClient();
@@ -106,6 +111,8 @@ export function AiDraftsPanel() {
   const [activeFilter, setActiveFilter] = useState<MarketFilter>('all');
   const [editedCombos, setEditedCombos] = useState<Record<string, BetLeg[]>>({});
   const [betLinks, setBetLinks] = useState<Record<string, string>>({});
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
+  const [sortField, setSortField] = useState<SortField>('probability');
 
   const { data: drafts = [], isLoading: loadingDrafts, refetch: refetchDrafts } = useQuery<AiDraft[]>({
     queryKey: ['ai-drafts'],
@@ -315,29 +322,89 @@ export function AiDraftsPanel() {
   };
 
   const filterDrafts = (drafts: AiDraft[]): AiDraft[] => {
-    if (activeFilter === 'all') return drafts;
+    let filtered = drafts;
     
-    return drafts.filter(draft => {
-      const market = normalizeText(draft.market);
-      const confidence = parseFloat(draft.confidence);
-      
-      switch (activeFilter) {
-        case 'highConfidence':
-          return confidence >= 85;
-        case 'over25':
-          return market.includes('over 2.5') || market.includes('over 1.5') || market.includes('gols');
-        case 'btts':
-          return market.includes('btts') || market.includes('ambas');
-        case 'corners':
-          return market.includes('corner') || market.includes('escanteio');
-        case 'cards':
-          return market.includes('card') || market.includes('cartao') || market.includes('cartoes');
-        case 'shots':
-          return market.includes('shot') || market.includes('chute');
-        default:
-          return true;
-      }
-    });
+    if (activeFilter !== 'all') {
+      filtered = drafts.filter(draft => {
+        const market = normalizeText(draft.market);
+        const confidence = parseFloat(draft.confidence);
+        
+        switch (activeFilter) {
+          case 'highConfidence':
+            return confidence >= 85;
+          case 'over25':
+            return market.includes('over 2.5') || market.includes('over 1.5') || market.includes('gols');
+          case 'btts':
+            return market.includes('btts') || market.includes('ambas');
+          case 'corners':
+            return market.includes('corner') || market.includes('escanteio');
+          case 'cards':
+            return market.includes('card') || market.includes('cartao') || market.includes('cartoes');
+          case 'shots':
+            return market.includes('shot') || market.includes('chute');
+          default:
+            return true;
+        }
+      });
+    }
+    
+    // Aplicar ordenação
+    if (sortOrder !== 'none') {
+      filtered = [...filtered].sort((a, b) => {
+        let valueA: number;
+        let valueB: number;
+        
+        switch (sortField) {
+          case 'probability':
+            valueA = parseFloat(a.probability) || 0;
+            valueB = parseFloat(b.probability) || 0;
+            break;
+          case 'confidence':
+            valueA = parseFloat(a.confidence) || 0;
+            valueB = parseFloat(b.confidence) || 0;
+            break;
+          case 'odd':
+            valueA = parseFloat(a.suggestedOdd) || parseFloat(a.totalOdd || '0') || 0;
+            valueB = parseFloat(b.suggestedOdd) || parseFloat(b.totalOdd || '0') || 0;
+            break;
+          default:
+            valueA = parseFloat(a.probability) || 0;
+            valueB = parseFloat(b.probability) || 0;
+        }
+        
+        return sortOrder === 'desc' ? valueB - valueA : valueA - valueB;
+      });
+    }
+    
+    return filtered;
+  };
+
+  const toggleSortOrder = () => {
+    if (sortOrder === 'desc') {
+      setSortOrder('asc');
+    } else if (sortOrder === 'asc') {
+      setSortOrder('none');
+    } else {
+      setSortOrder('desc');
+    }
+  };
+
+  const getSortIcon = () => {
+    if (sortOrder === 'desc') return <ArrowDown className="w-4 h-4" />;
+    if (sortOrder === 'asc') return <ArrowUp className="w-4 h-4" />;
+    return <ArrowUpDown className="w-4 h-4" />;
+  };
+
+  const getSortLabel = () => {
+    const fieldLabels: Record<SortField, string> = {
+      probability: 'Probabilidade',
+      confidence: 'Confiança',
+      odd: 'Odd'
+    };
+    
+    if (sortOrder === 'none') return `Ordenar por ${fieldLabels[sortField]}`;
+    if (sortOrder === 'desc') return `${fieldLabels[sortField]} (Maior → Menor)`;
+    return `${fieldLabels[sortField]} (Menor → Maior)`;
   };
 
   const filteredDrafts = filterDrafts(drafts);
@@ -622,20 +689,94 @@ export function AiDraftsPanel() {
 
       {/* Drafts List */}
       <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/10">
-        <div className="p-4 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent flex justify-between items-center">
-          <h3 className="font-bold text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" />
-            Previsões da IA
-          </h3>
-          <div className="flex items-center gap-2">
-            {activeFilter !== 'all' && (
-              <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-semibold">
-                {filteredDrafts.length} de {drafts.length}
+        <div className="p-4 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent">
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="font-bold text-white flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-primary" />
+              Previsões da IA
+            </h3>
+            <div className="flex items-center gap-2">
+              {activeFilter !== 'all' && (
+                <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded-full font-semibold">
+                  {filteredDrafts.length} de {drafts.length}
+                </span>
+              )}
+              <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold">
+                {filteredDrafts.length} Rascunhos
               </span>
+            </div>
+          </div>
+          
+          {/* Sorting Controls */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs text-gray-400 mr-1">Ordenar:</span>
+            
+            {/* Sort Field Selector */}
+            <div className="flex items-center bg-background/50 rounded-lg p-0.5 border border-white/10">
+              <button
+                onClick={() => setSortField('probability')}
+                className={`text-xs px-2.5 py-1 rounded-md transition-all ${
+                  sortField === 'probability' 
+                    ? 'bg-primary text-black font-bold' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                data-testid="sort-by-probability"
+              >
+                Probabilidade
+              </button>
+              <button
+                onClick={() => setSortField('confidence')}
+                className={`text-xs px-2.5 py-1 rounded-md transition-all ${
+                  sortField === 'confidence' 
+                    ? 'bg-primary text-black font-bold' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                data-testid="sort-by-confidence"
+              >
+                Confiança
+              </button>
+              <button
+                onClick={() => setSortField('odd')}
+                className={`text-xs px-2.5 py-1 rounded-md transition-all ${
+                  sortField === 'odd' 
+                    ? 'bg-primary text-black font-bold' 
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                data-testid="sort-by-odd"
+              >
+                Odd
+              </button>
+            </div>
+            
+            {/* Sort Order Toggle */}
+            <button
+              onClick={toggleSortOrder}
+              className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-all ${
+                sortOrder !== 'none'
+                  ? 'bg-primary/20 border-primary/50 text-primary font-semibold'
+                  : 'bg-background/50 border-white/10 text-gray-400 hover:text-white'
+              }`}
+              data-testid="toggle-sort-order"
+            >
+              {getSortIcon()}
+              <span className="hidden sm:inline">
+                {sortOrder === 'desc' ? 'Maior → Menor' : sortOrder === 'asc' ? 'Menor → Maior' : 'Sem ordem'}
+              </span>
+              <span className="sm:hidden">
+                {sortOrder === 'desc' ? '↓' : sortOrder === 'asc' ? '↑' : '⇅'}
+              </span>
+            </button>
+            
+            {/* Quick Reset */}
+            {(sortOrder !== 'desc' || sortField !== 'probability') && (
+              <button
+                onClick={() => { setSortField('probability'); setSortOrder('desc'); }}
+                className="text-xs text-gray-500 hover:text-primary transition-colors underline underline-offset-2"
+                data-testid="reset-sort"
+              >
+                Resetar
+              </button>
             )}
-            <span className="text-xs bg-primary/20 text-primary px-3 py-1 rounded-full font-semibold">
-              {filteredDrafts.length} Rascunhos
-            </span>
           </div>
         </div>
 
