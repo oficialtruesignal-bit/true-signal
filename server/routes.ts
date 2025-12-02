@@ -1638,12 +1638,15 @@ REGRAS IMPORTANTES:
         return summary;
       };
       
-      // Extract goal averages from team stats
-      const extractGoalsAvg = (statsJson: string | null, field: string = 'goalsScored'): string | null => {
+      // Extract goal AVERAGE per game from team stats (goalsScored / matchesAnalyzed)
+      const extractGoalsAvg = (statsJson: string | null): string | null => {
         if (!statsJson) return null;
         try {
           const stats = typeof statsJson === 'string' ? JSON.parse(statsJson) : statsJson;
-          return stats[field]?.toString() || null;
+          const goalsScored = parseFloat(stats.goalsScored) || 0;
+          const matchesAnalyzed = parseFloat(stats.matchesAnalyzed) || 1;
+          const avg = goalsScored / matchesAnalyzed;
+          return avg.toFixed(2);
         } catch {
           return null;
         }
@@ -1824,12 +1827,15 @@ REGRAS IMPORTANTES:
         return summary;
       };
       
-      // Helper to extract goals average from team stats JSON
-      const extractGoalsAvg = (statsJson: string | null, field: string = 'goalsScored'): string | null => {
+      // Helper to extract goals AVERAGE per game from team stats JSON (goalsScored / matchesAnalyzed)
+      const extractGoalsAvg = (statsJson: string | null): string | null => {
         if (!statsJson) return null;
         try {
           const stats = typeof statsJson === 'string' ? JSON.parse(statsJson) : statsJson;
-          return stats[field]?.toString() || null;
+          const goalsScored = parseFloat(stats.goalsScored) || 0;
+          const matchesAnalyzed = parseFloat(stats.matchesAnalyzed) || 1;
+          const avg = goalsScored / matchesAnalyzed;
+          return avg.toFixed(2);
         } catch {
           return null;
         }
