@@ -815,26 +815,124 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           )}
         </div>
         
-        {/* Entrada Recomendada - Mostra stake e valor em reais se configurado */}
-        <div className="mt-3 pt-3 border-t border-white/5 text-center">
-          <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
-            <span className="text-gray-400 text-xs">Entrada:</span>
-            <span className="text-[#33b864] font-bold text-sm">{(signal.stake || 1).toFixed(1)}u</span>
-            {unitValue && unitValue > 0 && (
-              <>
-                <span className="text-gray-500">=</span>
-                <span className="text-white font-bold text-sm">
-                  R$ {((signal.stake || 1) * unitValue).toFixed(2).replace('.', ',')}
-                </span>
-              </>
-            )}
-          </span>
+        {/* Entrada Recomendada com EV à esquerda e Análise à direita */}
+        <div className="mt-3 pt-3 border-t border-white/5">
+          <div className="flex items-center justify-between gap-2">
+            {/* EV Badge - Esquerda */}
+            <div className="flex-shrink-0">
+              {signal.expectedValue && signal.expectedValue > 0 ? (
+                <div className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-green-500/10 border border-green-500/30">
+                  <TrendingUp className="w-3 h-3 text-green-400" />
+                  <span className="text-green-400 font-bold text-xs">
+                    EV +{signal.expectedValue.toFixed(1)}%
+                  </span>
+                </div>
+              ) : (
+                <div className="w-16" />
+              )}
+            </div>
+            
+            {/* Entrada - Centro */}
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#33b864]/10 border border-[#33b864]/30">
+              <span className="text-gray-400 text-xs">Entrada:</span>
+              <span className="text-[#33b864] font-bold text-sm">{(signal.stake || 1).toFixed(1)}u</span>
+              {unitValue && unitValue > 0 && (
+                <>
+                  <span className="text-gray-500">=</span>
+                  <span className="text-white font-bold text-sm">
+                    R$ {((signal.stake || 1) * unitValue).toFixed(2).replace('.', ',')}
+                  </span>
+                </>
+              )}
+            </span>
+            
+            {/* Botão Análise - Direita */}
+            <div className="flex-shrink-0">
+              {(signal.analysisSummary || signal.confidence || signal.expectedValue) ? (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      className="flex items-center gap-1 px-2 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-colors"
+                      data-testid={`btn-analysis-popover-${signal.id}`}
+                    >
+                      <Brain className="w-3 h-3 text-blue-400" />
+                      <span className="text-blue-400 font-medium text-xs">Análise</span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent 
+                    className="w-80 p-4 bg-[#0d0d0d] border border-white/10 rounded-xl"
+                    side="top"
+                    align="end"
+                  >
+                    {/* Texto da análise */}
+                    {signal.analysisSummary && (
+                      <div className="mb-3">
+                        <p className="text-sm text-gray-200 leading-relaxed pl-3 border-l-2 border-[#33b864]">
+                          "{signal.analysisSummary}"
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Dados utilizados */}
+                    <div className="mb-3">
+                      <p className="text-[10px] text-gray-500 mb-2 uppercase tracking-wide">Dados utilizados:</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {signal.homeTeam && (
+                          <span className="px-2 py-0.5 text-[9px] bg-white/5 text-gray-400 rounded border border-white/10">
+                            {signal.homeTeam}: {signal.homeGoalsAvg?.toFixed(2) || '0.00'} gols/jogo
+                          </span>
+                        )}
+                        {signal.awayTeam && (
+                          <span className="px-2 py-0.5 text-[9px] bg-white/5 text-gray-400 rounded border border-white/10">
+                            {signal.awayTeam}: {signal.awayGoalsAvg?.toFixed(2) || '0.00'} gols/jogo
+                          </span>
+                        )}
+                        {signal.probability && (
+                          <span className="px-2 py-0.5 text-[9px] bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">
+                            Prob: {signal.probability.toFixed(1)}%
+                          </span>
+                        )}
+                        {signal.odd && (
+                          <span className="px-2 py-0.5 text-[9px] bg-yellow-500/10 text-yellow-400 rounded border border-yellow-500/20">
+                            Odd: {parseFloat(String(signal.odd)).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
+                    {/* Footer */}
+                    <div className="flex items-center justify-between pt-2 border-t border-white/5">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-full bg-[#33b864]/20 flex items-center justify-center">
+                          <Brain className="w-2.5 h-2.5 text-[#33b864]" />
+                        </div>
+                        <span className="text-[10px] font-bold text-white">TRUE SIGNAL IA</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {signal.confidence && (
+                          <span className={cn(
+                            "text-[10px] font-bold",
+                            signal.confidence >= 85 ? "text-green-400" :
+                            signal.confidence >= 75 ? "text-yellow-400" : "text-orange-400"
+                          )}>
+                            {signal.confidence.toFixed(0)}%
+                          </span>
+                        )}
+                        {signal.expectedValue && signal.expectedValue > 0 && (
+                          <span className="text-[10px] font-bold text-green-400">
+                            EV +{signal.expectedValue.toFixed(1)}%
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              ) : (
+                <div className="w-16" />
+              )}
+            </div>
+          </div>
         </div>
-        
-        {/* Seção de Análise Expandível - Design igual ao print */}
-        {(signal.analysisSummary || signal.confidence || signal.expectedValue) && (
-          <AnalysisSection signal={signal} />
-        )}
       </div>
 
       {/* --- FOOTER: Botão de Ação --- */}
