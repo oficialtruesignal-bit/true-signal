@@ -45,6 +45,27 @@ export const insertFavoriteSchema = createInsertSchema(favorites).omit({
 export type InsertFavorite = z.infer<typeof insertFavoriteSchema>;
 export type Favorite = typeof favorites.$inferSelect;
 
+// User Bets - Track individual user entries and results
+export const userBets = pgTable("user_bets", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  tipId: uuid("tip_id").notNull().references(() => tips.id, { onDelete: "cascade" }),
+  enteredAt: timestamp("entered_at").notNull().defaultNow(),
+  result: text("result", { enum: ["pending", "green", "red"] }).notNull().default("pending"),
+  resultMarkedAt: timestamp("result_marked_at"),
+  stakeUsed: decimal("stake_used", { precision: 5, scale: 2 }).notNull().default("1.0"),
+  oddAtEntry: decimal("odd_at_entry", { precision: 5, scale: 2 }).notNull(),
+  profit: decimal("profit", { precision: 10, scale: 2 }),
+});
+
+export const insertUserBetSchema = createInsertSchema(userBets).omit({
+  id: true,
+  enteredAt: true,
+});
+
+export type InsertUserBet = z.infer<typeof insertUserBetSchema>;
+export type UserBet = typeof userBets.$inferSelect;
+
 export const insertProfileSchema = createInsertSchema(profiles).omit({
   id: true,
   createdAt: true,
