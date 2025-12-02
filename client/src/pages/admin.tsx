@@ -44,33 +44,12 @@ export default function Admin() {
   const [premiumEmail, setPremiumEmail] = useState("");
   const [premiumDays, setPremiumDays] = useState("30");
   const [isActivatingPremium, setIsActivatingPremium] = useState(false);
-  const [isMonitorRunning, setIsMonitorRunning] = useState(true);
   const [activeTab, setActiveTab] = useState<AdminTab>('tickets');
   const [ticketSubTab, setTicketSubTab] = useState<'manual' | 'scanner'>('manual');
   
   console.log('🔧 Admin Page Loaded - Version 5.0 - Multi-Bot System');
 
-  const { data: liveMatches = [], isLoading: isLoadingLive, refetch: refetchLive } = useQuery({
-    queryKey: ['live-pressure'],
-    queryFn: async () => {
-      const response = await axios.get('/api/live/pressure');
-      const data = response.data;
-      if (Array.isArray(data)) return data as LivePressureData[];
-      if (data?.matches && Array.isArray(data.matches)) return data.matches as LivePressureData[];
-      return [];
-    },
-    refetchInterval: isMonitorRunning ? 30000 : false,
-    enabled: isMonitorRunning,
-  });
-
-  const { data: liveAlerts = [] } = useQuery({
-    queryKey: ['live-alerts'],
-    queryFn: async () => {
-      const response = await axios.get('/api/live/alerts?limit=20');
-      return response.data;
-    },
-    refetchInterval: 60000,
-  });
+  // DESATIVADO: Monitor de Jogos Quentes - Em Construção (consumo excessivo de API-Football)
 
   const handleActivatePremium = async () => {
     if (!premiumEmail.trim()) {
@@ -206,13 +185,9 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     createMutation.mutate(formData);
   };
 
-  const hotMatches = liveMatches
-    .filter(m => m.homePressure >= 65 || m.awayPressure >= 65)
-    .sort((a, b) => Math.max(b.homePressure, b.awayPressure) - Math.max(a.homePressure, a.awayPressure));
-
   const tabs = [
     { id: 'tickets' as const, label: 'Bilhetes', icon: LayoutDashboard, color: 'from-[#33b864] to-emerald-600', badge: signals.length },
-    { id: 'live' as const, label: 'Jogos Quentes', icon: Flame, color: 'from-orange-500 to-red-500', badge: hotMatches.length },
+    { id: 'live' as const, label: 'Jogos Quentes', icon: Flame, color: 'from-orange-500 to-red-500' },
     { id: 'ai' as const, label: 'IA Preditiva', icon: Brain, color: 'from-purple-500 to-pink-500' },
     { id: 'bots' as const, label: 'Multi-Bot', icon: Target, color: 'from-cyan-500 to-blue-500' },
   ];
@@ -538,131 +513,22 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
         </div>
       )}
 
-      {/* TAB 2: JOGOS QUENTES */}
+      {/* TAB 2: JOGOS QUENTES - EM CONSTRUÇÃO */}
       {activeTab === 'live' && (
-        <div className="space-y-4">
-          {/* Header com status */}
-          <Card className="border-orange-500/30">
-            <CardHeader>
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Flame className="w-6 h-6 text-orange-500" />
-                    Monitor de Gols Ao Vivo
-                  </CardTitle>
-                  <CardDescription className="mt-1">Análise de pressão em tempo real</CardDescription>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm bg-green-500/20 text-green-400 border border-green-500/50">
-                    <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-                    Ativo 24/7
-                  </div>
-                  <Button variant="outline" size="lg" onClick={() => refetchLive()} className="h-12 px-4 rounded-xl">
-                    <RefreshCw className={cn("w-5 h-5", isLoadingLive && 'animate-spin')} />
-                  </Button>
-                </div>
+        <div className="flex flex-col items-center justify-center py-20">
+          <Card className="border-orange-500/30 max-w-md w-full">
+            <CardContent className="pt-8 pb-10 text-center">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-orange-500/20 to-red-500/20 border-2 border-orange-500/30 flex items-center justify-center">
+                <Flame className="w-12 h-12 text-orange-500 animate-pulse" />
               </div>
-            </CardHeader>
-            
-            {/* Stats Grid - Mobile Otimizado */}
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div className="bg-gradient-to-br from-orange-500/20 to-red-500/20 border border-orange-500/30 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-orange-400">{hotMatches.length}</div>
-                  <div className="text-sm text-gray-400">Quentes</div>
-                </div>
-                <div className="bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-green-400">{liveMatches.length}</div>
-                  <div className="text-sm text-gray-400">Ao Vivo</div>
-                </div>
-                <div className="bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-purple-400">{liveAlerts.length}</div>
-                  <div className="text-sm text-gray-400">Alertas</div>
-                </div>
-                <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-xl p-4 text-center">
-                  <div className="text-3xl font-bold text-blue-400">8</div>
-                  <div className="text-sm text-gray-400">Bots</div>
-                </div>
+              <h3 className="text-2xl font-bold text-white mb-3">Em Construção</h3>
+              <p className="text-gray-400 mb-6">
+                O Monitor de Jogos Quentes está sendo otimizado para reduzir consumo de API.
+              </p>
+              <div className="flex items-center justify-center gap-2 text-sm text-orange-400 bg-orange-500/10 rounded-full px-4 py-2">
+                <Clock className="w-4 h-4" />
+                <span>Previsão: Em breve</span>
               </div>
-
-              {/* Lista de Jogos Quentes */}
-              {hotMatches.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Activity className="w-16 h-16 mx-auto mb-4 opacity-30 animate-pulse" />
-                  <p className="text-lg">Monitorando...</p>
-                  <p className="text-sm text-gray-500">Nenhum jogo quente no momento</p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {hotMatches.map((match) => {
-                    const dominantSide = match.homePressure > match.awayPressure ? 'home' : 'away';
-                    const pressure = dominantSide === 'home' ? match.homePressure : match.awayPressure;
-                    const goalProb = dominantSide === 'home' ? match.homeGoalProbability : match.awayGoalProbability;
-                    const delta = dominantSide === 'home' ? match.homePressureDelta : match.awayPressureDelta;
-                    const tier = pressure >= 85 ? 'PRIME' : pressure >= 80 ? 'CORE' : 'WATCH';
-                    const tierEmoji = tier === 'PRIME' ? '💎' : tier === 'CORE' ? '⭐' : '👁️';
-
-                    return (
-                      <div key={match.fixtureId} className="bg-gradient-to-br from-[#0d1117] to-[#161b22] border border-orange-500/30 rounded-2xl p-4">
-                        {/* Header */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                              <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded-full animate-pulse font-bold">{match.matchMinute}'</span>
-                              <span className="text-xs text-gray-400">{match.league}</span>
-                              <Badge className={cn(
-                                "text-xs",
-                                tier === 'PRIME' ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30' :
-                                tier === 'CORE' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
-                                'bg-blue-500/20 text-blue-400 border-blue-500/30'
-                              )}>
-                                {tierEmoji} {tier}
-                              </Badge>
-                            </div>
-                            <h4 className="text-lg font-bold text-white">
-                              {match.homeTeam} <span className="text-[#33b864]">{match.score}</span> {match.awayTeam}
-                            </h4>
-                          </div>
-                          
-                          <div className="text-right">
-                            <div className="text-3xl font-bold text-orange-400">{pressure.toFixed(0)}%</div>
-                            <div className="text-xs text-gray-400">Pressão {dominantSide === 'home' ? 'Casa' : 'Fora'}</div>
-                          </div>
-                        </div>
-
-                        {/* Stats Grid */}
-                        <div className="grid grid-cols-4 gap-2">
-                          <div className="bg-white/5 rounded-xl p-3 text-center">
-                            <div className="text-base font-bold text-white">{match.homePressure.toFixed(0)}%</div>
-                            <div className="text-xs text-gray-400">Casa</div>
-                          </div>
-                          <div className="bg-white/5 rounded-xl p-3 text-center">
-                            <div className="text-base font-bold text-white">{match.awayPressure.toFixed(0)}%</div>
-                            <div className="text-xs text-gray-400">Fora</div>
-                          </div>
-                          <div className="bg-white/5 rounded-xl p-3 text-center">
-                            <div className={cn("text-base font-bold", goalProb >= 70 ? 'text-green-400' : 'text-yellow-400')}>{goalProb.toFixed(0)}%</div>
-                            <div className="text-xs text-gray-400">Prob Gol</div>
-                          </div>
-                          <div className="bg-white/5 rounded-xl p-3 text-center">
-                            <div className={cn("text-base font-bold", delta >= 15 ? 'text-green-400' : delta >= 0 ? 'text-yellow-400' : 'text-red-400')}>
-                              {delta >= 0 ? '+' : ''}{delta.toFixed(0)}%
-                            </div>
-                            <div className="text-xs text-gray-400">Delta</div>
-                          </div>
-                        </div>
-
-                        {match.alertTriggered && (
-                          <div className="mt-3 flex items-center gap-2 bg-orange-500/20 text-orange-400 px-4 py-3 rounded-xl">
-                            <AlertTriangle className="w-5 h-5" />
-                            <span className="text-sm font-medium">Alerta: {match.alertType}</span>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
