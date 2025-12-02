@@ -480,79 +480,76 @@ export function AiDraftsPanel() {
         </div>
       </div>
 
-      {/* Analysis Controls */}
-      <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl p-6 shadow-lg shadow-[#33b864]/10">
-        <div className="flex flex-col md:flex-row items-center gap-4">
+      {/* Analysis Controls - Unified Compact Group */}
+      <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl p-4 shadow-lg shadow-[#33b864]/10">
+        <div className="flex flex-col gap-3">
+          {/* Date Picker Row */}
           <div className="flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-primary" />
+            <Calendar className="w-4 h-4 text-primary" />
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="bg-background border border-white/10 rounded-lg px-4 py-2 text-white focus:border-primary/50 focus:outline-none"
+              className="bg-background border border-white/10 rounded-lg px-3 py-1.5 text-sm text-white focus:border-primary/50 focus:outline-none flex-1"
               data-testid="input-ai-date"
             />
           </div>
           
-          <Button
-            onClick={runAnalysis}
-            disabled={isAnalyzing}
-            className="bg-gradient-to-r from-primary to-green-600 hover:from-primary/90 hover:to-green-600/90 text-black font-bold gap-2"
-            data-testid="button-run-analysis"
-          >
-            {isAnalyzing ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Analisando jogos...
-              </>
-            ) : (
-              <>
-                <Brain className="w-4 h-4" />
-                Executar Análise IA
-              </>
-            )}
-          </Button>
+          {/* Action Buttons - Horizontal Group */}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={runAnalysis}
+              disabled={isAnalyzing}
+              size="sm"
+              className="bg-gradient-to-r from-primary to-green-600 hover:from-primary/90 hover:to-green-600/90 text-black font-bold gap-1.5 flex-1 min-w-[140px]"
+              data-testid="button-run-analysis"
+            >
+              {isAnalyzing ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Brain className="w-3.5 h-3.5" />
+              )}
+              {isAnalyzing ? 'Analisando...' : 'Análise IA'}
+            </Button>
 
-          <Button
-            onClick={scanPatternOpportunities}
-            disabled={isScanningPatterns}
-            variant="outline"
-            className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10 font-bold gap-2"
-            data-testid="button-scan-patterns"
-          >
-            {isScanningPatterns ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Escaneando...
-              </>
-            ) : (
-              <>
-                <Target className="w-4 h-4" />
-                Analisar Oportunidades
-              </>
-            )}
-          </Button>
+            <Button
+              onClick={scanPatternOpportunities}
+              disabled={isScanningPatterns}
+              size="sm"
+              className="bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white font-bold gap-1.5 flex-1 min-w-[140px]"
+              data-testid="button-scan-patterns"
+            >
+              {isScanningPatterns ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Target className="w-3.5 h-3.5" />
+              )}
+              {isScanningPatterns ? 'Escaneando...' : 'Oportunidades'}
+            </Button>
 
+            {drafts.length > 0 && (
+              <Button
+                onClick={selectAllHighConfidence}
+                size="sm"
+                className="bg-gradient-to-r from-yellow-600 to-amber-500 hover:from-yellow-500 hover:to-amber-400 text-black font-bold gap-1.5 flex-1 min-w-[140px]"
+                data-testid="button-select-high-confidence"
+              >
+                <Zap className="w-3.5 h-3.5" />
+                Alta Confiança
+              </Button>
+            )}
+          </div>
+
+          {/* Bulk Approve - Full Width When Visible */}
           {selectedDrafts.size > 0 && (
             <Button
               onClick={bulkApprove}
-              className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2"
+              size="sm"
+              className="bg-green-600 hover:bg-green-700 text-white font-bold gap-2 w-full"
               data-testid="button-bulk-approve"
             >
               <CheckCircle2 className="w-4 h-4" />
               Aprovar {selectedDrafts.size} Selecionados
-            </Button>
-          )}
-
-          {drafts.length > 0 && (
-            <Button
-              onClick={selectAllHighConfidence}
-              variant="outline"
-              className="border-primary/30 text-primary hover:bg-primary/10 gap-2"
-              data-testid="button-select-high-confidence"
-            >
-              <Target className="w-4 h-4" />
-              Selecionar Alta Confiança
             </Button>
           )}
         </div>
