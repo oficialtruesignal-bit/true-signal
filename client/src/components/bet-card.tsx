@@ -991,7 +991,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                       data-testid={`btn-analysis-mobile-${signal.id}`}
                     >
                       <Brain className="w-3.5 h-3.5 text-blue-400" />
-                      <span className="text-blue-400 font-medium text-xs">Análise</span>
+                      <span className="text-blue-400 font-medium text-[10px]">Ver análise completa</span>
                     </button>
                   </PopoverTrigger>
                   <PopoverContent 
@@ -1093,7 +1093,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                       data-testid={`btn-analysis-popover-${signal.id}`}
                     >
                       <Brain className="w-3 h-3 text-blue-400" />
-                      <span className="text-blue-400 font-medium text-xs">Análise</span>
+                      <span className="text-blue-400 font-medium text-xs">Ver análise completa</span>
                     </button>
                   </PopoverTrigger>
                   <PopoverContent 
