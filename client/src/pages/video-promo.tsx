@@ -27,8 +27,40 @@ import take2 from '@assets/generated_videos/take_2_war_room_analysts_screens.mp4
 import take3 from '@assets/generated_videos/take_3_phone_hero_product_shot.mp4';
 import take4 from '@assets/generated_videos/take_4_notification_push_alert.mp4';
 import take5 from '@assets/generated_videos/take_5_copy_button_press_action.mp4';
+import logoReveal from '@assets/generated_videos/logo_true_signal_animated_reveal.mp4';
+import greenProfit from '@assets/generated_videos/green_profit_notification_celebration.mp4';
+import manWinning from '@assets/generated_videos/man_genuine_celebration_winning_reaction.mp4';
+import ctaFinal from '@assets/generated_videos/cta_final_5_dias_gratis_end_card.mp4';
 
 const videos = [
+  { 
+    src: logoReveal, 
+    title: "ABERTURA: LOGO ANIMADA", 
+    description: "Logo TRUE SIGNAL surgindo com efeito neon",
+    filename: "abertura_logo.mp4",
+    category: "final"
+  },
+  { 
+    src: greenProfit, 
+    title: "CLÍMAX: GREEN +R$ 1.250", 
+    description: "Notificação de lucro com confete",
+    filename: "climax_green_lucro.mp4",
+    category: "final"
+  },
+  { 
+    src: manWinning, 
+    title: "REAÇÃO: CELEBRAÇÃO REAL", 
+    description: "Cliente comemorando vitória autêntica",
+    filename: "reacao_celebracao.mp4",
+    category: "final"
+  },
+  { 
+    src: ctaFinal, 
+    title: "CTA: 5 DIAS GRÁTIS", 
+    description: "Encerramento com chamada para ação",
+    filename: "cta_5_dias_gratis.mp4",
+    category: "final"
+  },
   { 
     src: take1, 
     title: "TAKE 1: CAMPO + DADOS", 
@@ -200,6 +232,7 @@ const videos = [
 ];
 
 const categoryLabels: Record<string, { label: string; color: string }> = {
+  final: { label: '⭐ ESSENCIAL', color: 'bg-green-500/30 text-green-300' },
   roteiro: { label: 'ROTEIRO ADS', color: 'bg-yellow-500/30 text-yellow-300' },
   mockup: { label: 'MOCKUP', color: 'bg-pink-500/30 text-pink-300' },
   stats: { label: 'ESTATÍSTICAS', color: 'bg-orange-500/30 text-orange-300' },
@@ -275,12 +308,20 @@ export default function VideoPromoPage() {
             Todos ({videos.length})
           </Button>
           <Button
+            onClick={() => { setFilter('final'); setSelectedVideo(0); }}
+            variant={filter === 'final' ? 'default' : 'outline'}
+            className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
+            size="sm"
+          >
+            ⭐ Essencial (4)
+          </Button>
+          <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
             variant={filter === 'roteiro' ? 'default' : 'outline'}
             className={filter === 'roteiro' ? 'bg-yellow-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            Roteiro ADS (5)
+            Roteiro (5)
           </Button>
           <Button
             onClick={() => { setFilter('mockup'); setSelectedVideo(0); }}
