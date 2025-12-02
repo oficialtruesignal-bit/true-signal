@@ -247,7 +247,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
 
   const handleStatusChange = async (newStatus: 'pending' | 'green' | 'red') => {
     try {
-      await tipsService.updateTipStatus(signal.id, newStatus);
+      await tipsService.updateStatus(signal.id, newStatus);
       setCurrentStatus(newStatus);
       queryClient.invalidateQueries({ queryKey: ['tips'] });
       toast({
@@ -265,7 +265,7 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
 
   const handleDelete = async () => {
     try {
-      await tipsService.deleteTip(signal.id);
+      await tipsService.delete(signal.id);
       queryClient.invalidateQueries({ queryKey: ['tips'] });
       toast({
         title: "Bilhete removido",
@@ -418,21 +418,21 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
         {/* BLOCO D: RODAPÉ DE AÇÃO */}
         <div className="px-4 pb-4 space-y-3">
           {/* Linha 1: Entrada + Ver Análise */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 px-4 py-2.5 bg-[#1a1a1a] rounded-xl border border-white/10">
-              <span className="text-gray-400 text-sm">Entrada: </span>
-              <span className="text-white font-bold text-sm">R$ {stakeValue.toFixed(2)}</span>
-              <span className="text-gray-500 text-xs ml-1">({stakeUnits.toFixed(1)}u)</span>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-3 py-2 bg-[#1a1a1a] rounded-lg border border-white/10">
+              <span className="text-gray-400 text-xs">Entrada: </span>
+              <span className="text-white font-bold text-xs">R$ {stakeValue.toFixed(2)}</span>
+              <span className="text-gray-500 text-[10px] ml-1">({stakeUnits.toFixed(1)}u)</span>
             </div>
             
             {hasAnalysis && (
               <button 
                 onClick={() => setShowAnalysis(true)}
-                className="flex items-center gap-2 px-4 py-2.5 bg-transparent border border-white/20 rounded-xl hover:bg-white/5 transition-colors"
+                className="flex items-center gap-1.5 px-3 py-2 bg-transparent border border-white/20 rounded-lg hover:bg-white/5 transition-colors"
                 data-testid={`btn-analysis-${signal.id}`}
               >
-                <Eye className="w-4 h-4 text-gray-400" />
-                <span className="text-gray-300 text-sm font-medium">VER ANÁLISE</span>
+                <Eye className="w-3.5 h-3.5 text-gray-400" />
+                <span className="text-gray-300 text-xs font-medium">VER ANÁLISE</span>
               </button>
             )}
           </div>
