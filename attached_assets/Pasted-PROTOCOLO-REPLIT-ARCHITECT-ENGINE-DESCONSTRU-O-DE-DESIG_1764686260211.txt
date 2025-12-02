@@ -1,0 +1,81 @@
+PROTOCOLO REPLIT ARCHITECT ENGINE: DESCONSTRUÇÃO DE DESIGN (PARA REPLICAÇÃO IA) 🟢
+
+Entendido. Você quer que eu atue como o "Tradutor Visual" para ensinar o Replit Agent a recriar exatamente este card.
+
+Não basta dizer "faça igual". Tenho que explicar a anatomia do componente (Cores, Espaçamentos, Fontes, Sombras, Lógica de Layout).
+
+Copie este texto abaixo. Ele é um Manual de Instruções Técnico para qualquer IA.
+
+PROMPT DE REFERÊNCIA VISUAL: "THE MASTER SIGNAL CARD"
+ROLE: Senior UI Engineer & Tailwind CSS Specialist.
+
+TASK: Recriar com precisão de pixel o componente SignalCard.tsx baseado na referência visual "Master Card". ESTILO: Dark Mode Premium, Glassmorphism Sutil, Detalhes em Verde Neon (#33b864).
+
+1. ANATOMIA DO CARD (ESTRUTURA)
+O card é um container vertical dividido em 4 blocos distintos.
+
+BLOCO A: CABEÇALHO (Header)
+Layout: Flex Row (Justify Between).
+
+Elemento 1 (Esquerda): Botão de "Favoritar" (Coração).
+
+Estilo: Outline cinza escuro, fundo transparente.
+
+Elemento 2 (Direita): Badges de Valor.
+
+Badge EV: +EV 15.3% (Fundo Verde Neon Transparente, Texto Verde, Borda Verde).
+
+Badge ODD: ODD 1.81 (Fundo Verde Neon Sólido ou muito forte, Texto Preto ou Verde Escuro, Fonte Bold).
+
+BLOCO B: INFORMAÇÕES DO JOGO (Match Info)
+Layout: Container com fundo levemente mais claro que o base (bg-white/5 ou #1A1A1A) e bordas arredondadas (rounded-lg).
+
+Conteúdo:
+
+Linha 1: Escudo Casa (Esq) - Nomes dos Times (Centro) - Escudo Fora (Dir).
+
+Times: Fonte Branca, Peso Bold. "Hull City x Middlesbrough".
+
+Linha 2: Metadados. "Championship • 02/12 • 20:00". Fonte cinza, pequena (text-xs).
+
+BLOCO C: LISTA DE MERCADOS (The Pick)
+Layout: Lista vertical com linhas conectadas ou itens individuais.
+
+Marcador Visual: Cada item tem um Check Verde (Círculo verde com tick branco) na esquerda.
+
+Tipografia:
+
+Mercado: Branco, Bold. "Over 0.5 Gols HT".
+
+Odd Individual: Cinza claro, entre parênteses. "(@1.36)".
+
+Decoração: Uma linha vertical verde fina conecta os checks (se for múltipla), criando uma "timeline" visual.
+
+D. RODAPÉ DE AÇÃO (Action Footer)
+Layout: Grid de 2 colunas para info + Botão Full Width.
+
+Linha 1 (Info & Análise):
+
+Esquerda: Caixa de Entrada (Stake). "Entrada: R$ 2,00 (2.0u)". Fundo escuro, borda sutil.
+
+Direita: Botão "VER ANÁLISE" (Olho + Texto). Fundo transparente, borda cinza/azulada, texto discreto.
+
+Linha 2 (Botão Principal):
+
+Botão: "COPIAR BILHETE".
+
+Estilo: Largura Total (w-full). Altura generosa (h-12). Cor Verde Neon (bg-[#33b864]). Texto Preto (text-black). Fonte Bold e Uppercase. Sombra verde suave (shadow-lg shadow-green-500/20).
+
+2. PALETA DE CORES & TEXTURAS (CSS)
+Fundo do Card: #0a0a0a (Preto Profundo) ou #121212 (Cinza Carvão).
+
+Bordas: border border-white/10 (Muito sutil).
+
+Verde Neon (Marca): #33b864 (Usar em botões, checks e badges).
+
+Fonte: Sora (Google Fonts). Pesos: 400 (Regular), 600 (SemiBold), 800 (ExtraBold).
+
+3. COMPORTAMENTO (LÓGICA)
+O botão "Ver Análise" abre um modal.
+
+O botão "Copiar Bilhete" copia o link ou redireciona e dispara um Toast de sucesso.
