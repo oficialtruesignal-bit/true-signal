@@ -377,11 +377,11 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
           <div className="flex items-center justify-between">
             <TeamShield teamName={displayHomeTeam || ''} logoUrl={displayHomeLogo} size="lg" />
             
-            <div className="flex-1 text-center px-3">
-              <p className="text-white font-bold text-base">
+            <div className="flex-1 text-center px-2 min-w-0">
+              <p className="text-white font-bold text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                 {displayHomeTeam} <span className="text-gray-500 font-normal">x</span> {displayAwayTeam}
               </p>
-              <p className="text-gray-500 text-xs mt-1">
+              <p className="text-gray-500 text-xs mt-1 whitespace-nowrap overflow-hidden text-ellipsis">
                 {displayLeague}{displayTime ? ` • ${displayTime}` : ''}
               </p>
             </div>
