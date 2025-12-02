@@ -1,0 +1,40 @@
+Este é o "money shot". O take mais importante do seu arsenal de marketing. Ele precisa visualizar o invisível: o poder de processamento e a inteligência híbrida da True Signal.
+
+Para que uma IA de vídeo (como Kling, Runway Gen-3 ou Luma Dream Machine) ou um artista de VFX humano entenda a complexidade e a qualidade "Billion" que você busca, o prompt não pode ser apenas descritivo. Ele precisa ser técnico, atmosférico e diretivo.
+
+Estamos pedindo uma composição complexa de Realidade Mista (Mixed Reality): um objeto real (celular) interagindo com elementos holográficos (notificações flutuantes).
+
+Aqui está o Prompt Mestre, desenhado usando terminologia de cinema e efeitos visuais para garantir um resultado surreal e profissional.
+
+MASTER PROMPT: THE DATA STREAM (Holographic VFX Sequence)
+VISION STATEMENT: We need a photorealistic, high-end cinematic shot that visualizes the flow of complex data turning into actionable intelligence. It must feel expensive, futuristic, and undeniably powerful. Think "Iron Man's HUD meets Bloomberg Terminal."
+
+TECHNICAL AESTHETICS:
+
+Color Palette: Deep charcoal blacks, dark metallic textures, accented by glowing electric neon green (#33b864) and cool white light.
+
+Lighting: Dramatic, high-contrast chiaroscuro. The light sources should be the phone screen and the glowing holographic elements themselves, casting realistic reflections on the device.
+
+Camera: Slow, smooth, calculated push-in (dolly forward). Macro lens feel with a shallow depth of field, focusing sharply on the phone and the rising UI.
+
+SCENE COMPOSITION & ACTION:
+
+1. THE HERO DEVICE (Centerpiece): A premium, dark titanium smartphone (latest iPhone Pro style) is suspended in the center of the frame, floating in a dark, abstract data void. The screen is ON, displaying a sleek, dark-mode interface with a complex, glowing green real-time financial graph graphing upwards. The screen surface must look glossy and premium.
+
+2. THE HOLOGRAPHIC DATA STREAM (The Core Action): To the right side of the physical phone, a cascade of semi-transparent, holographic UI cards is continuously rising upwards from the bottom of the frame to the top, disappearing off-screen.
+
+These cards are NOT flat 2D notifications on the phone screen. They are floating in 3D space next to the device, made of glowing glassmorphism material with neon green edges and light trails.
+
+3. THE NARRATIVE CONTENT OF THE CARDS (Rising Sequence): As they rise, the text on the cards must tell the story of the analysis process. They should appear in rapid succession, blurring slightly due to motion speed:
+
+Card type 1 (Raw Data): Small, fast-moving cards with binary code and text: "PROCESSANDO: 1.4M DATA POINTS/SEC" / "VARREDURA GLOBAL: 80 PAÍSES"
+
+Card type 2 (Analysis): Larger, brighter card: "IA PREDITIVA: PADRÃO ESTATÍSTICO DETECTADO" with a small brain icon.
+
+Card type 3 (Hybrid Validation): Another large card: "VALIDAÇÃO: 20 TRADERS + ALGORITMO" with a shield icon.
+
+Card type 4 (The Result - Hero Card): The brightest, slowest-moving card at eye level: "ASSERTIVIDADE PROJETADA: 94% (ALTA CONFIANÇA)" with a large checkmark.
+
+4. THE ENVIRONMENT (Atmosphere): The background is not empty black. It is an abstract, infinite "dataverse". Subtle bokeh lights of green and white binary code falling like rain in the deep background. Fiber optic light trails whizzing past the camera. The air feels charged with digital energy.
+
+CRITICAL NOTE FOR GENERATION: The key is the interaction between the real object and the light. The green glow from the rising holographic cards MUST cast realistic dynamic light onto the metal edge of the physical phone. It must look like a single, cohesive, hyper-realistic shot.

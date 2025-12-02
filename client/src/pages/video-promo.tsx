@@ -52,8 +52,16 @@ import matrixGlitch from '@assets/generated_videos/stadium_matrix_wireframe_digi
 import stressedEye from '@assets/generated_videos/stressed_eye_red_screen_frustration_defeat.mp4';
 import luxuryNotif from '@assets/generated_videos/phone_notification_green_luxury_suit_urgent.mp4';
 import serverDoor from '@assets/generated_videos/server_door_closing_access_restricted_vault.mp4';
+import moneyShot from '@assets/generated_videos/money_shot_phone_holographic_cards_dataverse.mp4';
 
 const videos = [
+  { 
+    src: moneyShot, 
+    title: "💰 MONEY SHOT: The Data Stream", 
+    description: "Celular flutuante + cards holográficos - Iron Man HUD",
+    filename: "money_shot_dataverse.mp4",
+    category: "final"
+  },
   { 
     src: warRoom, 
     title: "🏢 WAR ROOM: Equipe Billions Style", 
@@ -481,7 +489,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (25)
+            ⭐ Essencial (26)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
