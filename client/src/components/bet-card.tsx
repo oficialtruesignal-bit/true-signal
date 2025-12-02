@@ -299,6 +299,16 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
   };
 
   const handleMarkResult = async (result: 'green' | 'red') => {
+    // Bloqueia se o bilhete já foi resolvido pelo sistema
+    if (currentStatus !== 'pending') {
+      toast({
+        title: "Bilhete já resolvido",
+        description: `Este bilhete já foi marcado como ${currentStatus === 'green' ? 'GANHOU' : 'PERDEU'}`,
+        variant: "destructive",
+      });
+      return;
+    }
+    
     try {
       await markResult(signal.id, result);
       toast({

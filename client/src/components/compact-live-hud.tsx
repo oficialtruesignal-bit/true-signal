@@ -1,21 +1,36 @@
-import { Scale, Users, TrendingDown, TrendingUp, Shield } from 'lucide-react';
+import { Scale, Users, TrendingDown, TrendingUp, Shield, User } from 'lucide-react';
 import { ProfitTrendChart } from './dashboard/profit-trend-chart';
 import { useTipsStats } from '@/hooks/use-tips-stats';
+import { useUserBets } from '@/hooks/use-user-bets';
+import { useAuth } from '@/hooks/use-auth';
 import { useState, useEffect } from 'react';
 
 export function CompactLiveHud() {
-  // Buscar estatísticas reais dos bilhetes
-  const { data: stats, isLoading } = useTipsStats();
+  const { user } = useAuth();
   
-  // Valores calculados a partir dos bilhetes reais
-  const greens = stats?.greens ?? 0;
-  const reds = stats?.reds ?? 0;
-  const totalEntries = stats?.totalResolved ?? 0;
-  const assertivityValue = stats?.assertivity ?? 0;
-  const averageOdd = stats?.averageOdd ?? 0;
-  const growthPercentage = stats?.growthPercentage ?? 0;
-  const monthName = stats?.monthName ?? 'Dezembro';
-  const monthTotalTips = stats?.monthTotalTips ?? 0;
+  // Estatísticas globais (backup/referência)
+  const { data: globalStats, isLoading: globalLoading } = useTipsStats();
+  
+  // Estatísticas individuais do usuário
+  const { stats: userStats, isLoading: userLoading } = useUserBets();
+  
+  // Verifica se o usuário tem entradas próprias
+  const hasUserBets = userStats && userStats.totalBets > 0;
+  
+  // Se o usuário tem entradas, mostra estatísticas DELE
+  // Senão, mostra estatísticas GLOBAIS da plataforma
+  const greens = hasUserBets ? userStats.greens : (globalStats?.greens ?? 0);
+  const reds = hasUserBets ? userStats.reds : (globalStats?.reds ?? 0);
+  const assertivityValue = hasUserBets ? userStats.assertivity : (globalStats?.assertivity ?? 0);
+  const profit = hasUserBets ? userStats.profit : 0;
+  const monthName = globalStats?.monthName ?? new Date().toLocaleString('pt-BR', { month: 'long' });
+  const totalBets = hasUserBets ? userStats.totalBets : (globalStats?.monthTotalTips ?? 0);
+  
+  // Valores globais para referência
+  const averageOdd = globalStats?.averageOdd ?? 0;
+  const growthPercentage = globalStats?.growthPercentage ?? 0;
+  
+  const isLoading = globalLoading || userLoading;
   
   // Usuários online oscila entre 254-403 com movimento suave
   const [onlineUsers, setOnlineUsers] = useState(330);
@@ -111,8 +126,8 @@ export function CompactLiveHud() {
               >
                 {isLoading ? '--' : `${assertivityValue.toFixed(1)}%`}
               </span>
-              <span className="text-[10px] text-muted-foreground mt-1">
-                Média Dezembro
+              <span className="text-[10px] text-muted-foreground mt-1 text-center">
+                {hasUserBets ? 'Sua Média' : `Média ${monthName}`}
               </span>
             </div>
 
@@ -178,7 +193,7 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* CARD C: GANHOU (dados reais dos bilhetes) */}
+        {/* CARD C: GREENS */}
         <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -189,8 +204,11 @@ export function CompactLiveHud() {
           
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
+              {hasUserBets && <User className="w-3 h-3 text-[#33b864]" />}
               <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhou</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+                {hasUserBets ? 'Seus Greens' : 'Ganhou'}
+              </span>
             </div>
             <span 
               className="text-3xl font-sora font-bold text-[#33b864] z-10"
@@ -202,11 +220,15 @@ export function CompactLiveHud() {
           
           {/* Total de bilhetes do mês */}
           <div className="z-10 border-t border-white/5 pt-2 mt-2">
-            <span className="text-[8px] text-gray-500">{monthTotalTips} bilhetes em {monthName}</span>
+            <span className="text-[8px] text-gray-500">
+              {hasUserBets 
+                ? `${totalBets} entradas em ${monthName}` 
+                : `${totalBets} bilhetes em ${monthName}`}
+            </span>
           </div>
         </div>
 
-        {/* CARD D: PERDIDA (dados reais dos bilhetes) */}
+        {/* CARD D: REDS */}
         <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-red-500/40 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -218,18 +240,29 @@ export function CompactLiveHud() {
           
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
+              {hasUserBets && <User className="w-3 h-3 text-red-500" />}
               <div className="w-1 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdida</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">
+                {hasUserBets ? 'Suas Reds' : 'Perdida'}
+              </span>
             </div>
             <span className="text-3xl font-sora font-bold text-red-500 z-10">
               {isLoading ? '--' : reds}
             </span>
           </div>
           
-          {/* Indicador de proteção */}
+          {/* Lucro/Prejuízo ou proteção */}
           <div className="flex items-center gap-1.5 z-10 border-t border-white/5 pt-2 mt-2">
-            <Shield className="w-3 h-3 text-[#33b864]" />
-            <span className="text-[8px] text-[#33b864]">Proteção de Banca Ativa</span>
+            {hasUserBets ? (
+              <span className={`text-[8px] font-bold ${profit >= 0 ? 'text-[#33b864]' : 'text-red-500'}`}>
+                {profit >= 0 ? '+' : ''}{profit.toFixed(2)} unidades
+              </span>
+            ) : (
+              <>
+                <Shield className="w-3 h-3 text-[#33b864]" />
+                <span className="text-[8px] text-[#33b864]">Proteção de Banca Ativa</span>
+              </>
+            )}
           </div>
         </div>
 

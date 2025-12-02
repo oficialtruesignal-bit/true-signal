@@ -634,6 +634,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "result must be 'green' or 'red'" });
       }
       
+      // Verifica se o usuário já marcou resultado
+      const existingBet = await storage.getUserBetByTip(req.params.userId, req.params.tipId);
+      if (existingBet && existingBet.result !== 'pending') {
+        return res.status(400).json({ 
+          error: "Resultado já marcado", 
+          currentResult: existingBet.result 
+        });
+      }
+      
       const bet = await storage.updateUserBetResult(req.params.userId, req.params.tipId, result);
       if (!bet) {
         return res.status(404).json({ error: "Bet not found" });
