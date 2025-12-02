@@ -34,8 +34,16 @@ import ctaFinal from '@assets/generated_videos/cta_final_5_dias_gratis_end_card.
 import logoOriginal from '@assets/generated_videos/true_signal_shield_pulse_logo_animation.mp4';
 import logoFinal from '@assets/generated_videos/shield_pulse_logo_true_gray_signal_white.mp4';
 import logoBillion from '@assets/generated_videos/elegant_billion_style_logo_true_signal.mp4';
+import greenMatrix from '@assets/generated_videos/matrix_style_professional_green_celebration.mp4';
 
 const videos = [
+  { 
+    src: greenMatrix, 
+    title: "🎬 GREEN MATRIX: Celebração Hollywood", 
+    description: "Vitória elegante estilo Matrix - Meta Ads Ready",
+    filename: "green_matrix_hollywood.mp4",
+    category: "final"
+  },
   { 
     src: logoBillion, 
     title: "🏆 LOGO BILLION: Estilo Premium", 
@@ -337,7 +345,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (7)
+            ⭐ Essencial (8)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
