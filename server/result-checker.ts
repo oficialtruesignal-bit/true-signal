@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { db } from './db';
-import { tips } from '@shared/schema';
-import { eq, and, isNotNull, lt } from 'drizzle-orm';
+import { tips, userBets } from '@shared/schema';
+import { eq, and, isNotNull } from 'drizzle-orm';
+import { resolveMarket, extractMatchData, MatchData } from './market-resolver';
 
 const API_BASE_URL = 'https://v3.football.api-sports.io';
 const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
@@ -10,6 +11,10 @@ interface FixtureResult {
   fixture: {
     id: number;
     status: { short: string; long: string };
+  };
+  teams: {
+    home: { id: number; name: string };
+    away: { id: number; name: string };
   };
   goals: {
     home: number | null;
