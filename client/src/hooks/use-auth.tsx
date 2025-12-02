@@ -47,15 +47,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         loadUserProfile(session.user.id, false, session.user);
       } else {
-        // Check localStorage backup for offline access
+        // Check localStorage backup for offline access (only valid Supabase sessions)
         const storedUser = localStorage.getItem('vantage_user');
         if (storedUser) {
           try {
             const parsed = JSON.parse(storedUser);
-            if (parsed.id && parsed.email) {
+            // Skip test accounts - require real Supabase auth
+            const isTestAccount = parsed.email === 'a@a.com' || parsed.email?.includes('test');
+            if (parsed.id && parsed.email && !isTestAccount) {
               console.log('🔄 [AUTH] Restoring user from localStorage backup');
               loadUserProfile(parsed.id, false, { id: parsed.id, email: parsed.email, user_metadata: { first_name: parsed.firstName } });
               return;
+            } else if (isTestAccount) {
+              console.log('🔒 [AUTH] Clearing test account from localStorage');
+              localStorage.removeItem('vantage_user');
             }
           } catch (e) {
             console.error('Error parsing stored user:', e);
@@ -65,14 +70,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }).catch(() => {
       clearTimeout(loadingTimeout);
-      // On network error, try localStorage backup
+      // On network error, try localStorage backup (only valid Supabase sessions)
       const storedUser = localStorage.getItem('vantage_user');
       if (storedUser) {
         try {
           const parsed = JSON.parse(storedUser);
-          if (parsed.id && parsed.email) {
+          // Skip test accounts - require real Supabase auth
+          const isTestAccount = parsed.email === 'a@a.com' || parsed.email?.includes('test');
+          if (parsed.id && parsed.email && !isTestAccount) {
             loadUserProfile(parsed.id, false, { id: parsed.id, email: parsed.email, user_metadata: { first_name: parsed.firstName } });
             return;
+          } else if (isTestAccount) {
+            console.log('🔒 [AUTH] Clearing test account from localStorage');
+            localStorage.removeItem('vantage_user');
           }
         } catch (e) {
           console.error('Error parsing stored user:', e);
@@ -88,9 +98,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (session?.user) {
         loadUserProfile(session.user.id, false, session.user);
       } else {
-        // Don't clear user immediately if we have localStorage backup
+        // Don't clear user immediately if we have valid localStorage backup (not test accounts)
         const storedUser = localStorage.getItem('vantage_user');
-        if (!storedUser) {
+        if (storedUser) {
+          try {
+            const parsed = JSON.parse(storedUser);
+            const isTestAccount = parsed.email === 'a@a.com' || parsed.email?.includes('test');
+            if (isTestAccount) {
+              console.log('🔒 [AUTH] Clearing test account from localStorage');
+              localStorage.removeItem('vantage_user');
+              setUser(null);
+            }
+          } catch (e) {
+            setUser(null);
+          }
+        } else {
           setUser(null);
         }
         setIsLoading(false);
