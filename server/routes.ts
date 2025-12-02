@@ -1798,6 +1798,43 @@ REGRAS IMPORTANTES:
       const drafts = await aiPredictionEngine.getDraftTickets();
       let approvedCount = 0;
       
+      // Helper to generate analysis summary
+      const generateAnalysisSummary = (draft: any): string => {
+        const confidence = parseFloat(draft.confidence || '0');
+        const probability = parseFloat(draft.probability || '0');
+        const ev = parseFloat(draft.expectedValue || '0');
+        
+        let summary = `Analisando o confronto entre ${draft.homeTeam} e ${draft.awayTeam}, `;
+        
+        if (confidence >= 85) {
+          summary += `percebi que ambos os times apresentam padrões consistentes. `;
+        } else if (confidence >= 75) {
+          summary += `identifiquei tendências interessantes nos últimos jogos. `;
+        } else {
+          summary += `observei alguns indicadores relevantes. `;
+        }
+        
+        summary += `Com base em tudo isso, a probabilidade calculada ficou em ${probability.toFixed(0)}%, `;
+        summary += `o que me dá ${confidence.toFixed(0)}% de confiança. `;
+        
+        if (ev > 0) {
+          summary += `O valor esperado é positivo (+${ev.toFixed(1)}%), indicando vantagem matemática a longo prazo.`;
+        }
+        
+        return summary;
+      };
+      
+      // Helper to extract goals average from team stats JSON
+      const extractGoalsAvg = (statsJson: string | null, field: string = 'goalsScored'): string | null => {
+        if (!statsJson) return null;
+        try {
+          const stats = typeof statsJson === 'string' ? JSON.parse(statsJson) : statsJson;
+          return stats[field]?.toString() || null;
+        } catch {
+          return null;
+        }
+      };
+      
       for (const id of ids) {
         const draft = drafts.find((d: any) => d.id === id);
         if (!draft) continue;
@@ -1809,6 +1846,10 @@ REGRAS IMPORTANTES:
           hour: '2-digit',
           minute: '2-digit'
         });
+        
+        // Extract analysis data
+        const homeGoalsAvg = extractGoalsAvg(draft.homeTeamStats);
+        const awayGoalsAvg = extractGoalsAvg(draft.awayTeamStats);
         
         // Handle combo (multiple legs) vs single bet
         const isCombo = draft.isCombo;
@@ -1825,6 +1866,15 @@ REGRAS IMPORTANTES:
               stake: draft.suggestedStake,
               status: 'pending',
               isLive: false,
+              // AI Analysis fields
+              analysisRationale: draft.analysisRationale,
+              analysisSummary: generateAnalysisSummary(draft),
+              confidence: draft.confidence,
+              probability: draft.probability,
+              expectedValue: draft.expectedValue,
+              homeGoalsAvg: homeGoalsAvg,
+              awayGoalsAvg: awayGoalsAvg,
+              aiSourceId: draft.id,
             };
           } else {
             console.warn(`[Bulk Approve] Skipping invalid combo draft ${id}`);
@@ -1848,6 +1898,15 @@ REGRAS IMPORTANTES:
             isCombo: false,
             totalOdd: null,
             legs: null,
+            // AI Analysis fields
+            analysisRationale: draft.analysisRationale,
+            analysisSummary: generateAnalysisSummary(draft),
+            confidence: draft.confidence,
+            probability: draft.probability,
+            expectedValue: draft.expectedValue,
+            homeGoalsAvg: homeGoalsAvg,
+            awayGoalsAvg: awayGoalsAvg,
+            aiSourceId: draft.id,
           };
         }
         
