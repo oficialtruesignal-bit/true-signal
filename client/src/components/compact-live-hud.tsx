@@ -14,6 +14,8 @@ export function CompactLiveHud() {
   const assertivityValue = stats?.assertivity ?? 0;
   const averageOdd = stats?.averageOdd ?? 0;
   const growthPercentage = stats?.growthPercentage ?? 0;
+  const monthName = stats?.monthName ?? 'Dezembro';
+  const monthTotalTips = stats?.monthTotalTips ?? 0;
   
   // Usuários online oscila entre 254-403 com movimento suave
   const [onlineUsers, setOnlineUsers] = useState(330);
@@ -176,7 +178,7 @@ export function CompactLiveHud() {
           </div>
         </div>
 
-        {/* CARD C: GREENS (dados reais dos bilhetes) */}
+        {/* CARD C: GANHOU (dados reais dos bilhetes) */}
         <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-[#33b864]/50 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -188,7 +190,7 @@ export function CompactLiveHud() {
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
               <div className="w-1 h-3 bg-[#33b864] rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Greens</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Ganhou</span>
             </div>
             <span 
               className="text-3xl font-sora font-bold text-[#33b864] z-10"
@@ -198,13 +200,13 @@ export function CompactLiveHud() {
             </span>
           </div>
           
-          {/* Total de entradas */}
+          {/* Total de bilhetes do mês */}
           <div className="z-10 border-t border-white/5 pt-2 mt-2">
-            <span className="text-[8px] text-gray-500">de {totalEntries} entradas</span>
+            <span className="text-[8px] text-gray-500">{monthTotalTips} bilhetes em {monthName}</span>
           </div>
         </div>
 
-        {/* CARD D: REDS (dados reais dos bilhetes) */}
+        {/* CARD D: PERDIDA (dados reais dos bilhetes) */}
         <div className="h-32 bg-[#1a1a1a] border-2 border-white/10 rounded-2xl p-4 hover:bg-[#1e1e1e] hover:border-red-500/40 transition-all flex flex-col justify-between relative group shadow-xl shadow-black/60 overflow-hidden">
           {/* Textura noise */}
           <div className="absolute inset-0 opacity-[0.02]" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 256 256\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noise\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'4\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noise)\'/%3E%3C/svg%3E")' }} />
@@ -217,7 +219,7 @@ export function CompactLiveHud() {
           <div className="flex flex-col justify-center flex-1">
             <div className="flex items-center gap-2 mb-2 z-10">
               <div className="w-1 h-3 bg-red-500 rounded-full"></div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Reds</span>
+              <span className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Perdida</span>
             </div>
             <span className="text-3xl font-sora font-bold text-red-500 z-10">
               {isLoading ? '--' : reds}
