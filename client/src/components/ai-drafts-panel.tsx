@@ -422,7 +422,7 @@ export function AiDraftsPanel() {
       )}
 
       {/* Confidence Explanation Card - Mobile Optimized */}
-      <div className="bg-gradient-to-r from-primary/10 via-green-500/5 to-blue-500/10 border border-primary/20 rounded-xl p-3 sm:p-4">
+      <div className="bg-gradient-to-r from-primary/10 via-green-500/5 to-blue-500/10 border-2 border-[#33b864]/40 rounded-2xl p-3 sm:p-4 shadow-lg shadow-[#33b864]/10">
         <div className="flex items-center gap-2 mb-2">
           <Target className="w-4 h-4 text-primary flex-shrink-0" />
           <h4 className="font-bold text-white text-xs sm:text-sm">O que significa a % de Confiança?</h4>
@@ -447,7 +447,7 @@ export function AiDraftsPanel() {
       </div>
 
       {/* Analysis Controls */}
-      <div className="bg-card border border-primary/20 rounded-xl p-6">
+      <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl p-6 shadow-lg shadow-[#33b864]/10">
         <div className="flex flex-col md:flex-row items-center gap-4">
           <div className="flex items-center gap-2">
             <Calendar className="w-5 h-5 text-primary" />
@@ -505,7 +505,7 @@ export function AiDraftsPanel() {
       </div>
 
       {/* Drafts List */}
-      <div className="bg-card border border-primary/20 rounded-xl overflow-hidden">
+      <div className="bg-card border-2 border-[#33b864]/40 rounded-2xl overflow-hidden shadow-lg shadow-[#33b864]/10">
         <div className="p-4 border-b border-primary/10 bg-gradient-to-r from-primary/10 to-transparent flex justify-between items-center">
           <h3 className="font-bold text-white flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-primary" />
