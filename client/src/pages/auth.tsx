@@ -25,7 +25,7 @@ import {
 // Validation Schemas
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
-  password: z.string().min(6, "A senha deve ter no mínimo 6 caracteres"),
+  password: z.string().min(1, "Senha obrigatória"),
 });
 
 const registerSchema = z.object({
