@@ -1,5 +1,5 @@
 import { Signal } from "@/lib/mock-data";
-import { Copy, Users, Pencil, Trash2, Heart, Brain, TrendingUp, Info, ChevronDown, ChevronUp, Check, X } from "lucide-react";
+import { Copy, Users, Pencil, Trash2, Heart, Brain, TrendingUp, Info, ChevronDown, ChevronUp, Check, X, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { getTeamLogo } from "@/lib/team-logos";
@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { tipsService } from "@/lib/tips-service";
 import { useFavorites } from "@/hooks/use-favorites";
 import { useUserBets } from "@/hooks/use-user-bets";
+import { TipAnalysisModal } from "@/components/tip-analysis-modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -782,10 +783,29 @@ export function BetCard({ signal, onDelete, unitValue }: BetCardProps) {
                 </p>
               </div>
               
-              {/* Assinatura */}
-              <div className="mt-3 flex items-center gap-2">
-                <span className="text-[10px] text-gray-500">Análise por</span>
-                <span className="text-[10px] font-bold text-purple-400">TRUE SIGNAL IA</span>
+              {/* Assinatura e botão Ver Análise Completa */}
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-gray-500">Análise por</span>
+                  <span className="text-[10px] font-bold text-purple-400">TRUE SIGNAL IA</span>
+                </div>
+                
+                {signal.fixtureId && (
+                  <TipAnalysisModal
+                    tipId={signal.id}
+                    homeTeam={signal.homeTeam}
+                    awayTeam={signal.awayTeam}
+                    trigger={
+                      <button 
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-500/20 hover:bg-purple-500/30 border border-purple-500/30 transition-colors"
+                        data-testid={`btn-full-analysis-${signal.id}`}
+                      >
+                        <BarChart3 className="w-3 h-3 text-purple-400" />
+                        <span className="text-[10px] font-medium text-purple-300">Ver Análise</span>
+                      </button>
+                    }
+                  />
+                )}
               </div>
             </div>
           </div>
