@@ -54,8 +54,16 @@ import luxuryNotif from '@assets/generated_videos/phone_notification_green_luxur
 import serverDoor from '@assets/generated_videos/server_door_closing_access_restricted_vault.mp4';
 import moneyShot from '@assets/generated_videos/money_shot_phone_holographic_cards_dataverse.mp4';
 import moneyShotV2 from '@assets/generated_videos/phone_holographic_cards_with_stats_content.mp4';
+import notifSequence from '@assets/generated_videos/notifications_emerging_from_phone_one_by_one.mp4';
 
 const videos = [
+  { 
+    src: notifSequence, 
+    title: "💰 MONEY SHOT V3: Notificações Saindo", 
+    description: "Cards emergindo um por um do celular com conteúdo",
+    filename: "money_shot_v3_sequence.mp4",
+    category: "final"
+  },
   { 
     src: moneyShotV2, 
     title: "💰 MONEY SHOT V2: Cards com Conteúdo", 
@@ -497,7 +505,7 @@ export default function VideoPromoPage() {
             className={filter === 'final' ? 'bg-green-500 text-black' : 'border-white/20 text-white'}
             size="sm"
           >
-            ⭐ Essencial (27)
+            ⭐ Essencial (28)
           </Button>
           <Button
             onClick={() => { setFilter('roteiro'); setSelectedVideo(0); }}
