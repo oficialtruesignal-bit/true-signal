@@ -653,12 +653,12 @@ class AIPredictionEngine {
     bet365Odds: Record<string, Record<string, number>> | null = null
   ): PredictionResult[] {
     const predictions: PredictionResult[] = [];
-    const CONFIDENCE_THRESHOLD = 75; // Abaixado de 80 para 75 - mais jogos
-    const MIN_EV_THRESHOLD = 0; // Só aceitar EV >= 0 (positivo ou neutro)
-    const SAFETY_MARGIN_SHOTS = 0.60;
-    const SAFETY_MARGIN_CORNERS = 0.55;
-    const SAFETY_MARGIN_CARDS = 0.50;
-    const SAFETY_MARGIN_GOALS = 0.65;
+    const CONFIDENCE_THRESHOLD = 70; // Reduzido para gerar mais bilhetes (6-8/dia)
+    const MIN_EV_THRESHOLD = -2; // Aceitar EV levemente negativo para mais opções
+    const SAFETY_MARGIN_SHOTS = 0.55; // Menos conservador
+    const SAFETY_MARGIN_CORNERS = 0.50;
+    const SAFETY_MARGIN_CARDS = 0.45;
+    const SAFETY_MARGIN_GOALS = 0.60;
     
     // Helper para calcular EV real
     const calculateEV = (probability: number, odd: number): number => {
@@ -1135,10 +1135,10 @@ class AIPredictionEngine {
     
     const predictions = this.generatePredictions(homeStats, awayStats, h2hAnalysis, bet365Odds);
     
-    // Filtrar previsões com alta confiança (>= 85%)
-    const highConfPredictions = predictions.filter(p => p.confidence >= 75 && p.suggestedOdd >= 1.35);
+    // Filtrar previsões com alta confiança (>= 70%) e odd mínima 1.30
+    const highConfPredictions = predictions.filter(p => p.confidence >= 70 && p.suggestedOdd >= 1.30);
     
-    // Se tiver 2+ linhas de alta confiança, criar bilhete combinado do mesmo jogo
+    // PRIORIZAR COMBOS: Se tiver 2+ linhas de alta confiança, criar bilhete combinado
     if (highConfPredictions.length >= 2) {
       // Ordenar por confiança e pegar até 4 linhas
       highConfPredictions.sort((a, b) => b.confidence - a.confidence);
@@ -1205,18 +1205,18 @@ class AIPredictionEngine {
       console.log(`[AI Engine] Legs: ${legs.map(l => `${l.market} @${l.odd} (${l.probability.toFixed(0)}%)`).join(' | ')}`);
     }
     
-    // Criar entradas simples APENAS para previsões de alta confiança que NÃO estão no combo
-    // Isso evita duplicação e garante que só mostramos o melhor conteúdo
+    // Criar entradas simples APENAS quando NÃO há combo suficiente
+    // Prioridade: COMBO > SINGLE - queremos mais combos multi-linhas
     const usedInCombo = new Set(highConfPredictions.slice(0, 4).map(p => `${p.market}_${p.predictedOutcome}`));
     
     for (const prediction of predictions) {
       // Só criar simples se:
       // 1. Não tem combo para este jogo (< 2 previsões de alta confiança)
-      // 2. OU é uma previsão de confiança muito alta (>= 90%) que não está no combo
+      // 2. OU é uma previsão de confiança MUITO alta (>= 88%) que vale sozinha
       const isInCombo = usedInCombo.has(`${prediction.market}_${prediction.predictedOutcome}`);
       const shouldCreateSingle = (
-        (highConfPredictions.length < 2 && prediction.confidence >= 75 && prediction.suggestedOdd >= 1.35) ||
-        (prediction.confidence >= 85 && prediction.suggestedOdd >= 1.35 && !isInCombo)
+        (highConfPredictions.length < 2 && prediction.confidence >= 70 && prediction.suggestedOdd >= 1.30) ||
+        (prediction.confidence >= 88 && prediction.suggestedOdd >= 1.40 && !isInCombo)
       );
       
       if (shouldCreateSingle) {
