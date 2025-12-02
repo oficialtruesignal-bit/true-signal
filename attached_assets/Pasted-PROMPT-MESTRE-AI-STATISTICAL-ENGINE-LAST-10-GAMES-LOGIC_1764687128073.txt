@@ -1,0 +1,59 @@
+PROMPT MESTRE: AI STATISTICAL ENGINE (LAST 10 GAMES LOGIC)
+ROLE: Senior Data Scientist & Backend Engineer.
+
+TASK: Implementar o algoritmo de "Pattern Recognition" (Reconhecimento de Padrões) no Scanner da aplicação. OBJETIVO: O sistema não deve sugerir jogos aleatórios. Ele deve analisar estatisticamente os últimos 10 jogos de cada time para encontrar tendências matemáticas com alta probabilidade.
+
+1. LÓGICA DO ALGORITMO ("THE 10-GAME RULE")
+Crie uma função analyzeMatchOpportunity(matchId) que execute os seguintes passos:
+
+Passo A: Coleta de Dados (Data Mining)
+Para cada jogo da lista de "Hoje", faça uma requisição à API para buscar o Histórico Recente (Form).
+
+Recupere os últimos 10 jogos do Time da Casa (Home) e os últimos 10 jogos do Time Visitante (Away).
+
+Passo B: A Matriz de Verificação (Pattern Matching)
+O sistema deve testar automaticamente as seguintes teses (Mercados) nesses 20 jogos históricos:
+
+Over 1.5 Gols: Aconteceu em >80% dos jogos somados?
+
+Over 2.5 Gols: Aconteceu em >70% dos jogos?
+
+Ambas Marcam (BTTS): Aconteceu em >75% dos jogos?
+
+Escanteios (Over 8.5): A média somada dos times é superior a 9.5?
+
+Vitória/Derrota: O time da casa venceu 8 dos últimos 10 em casa? (Favorito Forte).
+
+Passo C: O Cálculo de Probabilidade (Score)
+Para cada mercado testado, gere uma pontuação: Probabilidade = (Ocorrências / Total de Jogos Analisados) * 100
+
+Exemplo: Se em 20 jogos analisados, 18 tiveram "Mais de 1.5 Gols", a probabilidade é 90%.
+
+Passo D: O Filtro de Qualidade (The Gatekeeper)
+Regra de Ouro: Se a Probabilidade calculada for menor que 80%, descarte o sinal.
+
+Se for maior que 80%, gere o objeto Opportunity para o Frontend.
+
+2. INTEGRAÇÃO NO ADMIN (SUGESTÃO AUTOMÁTICA)
+No painel de "Criar Tip" (Admin), adicione um botão: "🤖 ANALISAR OPORTUNIDADES DO DIA".
+
+Ao clicar, o sistema roda esse algoritmo em background.
+
+Retorna uma lista de "Sinais Pré-Processados" para o Admin aprovar.
+
+Exibição:
+
+Jogo: Arsenal x Chelsea.
+
+Padrão Encontrado: Over 2.5 Gols.
+
+Dados: "Bateu em 80% dos últimos 10 jogos".
+
+Botão: "Criar Bilhete com 1 Clique".
+
+3. OTIMIZAÇÃO DE API
+Atenção: Buscar histórico de todos os jogos consome muitas requisições.
+
+Solução: Limite a análise apenas às Ligas Principais (Premier League, La Liga, Brasileirão, Bundesliga, Serie A) para economizar recursos e garantir liquidez.
+
+COMANDO: Implemente essa lógica de Backend. A IA deve parar de "achar" e começar a "provar" matematicamente por que aquele bilhete é bom.
