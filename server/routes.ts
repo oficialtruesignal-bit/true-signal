@@ -375,6 +375,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Email e senha são obrigatórios" });
       }
 
+      // DEV TEST LOGIN - REMOVER ANTES DE PRODUÇÃO
+      if (email === 'a@a.com' && password === '1') {
+        console.log(`[AUTH PROXY] DEV TEST LOGIN for a@a.com`);
+        const testProfile = await storage.getProfileByEmail('a@a.com');
+        if (testProfile) {
+          return res.json({
+            user: {
+              id: testProfile.id,
+              email: testProfile.email,
+              user_metadata: { first_name: testProfile.firstName }
+            },
+            access_token: 'dev-test-token',
+            refresh_token: 'dev-test-refresh'
+          });
+        }
+      }
+
       if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
         console.error("[AUTH PROXY] Supabase credentials not configured");
         return res.status(500).json({ error: "Serviço de autenticação não configurado" });
