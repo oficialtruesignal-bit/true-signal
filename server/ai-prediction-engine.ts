@@ -2346,6 +2346,269 @@ class AIPredictionEngine {
     
     return recommendation;
   }
+
+  /**
+   * PATTERN SCANNER - Analisa os últimos 10 jogos para encontrar padrões com >= 80% probabilidade
+   * Implementa "The 10-Game Rule" para sugestões matemáticas
+   */
+  async scanDailyOpportunities(date?: string): Promise<PatternOpportunity[]> {
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    console.log(`[Pattern Scanner] Scanning opportunities for ${targetDate}...`);
+    
+    const PRIORITY_LEAGUES = [39, 140, 135, 78, 61, 71, 2, 3, 94, 88, 128, 13]; // Top leagues
+    const PATTERN_THRESHOLD = 80; // Minimum 80% to create opportunity
+    
+    const opportunities: PatternOpportunity[] = [];
+    
+    try {
+      // Buscar jogos do dia nas ligas prioritárias
+      const response = await axios.get(`${API_BASE_URL}/fixtures`, {
+        params: { date: targetDate },
+        headers: this.apiHeaders
+      });
+      
+      const allFixtures: FixtureData[] = response.data.response || [];
+      const priorityFixtures = allFixtures.filter(f => PRIORITY_LEAGUES.includes(f.league.id));
+      
+      console.log(`[Pattern Scanner] Found ${priorityFixtures.length} fixtures in priority leagues`);
+      
+      for (const fixture of priorityFixtures.slice(0, 15)) {
+        try {
+          const homeTeamId = fixture.teams.home.id;
+          const awayTeamId = fixture.teams.away.id;
+          
+          // Buscar últimos 10 jogos de cada time
+          const [homeFixtures, awayFixtures] = await Promise.all([
+            this.fetchTeamLastMatches(homeTeamId, 10),
+            this.fetchTeamLastMatches(awayTeamId, 10)
+          ]);
+          
+          if (homeFixtures.length < 5 || awayFixtures.length < 5) continue;
+          
+          // Calcular estatísticas
+          const homeStats = this.calculateTeamStats(homeFixtures, homeTeamId);
+          const awayStats = this.calculateTeamStats(awayFixtures, awayTeamId);
+          
+          // PATTERN MATCHING - Testar cada mercado
+          const patterns = this.detectPatterns(homeStats, awayStats, PATTERN_THRESHOLD);
+          
+          for (const pattern of patterns) {
+            opportunities.push({
+              fixtureId: String(fixture.fixture.id),
+              homeTeam: fixture.teams.home.name,
+              awayTeam: fixture.teams.away.name,
+              homeTeamLogo: fixture.teams.home.logo,
+              awayTeamLogo: fixture.teams.away.logo,
+              league: fixture.league.name,
+              leagueId: String(fixture.league.id),
+              matchTime: fixture.fixture.date,
+              pattern: pattern.market,
+              patternDescription: pattern.description,
+              probability: pattern.probability,
+              occurrences: pattern.occurrences,
+              totalGames: pattern.totalGames,
+              suggestedOdd: pattern.suggestedOdd,
+              rationale: pattern.rationale,
+              homeStats: {
+                matchesAnalyzed: homeStats.matchesAnalyzed,
+                over15Pct: homeStats.over15Pct,
+                over25Pct: homeStats.over25Pct,
+                bttsPct: homeStats.bttsPct,
+                avgCorners: homeStats.avgCorners
+              },
+              awayStats: {
+                matchesAnalyzed: awayStats.matchesAnalyzed,
+                over15Pct: awayStats.over15Pct,
+                over25Pct: awayStats.over25Pct,
+                bttsPct: awayStats.bttsPct,
+                avgCorners: awayStats.avgCorners
+              }
+            });
+          }
+          
+          // Rate limit
+          await new Promise(r => setTimeout(r, 200));
+          
+        } catch (error) {
+          console.error(`[Pattern Scanner] Error analyzing fixture ${fixture.fixture.id}:`, error);
+        }
+      }
+      
+      // Ordenar por probabilidade (maior primeiro)
+      opportunities.sort((a, b) => b.probability - a.probability);
+      
+      console.log(`[Pattern Scanner] Found ${opportunities.length} opportunities with >= ${PATTERN_THRESHOLD}% probability`);
+      
+      return opportunities;
+      
+    } catch (error) {
+      console.error('[Pattern Scanner] Error:', error);
+      return [];
+    }
+  }
+  
+  /**
+   * Detecta padrões estatísticos nos últimos 10 jogos
+   */
+  private detectPatterns(homeStats: TeamStats, awayStats: TeamStats, threshold: number): DetectedPattern[] {
+    const patterns: DetectedPattern[] = [];
+    const totalGames = homeStats.matchesAnalyzed + awayStats.matchesAnalyzed;
+    
+    // OVER 1.5 GOLS - Precisa de >80% nos jogos combinados
+    const over15Combined = (homeStats.over15Pct + awayStats.over15Pct) / 2;
+    if (over15Combined >= threshold) {
+      patterns.push({
+        market: 'Over 1.5 Gols FT',
+        description: 'Pelo menos 2 gols na partida',
+        probability: over15Combined,
+        occurrences: Math.round((over15Combined / 100) * totalGames),
+        totalGames,
+        suggestedOdd: 1.30,
+        rationale: [
+          `${homeStats.teamName}: Over 1.5 em ${homeStats.over15Pct.toFixed(0)}% dos jogos`,
+          `${awayStats.teamName}: Over 1.5 em ${awayStats.over15Pct.toFixed(0)}% dos jogos`,
+          `Padrão detectado em ${over15Combined.toFixed(0)}% dos ${totalGames} jogos analisados`
+        ]
+      });
+    }
+    
+    // OVER 2.5 GOLS - Precisa de >70% (ajustado para mais oportunidades)
+    const over25Combined = (homeStats.over25Pct + awayStats.over25Pct) / 2;
+    if (over25Combined >= threshold - 10) {
+      patterns.push({
+        market: 'Over 2.5 Gols FT',
+        description: 'Pelo menos 3 gols na partida',
+        probability: over25Combined,
+        occurrences: Math.round((over25Combined / 100) * totalGames),
+        totalGames,
+        suggestedOdd: 1.65,
+        rationale: [
+          `${homeStats.teamName}: Over 2.5 em ${homeStats.over25Pct.toFixed(0)}% dos jogos`,
+          `${awayStats.teamName}: Over 2.5 em ${awayStats.over25Pct.toFixed(0)}% dos jogos`,
+          `Padrão detectado em ${over25Combined.toFixed(0)}% dos ${totalGames} jogos analisados`
+        ]
+      });
+    }
+    
+    // BTTS (Ambas Marcam) - Precisa de >75%
+    const bttsCombinad = (homeStats.bttsPct + awayStats.bttsPct) / 2;
+    if (bttsCombinad >= threshold - 5) {
+      patterns.push({
+        market: 'Ambas Marcam',
+        description: 'Sim - Ambos times marcam',
+        probability: bttsCombinad,
+        occurrences: Math.round((bttsCombinad / 100) * totalGames),
+        totalGames,
+        suggestedOdd: 1.75,
+        rationale: [
+          `${homeStats.teamName}: BTTS em ${homeStats.bttsPct.toFixed(0)}% dos jogos`,
+          `${awayStats.teamName}: BTTS em ${awayStats.bttsPct.toFixed(0)}% dos jogos`,
+          `Padrão detectado em ${bttsCombinad.toFixed(0)}% dos ${totalGames} jogos analisados`
+        ]
+      });
+    }
+    
+    // ESCANTEIOS OVER 8.5 - Média combinada > 9.5
+    const avgCornersTotal = homeStats.avgCorners + awayStats.avgCorners;
+    if (avgCornersTotal >= 9.5) {
+      const cornersProb = Math.min(85, 50 + (avgCornersTotal - 9.5) * 10);
+      if (cornersProb >= threshold - 10) {
+        patterns.push({
+          market: 'Over 8.5 Escanteios',
+          description: 'Pelo menos 9 escanteios na partida',
+          probability: cornersProb,
+          occurrences: Math.round((cornersProb / 100) * totalGames),
+          totalGames,
+          suggestedOdd: 1.85,
+          rationale: [
+            `${homeStats.teamName}: média de ${homeStats.avgCorners.toFixed(1)} escanteios/jogo`,
+            `${awayStats.teamName}: média de ${awayStats.avgCorners.toFixed(1)} escanteios/jogo`,
+            `Média combinada: ${avgCornersTotal.toFixed(1)} escanteios`
+          ]
+        });
+      }
+    }
+    
+    // GOL NO 1º TEMPO - Ambos times marcam no primeiro tempo
+    const htGoalsProb = (homeStats.goalsFirstHalfOver05Pct + awayStats.goalsFirstHalfOver05Pct) / 2;
+    if (htGoalsProb >= threshold) {
+      patterns.push({
+        market: 'Over 0.5 Gols HT',
+        description: 'Pelo menos 1 gol no 1º tempo',
+        probability: htGoalsProb,
+        occurrences: Math.round((htGoalsProb / 100) * totalGames),
+        totalGames,
+        suggestedOdd: 1.35,
+        rationale: [
+          `${homeStats.teamName}: Gol no 1ºT em ${homeStats.goalsFirstHalfOver05Pct.toFixed(0)}% dos jogos`,
+          `${awayStats.teamName}: Gol no 1ºT em ${awayStats.goalsFirstHalfOver05Pct.toFixed(0)}% dos jogos`,
+          `Padrão detectado em ${htGoalsProb.toFixed(0)}% dos jogos`
+        ]
+      });
+    }
+    
+    // CARTÕES - Ambos times recebem cartão
+    if (homeStats.bothTeamsCardPct >= threshold - 10 && awayStats.bothTeamsCardPct >= threshold - 10) {
+      const cardsProb = (homeStats.bothTeamsCardPct + awayStats.bothTeamsCardPct) / 2;
+      patterns.push({
+        market: 'Ambas Recebem Cartão',
+        description: 'Sim - Ambos times recebem cartão',
+        probability: cardsProb,
+        occurrences: Math.round((cardsProb / 100) * totalGames),
+        totalGames,
+        suggestedOdd: 1.40,
+        rationale: [
+          `${homeStats.teamName}: Ambos c/ cartão em ${homeStats.bothTeamsCardPct.toFixed(0)}% dos jogos`,
+          `${awayStats.teamName}: Ambos c/ cartão em ${awayStats.bothTeamsCardPct.toFixed(0)}% dos jogos`,
+          `Padrão detectado em ${cardsProb.toFixed(0)}% dos jogos`
+        ]
+      });
+    }
+    
+    return patterns;
+  }
+}
+
+interface PatternOpportunity {
+  fixtureId: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo: string;
+  awayTeamLogo: string;
+  league: string;
+  leagueId: string;
+  matchTime: string;
+  pattern: string;
+  patternDescription: string;
+  probability: number;
+  occurrences: number;
+  totalGames: number;
+  suggestedOdd: number;
+  rationale: string[];
+  homeStats: {
+    matchesAnalyzed: number;
+    over15Pct: number;
+    over25Pct: number;
+    bttsPct: number;
+    avgCorners: number;
+  };
+  awayStats: {
+    matchesAnalyzed: number;
+    over15Pct: number;
+    over25Pct: number;
+    bttsPct: number;
+    avgCorners: number;
+  };
+}
+
+interface DetectedPattern {
+  market: string;
+  description: string;
+  probability: number;
+  occurrences: number;
+  totalGames: number;
+  suggestedOdd: number;
+  rationale: string[];
 }
 
 export const aiPredictionEngine = new AIPredictionEngine();

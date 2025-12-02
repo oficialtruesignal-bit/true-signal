@@ -2063,6 +2063,31 @@ REGRAS IMPORTANTES:
   });
 
   // =====================================================
+  // PATTERN SCANNER - Análise de Padrões com Regra dos 10 Jogos
+  // =====================================================
+
+  app.get("/api/ai/pattern-scanner", async (req, res) => {
+    try {
+      const date = req.query.date as string || new Date().toISOString().split('T')[0];
+      
+      console.log(`[Pattern Scanner] Requisição para oportunidades em ${date}`);
+      
+      const opportunities = await aiPredictionEngine.scanDailyOpportunities(date);
+      
+      return res.json({
+        success: true,
+        date,
+        totalOpportunities: opportunities.length,
+        threshold: 80,
+        opportunities
+      });
+    } catch (error: any) {
+      console.error("[Pattern Scanner] Error:", error);
+      return res.status(500).json({ error: "Erro ao escanear padrões" });
+    }
+  });
+
+  // =====================================================
   // LIVE PRESSURE MONITOR ENDPOINTS
   // =====================================================
 
