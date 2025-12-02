@@ -1683,7 +1683,7 @@ REGRAS IMPORTANTES:
       const numericExpectedValue = safeParseFloat(draft.expectedValue);
       const numericHomeGoalsAvg = safeParseFloat(homeGoalsAvg);
       const numericAwayGoalsAvg = safeParseFloat(awayGoalsAvg);
-      const numericStake = safeParseFloat(adjustedStake || draft.suggestedStake) || 2.0;
+      const numericStake = safeParseFloat(adjustedStake || draft.suggestedStake) || 1.0;
       const numericOdd = safeParseFloat(adjustedOdd || draft.suggestedOdd) || 1.5;
       
       console.log(`[AI Approve] Converting fields - confidence: ${draft.confidence} -> ${numericConfidence}, EV: ${draft.expectedValue} -> ${numericExpectedValue}, homeGoals: ${homeGoalsAvg} -> ${numericHomeGoalsAvg}`);
@@ -1908,7 +1908,7 @@ REGRAS IMPORTANTES:
         const numericExpectedValue = safeParseFloat(draft.expectedValue);
         const numericHomeGoalsAvg = safeParseFloat(homeGoalsAvg);
         const numericAwayGoalsAvg = safeParseFloat(awayGoalsAvg);
-        const numericStake = safeParseFloat(draft.suggestedStake) || 2.0;
+        const numericStake = safeParseFloat(draft.suggestedStake) || 1.0;
         const numericOdd = safeParseFloat(draft.suggestedOdd) || 1.5;
         
         console.log(`[Bulk Approve] ${draft.homeTeam} vs ${draft.awayTeam} - confidence: ${numericConfidence}, EV: ${numericExpectedValue}, homeGoals: ${numericHomeGoalsAvg}`);
