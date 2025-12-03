@@ -401,7 +401,6 @@ class ElitePredictionEngine {
   }
 
   private async analyzeTeam(teamId: number, matches: any[], leagueId: number, season: number): Promise<TeamStats> {
-    const teamStats = await this.fetchTeamStatistics(teamId, leagueId, season);
     const teamName = matches[0]?.teams?.home?.id === teamId 
       ? matches[0]?.teams?.home?.name 
       : matches[0]?.teams?.away?.name || 'Unknown';
@@ -413,10 +412,17 @@ class ElitePredictionEngine {
     let cleanSheets = 0, failedToScore = 0;
     let corners = 0, cornersAgainst = 0;
     let cards = 0, cardsAgainst = 0;
-    let fouls = 0, shots = 0, shotsOnTarget = 0;
+    let fouls = 0, foulsAgainst = 0;
+    let shots = 0, shotsOnTarget = 0;
     let homeGames = 0, awayGames = 0;
+    let matchesWithStats = 0;
 
-    for (const match of matches) {
+    const fixtureIds = matches.slice(0, 8).map(m => m.fixture.id);
+    const statsPromises = fixtureIds.map(id => this.fetchFixtureStatistics(id));
+    const allStats = await Promise.all(statsPromises);
+
+    for (let i = 0; i < matches.length; i++) {
+      const match = matches[i];
       const isHome = match.teams.home.id === teamId;
       const teamGoals = isHome ? (match.goals.home ?? 0) : (match.goals.away ?? 0);
       const oppGoals = isHome ? (match.goals.away ?? 0) : (match.goals.home ?? 0);
@@ -443,9 +449,33 @@ class ElitePredictionEngine {
       if (htHome + htAway > 0) goalsHT++;
       if (oppGoals === 0) cleanSheets++;
       if (teamGoals === 0) failedToScore++;
+
+      if (i < allStats.length && allStats[i] && allStats[i].length >= 2) {
+        matchesWithStats++;
+        const teamStatsIdx = isHome ? 0 : 1;
+        const oppStatsIdx = isHome ? 1 : 0;
+        const teamMatchStats = allStats[i][teamStatsIdx]?.statistics || [];
+        const oppMatchStats = allStats[i][oppStatsIdx]?.statistics || [];
+
+        const getStat = (stats: any[], name: string): number => {
+          const stat = stats.find((s: any) => s.type === name);
+          if (!stat || stat.value === null) return 0;
+          return typeof stat.value === 'string' ? parseInt(stat.value) || 0 : stat.value || 0;
+        };
+
+        corners += getStat(teamMatchStats, 'Corner Kicks');
+        cornersAgainst += getStat(oppMatchStats, 'Corner Kicks');
+        cards += getStat(teamMatchStats, 'Yellow Cards') + getStat(teamMatchStats, 'Red Cards');
+        cardsAgainst += getStat(oppMatchStats, 'Yellow Cards') + getStat(oppMatchStats, 'Red Cards');
+        fouls += getStat(teamMatchStats, 'Fouls');
+        foulsAgainst += getStat(oppMatchStats, 'Fouls');
+        shots += getStat(teamMatchStats, 'Total Shots');
+        shotsOnTarget += getStat(teamMatchStats, 'Shots on Goal');
+      }
     }
 
     const n = matches.length || 1;
+    const statsN = matchesWithStats || 1;
     const form = this.calculateFormPoints(matches, teamId);
 
     let position = 0, leagueSize = 0;
@@ -458,37 +488,35 @@ class ElitePredictionEngine {
       }
     } catch {}
 
-    const xG = teamStats?.goals?.for?.average?.total 
-      ? parseFloat(teamStats.goals.for.average.total) 
-      : goalsScored / n;
-    const xGA = teamStats?.goals?.against?.average?.total 
-      ? parseFloat(teamStats.goals.against.average.total) 
-      : goalsConceded / n;
+    const avgGoalsScoredCalc = goalsScored / n;
+    const avgGoalsConcededCalc = goalsConceded / n;
+
+    console.log(`[ELITE STATS] ${teamName}: ${cards}/${statsN} cartões (${(cards/statsN).toFixed(1)}/jogo), ${corners}/${statsN} cantos (${(corners/statsN).toFixed(1)}/jogo), ${shots}/${statsN} chutes (${(shots/statsN).toFixed(1)}/jogo)`);
 
     return {
       teamId,
       teamName,
-      avgGoalsScored: goalsScored / n,
-      avgGoalsConceded: goalsConceded / n,
-      avgGoalsScoredHome: homeGames > 0 ? goalsScoredHome / homeGames : goalsScored / n,
-      avgGoalsConcededHome: homeGames > 0 ? goalsConcededHome / homeGames : goalsConceded / n,
-      avgGoalsScoredAway: awayGames > 0 ? goalsScoredAway / awayGames : goalsScored / n,
-      avgGoalsConcededAway: awayGames > 0 ? goalsConcededAway / awayGames : goalsConceded / n,
-      xG,
-      xGA,
+      avgGoalsScored: avgGoalsScoredCalc,
+      avgGoalsConceded: avgGoalsConcededCalc,
+      avgGoalsScoredHome: homeGames > 0 ? goalsScoredHome / homeGames : avgGoalsScoredCalc,
+      avgGoalsConcededHome: homeGames > 0 ? goalsConcededHome / homeGames : avgGoalsConcededCalc,
+      avgGoalsScoredAway: awayGames > 0 ? goalsScoredAway / awayGames : avgGoalsScoredCalc,
+      avgGoalsConcededAway: awayGames > 0 ? goalsConcededAway / awayGames : avgGoalsConcededCalc,
+      xG: avgGoalsScoredCalc,
+      xGA: avgGoalsConcededCalc,
       over15Rate: (over15 / n) * 100,
       over25Rate: (over25 / n) * 100,
       bttsRate: (btts / n) * 100,
       goalsHTRate: (goalsHT / n) * 100,
       cleanSheetRate: (cleanSheets / n) * 100,
       failedToScoreRate: (failedToScore / n) * 100,
-      avgCorners: teamStats?.corners?.for?.average?.total ? parseFloat(teamStats.corners.for.average.total) : 5,
-      avgCornersAgainst: teamStats?.corners?.against?.average?.total ? parseFloat(teamStats.corners.against.average.total) : 5,
-      avgCards: teamStats?.cards?.yellow ? Object.values(teamStats.cards.yellow as Record<string, any>).reduce((a: number, b: any) => a + (b?.total || 0), 0) / n : 1.8,
-      avgCardsAgainst: 1.8,
-      avgFouls: teamStats?.fouls?.for?.average?.total ? parseFloat(teamStats.fouls.for.average.total) : 12,
-      avgShots: teamStats?.shots?.for?.average?.total ? parseFloat(teamStats.shots.for.average.total) : 12,
-      avgShotsOnTarget: teamStats?.shots?.for?.average?.on ? parseFloat(teamStats.shots.for.average.on) : 4,
+      avgCorners: corners / statsN,
+      avgCornersAgainst: cornersAgainst / statsN,
+      avgCards: cards / statsN,
+      avgCardsAgainst: cardsAgainst / statsN,
+      avgFouls: fouls / statsN,
+      avgShots: shots / statsN,
+      avgShotsOnTarget: shotsOnTarget / statsN,
       formLast5: form.formString,
       formPoints: form.points,
       winStreak: form.streak.winStreak,
@@ -785,57 +813,86 @@ class ElitePredictionEngine {
       }
     }
 
-    const projectedCorners = homeStats.avgCorners + awayStats.avgCornersAgainst;
-    if (projectedCorners >= 9.0 && homeStats.avgCorners >= 4) {
-      const cornerLine = Math.floor(projectedCorners - 1.5);
-      const cornerProb = 65 + (projectedCorners - 10.5) * 5;
+    const projectedCorners = homeStats.avgCorners + awayStats.avgCorners;
+    console.log(`[ELITE CORNERS] ${homeStats.teamName}: ${homeStats.avgCorners.toFixed(1)} + ${awayStats.teamName}: ${awayStats.avgCorners.toFixed(1)} = ${projectedCorners.toFixed(1)} cantos projetados`);
+    
+    if (projectedCorners >= 8.5) {
+      const cornerLine = Math.floor(projectedCorners - 2);
+      const cornerProb = 60 + (projectedCorners - 8) * 4;
       
       const signal = createSignal(
         `Over ${cornerLine}.5 Escanteios`,
         'CORNERS',
         `+${cornerLine}.5 corners`,
-        Math.min(85, cornerProb),
+        Math.min(82, cornerProb),
         `Corners Over/Under_Over ${cornerLine}.5`,
         {
-          primary: `Projeção: ${projectedCorners.toFixed(1)} escanteios no jogo`,
+          primary: `Projeção: ${projectedCorners.toFixed(1)} escanteios no jogo (média últimos 8 jogos)`,
           homeAnalysis: `${homeStats.teamName}: ${homeStats.avgCorners.toFixed(1)} cantos/jogo, ${homeStats.avgShots.toFixed(0)} chutes/jogo`,
-          awayAnalysis: `${awayStats.teamName}: cede ${awayStats.avgCornersAgainst.toFixed(1)} cantos/jogo`,
-          h2hInsight: `Pressão ofensiva do mandante gera volume de escanteios`,
-          contextInsight: context.isClassico ? `Clássico tende a ter mais ataques e cantos.` : `Estilo de jogo favorece escanteios.`
+          awayAnalysis: `${awayStats.teamName}: ${awayStats.avgCorners.toFixed(1)} cantos/jogo, ${awayStats.avgShots.toFixed(0)} chutes/jogo`,
+          h2hInsight: `Soma das médias de cantos indica jogo com muitos escanteios`,
+          contextInsight: context.isClassico ? `🔥 Clássico tende a ter mais ataques e cantos.` : `Estilo de jogo ofensivo favorece escanteios.`
         }
       );
-      if (signal && signal.expectedValue >= 2) signals.push(signal);
+      if (signal && signal.expectedValue >= 1.5) signals.push(signal);
     }
 
     const projectedCards = homeStats.avgCards + awayStats.avgCards;
-    if (projectedCards >= 4.5 || context.isClassico) {
-      const cardLine = context.isClassico ? 4 : Math.floor(projectedCards);
-      let cardProb = 60 + (projectedCards - 4) * 6;
-      if (context.isClassico) cardProb += 15;
+    console.log(`[ELITE CARDS] ${homeStats.teamName}: ${homeStats.avgCards.toFixed(1)} + ${awayStats.teamName}: ${awayStats.avgCards.toFixed(1)} = ${projectedCards.toFixed(1)} cartões projetados`);
+    
+    if (projectedCards >= 3.5 || context.isClassico) {
+      const cardLine = Math.max(2, Math.floor(projectedCards - 0.5));
+      let cardProb = 55 + (projectedCards - 3) * 8;
+      if (context.isClassico) cardProb += 12;
       
       const signal = createSignal(
         `Over ${cardLine}.5 Cartões`,
         'CARDS',
         `+${cardLine}.5 cartões`,
-        Math.min(88, cardProb),
+        Math.min(85, cardProb),
         `Cards Over/Under_Over ${cardLine}.5`,
         {
-          primary: `Projeção: ${projectedCards.toFixed(1)} cartões no jogo`,
+          primary: `Projeção: ${projectedCards.toFixed(1)} cartões (dados reais últimos 8 jogos)`,
           homeAnalysis: `${homeStats.teamName}: ${homeStats.avgCards.toFixed(1)} cartões + ${homeStats.avgFouls.toFixed(0)} faltas/jogo`,
           awayAnalysis: `${awayStats.teamName}: ${awayStats.avgCards.toFixed(1)} cartões + ${awayStats.avgFouls.toFixed(0)} faltas/jogo`,
           h2hInsight: context.isClassico ? `🔥 Clássico = jogo quente com muitos cartões` : `Perfil de jogo com faltas frequentes`,
-          refereeInsight: `Análise de árbitros sugere média de ${(projectedCards * 1.1).toFixed(1)} cartões`,
+          refereeInsight: `Total projetado baseado em estatísticas reais das partidas`,
           contextInsight: context.isClassico 
             ? `DERBY! Rivalidade histórica = intensidade máxima e cartões.`
             : context.matchImportance >= 80 
               ? `Jogo decisivo tende a ter mais faltas táticas.`
-              : `Padrão de jogo truncado favorece cartões.`
+              : `Padrão de jogo favorece cartões.`
         }
       );
-      if (signal && signal.expectedValue >= 2) signals.push(signal);
+      if (signal && signal.expectedValue >= 1.5) signals.push(signal);
     }
 
-    return signals.filter(s => s.expectedValue >= 2 && s.confidenceScore >= 55);
+    const projectedShots = homeStats.avgShots + awayStats.avgShots;
+    const projectedShotsOnTarget = homeStats.avgShotsOnTarget + awayStats.avgShotsOnTarget;
+    console.log(`[ELITE SHOTS] ${homeStats.teamName}: ${homeStats.avgShots.toFixed(1)} + ${awayStats.teamName}: ${awayStats.avgShots.toFixed(1)} = ${projectedShots.toFixed(1)} chutes projetados`);
+    
+    if (projectedShotsOnTarget >= 8) {
+      const shotLine = Math.floor(projectedShotsOnTarget - 2);
+      const shotProb = 58 + (projectedShotsOnTarget - 8) * 4;
+      
+      const signal = createSignal(
+        `Over ${shotLine}.5 Chutes no Gol`,
+        'GOALS',
+        `+${shotLine}.5 chutes no alvo`,
+        Math.min(80, shotProb),
+        `Shots on Target_Over ${shotLine}.5`,
+        {
+          primary: `Projeção: ${projectedShotsOnTarget.toFixed(1)} chutes no alvo (${projectedShots.toFixed(0)} chutes totais)`,
+          homeAnalysis: `${homeStats.teamName}: ${homeStats.avgShotsOnTarget.toFixed(1)} chutes no gol/jogo`,
+          awayAnalysis: `${awayStats.teamName}: ${awayStats.avgShotsOnTarget.toFixed(1)} chutes no gol/jogo`,
+          h2hInsight: `Volume de chutes indica jogo ofensivo`,
+          contextInsight: `Perfil ofensivo de ambos favorece chutes ao gol.`
+        }
+      );
+      if (signal && signal.expectedValue >= 1.5) signals.push(signal);
+    }
+
+    return signals.filter(s => s.expectedValue >= 1.5 && s.confidenceScore >= 52);
   }
 
   async runEliteScan(maxFixtures: number = 80): Promise<EliteScanResult> {
