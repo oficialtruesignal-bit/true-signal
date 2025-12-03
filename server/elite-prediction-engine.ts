@@ -93,6 +93,26 @@ interface PoissonProbabilities {
   exactScores: { score: string; probability: number }[];
 }
 
+interface AnalyzedOpportunity {
+  fixtureId: number;
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo: string;
+  awayTeamLogo: string;
+  league: string;
+  leagueLogo: string;
+  matchDate: string;
+  matchTime: string;
+  market: string;
+  probability: number;
+  bookmakerOdd: number | null;
+  fairOdd: number;
+  expectedValue: number | null;
+  status: 'APPROVED' | 'REJECTED_NO_ODDS' | 'REJECTED_LOW_EV' | 'REJECTED_LOW_PROB';
+  rejectionReason?: string;
+  potentialBadge: 'DIAMOND' | 'GOLD' | 'SILVER' | null;
+}
+
 interface EliteSignal {
   fixtureId: number;
   league: string;
@@ -139,8 +159,10 @@ interface EliteScanResult {
   signalsGenerated: number;
   diamondSignals: number;
   goldSignals: number;
+  silverSignals: number;
   avgExpectedValue: number;
   opportunities: EliteSignal[];
+  analyzedOpportunities: AnalyzedOpportunity[];
 }
 
 const TOP_LEAGUES = [
@@ -706,8 +728,9 @@ class ElitePredictionEngine {
     context: MatchContext,
     probabilities: PoissonProbabilities,
     odds: Record<string, number>
-  ): EliteSignal[] {
+  ): { signals: EliteSignal[], analyzed: AnalyzedOpportunity[] } {
     const signals: EliteSignal[] = [];
+    const analyzed: AnalyzedOpportunity[] = [];
     const matchDate = new Date(fixture.fixture.date);
 
     // VALIDAÇÃO: Mínimo de dados para análise confiável
@@ -716,7 +739,7 @@ class ElitePredictionEngine {
     
     if (homeStats.matchesPlayed < MIN_GAMES_REQUIRED || awayStats.matchesPlayed < MIN_GAMES_REQUIRED) {
       console.log(`[ELITE] ❌ Dados insuficientes: ${homeStats.teamName} (${homeStats.matchesPlayed}) vs ${awayStats.teamName} (${awayStats.matchesPlayed}) - mínimo ${MIN_GAMES_REQUIRED}`);
-      return [];
+      return { signals: [], analyzed: [] };
     }
 
     const homePatterns = homeStats.patterns;
@@ -724,8 +747,39 @@ class ElitePredictionEngine {
 
     if (homePatterns.matchesWithStats < MIN_STATS_REQUIRED || awayPatterns.matchesWithStats < MIN_STATS_REQUIRED) {
       console.log(`[ELITE] ❌ Estatísticas insuficientes: ${homeStats.teamName} (${homePatterns.matchesWithStats}) vs ${awayStats.teamName} (${awayPatterns.matchesWithStats}) - mínimo ${MIN_STATS_REQUIRED}`);
-      return [];
+      return { signals: [], analyzed: [] };
     }
+
+    // Helper para criar oportunidade analisada (rastreamento)
+    const trackOpportunity = (
+      market: string,
+      probability: number,
+      bookmakerOdd: number | null,
+      ev: number | null,
+      status: AnalyzedOpportunity['status'],
+      rejectionReason?: string,
+      potentialBadge?: 'DIAMOND' | 'GOLD' | 'SILVER' | null
+    ) => {
+      analyzed.push({
+        fixtureId: fixture.fixture.id,
+        homeTeam: fixture.teams.home.name,
+        awayTeam: fixture.teams.away.name,
+        homeTeamLogo: fixture.teams.home.logo,
+        awayTeamLogo: fixture.teams.away.logo,
+        league: fixture.league.name,
+        leagueLogo: fixture.league.logo,
+        matchDate: matchDate.toLocaleDateString('pt-BR'),
+        matchTime: matchDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+        market,
+        probability: Math.round(probability * 10) / 10,
+        bookmakerOdd,
+        fairOdd: Math.round((100 / probability) * 100) / 100,
+        expectedValue: ev !== null ? Math.round(ev * 10) / 10 : null,
+        status,
+        rejectionReason,
+        potentialBadge: potentialBadge || null
+      });
+    };
 
     const createSignal = (
       market: string,
@@ -736,19 +790,40 @@ class ElitePredictionEngine {
       reasoning: EliteSignal['reasoning'],
       patternStrength: number
     ): EliteSignal | null => {
-      let bookmakerOdd = odds[oddKey] || 0;
+      const originalOdd = odds[oddKey] || 0;
+      let bookmakerOdd = originalOdd;
+      const fairOdd = 100 / probability;
       
+      // Log detalhado de odds
+      if (originalOdd === 0) {
+        console.log(`[ELITE] ⚠️ ${market}: Odd não encontrada para key "${oddKey}". Usando fallback.`);
+      }
+      
+      // Fallback quando odds não disponíveis: usar fairOdd com margem da casa
       if (bookmakerOdd < 1.20) {
-        const fairOdd = 100 / probability;
-        bookmakerOdd = fairOdd * 0.92;
-        if (bookmakerOdd < 1.30) bookmakerOdd = 1.30;
+        bookmakerOdd = fairOdd * 0.95; // 5% margem assumida
+        if (bookmakerOdd < 1.35) bookmakerOdd = 1.35;
+        console.log(`[ELITE] 📊 ${market}: Fallback odd = ${bookmakerOdd.toFixed(2)} (fairOdd ${fairOdd.toFixed(2)} * 0.95)`);
       }
 
-      const fairOdd = 100 / probability;
       const ev = this.calculateExpectedValue(probability, bookmakerOdd);
       
-      // Só aceitar se EV >= 3% (mais conservador)
-      if (ev < 3) return null;
+      // Determinar badge potencial antes de rejeitar
+      let potentialBadge: 'DIAMOND' | 'GOLD' | 'SILVER' | null = null;
+      if (ev >= 8 && probability >= 75) potentialBadge = 'DIAMOND';
+      else if (ev >= 5 && probability >= 68) potentialBadge = 'GOLD';
+      else if (ev >= 3 && probability >= 62) potentialBadge = 'SILVER';
+      
+      // Log detalhado de EV
+      console.log(`[ELITE] 📈 ${market}: Prob=${probability.toFixed(1)}%, Odd=${bookmakerOdd.toFixed(2)}, EV=${ev.toFixed(1)}%, Badge=${potentialBadge || 'NONE'}`);
+      
+      // EV check
+      if (ev < 3) {
+        trackOpportunity(market, probability, bookmakerOdd, ev, 'REJECTED_LOW_EV', 
+          `EV ${ev.toFixed(1)}% < 3% mínimo`, potentialBadge);
+        console.log(`[ELITE] ❌ ${market}: EV ${ev.toFixed(1)}% abaixo do mínimo 3%`);
+        return null;
+      }
       
       let badge: EliteSignal['badgeType'] = 'SILVER';
       let confidenceScore = probability;
@@ -762,8 +837,15 @@ class ElitePredictionEngine {
       } else if (ev >= 3 && probability >= 62) {
         confidenceScore = Math.min(88, probability + 1);
       } else {
-        return null; // Não passa nos critérios mínimos
+        trackOpportunity(market, probability, bookmakerOdd, ev, 'REJECTED_LOW_PROB',
+          `Prob ${probability.toFixed(1)}% < 62% para SILVER`, potentialBadge);
+        console.log(`[ELITE] ❌ ${market}: Prob ${probability.toFixed(1)}% abaixo do mínimo para tier`);
+        return null;
       }
+
+      // APROVADO! Rastrear como aprovado
+      trackOpportunity(market, probability, bookmakerOdd, ev, 'APPROVED', undefined, badge);
+      console.log(`[ELITE] ✅ ${market}: APROVADO como ${badge}! EV=${ev.toFixed(1)}%, Prob=${probability.toFixed(1)}%`);
 
       return {
         fixtureId: fixture.fixture.id,
@@ -1055,8 +1137,8 @@ class ElitePredictionEngine {
     }
 
     // Log de observabilidade
-    console.log(`[ELITE] ${fixture.teams.home.name} vs ${fixture.teams.away.name}: ${signals.length} sinais | Gates falhos: Goals=${gatesFailedGoals}, BTTS=${gatesFailedBtts}, Cards=${gatesFailedCards}, Corners=${gatesFailedCorners}, Over15=${gatesFailedOver15}`);
-    return signals;
+    console.log(`[ELITE] ${fixture.teams.home.name} vs ${fixture.teams.away.name}: ${signals.length} sinais, ${analyzed.length} analisados | Gates falhos: Goals=${gatesFailedGoals}, BTTS=${gatesFailedBtts}, Cards=${gatesFailedCards}, Corners=${gatesFailedCorners}, Over15=${gatesFailedOver15}`);
+    return { signals, analyzed };
   }
 
   async runEliteScan(maxFixtures: number = 80): Promise<EliteScanResult> {
@@ -1089,6 +1171,7 @@ class ElitePredictionEngine {
     console.log(`[ELITE ENGINE] Fixtures válidos (top leagues): ${validFixtures.length}`);
 
     const opportunities: EliteSignal[] = [];
+    const allAnalyzedOpportunities: AnalyzedOpportunity[] = [];
     let fixturesAnalyzed = 0;
 
     for (const fixture of validFixtures) {
@@ -1130,7 +1213,7 @@ class ElitePredictionEngine {
         const probabilities = this.calculatePoissonProbabilities(lambdaHome, lambdaAway);
 
         const odds = this.extractOdds(oddsData);
-        const signals = this.generateSignals(
+        const { signals, analyzed } = this.generateSignals(
           fixture,
           homeStats,
           awayStats,
@@ -1141,6 +1224,7 @@ class ElitePredictionEngine {
         );
 
         opportunities.push(...signals);
+        allAnalyzedOpportunities.push(...analyzed);
 
       } catch (error: any) {
         console.error(`[ELITE] Erro: ${error.message}`);
@@ -1155,6 +1239,7 @@ class ElitePredictionEngine {
 
     const diamondSignals = opportunities.filter(s => s.badgeType === 'DIAMOND').length;
     const goldSignals = opportunities.filter(s => s.badgeType === 'GOLD').length;
+    const silverSignals = opportunities.filter(s => s.badgeType === 'SILVER').length;
     const avgEV = opportunities.length > 0 
       ? opportunities.reduce((sum, s) => sum + s.expectedValue, 0) / opportunities.length 
       : 0;
@@ -1166,12 +1251,14 @@ class ElitePredictionEngine {
       signalsGenerated: opportunities.length,
       diamondSignals,
       goldSignals,
+      silverSignals,
       avgExpectedValue: Math.round(avgEV * 10) / 10,
-      opportunities: opportunities.slice(0, 30)
+      opportunities: opportunities.slice(0, 30),
+      analyzedOpportunities: allAnalyzedOpportunities
     };
 
     this.setCache('elite_last_scan', result);
-    console.log(`[ELITE ENGINE] ✅ Scan completo: ${opportunities.length} sinais (${diamondSignals} DIAMOND, ${goldSignals} GOLD)`);
+    console.log(`[ELITE ENGINE] ✅ Scan completo: ${opportunities.length} sinais (${diamondSignals} DIAMOND, ${goldSignals} GOLD, ${silverSignals} SILVER) | ${allAnalyzedOpportunities.length} analisados`);
 
     return result;
   }
