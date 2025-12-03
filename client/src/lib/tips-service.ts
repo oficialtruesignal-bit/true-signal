@@ -49,6 +49,7 @@ export const tipsService = {
           timestamp: tip.createdAt || tip.created_at,
           betLink: tip.betLink || tip.bet_link || undefined,
           isLive: tip.isLive !== undefined ? tip.isLive : (tip.is_live || false),
+          isFree: tip.isFree !== undefined ? tip.isFree : (tip.is_free || false),
           fixtureId: tip.fixtureId || tip.fixture_id ? String(tip.fixtureId || tip.fixture_id) : undefined,
           imageUrl: tip.imageUrl || tip.image_url || undefined,
           // Combo support

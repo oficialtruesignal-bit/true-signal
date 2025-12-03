@@ -1000,6 +1000,44 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // SECURITY: Protected - only admins can set tip as free
+  app.patch("/api/tips/:id/free", async (req, res) => {
+    try {
+      const { isFree, adminEmail, adminUserId } = req.body;
+      
+      // SECURITY: Verify admin with both email AND userId
+      if (!await verifyAdmin(adminEmail, adminUserId)) {
+        console.warn(`⚠️ [SECURITY] Unauthorized tip free toggle attempt`);
+        return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+      }
+      
+      // If setting as free, first clear any existing free tips (only 1 free at a time)
+      if (isFree) {
+        await storage.clearAllFreeTips();
+      }
+
+      const tip = await storage.setTipFree(req.params.id, isFree);
+      if (!tip) {
+        return res.status(404).json({ error: "Tip not found" });
+      }
+      
+      console.log(`✅ Tip ${req.params.id} set as ${isFree ? 'FREE' : 'PREMIUM'} by admin`);
+      return res.json({ tip });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get current free tip
+  app.get("/api/tips/free", async (req, res) => {
+    try {
+      const freeTip = await storage.getFreeTip();
+      return res.json({ tip: freeTip || null });
+    } catch (error: any) {
+      return res.status(500).json({ error: error.message });
+    }
+  });
+
   // Tips Statistics - Dashboard metrics calculated from real tips + baseline
   app.get("/api/tips/stats", async (req, res) => {
     try {
