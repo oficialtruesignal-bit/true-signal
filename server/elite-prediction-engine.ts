@@ -665,8 +665,16 @@ class ElitePredictionEngine {
       oddKey: string,
       reasoning: EliteSignal['reasoning']
     ): EliteSignal | null => {
-      const bookmakerOdd = odds[oddKey] || 1.0;
-      if (bookmakerOdd < 1.20) return null;
+      let bookmakerOdd = odds[oddKey] || 0;
+      
+      // Se não tem odd da casa, estima baseado na probabilidade
+      if (bookmakerOdd < 1.20) {
+        const fairOdd = 100 / probability;
+        // Estima odd da casa com margem de 5-8%
+        bookmakerOdd = fairOdd * 0.92;
+        if (bookmakerOdd < 1.25) bookmakerOdd = 1.25;
+        console.log(`[ELITE] Odd estimada para ${oddKey}: ${bookmakerOdd.toFixed(2)} (sem odds reais)`);
+      }
 
       const fairOdd = 100 / probability;
       const ev = this.calculateExpectedValue(probability, bookmakerOdd);
