@@ -645,6 +645,7 @@ class ElitePredictionEngine {
     bttsRate: number;
     avgCards: number;
     record: string;
+    totalMatches: number;
   } {
     let homeWins = 0, awayWins = 0, draws = 0;
     let totalGoals = 0, over25 = 0, btts = 0;
@@ -676,7 +677,8 @@ class ElitePredictionEngine {
       over25Rate: (over25 / n) * 100,
       bttsRate: (btts / n) * 100,
       avgCards: 4.2,
-      record: `${homeWins}V ${draws}E ${awayWins}D`
+      record: `${homeWins}V ${draws}E ${awayWins}D`,
+      totalMatches: h2hMatches.length
     };
   }
 
@@ -796,12 +798,64 @@ class ElitePredictionEngine {
     };
 
     // === ANÁLISE BASEADA EM PADRÕES REAIS ===
+    // Calibração: probabilidade com shrinkage Bayesiano por tamanho de amostra + H2H ponderado
     
-    // 1. OVER 2.5 GOLS - Ambos times precisam ter 60%+ de Over 2.5 nos últimos jogos
+    // Helper: Calibrar probabilidade com shrinkage Bayesiano
+    // Fórmula: P_calibrado = (n * P_observado + k * P_prior) / (n + k)
+    // Priors por mercado: Goals/BTTS=45%, Cards=50%, Corners=45%, Over1.5=60%
+    const calibrateProb = (
+      homeRate: number, 
+      awayRate: number, 
+      priorRate: number, // Prior específico por mercado
+      h2hRate: number, 
+      h2hGames: number,
+      homeSampleSize: number,
+      awaySampleSize: number
+    ): number => {
+      const SHRINKAGE_FACTOR = 5; // k: força do shrinkage
+      
+      // Shrinkage por time usando prior específico
+      const homeShrunk = (homeSampleSize * homeRate + SHRINKAGE_FACTOR * priorRate) / (homeSampleSize + SHRINKAGE_FACTOR);
+      const awayShrunk = (awaySampleSize * awayRate + SHRINKAGE_FACTOR * priorRate) / (awaySampleSize + SHRINKAGE_FACTOR);
+      
+      let baseRate = (homeShrunk + awayShrunk) / 2;
+      
+      // H2H ponderado por tamanho de amostra (5+ jogos = peso máximo 20%)
+      if (h2hGames >= 3 && h2hRate > 0) {
+        const h2hWeight = Math.min(0.20, h2hGames * 0.04); // 3 jogos=12%, 5 jogos=20%
+        baseRate = baseRate * (1 - h2hWeight) + h2hRate * h2hWeight;
+      }
+      
+      // Cap final conservador
+      return Math.min(78, baseRate);
+    };
+    
+    // Contadores de observabilidade por gate
+    let gatesFailedGoals = 0;
+    let gatesFailedBtts = 0;
+    let gatesFailedCards = 0;
+    let gatesFailedCorners = 0;
+    let gatesFailedOver15 = 0;
+    
+    // 1. OVER 2.5 GOLS - Threshold flexível: 55%+ cada OU 50%+ com H2H forte
     const combined25Rate = (homePatterns.over25GoalsRate + awayPatterns.over25GoalsRate) / 2;
-    if (homePatterns.over25GoalsRate >= 60 && awayPatterns.over25GoalsRate >= 60) {
-      const patternProb = Math.min(85, combined25Rate);
-      console.log(`[ELITE] ✅ PADRÃO Over 2.5: ${homeStats.teamName} ${homePatterns.over25GoalsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over25GoalsRate.toFixed(0)}%`);
+    const h2hConfirms25 = h2hData.over25Rate >= 55;
+    const home25Ok = homePatterns.over25GoalsRate >= 55;
+    const away25Ok = awayPatterns.over25GoalsRate >= 55;
+    const home25Relaxed = homePatterns.over25GoalsRate >= 45 && h2hConfirms25;
+    const away25Relaxed = awayPatterns.over25GoalsRate >= 45 && h2hConfirms25;
+    
+    if ((home25Ok && away25Ok) || (home25Ok && away25Relaxed) || (away25Ok && home25Relaxed)) {
+      const patternProb = calibrateProb(
+        homePatterns.over25GoalsRate, 
+        awayPatterns.over25GoalsRate, 
+        45, // Prior para Goals
+        h2hData.over25Rate, 
+        h2hData.totalMatches,
+        homePatterns.matchesAnalyzed,
+        awayPatterns.matchesAnalyzed
+      );
+      console.log(`[ELITE] ✅ PADRÃO Over 2.5: ${homeStats.teamName} ${homePatterns.over25GoalsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over25GoalsRate.toFixed(0)}% (H2H ${h2hData.over25Rate.toFixed(0)}%)`);
       
       const signal = createSignal(
         'Over 2.5 Gols',
@@ -810,22 +864,38 @@ class ElitePredictionEngine {
         patternProb,
         'Goals Over/Under_Over 2.5',
         {
-          primary: `PADRÃO VERIFICADO: ${homePatterns.over25GoalsRate.toFixed(0)}% + ${awayPatterns.over25GoalsRate.toFixed(0)}% = média ${combined25Rate.toFixed(0)}%`,
+          primary: `PADRÃO: ${homePatterns.over25GoalsRate.toFixed(0)}% + ${awayPatterns.over25GoalsRate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
           homeAnalysis: `${homeStats.teamName}: Over 2.5 em ${homePatterns.over25GoalsRate.toFixed(0)}% dos últimos ${homePatterns.matchesAnalyzed} jogos`,
           awayAnalysis: `${awayStats.teamName}: Over 2.5 em ${awayPatterns.over25GoalsRate.toFixed(0)}% dos últimos ${awayPatterns.matchesAnalyzed} jogos`,
-          h2hInsight: `H2H: ${h2hData.over25Rate.toFixed(0)}% Over 2.5. Média ${h2hData.avgGoals.toFixed(1)} gols/jogo`,
-          contextInsight: `Padrão consistente em ambos os times - alta confiança.`
+          h2hInsight: `H2H: ${h2hData.over25Rate.toFixed(0)}% Over 2.5 (${h2hData.totalMatches} jogos). Média ${h2hData.avgGoals.toFixed(1)} gols`,
+          contextInsight: h2hConfirms25 ? `✓ H2H confirma padrão de gols.` : `Padrão consistente em ambos.`
         },
-        Math.round(combined25Rate)
+        Math.round(patternProb)
       );
       if (signal) signals.push(signal);
+    } else {
+      gatesFailedGoals++;
     }
 
-    // 2. BTTS - Ambos times precisam ter 55%+ de BTTS nos últimos jogos  
+    // 2. BTTS - Threshold flexível: 50%+ cada OU 45%+ com H2H forte
     const combinedBttsRate = (homePatterns.bttsRate + awayPatterns.bttsRate) / 2;
-    if (homePatterns.bttsRate >= 55 && awayPatterns.bttsRate >= 55) {
-      const patternProb = Math.min(80, combinedBttsRate);
-      console.log(`[ELITE] ✅ PADRÃO BTTS: ${homeStats.teamName} ${homePatterns.bttsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.bttsRate.toFixed(0)}%`);
+    const h2hConfirmsBtts = h2hData.bttsRate >= 50;
+    const homeBttsOk = homePatterns.bttsRate >= 50;
+    const awayBttsOk = awayPatterns.bttsRate >= 50;
+    const homeBttsRelaxed = homePatterns.bttsRate >= 40 && h2hConfirmsBtts;
+    const awayBttsRelaxed = awayPatterns.bttsRate >= 40 && h2hConfirmsBtts;
+    
+    if ((homeBttsOk && awayBttsOk) || (homeBttsOk && awayBttsRelaxed) || (awayBttsOk && homeBttsRelaxed)) {
+      const patternProb = calibrateProb(
+        homePatterns.bttsRate, 
+        awayPatterns.bttsRate, 
+        45, // Prior para BTTS
+        h2hData.bttsRate, 
+        h2hData.totalMatches,
+        homePatterns.matchesAnalyzed,
+        awayPatterns.matchesAnalyzed
+      );
+      console.log(`[ELITE] ✅ PADRÃO BTTS: ${homeStats.teamName} ${homePatterns.bttsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.bttsRate.toFixed(0)}% (H2H ${h2hData.bttsRate.toFixed(0)}%)`);
       
       const signal = createSignal(
         'Ambas Marcam',
@@ -834,22 +904,36 @@ class ElitePredictionEngine {
         patternProb,
         'Both Teams Score_Yes',
         {
-          primary: `PADRÃO VERIFICADO: ${homePatterns.bttsRate.toFixed(0)}% + ${awayPatterns.bttsRate.toFixed(0)}% = média ${combinedBttsRate.toFixed(0)}%`,
+          primary: `PADRÃO: ${homePatterns.bttsRate.toFixed(0)}% + ${awayPatterns.bttsRate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
           homeAnalysis: `${homeStats.teamName}: BTTS em ${homePatterns.bttsRate.toFixed(0)}% dos últimos ${homePatterns.matchesAnalyzed} jogos`,
           awayAnalysis: `${awayStats.teamName}: BTTS em ${awayPatterns.bttsRate.toFixed(0)}% dos últimos ${awayPatterns.matchesAnalyzed} jogos`,
           h2hInsight: `H2H BTTS: ${h2hData.bttsRate.toFixed(0)}%`,
-          contextInsight: `Ambos times marcam e sofrem gols com frequência.`
+          contextInsight: h2hConfirmsBtts ? `✓ H2H confirma padrão BTTS.` : `Ambos marcam e sofrem com frequência.`
         },
-        Math.round(combinedBttsRate)
+        Math.round(patternProb)
       );
       if (signal) signals.push(signal);
+    } else {
+      gatesFailedBtts++;
     }
 
-    // 3. OVER 4.5 CARTÕES - Ambos times precisam ter 50%+ de Over 4.5 cards
+    // 3. OVER 4.5 CARTÕES - Com calibração Bayesiana
     const combined45CardsRate = (homePatterns.over45CardsRate + awayPatterns.over45CardsRate) / 2;
-    if (homePatterns.over45CardsRate >= 50 && awayPatterns.over45CardsRate >= 50) {
-      const patternProb = Math.min(78, combined45CardsRate + 10);
-      console.log(`[ELITE] ✅ PADRÃO Over 4.5 Cartões: ${homeStats.teamName} ${homePatterns.over45CardsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over45CardsRate.toFixed(0)}%`);
+    const cards45Threshold = context.isClassico ? 35 : 45;
+    
+    if (homePatterns.over45CardsRate >= cards45Threshold && awayPatterns.over45CardsRate >= cards45Threshold) {
+      let patternProb = calibrateProb(
+        homePatterns.over45CardsRate, 
+        awayPatterns.over45CardsRate, 
+        50, // Prior para cards
+        0,
+        0,
+        homePatterns.matchesWithStats,
+        awayPatterns.matchesWithStats
+      );
+      // Boost para clássicos mas ainda respeitando cap de 78%
+      if (context.isClassico) patternProb = Math.min(78, patternProb + 5);
+      console.log(`[ELITE] ✅ PADRÃO Over 4.5 Cartões: ${homeStats.teamName} ${homePatterns.over45CardsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over45CardsRate.toFixed(0)}% = ${patternProb.toFixed(0)}%`);
       
       const signal = createSignal(
         'Over 4.5 Cartões',
@@ -858,22 +942,32 @@ class ElitePredictionEngine {
         patternProb,
         'Cards Over/Under_Over 4.5',
         {
-          primary: `PADRÃO VERIFICADO: ${homePatterns.over45CardsRate.toFixed(0)}% + ${awayPatterns.over45CardsRate.toFixed(0)}% = média ${combined45CardsRate.toFixed(0)}%`,
+          primary: `PADRÃO: ${homePatterns.over45CardsRate.toFixed(0)}% + ${awayPatterns.over45CardsRate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
           homeAnalysis: `${homeStats.teamName}: Over 4.5 cards em ${homePatterns.over45CardsRate.toFixed(0)}% dos últimos ${homePatterns.matchesWithStats} jogos`,
           awayAnalysis: `${awayStats.teamName}: Over 4.5 cards em ${awayPatterns.over45CardsRate.toFixed(0)}% dos últimos ${awayPatterns.matchesWithStats} jogos`,
-          h2hInsight: context.isClassico ? `🔥 CLÁSSICO = cartões garantidos` : `Perfil de jogo com faltas`,
-          contextInsight: `Histórico de jogos com muitos cartões.`
+          h2hInsight: context.isClassico ? `🔥 CLÁSSICO = intensidade extra` : `Perfil de jogo com faltas`,
+          contextInsight: context.isClassico ? `DERBY! Rivalidade eleva cartões.` : `Histórico consistente de cartões.`
         },
-        Math.round(combined45CardsRate)
+        Math.round(patternProb)
       );
       if (signal) signals.push(signal);
+    } else {
+      gatesFailedCards++;
     }
 
-    // 4. OVER 3.5 CARTÕES - Threshold menor, padrão mais comum
+    // 4. OVER 3.5 CARTÕES - Com calibração (se Over 4.5 não qualificou)
     const combined35CardsRate = (homePatterns.over35CardsRate + awayPatterns.over35CardsRate) / 2;
-    if (homePatterns.over35CardsRate >= 60 && awayPatterns.over35CardsRate >= 60 && combined45CardsRate < 50) {
-      const patternProb = Math.min(82, combined35CardsRate);
-      console.log(`[ELITE] ✅ PADRÃO Over 3.5 Cartões: ${homeStats.teamName} ${homePatterns.over35CardsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over35CardsRate.toFixed(0)}%`);
+    if (homePatterns.over35CardsRate >= 55 && awayPatterns.over35CardsRate >= 55 && combined45CardsRate < 45) {
+      const patternProb = calibrateProb(
+        homePatterns.over35CardsRate, 
+        awayPatterns.over35CardsRate, 
+        50, // Prior para cards
+        0,
+        0,
+        homePatterns.matchesWithStats,
+        awayPatterns.matchesWithStats
+      );
+      console.log(`[ELITE] ✅ PADRÃO Over 3.5 Cartões: ${homeStats.teamName} ${homePatterns.over35CardsRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over35CardsRate.toFixed(0)}% = ${patternProb.toFixed(0)}%`);
       
       const signal = createSignal(
         'Over 3.5 Cartões',
@@ -882,22 +976,30 @@ class ElitePredictionEngine {
         patternProb,
         'Cards Over/Under_Over 3.5',
         {
-          primary: `PADRÃO VERIFICADO: ${homePatterns.over35CardsRate.toFixed(0)}% + ${awayPatterns.over35CardsRate.toFixed(0)}% = média ${combined35CardsRate.toFixed(0)}%`,
+          primary: `PADRÃO: ${homePatterns.over35CardsRate.toFixed(0)}% + ${awayPatterns.over35CardsRate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
           homeAnalysis: `${homeStats.teamName}: Over 3.5 cards em ${homePatterns.over35CardsRate.toFixed(0)}% dos jogos`,
           awayAnalysis: `${awayStats.teamName}: Over 3.5 cards em ${awayPatterns.over35CardsRate.toFixed(0)}% dos jogos`,
-          h2hInsight: `Padrão consistente de cartões em ambos`,
+          h2hInsight: `Padrão consistente de cartões`,
           contextInsight: `Alta frequência de cartões nos jogos destes times.`
         },
-        Math.round(combined35CardsRate)
+        Math.round(patternProb)
       );
       if (signal) signals.push(signal);
     }
 
-    // 5. OVER 8.5 ESCANTEIOS - Ambos times precisam ter 50%+ de Over 8.5 corners
+    // 5. OVER 8.5 ESCANTEIOS - Com calibração Bayesiana
     const combined85CornersRate = (homePatterns.over85CornersRate + awayPatterns.over85CornersRate) / 2;
-    if (homePatterns.over85CornersRate >= 50 && awayPatterns.over85CornersRate >= 50) {
-      const patternProb = Math.min(78, combined85CornersRate + 10);
-      console.log(`[ELITE] ✅ PADRÃO Over 8.5 Cantos: ${homeStats.teamName} ${homePatterns.over85CornersRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over85CornersRate.toFixed(0)}%`);
+    if (homePatterns.over85CornersRate >= 45 && awayPatterns.over85CornersRate >= 45) {
+      const patternProb = calibrateProb(
+        homePatterns.over85CornersRate, 
+        awayPatterns.over85CornersRate, 
+        45, // Prior para corners
+        0,
+        0,
+        homePatterns.matchesWithStats,
+        awayPatterns.matchesWithStats
+      );
+      console.log(`[ELITE] ✅ PADRÃO Over 8.5 Cantos: ${homeStats.teamName} ${homePatterns.over85CornersRate.toFixed(0)}% + ${awayStats.teamName} ${awayPatterns.over85CornersRate.toFixed(0)}% = ${patternProb.toFixed(0)}%`);
       
       const signal = createSignal(
         'Over 8.5 Escanteios',
@@ -906,18 +1008,54 @@ class ElitePredictionEngine {
         patternProb,
         'Corners Over/Under_Over 8.5',
         {
-          primary: `PADRÃO VERIFICADO: ${homePatterns.over85CornersRate.toFixed(0)}% + ${awayPatterns.over85CornersRate.toFixed(0)}% = média ${combined85CornersRate.toFixed(0)}%`,
+          primary: `PADRÃO: ${homePatterns.over85CornersRate.toFixed(0)}% + ${awayPatterns.over85CornersRate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
           homeAnalysis: `${homeStats.teamName}: Over 8.5 corners em ${homePatterns.over85CornersRate.toFixed(0)}% dos jogos`,
           awayAnalysis: `${awayStats.teamName}: Over 8.5 corners em ${awayPatterns.over85CornersRate.toFixed(0)}% dos jogos`,
           h2hInsight: `Estilo de jogo ofensivo de ambos`,
           contextInsight: `Times que geram muitas finalizações e escanteios.`
         },
-        Math.round(combined85CornersRate)
+        Math.round(patternProb)
       );
       if (signal) signals.push(signal);
+    } else {
+      gatesFailedCorners++;
+    }
+    
+    // 6. OVER 1.5 GOLS - Mercado mais comum, threshold 70%+ para valor
+    if (homeStats.over15Rate >= 70 && awayStats.over15Rate >= 70) {
+      const patternProb = calibrateProb(
+        homeStats.over15Rate, 
+        awayStats.over15Rate, 
+        60, // Prior mais alto para Over 1.5
+        h2hData.avgGoals >= 2 ? 75 : 0, // H2H confirma se média >= 2 gols
+        h2hData.totalMatches,
+        homePatterns.matchesAnalyzed,
+        awayPatterns.matchesAnalyzed
+      );
+      console.log(`[ELITE] ✅ PADRÃO Over 1.5: ${homeStats.teamName} ${homeStats.over15Rate.toFixed(0)}% + ${awayStats.teamName} ${awayStats.over15Rate.toFixed(0)}% = ${patternProb.toFixed(0)}%`);
+      
+      const signal = createSignal(
+        'Over 1.5 Gols',
+        'GOALS',
+        `Mais de 1.5 gols`,
+        patternProb,
+        'Goals Over/Under_Over 1.5',
+        {
+          primary: `PADRÃO FORTE: ${homeStats.over15Rate.toFixed(0)}% + ${awayStats.over15Rate.toFixed(0)}% = ${patternProb.toFixed(0)}% (calibrado)`,
+          homeAnalysis: `${homeStats.teamName}: Over 1.5 em ${homeStats.over15Rate.toFixed(0)}% dos jogos`,
+          awayAnalysis: `${awayStats.teamName}: Over 1.5 em ${awayStats.over15Rate.toFixed(0)}% dos jogos`,
+          h2hInsight: `H2H: média ${h2hData.avgGoals.toFixed(1)} gols/jogo`,
+          contextInsight: `Ambos os times raramente terminam com menos de 2 gols.`
+        },
+        Math.round(patternProb)
+      );
+      if (signal) signals.push(signal);
+    } else {
+      gatesFailedOver15++;
     }
 
-    console.log(`[ELITE] ${fixture.teams.home.name} vs ${fixture.teams.away.name}: ${signals.length} sinais gerados`);
+    // Log de observabilidade
+    console.log(`[ELITE] ${fixture.teams.home.name} vs ${fixture.teams.away.name}: ${signals.length} sinais | Gates falhos: Goals=${gatesFailedGoals}, BTTS=${gatesFailedBtts}, Cards=${gatesFailedCards}, Corners=${gatesFailedCorners}, Over15=${gatesFailedOver15}`);
     return signals;
   }
 
