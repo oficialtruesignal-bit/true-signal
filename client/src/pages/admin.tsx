@@ -400,6 +400,30 @@ function OraculoTab({ user }: { user: any }) {
                       <p className="text-xs text-[#33b864] mb-1">🎯 Contexto do Jogo</p>
                       <p className="text-sm text-white">{signal.reasoning.contextInsight}</p>
                     </div>
+                    
+                    {/* Botão Publicar */}
+                    <Button
+                      className="w-full mt-3 bg-gradient-to-r from-[#33b864] to-emerald-500 hover:from-[#2da557] hover:to-emerald-600 text-white font-bold"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        try {
+                          const response = await axios.post('/api/elite/publish', {
+                            signal,
+                            adminEmail: user?.email,
+                            adminUserId: user?.id,
+                          });
+                          if (response.data.success) {
+                            toast.success(`✅ ${signal.badgeType} publicado! ${signal.homeTeam} vs ${signal.awayTeam}`);
+                          }
+                        } catch (error: any) {
+                          toast.error(error.response?.data?.error || 'Erro ao publicar sinal');
+                        }
+                      }}
+                      data-testid={`publish-signal-${index}`}
+                    >
+                      <PlusCircle className="w-4 h-4 mr-2" />
+                      PUBLICAR PARA USUÁRIOS
+                    </Button>
                   </div>
                 )}
 

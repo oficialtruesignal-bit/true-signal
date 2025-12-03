@@ -2248,6 +2248,82 @@ REGRAS IMPORTANTES:
     }
   });
 
+  // PUBLICAR sinal do Elite Engine como tip para usuários
+  app.post("/api/elite/publish", async (req, res) => {
+    try {
+      const { signal, adminEmail, adminUserId } = req.body;
+      
+      // Verificar admin
+      if (!adminEmail || adminEmail !== 'kwillianferreira@gmail.com') {
+        const profile = adminUserId ? await storage.getProfileById(adminUserId) : null;
+        if (!profile || profile.role !== 'admin') {
+          return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+        }
+      }
+
+      if (!signal) {
+        return res.status(400).json({ error: "Sinal não fornecido" });
+      }
+
+      // Construir reasoning como JSON
+      const analysisRationale = JSON.stringify({
+        primary: signal.reasoning?.primary || '',
+        homeAnalysis: signal.reasoning?.homeAnalysis || '',
+        awayAnalysis: signal.reasoning?.awayAnalysis || '',
+        h2hInsight: signal.reasoning?.h2hInsight || '',
+        contextInsight: signal.reasoning?.contextInsight || '',
+        badgeType: signal.badgeType,
+        patternStrength: signal.patternStrength,
+        rawProbabilities: signal.rawProbabilities
+      });
+
+      // Criar tip a partir do sinal Elite
+      const tipData = {
+        fixtureId: signal.fixtureId?.toString() || null,
+        league: signal.league,
+        homeTeam: signal.homeTeam,
+        awayTeam: signal.awayTeam,
+        homeTeamLogo: signal.homeTeamLogo || null,
+        awayTeamLogo: signal.awayTeamLogo || null,
+        matchTime: `${signal.matchDate} ${signal.matchTime}`,
+        market: `${signal.market} - ${signal.prediction}`,
+        odd: signal.bookmakerOdd?.toString() || '1.50',
+        stake: '2.0', // Stake padrão para sinais Elite
+        status: 'pending' as const,
+        betLink: null,
+        imageUrl: null,
+        isLive: false,
+        isFree: false,
+        isCombo: false,
+        totalOdd: null,
+        legs: null,
+        analysisRationale,
+        analysisSummary: `${signal.badgeType} | EV: ${signal.expectedValue}% | Prob: ${signal.probability}%`,
+        confidence: signal.confidenceScore?.toString() || null,
+        probability: signal.probability?.toString() || null,
+        expectedValue: signal.expectedValue?.toString() || null,
+        homeGoalsAvg: null,
+        awayGoalsAvg: null,
+        aiSourceId: null
+      };
+
+      console.log(`[ELITE] Publicando sinal: ${signal.homeTeam} vs ${signal.awayTeam} - ${signal.market}`);
+      
+      const newTip = await storage.createTip(tipData);
+      
+      console.log(`[ELITE] ✅ Sinal publicado com sucesso! ID: ${newTip.id}`);
+
+      return res.json({
+        success: true,
+        tip: newTip,
+        message: `Sinal ${signal.badgeType} publicado com sucesso!`
+      });
+    } catch (error: any) {
+      console.error("[ELITE] Erro ao publicar sinal:", error);
+      return res.status(500).json({ error: "Erro ao publicar sinal: " + error.message });
+    }
+  });
+
   // =====================================================
   // LIVE PRESSURE MONITOR ENDPOINTS
   // =====================================================
