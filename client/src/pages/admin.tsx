@@ -203,20 +203,26 @@ function OraculoTab({ user }: { user: any }) {
             </Button>
           ))}
         </div>
-        <div className="flex items-center gap-4 text-sm">
+        <div className="flex flex-wrap items-center gap-3 text-sm">
           <div className="flex items-center gap-1">
             <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0 text-[10px]">
               <Diamond className="w-2.5 h-2.5 mr-0.5" />
               DIAMOND
             </Badge>
-            <span className="text-gray-500 text-xs">EV≥8% + Score≥75%</span>
+            <span className="text-gray-500 text-xs">EV≥7% + Prob≥72%</span>
           </div>
           <div className="flex items-center gap-1">
             <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0 text-[10px]">
               <Star className="w-2.5 h-2.5 mr-0.5" />
               GOLD
             </Badge>
-            <span className="text-gray-500 text-xs">EV≥5% + Score≥68%</span>
+            <span className="text-gray-500 text-xs">EV≥4% + Prob≥62%</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Badge className="bg-gray-500 text-white border-0 text-[10px]">
+              SILVER
+            </Badge>
+            <span className="text-gray-500 text-xs">EV≥2.5% + Prob≥58%</span>
           </div>
         </div>
       </div>

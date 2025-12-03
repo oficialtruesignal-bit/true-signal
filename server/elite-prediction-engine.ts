@@ -137,6 +137,7 @@ const TOP_LEAGUES = [
   78,   // Bundesliga
   61,   // Ligue 1
   71,   // Brasileirão Série A
+  72,   // Brasileirão Série B
   2,    // Champions League
   3,    // Europa League
   848,  // Conference League
@@ -146,8 +147,26 @@ const TOP_LEAGUES = [
   203,  // Super Lig (Turkey)
   179,  // Scottish Premiership
   128,  // Liga Argentina
+  129,  // Copa Argentina
   13,   // Libertadores
   11,   // Copa Sudamericana
+  253,  // MLS
+  262,  // Liga MX
+  307,  // Saudi Pro League
+  218,  // Championship (England)
+  40,   // Serie B (Italy)
+  141,  // La Liga 2 (Spain)
+  79,   // 2. Bundesliga
+  62,   // Ligue 2 (France)
+  235,  // Russian Premier League
+  106,  // Ekstraklasa (Poland)
+  113,  // Super League (Switzerland)
+  103,  // Eliteserien (Norway)
+  119,  // Allsvenskan (Sweden)
+  169,  // Super League (China)
+  292,  // K League 1 (Korea)
+  98,   // J1 League (Japan)
+  188,  // A-League (Australia)
 ];
 
 const EXCLUDED_KEYWORDS = [
@@ -627,12 +646,14 @@ class ElitePredictionEngine {
       let badge: EliteSignal['badgeType'] = 'SILVER';
       let confidenceScore = probability;
       
-      if (ev >= 8 && probability >= 75) {
+      if (ev >= 7 && probability >= 72) {
         badge = 'DIAMOND';
         confidenceScore = Math.min(98, probability + ev * 0.5);
-      } else if (ev >= 5 && probability >= 68) {
+      } else if (ev >= 4 && probability >= 62) {
         badge = 'GOLD';
         confidenceScore = Math.min(94, probability + ev * 0.3);
+      } else if (ev >= 2.5 && probability >= 58) {
+        confidenceScore = Math.min(88, probability + ev * 0.2);
       }
 
       if (context.isClassico) confidenceScore = Math.min(99, confidenceScore + 3);
@@ -679,7 +700,7 @@ class ElitePredictionEngine {
       };
     };
 
-    if (probabilities.over25 >= 62 && homeStats.over25Rate >= 55 && awayStats.over25Rate >= 55) {
+    if (probabilities.over25 >= 55 && homeStats.over25Rate >= 45 && awayStats.over25Rate >= 45) {
       const signal = createSignal(
         'Over 2.5 Gols',
         'GOALS',
@@ -698,10 +719,10 @@ class ElitePredictionEngine {
               : `Condições favoráveis para jogo com gols.`
         }
       );
-      if (signal && signal.expectedValue >= 3) signals.push(signal);
+      if (signal && signal.expectedValue >= 2) signals.push(signal);
     }
 
-    if (probabilities.over15 >= 75 && homeStats.over15Rate >= 70 && awayStats.over15Rate >= 70) {
+    if (probabilities.over15 >= 68 && homeStats.over15Rate >= 60 && awayStats.over15Rate >= 60) {
       const signal = createSignal(
         'Over 1.5 Gols',
         'GOALS',
@@ -719,7 +740,7 @@ class ElitePredictionEngine {
       if (signal && signal.expectedValue >= 2) signals.push(signal);
     }
 
-    if (probabilities.htOver05 >= 70 && homeStats.goalsHTRate >= 65 && awayStats.goalsHTRate >= 65) {
+    if (probabilities.htOver05 >= 60 && homeStats.goalsHTRate >= 55 && awayStats.goalsHTRate >= 55) {
       const signal = createSignal(
         'Over 0.5 Gols HT',
         'GOALS',
@@ -737,7 +758,7 @@ class ElitePredictionEngine {
       if (signal && signal.expectedValue >= 2) signals.push(signal);
     }
 
-    if (probabilities.btts >= 58 && homeStats.bttsRate >= 55 && awayStats.bttsRate >= 55) {
+    if (probabilities.btts >= 52 && homeStats.bttsRate >= 48 && awayStats.bttsRate >= 48) {
       const homeScoresRate = 100 - homeStats.failedToScoreRate;
       const awayConcedes = 100 - awayStats.cleanSheetRate;
       const awayScoresRate = 100 - awayStats.failedToScoreRate;
@@ -745,7 +766,7 @@ class ElitePredictionEngine {
 
       const combinedBtts = Math.min(homeScoresRate, awayConcedes) * Math.min(awayScoresRate, homeConcedes) / 100;
 
-      if (combinedBtts >= 50) {
+      if (combinedBtts >= 40) {
         const signal = createSignal(
           'Ambas Marcam',
           'BTTS',
@@ -765,7 +786,7 @@ class ElitePredictionEngine {
     }
 
     const projectedCorners = homeStats.avgCorners + awayStats.avgCornersAgainst;
-    if (projectedCorners >= 10.5 && homeStats.avgCorners >= 5) {
+    if (projectedCorners >= 9.0 && homeStats.avgCorners >= 4) {
       const cornerLine = Math.floor(projectedCorners - 1.5);
       const cornerProb = 65 + (projectedCorners - 10.5) * 5;
       
@@ -814,10 +835,10 @@ class ElitePredictionEngine {
       if (signal && signal.expectedValue >= 2) signals.push(signal);
     }
 
-    return signals.filter(s => s.expectedValue >= 3 && s.confidenceScore >= 65);
+    return signals.filter(s => s.expectedValue >= 2 && s.confidenceScore >= 55);
   }
 
-  async runEliteScan(maxFixtures: number = 40): Promise<EliteScanResult> {
+  async runEliteScan(maxFixtures: number = 80): Promise<EliteScanResult> {
     console.log('[ELITE ENGINE] 🚀 Iniciando varredura ELITE...');
     
     const today = new Date();
@@ -837,7 +858,11 @@ class ElitePredictionEngine {
 
     const validFixtures = allFixtures
       .filter(f => !this.isLeagueExcluded(f.league.name))
-      .filter(f => TOP_LEAGUES.includes(f.league.id))
+      .sort((a, b) => {
+        const aTop = TOP_LEAGUES.includes(a.league.id) ? 0 : 1;
+        const bTop = TOP_LEAGUES.includes(b.league.id) ? 0 : 1;
+        return aTop - bTop;
+      })
       .slice(0, maxFixtures);
 
     console.log(`[ELITE ENGINE] Fixtures válidos (top leagues): ${validFixtures.length}`);
