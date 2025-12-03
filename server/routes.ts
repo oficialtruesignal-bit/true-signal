@@ -2193,6 +2193,62 @@ REGRAS IMPORTANTES:
   });
 
   // =====================================================
+  // ELITE PREDICTION ENGINE - MOTOR PREDITIVO AVANÇADO
+  // Poisson Model + xG + EV Calculation + Pattern Detection
+  // =====================================================
+
+  app.post("/api/elite/scan", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!adminEmail || adminEmail !== 'kwillianferreira@gmail.com') {
+        const profile = adminUserId ? await storage.getProfileById(adminUserId) : null;
+        if (!profile || profile.role !== 'admin') {
+          return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+        }
+      }
+
+      console.log(`[ELITE ENGINE] Scan iniciado por ${adminEmail}`);
+      
+      const { elitePredictionEngine } = await import("./elite-prediction-engine");
+      const maxFixtures = parseInt(req.query.max as string) || 40;
+      const result = await elitePredictionEngine.runEliteScan(maxFixtures);
+      
+      return res.json({
+        success: true,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("[ELITE ENGINE] Error:", error);
+      return res.status(500).json({ error: "Erro ao executar varredura ELITE" });
+    }
+  });
+
+  app.get("/api/elite/results", async (req, res) => {
+    try {
+      const { elitePredictionEngine } = await import("./elite-prediction-engine");
+      const result = await elitePredictionEngine.getLastScanResult();
+      
+      if (!result) {
+        return res.json({
+          success: true,
+          hasResults: false,
+          message: "Nenhuma varredura executada ainda"
+        });
+      }
+      
+      return res.json({
+        success: true,
+        hasResults: true,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("[ELITE ENGINE] Error:", error);
+      return res.status(500).json({ error: "Erro ao buscar resultados ELITE" });
+    }
+  });
+
+  // =====================================================
   // LIVE PRESSURE MONITOR ENDPOINTS
   // =====================================================
 

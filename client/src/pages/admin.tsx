@@ -36,39 +36,52 @@ interface LivePressureData {
 
 type AdminTab = 'tickets' | 'free' | 'live' | 'ai' | 'bots' | 'oraculo';
 
-interface OraculoSignal {
+interface EliteSignal {
   fixtureId: number;
   league: string;
-  leagueCountry: string;
+  leagueLogo: string;
   homeTeam: string;
   awayTeam: string;
   homeTeamLogo: string;
   awayTeamLogo: string;
   matchDate: string;
   matchTime: string;
-  marketRecommendation: string;
+  market: string;
+  marketCategory: 'GOALS' | 'CORNERS' | 'CARDS' | 'BTTS' | 'RESULT';
+  prediction: string;
+  probability: number;
+  bookmakerOdd: number;
+  fairOdd: number;
+  expectedValue: number;
   confidenceScore: number;
-  badgeType: 'DIAMOND' | 'GOLD';
+  badgeType: 'DIAMOND' | 'GOLD' | 'SILVER';
   reasoning: {
-    pattern: string;
-    statsHome: string;
-    statsAway: string;
-    aiInsight: string;
+    primary: string;
+    homeAnalysis: string;
+    awayAnalysis: string;
+    h2hInsight: string;
+    refereeInsight?: string;
+    contextInsight: string;
   };
-  dominanceIndex: {
-    home: number;
-    away: number;
+  patternStrength: number;
+  dataPoints: {
+    homeForm: string;
+    awayForm: string;
+    h2hRecord: string;
+    homePosition: string;
+    awayPosition: string;
   };
 }
 
 function OraculoTab({ user }: { user: any }) {
   const [isScanning, setIsScanning] = useState(false);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string>('ALL');
 
-  const { data: oraculoData, refetch } = useQuery({
-    queryKey: ['oraculo-results'],
+  const { data: eliteData, refetch } = useQuery({
+    queryKey: ['elite-results'],
     queryFn: async () => {
-      const response = await axios.get('/api/oraculo/results');
+      const response = await axios.get('/api/elite/results');
       return response.data;
     },
     refetchInterval: false,
@@ -77,13 +90,13 @@ function OraculoTab({ user }: { user: any }) {
   const runScan = async () => {
     setIsScanning(true);
     try {
-      const response = await axios.post('/api/oraculo/scan', {
+      const response = await axios.post('/api/elite/scan', {
         adminEmail: user?.email,
         adminUserId: user?.id,
       });
       
       if (response.data.success) {
-        toast.success(`ORÁCULO: ${response.data.signalsGenerated} oportunidades encontradas!`);
+        toast.success(`🎯 ELITE ENGINE: ${response.data.diamondSignals} DIAMOND + ${response.data.goldSignals} GOLD encontrados! EV Médio: ${response.data.avgExpectedValue}%`);
         refetch();
       }
     } catch (error: any) {
@@ -93,193 +106,268 @@ function OraculoTab({ user }: { user: any }) {
     }
   };
 
+  const filteredOpportunities = eliteData?.opportunities?.filter((s: EliteSignal) => 
+    filterCategory === 'ALL' || s.marketCategory === filterCategory
+  ) || [];
+
+  const categoryIcons: Record<string, React.ReactNode> = {
+    'GOALS': '⚽',
+    'CORNERS': '🚩',
+    'CARDS': '🟨',
+    'BTTS': '🔄',
+    'RESULT': '🏆'
+  };
+
   return (
     <div className="space-y-6">
-      {/* Header do ORÁCULO */}
-      <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-600/5">
+      {/* Header ELITE ENGINE */}
+      <Card className="border-cyan-500/30 bg-gradient-to-br from-cyan-500/5 via-blue-600/5 to-purple-500/5">
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
-                <Eye className="w-6 h-6 text-black" />
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/30 animate-pulse">
+                <Diamond className="w-7 h-7 text-white" />
               </div>
               <div>
-                <CardTitle className="flex items-center gap-2 text-lg">
-                  ORÁCULO
-                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">V3.0</Badge>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  ELITE ENGINE
+                  <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0 text-xs">POISSON + xG</Badge>
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Predictive Sports Engine - Deep Scan Algorithm
+                  Motor Preditivo Avançado • EV Calculation • Pattern Detection
                 </CardDescription>
               </div>
             </div>
             <Button
               onClick={runScan}
               disabled={isScanning}
-              className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:opacity-90"
-              data-testid="button-run-oraculo"
+              size="lg"
+              className="bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 text-white font-bold hover:opacity-90 shadow-lg shadow-cyan-500/30"
+              data-testid="button-run-elite"
             >
               {isScanning ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Escaneando...
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Analisando...
                 </>
               ) : (
                 <>
-                  <ScanLine className="w-4 h-4 mr-2" />
-                  Rodar Varredura 24h
+                  <ScanLine className="w-5 h-5 mr-2" />
+                  🔍 PESQUISAR BILHETES
                 </>
               )}
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <div className="bg-black/30 rounded-lg p-3 text-center">
               <p className="text-xs text-gray-500">Jogos Escaneados</p>
-              <p className="text-xl font-bold text-white">{oraculoData?.totalFixturesScanned || 0}</p>
+              <p className="text-xl font-bold text-white">{eliteData?.totalFixturesScanned || 0}</p>
             </div>
             <div className="bg-black/30 rounded-lg p-3 text-center">
               <p className="text-xs text-gray-500">Analisados</p>
-              <p className="text-xl font-bold text-amber-400">{oraculoData?.fixturesAnalyzed || 0}</p>
+              <p className="text-xl font-bold text-cyan-400">{eliteData?.fixturesAnalyzed || 0}</p>
             </div>
-            <div className="bg-black/30 rounded-lg p-3 text-center">
-              <p className="text-xs text-gray-500">Oportunidades</p>
-              <p className="text-xl font-bold text-[#33b864]">{oraculoData?.signalsGenerated || 0}</p>
+            <div className="bg-black/30 rounded-lg p-3 text-center border border-cyan-500/30">
+              <p className="text-xs text-cyan-400">💎 DIAMOND</p>
+              <p className="text-xl font-bold text-cyan-400">{eliteData?.diamondSignals || 0}</p>
             </div>
-            <div className="bg-black/30 rounded-lg p-3 text-center">
-              <p className="text-xs text-gray-500">Última Varredura</p>
-              <p className="text-sm font-bold text-white">
-                {oraculoData?.scanTimestamp 
-                  ? new Date(oraculoData.scanTimestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-                  : '--:--'}
-              </p>
+            <div className="bg-black/30 rounded-lg p-3 text-center border border-yellow-500/30">
+              <p className="text-xs text-yellow-400">🏆 GOLD</p>
+              <p className="text-xl font-bold text-yellow-400">{eliteData?.goldSignals || 0}</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3 text-center border border-[#33b864]/30">
+              <p className="text-xs text-[#33b864]">📈 EV Médio</p>
+              <p className="text-xl font-bold text-[#33b864]">{eliteData?.avgExpectedValue || 0}%</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Legenda de Badges */}
-      <div className="flex items-center gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0">
-            <Diamond className="w-3 h-3 mr-1" />
-            DIAMOND
-          </Badge>
-          <span className="text-gray-400">Score ≥85%</span>
+      {/* Filtros e Legenda */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {['ALL', 'GOALS', 'BTTS', 'CORNERS', 'CARDS'].map(cat => (
+            <Button
+              key={cat}
+              size="sm"
+              variant={filterCategory === cat ? "default" : "outline"}
+              onClick={() => setFilterCategory(cat)}
+              className={cn(
+                "text-xs",
+                filterCategory === cat && "bg-gradient-to-r from-cyan-500 to-blue-500 text-white border-0"
+              )}
+            >
+              {cat === 'ALL' ? '🎯 Todos' : `${categoryIcons[cat]} ${cat}`}
+            </Button>
+          ))}
         </div>
-        <div className="flex items-center gap-2">
-          <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0">
-            <Sparkles className="w-3 h-3 mr-1" />
-            GOLD
-          </Badge>
-          <span className="text-gray-400">Score ≥75%</span>
+        <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-1">
+            <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0 text-[10px]">
+              <Diamond className="w-2.5 h-2.5 mr-0.5" />
+              DIAMOND
+            </Badge>
+            <span className="text-gray-500 text-xs">EV≥8% + Score≥75%</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0 text-[10px]">
+              <Star className="w-2.5 h-2.5 mr-0.5" />
+              GOLD
+            </Badge>
+            <span className="text-gray-500 text-xs">EV≥5% + Score≥68%</span>
+          </div>
         </div>
       </div>
 
-      {/* Lista de Oportunidades */}
-      {!oraculoData?.hasResults ? (
-        <Card className="border-dashed border-amber-500/30">
+      {/* Lista de Oportunidades ELITE */}
+      {!eliteData?.hasResults ? (
+        <Card className="border-dashed border-cyan-500/30">
           <CardContent className="py-16 text-center">
-            <Eye className="w-16 h-16 mx-auto mb-4 text-amber-500/30" />
-            <h3 className="text-xl font-bold text-white mb-2">Nenhuma varredura executada</h3>
-            <p className="text-gray-400 mb-4">Clique em "Rodar Varredura 24h" para iniciar a análise</p>
-            <p className="text-xs text-gray-500">
-              O ORÁCULO analisa todos os jogos das próximas 24h usando a Regra dos 10 Jogos + H2H
-            </p>
+            <Diamond className="w-20 h-20 mx-auto mb-4 text-cyan-500/30" />
+            <h3 className="text-xl font-bold text-white mb-2">Motor Elite Pronto</h3>
+            <p className="text-gray-400 mb-4">Clique em "PESQUISAR BILHETES" para iniciar a análise completa</p>
+            <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-500">
+              <span className="px-2 py-1 bg-black/30 rounded">📊 Modelo Poisson</span>
+              <span className="px-2 py-1 bg-black/30 rounded">📈 xG Analysis</span>
+              <span className="px-2 py-1 bg-black/30 rounded">💰 EV Calculation</span>
+              <span className="px-2 py-1 bg-black/30 rounded">🔥 Clássicos</span>
+              <span className="px-2 py-1 bg-black/30 rounded">📋 Posição Tabela</span>
+              <span className="px-2 py-1 bg-black/30 rounded">🏠 Fator Casa</span>
+            </div>
           </CardContent>
         </Card>
-      ) : oraculoData?.opportunities?.length === 0 ? (
+      ) : filteredOpportunities.length === 0 ? (
         <Card className="border-dashed border-gray-700">
           <CardContent className="py-16 text-center">
             <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-gray-500" />
-            <h3 className="text-xl font-bold text-white mb-2">Nenhuma oportunidade encontrada</h3>
-            <p className="text-gray-400">Não foram encontrados padrões com score ≥75% nos jogos analisados</p>
+            <h3 className="text-xl font-bold text-white mb-2">
+              {filterCategory === 'ALL' ? 'Nenhuma oportunidade encontrada' : `Nenhum bilhete de ${filterCategory}`}
+            </h3>
+            <p className="text-gray-400">Filtros aplicados não encontraram resultados com EV positivo</p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4">
-          {oraculoData?.opportunities?.map((signal: OraculoSignal, index: number) => (
+          {filteredOpportunities.map((signal: EliteSignal, index: number) => (
             <Card 
-              key={signal.fixtureId + '-' + index} 
+              key={signal.fixtureId + '-' + signal.market + '-' + index} 
               className={cn(
-                "border transition-all cursor-pointer hover:border-amber-500/50",
+                "border transition-all cursor-pointer",
                 signal.badgeType === 'DIAMOND' 
-                  ? "border-cyan-500/30 bg-gradient-to-br from-cyan-500/5 to-blue-500/5"
-                  : "border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-600/5"
+                  ? "border-cyan-500/40 bg-gradient-to-br from-cyan-500/10 to-blue-500/10 hover:border-cyan-400"
+                  : signal.badgeType === 'GOLD'
+                    ? "border-yellow-500/40 bg-gradient-to-br from-yellow-500/10 to-amber-500/10 hover:border-yellow-400"
+                    : "border-gray-600/40 bg-gradient-to-br from-gray-600/10 to-gray-700/10 hover:border-gray-500"
               )}
               onClick={() => setExpandedCard(expandedCard === index ? null : index)}
-              data-testid={`oraculo-card-${index}`}
+              data-testid={`elite-card-${index}`}
             >
               <CardContent className="p-4">
                 {/* Header do Card */}
-                <div className="flex items-start justify-between mb-3">
+                <div className="flex items-start justify-between mb-3 gap-2">
                   <div className="flex items-center gap-3">
                     <div className="flex -space-x-2">
-                      <img src={signal.homeTeamLogo} alt="" className="w-8 h-8 rounded-full bg-white/10 border border-white/20" />
-                      <img src={signal.awayTeamLogo} alt="" className="w-8 h-8 rounded-full bg-white/10 border border-white/20" />
+                      <img src={signal.homeTeamLogo} alt="" className="w-10 h-10 rounded-full bg-white/10 border-2 border-white/20" />
+                      <img src={signal.awayTeamLogo} alt="" className="w-10 h-10 rounded-full bg-white/10 border-2 border-white/20" />
                     </div>
                     <div>
                       <p className="text-white font-bold text-sm">
                         {signal.homeTeam} vs {signal.awayTeam}
                       </p>
-                      <p className="text-gray-500 text-xs">{signal.league} • {signal.matchDate} {signal.matchTime}</p>
+                      <p className="text-gray-500 text-xs flex items-center gap-2">
+                        <img src={signal.leagueLogo} alt="" className="w-4 h-4" />
+                        {signal.league} • {signal.matchDate} {signal.matchTime}
+                      </p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-shrink-0">
                     {signal.badgeType === 'DIAMOND' ? (
-                      <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0 font-bold">
+                      <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-white border-0 font-bold shadow-lg shadow-cyan-500/30">
                         <Diamond className="w-3 h-3 mr-1" />
                         DIAMOND
                       </Badge>
-                    ) : (
+                    ) : signal.badgeType === 'GOLD' ? (
                       <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0 font-bold">
-                        <Sparkles className="w-3 h-3 mr-1" />
+                        <Star className="w-3 h-3 mr-1" />
                         GOLD
                       </Badge>
+                    ) : (
+                      <Badge className="bg-gray-600 text-white border-0">
+                        SILVER
+                      </Badge>
                     )}
-                    <div className="text-center bg-black/30 px-3 py-1 rounded-lg">
-                      <p className="text-xs text-gray-500">Score</p>
-                      <p className="text-lg font-bold text-[#33b864]">{signal.confidenceScore}%</p>
-                    </div>
                   </div>
                 </div>
 
-                {/* Mercado Recomendado */}
-                <div className="bg-black/30 rounded-lg p-3 mb-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-[#33b864]" />
-                      <span className="text-white font-bold">{signal.marketRecommendation}</span>
+                {/* Mercado + Métricas */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                  <div className="col-span-2 bg-black/40 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{categoryIcons[signal.marketCategory]}</span>
+                      <span className="text-white font-bold text-sm">{signal.market}</span>
                     </div>
-                    <div className="flex gap-2 text-xs">
-                      <span className="text-gray-500">ID Home: <span className="text-amber-400">{signal.dominanceIndex.home}</span></span>
-                      <span className="text-gray-500">ID Away: <span className="text-amber-400">{signal.dominanceIndex.away}</span></span>
-                    </div>
+                    <p className="text-gray-400 text-xs">{signal.prediction}</p>
+                  </div>
+                  <div className="bg-black/40 rounded-lg p-2 text-center">
+                    <p className="text-[10px] text-gray-500">PROB</p>
+                    <p className="text-lg font-bold text-white">{signal.probability}%</p>
+                  </div>
+                  <div className="bg-black/40 rounded-lg p-2 text-center">
+                    <p className="text-[10px] text-gray-500">EV</p>
+                    <p className={cn(
+                      "text-lg font-bold",
+                      signal.expectedValue >= 8 ? "text-cyan-400" : 
+                      signal.expectedValue >= 5 ? "text-[#33b864]" : "text-yellow-400"
+                    )}>+{signal.expectedValue}%</p>
+                  </div>
+                </div>
+
+                {/* Odds */}
+                <div className="flex items-center justify-between bg-black/30 rounded-lg p-2 mb-2">
+                  <div className="flex items-center gap-4 text-xs">
+                    <span className="text-gray-500">Odd Bet365: <span className="text-white font-bold">{signal.bookmakerOdd}</span></span>
+                    <span className="text-gray-500">Odd Justa: <span className="text-cyan-400 font-bold">{signal.fairOdd}</span></span>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs">
+                    <span className="text-gray-500">{signal.dataPoints.homeForm}</span>
+                    <span className="text-gray-400">vs</span>
+                    <span className="text-gray-500">{signal.dataPoints.awayForm}</span>
                   </div>
                 </div>
 
                 {/* Detalhes Expandidos */}
                 {expandedCard === index && (
                   <div className="space-y-3 mt-4 pt-4 border-t border-white/10">
-                    <div className="bg-black/20 rounded-lg p-3">
-                      <p className="text-xs text-gray-500 mb-1">Padrão Detectado</p>
-                      <p className="text-sm text-white">{signal.reasoning.pattern}</p>
+                    <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 border border-cyan-500/30 rounded-lg p-3">
+                      <p className="text-xs text-cyan-400 mb-1 font-bold">📊 Análise Poisson</p>
+                      <p className="text-sm text-white">{signal.reasoning.primary}</p>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="bg-black/20 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Mandante</p>
-                        <p className="text-xs text-gray-300">{signal.reasoning.statsHome}</p>
+                        <p className="text-xs text-gray-500 mb-1">🏠 Mandante ({signal.dataPoints.homePosition})</p>
+                        <p className="text-xs text-gray-300">{signal.reasoning.homeAnalysis}</p>
                       </div>
                       <div className="bg-black/20 rounded-lg p-3">
-                        <p className="text-xs text-gray-500 mb-1">Visitante</p>
-                        <p className="text-xs text-gray-300">{signal.reasoning.statsAway}</p>
+                        <p className="text-xs text-gray-500 mb-1">✈️ Visitante ({signal.dataPoints.awayPosition})</p>
+                        <p className="text-xs text-gray-300">{signal.reasoning.awayAnalysis}</p>
                       </div>
                     </div>
+                    <div className="bg-black/20 rounded-lg p-3">
+                      <p className="text-xs text-gray-500 mb-1">⚔️ H2H: {signal.dataPoints.h2hRecord}</p>
+                      <p className="text-xs text-gray-300">{signal.reasoning.h2hInsight}</p>
+                    </div>
+                    {signal.reasoning.refereeInsight && (
+                      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3">
+                        <p className="text-xs text-yellow-400 mb-1">👨‍⚖️ Fator Árbitro</p>
+                        <p className="text-xs text-gray-300">{signal.reasoning.refereeInsight}</p>
+                      </div>
+                    )}
                     <div className="bg-gradient-to-r from-[#33b864]/10 to-emerald-500/10 border border-[#33b864]/30 rounded-lg p-3">
-                      <p className="text-xs text-[#33b864] mb-1">💡 AI Insight</p>
-                      <p className="text-sm text-white">{signal.reasoning.aiInsight}</p>
+                      <p className="text-xs text-[#33b864] mb-1">🎯 Contexto do Jogo</p>
+                      <p className="text-sm text-white">{signal.reasoning.contextInsight}</p>
                     </div>
                   </div>
                 )}
@@ -510,7 +598,7 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
   const tabs = [
     { id: 'tickets' as const, label: 'Bilhetes', icon: LayoutDashboard, color: 'from-[#33b864] to-emerald-600', badge: signals.length },
     { id: 'free' as const, label: 'Bilhete Free', icon: Gift, color: 'from-yellow-500 to-orange-500', badge: freeTip ? 1 : 0 },
-    { id: 'oraculo' as const, label: 'ORÁCULO', icon: Eye, color: 'from-amber-500 to-yellow-600' },
+    { id: 'oraculo' as const, label: 'ELITE ENGINE', icon: Diamond, color: 'from-cyan-500 to-blue-500' },
     { id: 'live' as const, label: 'Jogos Quentes', icon: Flame, color: 'from-orange-500 to-red-500' },
     { id: 'ai' as const, label: 'IA Preditiva', icon: Brain, color: 'from-purple-500 to-pink-500' },
     { id: 'bots' as const, label: 'Multi-Bot', icon: Target, color: 'from-cyan-500 to-blue-500' },

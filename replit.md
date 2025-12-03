@@ -6,6 +6,17 @@ TRUE SIGNAL is an AI-powered sports betting intelligence platform that delivers 
 
 **NEW: AI Prediction Engine** - Automated betting tip generation using Poisson probability model, analyzing last 10 matches per team, H2H history, and form to generate high-confidence predictions (≥70%) for admin approval.
 
+**NEW: ELITE PREDICTION ENGINE** - Advanced predictive motor with:
+- **Poisson Distribution Model**: Calculates exact probabilities for Goals (Over 1.5/2.5/3.5), BTTS, HT goals
+- **Expected Value (EV) Calculation**: Only surfaces bets with EV ≥ 3% vs Bet365 odds (fairOdd vs bookmakerOdd)
+- **xG Analysis**: Uses expected goals data to compute team attack/defense strengths
+- **Match Context Engine**: Analyzes table position, relegation battles, title deciders, derby matches
+- **Classic Detection**: Identifies 25+ major derbies (El Clásico, Derby d'Italia, Superclásico, etc.) with intensity scoring
+- **Pattern Detection**: Requires ≥75% recurrence in last 10 matches + H2H confirmation
+- **DIAMOND/GOLD Badges**: DIAMOND (EV≥8% + Prob≥75%), GOLD (EV≥5% + Prob≥68%)
+- **Markets**: Goals (FT/HT), BTTS, Corners, Cards with statistical backing
+- **Admin Interface**: "ELITE ENGINE" tab with category filters and detailed reasoning per signal
+
 ## Brand Identity
 
 - **Logo**: Minimalist shield with animated pulse line, Inter font
