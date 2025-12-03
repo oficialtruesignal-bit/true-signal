@@ -2137,6 +2137,62 @@ REGRAS IMPORTANTES:
   });
 
   // =====================================================
+  // ORÁCULO - PREDICTIVE SPORTS ENGINE V3.0
+  // Deep Scan Algorithm com Regra dos 10 Jogos + H2H
+  // =====================================================
+
+  app.post("/api/oraculo/scan", async (req, res) => {
+    try {
+      const { adminEmail, adminUserId } = req.body;
+      
+      if (!adminEmail || adminEmail !== 'kwillianferreira@gmail.com') {
+        const profile = adminUserId ? await storage.getProfileById(adminUserId) : null;
+        if (!profile || profile.role !== 'admin') {
+          return res.status(403).json({ error: "Acesso negado. Apenas administradores." });
+        }
+      }
+
+      console.log(`[ORÁCULO] Scan iniciado por ${adminEmail}`);
+      
+      const { oraculoService } = await import("./oraculo-service");
+      const maxFixtures = parseInt(req.query.max as string) || 30;
+      const result = await oraculoService.runDeepScan(maxFixtures);
+      
+      return res.json({
+        success: true,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("[ORÁCULO] Error:", error);
+      return res.status(500).json({ error: "Erro ao executar varredura do ORÁCULO" });
+    }
+  });
+
+  app.get("/api/oraculo/results", async (req, res) => {
+    try {
+      const { oraculoService } = await import("./oraculo-service");
+      const result = await oraculoService.getLastScanResult();
+      
+      if (!result) {
+        return res.json({
+          success: true,
+          hasResults: false,
+          message: "Nenhuma varredura executada ainda"
+        });
+      }
+      
+      return res.json({
+        success: true,
+        hasResults: true,
+        ...result
+      });
+    } catch (error: any) {
+      console.error("[ORÁCULO] Error:", error);
+      return res.status(500).json({ error: "Erro ao buscar resultados do ORÁCULO" });
+    }
+  });
+
+  // =====================================================
   // LIVE PRESSURE MONITOR ENDPOINTS
   // =====================================================
 

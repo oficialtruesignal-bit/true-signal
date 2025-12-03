@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight, Gift, Star, PlusCircle } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight, Gift, Star, PlusCircle, Eye, Sparkles, TrendingUp, Diamond } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -34,7 +34,271 @@ interface LivePressureData {
   alertType?: string;
 }
 
-type AdminTab = 'tickets' | 'free' | 'live' | 'ai' | 'bots';
+type AdminTab = 'tickets' | 'free' | 'live' | 'ai' | 'bots' | 'oraculo';
+
+interface OraculoSignal {
+  fixtureId: number;
+  league: string;
+  leagueCountry: string;
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo: string;
+  awayTeamLogo: string;
+  matchDate: string;
+  matchTime: string;
+  marketRecommendation: string;
+  confidenceScore: number;
+  badgeType: 'DIAMOND' | 'GOLD';
+  reasoning: {
+    pattern: string;
+    statsHome: string;
+    statsAway: string;
+    aiInsight: string;
+  };
+  dominanceIndex: {
+    home: number;
+    away: number;
+  };
+}
+
+function OraculoTab({ user }: { user: any }) {
+  const [isScanning, setIsScanning] = useState(false);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
+
+  const { data: oraculoData, refetch } = useQuery({
+    queryKey: ['oraculo-results'],
+    queryFn: async () => {
+      const response = await axios.get('/api/oraculo/results');
+      return response.data;
+    },
+    refetchInterval: false,
+  });
+
+  const runScan = async () => {
+    setIsScanning(true);
+    try {
+      const response = await axios.post('/api/oraculo/scan', {
+        adminEmail: user?.email,
+        adminUserId: user?.id,
+      });
+      
+      if (response.data.success) {
+        toast.success(`ORÁCULO: ${response.data.signalsGenerated} oportunidades encontradas!`);
+        refetch();
+      }
+    } catch (error: any) {
+      toast.error(error.response?.data?.error || 'Erro ao executar varredura');
+    } finally {
+      setIsScanning(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header do ORÁCULO */}
+      <Card className="border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-600/5">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+                <Eye className="w-6 h-6 text-black" />
+              </div>
+              <div>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  ORÁCULO
+                  <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">V3.0</Badge>
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Predictive Sports Engine - Deep Scan Algorithm
+                </CardDescription>
+              </div>
+            </div>
+            <Button
+              onClick={runScan}
+              disabled={isScanning}
+              className="bg-gradient-to-r from-amber-500 to-yellow-600 text-black font-bold hover:opacity-90"
+              data-testid="button-run-oraculo"
+            >
+              {isScanning ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Escaneando...
+                </>
+              ) : (
+                <>
+                  <ScanLine className="w-4 h-4 mr-2" />
+                  Rodar Varredura 24h
+                </>
+              )}
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-black/30 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500">Jogos Escaneados</p>
+              <p className="text-xl font-bold text-white">{oraculoData?.totalFixturesScanned || 0}</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500">Analisados</p>
+              <p className="text-xl font-bold text-amber-400">{oraculoData?.fixturesAnalyzed || 0}</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500">Oportunidades</p>
+              <p className="text-xl font-bold text-[#33b864]">{oraculoData?.signalsGenerated || 0}</p>
+            </div>
+            <div className="bg-black/30 rounded-lg p-3 text-center">
+              <p className="text-xs text-gray-500">Última Varredura</p>
+              <p className="text-sm font-bold text-white">
+                {oraculoData?.scanTimestamp 
+                  ? new Date(oraculoData.scanTimestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                  : '--:--'}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Legenda de Badges */}
+      <div className="flex items-center gap-4 text-sm">
+        <div className="flex items-center gap-2">
+          <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0">
+            <Diamond className="w-3 h-3 mr-1" />
+            DIAMOND
+          </Badge>
+          <span className="text-gray-400">Score ≥85%</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0">
+            <Sparkles className="w-3 h-3 mr-1" />
+            GOLD
+          </Badge>
+          <span className="text-gray-400">Score ≥75%</span>
+        </div>
+      </div>
+
+      {/* Lista de Oportunidades */}
+      {!oraculoData?.hasResults ? (
+        <Card className="border-dashed border-amber-500/30">
+          <CardContent className="py-16 text-center">
+            <Eye className="w-16 h-16 mx-auto mb-4 text-amber-500/30" />
+            <h3 className="text-xl font-bold text-white mb-2">Nenhuma varredura executada</h3>
+            <p className="text-gray-400 mb-4">Clique em "Rodar Varredura 24h" para iniciar a análise</p>
+            <p className="text-xs text-gray-500">
+              O ORÁCULO analisa todos os jogos das próximas 24h usando a Regra dos 10 Jogos + H2H
+            </p>
+          </CardContent>
+        </Card>
+      ) : oraculoData?.opportunities?.length === 0 ? (
+        <Card className="border-dashed border-gray-700">
+          <CardContent className="py-16 text-center">
+            <AlertTriangle className="w-16 h-16 mx-auto mb-4 text-gray-500" />
+            <h3 className="text-xl font-bold text-white mb-2">Nenhuma oportunidade encontrada</h3>
+            <p className="text-gray-400">Não foram encontrados padrões com score ≥75% nos jogos analisados</p>
+          </CardContent>
+        </Card>
+      ) : (
+        <div className="grid gap-4">
+          {oraculoData?.opportunities?.map((signal: OraculoSignal, index: number) => (
+            <Card 
+              key={signal.fixtureId + '-' + index} 
+              className={cn(
+                "border transition-all cursor-pointer hover:border-amber-500/50",
+                signal.badgeType === 'DIAMOND' 
+                  ? "border-cyan-500/30 bg-gradient-to-br from-cyan-500/5 to-blue-500/5"
+                  : "border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-yellow-600/5"
+              )}
+              onClick={() => setExpandedCard(expandedCard === index ? null : index)}
+              data-testid={`oraculo-card-${index}`}
+            >
+              <CardContent className="p-4">
+                {/* Header do Card */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="flex -space-x-2">
+                      <img src={signal.homeTeamLogo} alt="" className="w-8 h-8 rounded-full bg-white/10 border border-white/20" />
+                      <img src={signal.awayTeamLogo} alt="" className="w-8 h-8 rounded-full bg-white/10 border border-white/20" />
+                    </div>
+                    <div>
+                      <p className="text-white font-bold text-sm">
+                        {signal.homeTeam} vs {signal.awayTeam}
+                      </p>
+                      <p className="text-gray-500 text-xs">{signal.league} • {signal.matchDate} {signal.matchTime}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {signal.badgeType === 'DIAMOND' ? (
+                      <Badge className="bg-gradient-to-r from-cyan-400 to-blue-500 text-black border-0 font-bold">
+                        <Diamond className="w-3 h-3 mr-1" />
+                        DIAMOND
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-gradient-to-r from-yellow-400 to-amber-500 text-black border-0 font-bold">
+                        <Sparkles className="w-3 h-3 mr-1" />
+                        GOLD
+                      </Badge>
+                    )}
+                    <div className="text-center bg-black/30 px-3 py-1 rounded-lg">
+                      <p className="text-xs text-gray-500">Score</p>
+                      <p className="text-lg font-bold text-[#33b864]">{signal.confidenceScore}%</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mercado Recomendado */}
+                <div className="bg-black/30 rounded-lg p-3 mb-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-[#33b864]" />
+                      <span className="text-white font-bold">{signal.marketRecommendation}</span>
+                    </div>
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-gray-500">ID Home: <span className="text-amber-400">{signal.dominanceIndex.home}</span></span>
+                      <span className="text-gray-500">ID Away: <span className="text-amber-400">{signal.dominanceIndex.away}</span></span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Detalhes Expandidos */}
+                {expandedCard === index && (
+                  <div className="space-y-3 mt-4 pt-4 border-t border-white/10">
+                    <div className="bg-black/20 rounded-lg p-3">
+                      <p className="text-xs text-gray-500 mb-1">Padrão Detectado</p>
+                      <p className="text-sm text-white">{signal.reasoning.pattern}</p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-black/20 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Mandante</p>
+                        <p className="text-xs text-gray-300">{signal.reasoning.statsHome}</p>
+                      </div>
+                      <div className="bg-black/20 rounded-lg p-3">
+                        <p className="text-xs text-gray-500 mb-1">Visitante</p>
+                        <p className="text-xs text-gray-300">{signal.reasoning.statsAway}</p>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-r from-[#33b864]/10 to-emerald-500/10 border border-[#33b864]/30 rounded-lg p-3">
+                      <p className="text-xs text-[#33b864] mb-1">💡 AI Insight</p>
+                      <p className="text-sm text-white">{signal.reasoning.aiInsight}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Indicador de Expansão */}
+                <div className="flex justify-center mt-2">
+                  <ChevronRight className={cn(
+                    "w-4 h-4 text-gray-500 transition-transform",
+                    expandedCard === index && "rotate-90"
+                  )} />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Admin() {
   const queryClient = useQueryClient();
@@ -246,6 +510,7 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
   const tabs = [
     { id: 'tickets' as const, label: 'Bilhetes', icon: LayoutDashboard, color: 'from-[#33b864] to-emerald-600', badge: signals.length },
     { id: 'free' as const, label: 'Bilhete Free', icon: Gift, color: 'from-yellow-500 to-orange-500', badge: freeTip ? 1 : 0 },
+    { id: 'oraculo' as const, label: 'ORÁCULO', icon: Eye, color: 'from-amber-500 to-yellow-600' },
     { id: 'live' as const, label: 'Jogos Quentes', icon: Flame, color: 'from-orange-500 to-red-500' },
     { id: 'ai' as const, label: 'IA Preditiva', icon: Brain, color: 'from-purple-500 to-pink-500' },
     { id: 'bots' as const, label: 'Multi-Bot', icon: Target, color: 'from-cyan-500 to-blue-500' },
@@ -716,6 +981,11 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
             </CardContent>
           </Card>
         </div>
+      )}
+
+      {/* TAB: ORÁCULO - Predictive Sports Engine V3.0 */}
+      {activeTab === 'oraculo' && (
+        <OraculoTab user={user} />
       )}
 
       {/* TAB 3: JOGOS QUENTES - EM CONSTRUÇÃO */}
