@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight, Gift, Star } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight, Gift, Star, PlusCircle } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -154,6 +154,36 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     }
   });
 
+  const createFreeMutation = useMutation({
+    mutationFn: async (formData: any) => {
+      const newTip = await tipsService.create(formData);
+      await axios.patch(`/api/tips/${newTip.id}/free`, {
+        isFree: true,
+        adminEmail: user?.email,
+        adminUserId: user?.id,
+      });
+      return newTip;
+    },
+    onSuccess: async (newTip) => {
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
+      toast.success("Bilhete FREE criado com sucesso!");
+      
+      try {
+        const { notificationService } = await import("@/lib/notification-service");
+        await notificationService.sendNewTipNotification({
+          match: `${newTip.homeTeam} vs ${newTip.awayTeam}`,
+          market: newTip.market,
+          odd: newTip.odd,
+        });
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao criar bilhete FREE.");
+    }
+  });
+
   const updateStatusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string, status: Signal['status'] }) => 
       tipsService.updateStatus(id, status),
@@ -201,6 +231,14 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
       return;
     }
     createMutation.mutate(formData);
+  };
+
+  const handleCreateFreeTip = (formData: any) => {
+    if (user?.role !== 'admin' && user?.email !== 'kwillianferreira@gmail.com') {
+      toast.error("Apenas administradores podem criar tips.");
+      return;
+    }
+    createFreeMutation.mutate(formData);
   };
 
   const freeTip = signals.find(s => s.isFree);
@@ -545,9 +583,25 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
                 Bilhete Grátis do Dia
               </CardTitle>
               <CardDescription className="text-gray-400">
-                Selecione 1 bilhete que será visível para usuários não-Prime. Eles verão este bilhete + 10 bilhetes bloqueados como preview.
+                Crie um bilhete free manual ou selecione um bilhete existente. Usuários não-Prime verão este bilhete + 10 bloqueados.
               </CardDescription>
             </CardHeader>
+          </Card>
+
+          {/* Criar Bilhete FREE Manual */}
+          <Card className="border-yellow-500/30">
+            <CardHeader className="pb-3 border-b border-yellow-500/20">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <PlusCircle className="w-5 h-5 text-yellow-500" />
+                Criar Bilhete FREE Manual
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                O bilhete criado aqui será automaticamente marcado como FREE
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4">
+              <ManualTicketForm onSubmit={handleCreateFreeTip} isSubmitting={createFreeMutation.isPending} />
+            </CardContent>
           </Card>
 
           {/* Bilhete FREE Atual */}
