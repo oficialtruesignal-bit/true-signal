@@ -166,42 +166,72 @@ interface EliteScanResult {
 }
 
 const TOP_LEAGUES = [
+  // TIER 1 - Principais Ligas Europeias
   39,   // Premier League
   140,  // La Liga
   135,  // Serie A
   78,   // Bundesliga
   61,   // Ligue 1
-  71,   // Brasileirão Série A
-  72,   // Brasileirão Série B
+  
+  // TIER 1 - Competições Europeias
   2,    // Champions League
   3,    // Europa League
   848,  // Conference League
+  
+  // TIER 2 - Segundas Divisões Top 5
+  218,  // Championship (England)
+  141,  // La Liga 2 (Spain)
+  136,  // Serie B (Italy)
+  79,   // 2. Bundesliga
+  62,   // Ligue 2 (France)
+  
+  // TIER 2 - Ligas Europeias Secundárias
   94,   // Primeira Liga (Portugal)
-  88,   // Eredivisie
-  144,  // Jupiler Pro League
+  88,   // Eredivisie (Netherlands)
+  144,  // Jupiler Pro League (Belgium)
   203,  // Super Lig (Turkey)
   179,  // Scottish Premiership
+  235,  // Russian Premier League
+  106,  // Ekstraklasa (Poland)
+  113,  // Super League (Switzerland)
+  103,  // Eliteserien (Norway)
+  119,  // Allsvenskan (Sweden)
+  210,  // Super League (Greece)
+  197,  // Super Liga (Serbia)
+  207,  // Premijer Liga (Bosnia)
+  172,  // HNL (Croatia)
+  318,  // Superliga (Denmark)
+  185,  // Tipsport Liga (Czech)
+  271,  // NB I (Hungary)
+  
+  // TIER 2 - Américas
+  71,   // Brasileirão Série A
+  72,   // Brasileirão Série B
   128,  // Liga Argentina
   129,  // Copa Argentina
   13,   // Libertadores
   11,   // Copa Sudamericana
   253,  // MLS
   262,  // Liga MX
+  263,  // Liga MX Clausura
+  239,  // Primera División (Chile)
+  240,  // Primera División (Colombia)
+  281,  // Primera División (Peru)
+  
+  // TIER 3 - Ásia e Oceania
   307,  // Saudi Pro League
-  218,  // Championship (England)
-  40,   // Serie B (Italy)
-  141,  // La Liga 2 (Spain)
-  79,   // 2. Bundesliga
-  62,   // Ligue 2 (France)
-  235,  // Russian Premier League
-  106,  // Ekstraklasa (Poland)
-  113,  // Super League (Switzerland)
-  103,  // Eliteserien (Norway)
-  119,  // Allsvenskan (Sweden)
   169,  // Super League (China)
   292,  // K League 1 (Korea)
   98,   // J1 League (Japan)
   188,  // A-League (Australia)
+  
+  // TIER 3 - Copas Nacionais com bom volume
+  45,   // FA Cup (England)
+  143,  // Copa del Rey (Spain)
+  137,  // Coppa Italia
+  81,   // DFB Pokal
+  66,   // Coupe de France
+  73,   // Copa do Brasil
 ];
 
 const EXCLUDED_KEYWORDS = [
@@ -381,8 +411,66 @@ class ElitePredictionEngine {
   }
 
   private async fetchOdds(fixtureId: number): Promise<any> {
-    const odds = await this.apiRequest<any[]>('/odds', { fixture: fixtureId, bookmaker: 8 }); // Bet365
-    return odds?.[0] || null;
+    // FALLBACK MULTI-BOOKMAKER: Bet365 → Pinnacle → 1xBet → Unibet → qualquer disponível
+    const BOOKMAKER_PRIORITY = [
+      { id: 8, name: 'Bet365' },
+      { id: 3, name: 'Pinnacle' },
+      { id: 29, name: '1xBet' },
+      { id: 16, name: 'Unibet' },
+      { id: 11, name: 'Betway' },
+      { id: 1, name: 'Bwin' },
+    ];
+
+    // Primeiro, tentar buscar todas as odds do fixture (sem filtro de bookmaker)
+    const cacheKey = `odds_all_${fixtureId}`;
+    let allOdds: any[] | null = this.getCached<any[]>(cacheKey);
+    
+    if (!allOdds) {
+      try {
+        const response = await axios.get(`${API_BASE}/odds`, {
+          headers: { 'x-apisports-key': API_FOOTBALL_KEY },
+          params: { fixture: fixtureId },
+          timeout: 15000
+        });
+        
+        if (response.data?.response?.[0]?.bookmakers) {
+          allOdds = response.data.response[0].bookmakers as any[];
+          this.setCache(cacheKey, allOdds);
+          console.log(`[ELITE] ✅ Odds carregadas para fixture ${fixtureId}: ${allOdds.length} bookmakers disponíveis`);
+        } else {
+          console.log(`[ELITE] ⚠️ Nenhuma odds disponível para fixture ${fixtureId}`);
+          return null;
+        }
+      } catch (error: any) {
+        if (error.response?.status === 429) {
+          console.log(`[ELITE] ⚠️ Rate limit (429) ao buscar odds para fixture ${fixtureId}`);
+        } else {
+          console.error(`[ELITE] Erro ao buscar odds:`, error.message);
+        }
+        return null;
+      }
+    }
+
+    if (!allOdds || allOdds.length === 0) return null;
+
+    // Procurar bookmaker por prioridade
+    for (const bk of BOOKMAKER_PRIORITY) {
+      const bookmaker = allOdds.find((b: any) => b.id === bk.id);
+      if (bookmaker?.bets?.length > 0) {
+        console.log(`[ELITE] 📊 Usando odds de ${bk.name} para fixture ${fixtureId}`);
+        return { bookmakers: [bookmaker] };
+      }
+    }
+
+    // Fallback: usar qualquer bookmaker disponível
+    const anyBookmaker = allOdds.find((b: any) => b.bets?.length > 0);
+    if (anyBookmaker) {
+      console.log(`[ELITE] 📊 Usando odds de ${anyBookmaker.name} (fallback) para fixture ${fixtureId}`);
+      return { bookmakers: [anyBookmaker] };
+    }
+
+    console.log(`[ELITE] ⚠️ Nenhum bookmaker com odds válidas para fixture ${fixtureId}`);
+    return null;
   }
 
   private isLeagueExcluded(leagueName: string): boolean {
@@ -809,10 +897,11 @@ class ElitePredictionEngine {
       const ev = this.calculateExpectedValue(probability, bookmakerOdd);
       
       // Determinar badge potencial antes de rejeitar
+      // GATES RELAXADOS: 75→72, 68→66, 62→60 para aumentar conversão mantendo EV≥3%
       let potentialBadge: 'DIAMOND' | 'GOLD' | 'SILVER' | null = null;
-      if (ev >= 8 && probability >= 75) potentialBadge = 'DIAMOND';
-      else if (ev >= 5 && probability >= 68) potentialBadge = 'GOLD';
-      else if (ev >= 3 && probability >= 62) potentialBadge = 'SILVER';
+      if (ev >= 8 && probability >= 72) potentialBadge = 'DIAMOND';
+      else if (ev >= 5 && probability >= 66) potentialBadge = 'GOLD';
+      else if (ev >= 3 && probability >= 60) potentialBadge = 'SILVER';
       
       // Log detalhado de EV
       console.log(`[ELITE] 📈 ${market}: Prob=${probability.toFixed(1)}%, Odd=${bookmakerOdd.toFixed(2)}, EV=${ev.toFixed(1)}%, Badge=${potentialBadge || 'NONE'}`);
@@ -828,17 +917,17 @@ class ElitePredictionEngine {
       let badge: EliteSignal['badgeType'] = 'SILVER';
       let confidenceScore = probability;
       
-      if (ev >= 8 && probability >= 75) {
+      if (ev >= 8 && probability >= 72) {
         badge = 'DIAMOND';
         confidenceScore = Math.min(98, probability + 3);
-      } else if (ev >= 5 && probability >= 68) {
+      } else if (ev >= 5 && probability >= 66) {
         badge = 'GOLD';
         confidenceScore = Math.min(94, probability + 2);
-      } else if (ev >= 3 && probability >= 62) {
+      } else if (ev >= 3 && probability >= 60) {
         confidenceScore = Math.min(88, probability + 1);
       } else {
         trackOpportunity(market, probability, bookmakerOdd, ev, 'REJECTED_LOW_PROB',
-          `Prob ${probability.toFixed(1)}% < 62% para SILVER`, potentialBadge);
+          `Prob ${probability.toFixed(1)}% < 60% para SILVER`, potentialBadge);
         console.log(`[ELITE] ❌ ${market}: Prob ${probability.toFixed(1)}% abaixo do mínimo para tier`);
         return null;
       }
