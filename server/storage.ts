@@ -39,6 +39,9 @@ export interface IStorage {
   createTip(tip: InsertTip): Promise<Tip>;
   updateTipStatus(id: string, status: 'pending' | 'green' | 'red'): Promise<Tip | undefined>;
   deleteTip(id: string): Promise<void>;
+  setTipFree(id: string, isFree: boolean): Promise<Tip | undefined>;
+  getFreeTip(): Promise<Tip | undefined>;
+  clearAllFreeTips(): Promise<void>;
   
   // Onboarding methods
   updateTourCompleted(userId: string, completed: boolean): Promise<Profile | undefined>;
@@ -258,6 +261,24 @@ export class DatabaseStorage implements IStorage {
 
   async deleteTip(id: string): Promise<void> {
     await db.delete(tips).where(eq(tips.id, id));
+  }
+
+  async setTipFree(id: string, isFree: boolean): Promise<Tip | undefined> {
+    const [updatedTip] = await db
+      .update(tips)
+      .set({ isFree, updatedAt: new Date() })
+      .where(eq(tips.id, id))
+      .returning();
+    return updatedTip;
+  }
+
+  async getFreeTip(): Promise<Tip | undefined> {
+    const [freeTip] = await db.select().from(tips).where(eq(tips.isFree, true)).orderBy(desc(tips.createdAt)).limit(1);
+    return freeTip;
+  }
+
+  async clearAllFreeTips(): Promise<void> {
+    await db.update(tips).set({ isFree: false, updatedAt: new Date() }).where(eq(tips.isFree, true));
   }
 
   // Onboarding methods
