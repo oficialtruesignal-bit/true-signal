@@ -36,6 +36,26 @@ interface LivePressureData {
 
 type AdminTab = 'tickets' | 'free' | 'live' | 'ai' | 'bots' | 'oraculo';
 
+interface AnalyzedOpportunity {
+  fixtureId: number;
+  homeTeam: string;
+  awayTeam: string;
+  homeTeamLogo: string;
+  awayTeamLogo: string;
+  league: string;
+  leagueLogo: string;
+  matchDate: string;
+  matchTime: string;
+  market: string;
+  probability: number;
+  bookmakerOdd: number | null;
+  fairOdd: number;
+  expectedValue: number | null;
+  status: 'APPROVED' | 'REJECTED_NO_ODDS' | 'REJECTED_LOW_EV' | 'REJECTED_LOW_PROB';
+  rejectionReason?: string;
+  potentialBadge: 'DIAMOND' | 'GOLD' | 'SILVER' | null;
+}
+
 interface EliteSignal {
   fixtureId: number;
   league: string;
@@ -77,6 +97,7 @@ function OraculoTab({ user }: { user: any }) {
   const [isScanning, setIsScanning] = useState(false);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>('ALL');
+  const [showAnalyzedModal, setShowAnalyzedModal] = useState(false);
 
   const { data: eliteData, refetch } = useQuery({
     queryKey: ['elite-results'],
@@ -165,9 +186,13 @@ function OraculoTab({ user }: { user: any }) {
               <p className="text-xs text-gray-500">Jogos Escaneados</p>
               <p className="text-xl font-bold text-white">{eliteData?.totalFixturesScanned || 0}</p>
             </div>
-            <div className="bg-black/30 rounded-lg p-3 text-center">
-              <p className="text-xs text-gray-500">Analisados</p>
-              <p className="text-xl font-bold text-cyan-400">{eliteData?.fixturesAnalyzed || 0}</p>
+            <div 
+              className="bg-black/30 rounded-lg p-3 text-center cursor-pointer hover:bg-black/50 transition-colors border border-transparent hover:border-cyan-500/30"
+              onClick={() => setShowAnalyzedModal(true)}
+              data-testid="button-show-analyzed"
+            >
+              <p className="text-xs text-gray-500">Analisados <Eye className="w-3 h-3 inline ml-1" /></p>
+              <p className="text-xl font-bold text-cyan-400">{eliteData?.analyzedOpportunities?.length || eliteData?.fixturesAnalyzed || 0}</p>
             </div>
             <div className="bg-black/30 rounded-lg p-3 text-center border border-cyan-500/30">
               <p className="text-xs text-cyan-400">💎 DIAMOND</p>
@@ -388,6 +413,150 @@ function OraculoTab({ user }: { user: any }) {
               </CardContent>
             </Card>
           ))}
+        </div>
+      )}
+
+      {/* Modal de Oportunidades Analisadas */}
+      {showAnalyzedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+          <div className="bg-[#1a1a2e] border border-cyan-500/30 rounded-xl w-full max-w-4xl max-h-[80vh] overflow-hidden shadow-2xl shadow-cyan-500/20">
+            <div className="flex items-center justify-between p-4 border-b border-cyan-500/30 bg-gradient-to-r from-cyan-500/10 to-blue-500/10">
+              <div className="flex items-center gap-3">
+                <Eye className="w-5 h-5 text-cyan-400" />
+                <h3 className="text-lg font-bold text-white">Oportunidades Analisadas</h3>
+                <Badge className="bg-cyan-500/20 text-cyan-400 border-cyan-500/30">
+                  {eliteData?.analyzedOpportunities?.length || 0} mercados
+                </Badge>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => setShowAnalyzedModal(false)}
+                className="text-gray-400 hover:text-white"
+              >
+                <XCircle className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="p-4 overflow-y-auto max-h-[calc(80vh-80px)]">
+              {!eliteData?.analyzedOpportunities?.length ? (
+                <div className="text-center py-8">
+                  <AlertTriangle className="w-12 h-12 mx-auto text-gray-500 mb-4" />
+                  <p className="text-gray-400">Nenhuma oportunidade analisada ainda. Execute uma varredura primeiro.</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {/* Resumo */}
+                  <div className="grid grid-cols-4 gap-2 mb-4">
+                    <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-3 text-center">
+                      <p className="text-xs text-green-400">Aprovados</p>
+                      <p className="text-xl font-bold text-green-400">
+                        {eliteData.analyzedOpportunities.filter((o: AnalyzedOpportunity) => o.status === 'APPROVED').length}
+                      </p>
+                    </div>
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3 text-center">
+                      <p className="text-xs text-red-400">EV Baixo</p>
+                      <p className="text-xl font-bold text-red-400">
+                        {eliteData.analyzedOpportunities.filter((o: AnalyzedOpportunity) => o.status === 'REJECTED_LOW_EV').length}
+                      </p>
+                    </div>
+                    <div className="bg-orange-500/10 border border-orange-500/30 rounded-lg p-3 text-center">
+                      <p className="text-xs text-orange-400">Prob. Baixa</p>
+                      <p className="text-xl font-bold text-orange-400">
+                        {eliteData.analyzedOpportunities.filter((o: AnalyzedOpportunity) => o.status === 'REJECTED_LOW_PROB').length}
+                      </p>
+                    </div>
+                    <div className="bg-gray-500/10 border border-gray-500/30 rounded-lg p-3 text-center">
+                      <p className="text-xs text-gray-400">Sem Odds</p>
+                      <p className="text-xl font-bold text-gray-400">
+                        {eliteData.analyzedOpportunities.filter((o: AnalyzedOpportunity) => o.status === 'REJECTED_NO_ODDS').length}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Lista de Oportunidades */}
+                  {eliteData.analyzedOpportunities.map((opp: AnalyzedOpportunity, idx: number) => (
+                    <div 
+                      key={`${opp.fixtureId}-${opp.market}-${idx}`}
+                      className={cn(
+                        "rounded-lg p-3 border",
+                        opp.status === 'APPROVED' 
+                          ? "bg-green-500/10 border-green-500/30" 
+                          : opp.status === 'REJECTED_LOW_EV'
+                            ? "bg-red-500/10 border-red-500/30"
+                            : opp.status === 'REJECTED_LOW_PROB'
+                              ? "bg-orange-500/10 border-orange-500/30"
+                              : "bg-gray-500/10 border-gray-500/30"
+                      )}
+                    >
+                      <div className="flex items-center justify-between flex-wrap gap-2">
+                        <div className="flex items-center gap-2">
+                          <img src={opp.homeTeamLogo} alt="" className="w-5 h-5" />
+                          <span className="text-sm text-white font-medium">{opp.homeTeam}</span>
+                          <span className="text-xs text-gray-500">vs</span>
+                          <span className="text-sm text-white font-medium">{opp.awayTeam}</span>
+                          <img src={opp.awayTeamLogo} alt="" className="w-5 h-5" />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge className={cn(
+                            "text-[10px]",
+                            opp.status === 'APPROVED' ? "bg-green-500 text-white" :
+                            opp.status === 'REJECTED_LOW_EV' ? "bg-red-500 text-white" :
+                            opp.status === 'REJECTED_LOW_PROB' ? "bg-orange-500 text-white" :
+                            "bg-gray-500 text-white"
+                          )}>
+                            {opp.status === 'APPROVED' ? '✓ APROVADO' : 
+                             opp.status === 'REJECTED_LOW_EV' ? '✗ EV BAIXO' :
+                             opp.status === 'REJECTED_LOW_PROB' ? '✗ PROB BAIXA' :
+                             '✗ SEM ODDS'}
+                          </Badge>
+                          {opp.potentialBadge && (
+                            <Badge className={cn(
+                              "text-[10px]",
+                              opp.potentialBadge === 'DIAMOND' ? "bg-gradient-to-r from-cyan-400 to-blue-500 text-black" :
+                              opp.potentialBadge === 'GOLD' ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black" :
+                              "bg-gray-500 text-white"
+                            )}>
+                              {opp.potentialBadge}
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      <div className="mt-2 grid grid-cols-2 md:grid-cols-5 gap-2 text-xs">
+                        <div>
+                          <span className="text-gray-500">Mercado:</span>
+                          <span className="ml-1 text-white">{opp.market}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Prob:</span>
+                          <span className="ml-1 text-cyan-400">{opp.probability}%</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Odd:</span>
+                          <span className="ml-1 text-white">{opp.bookmakerOdd?.toFixed(2) || '-'}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">Fair:</span>
+                          <span className="ml-1 text-gray-400">{opp.fairOdd.toFixed(2)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-500">EV:</span>
+                          <span className={cn(
+                            "ml-1",
+                            (opp.expectedValue || 0) >= 3 ? "text-green-400" : "text-red-400"
+                          )}>
+                            {opp.expectedValue !== null ? `${opp.expectedValue}%` : '-'}
+                          </span>
+                        </div>
+                      </div>
+                      {opp.rejectionReason && (
+                        <p className="mt-2 text-xs text-gray-400 italic">{opp.rejectionReason}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
     </div>
