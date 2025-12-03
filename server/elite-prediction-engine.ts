@@ -232,7 +232,18 @@ const TOP_LEAGUES = [
   81,   // DFB Pokal
   66,   // Coupe de France
   73,   // Copa do Brasil
+  
+  // TIER 3 - Ligas Adicionais com bom volume
+  333,  // Super Liga (Slovakia)
+  345,  // Czech Liga
+  244,  // League One (England)
+  245,  // League Two (England)
+  283,  // Primera División (Uruguay)
+  384,  // Liga Profesional (Paraguay)
+  242,  // Liga Pro (Ecuador)
+  332,  // Cypriot First Division
 ];
+// Total: 61 ligas
 
 const EXCLUDED_KEYWORDS = [
   'U17', 'U18', 'U19', 'U20', 'U21', 'U23',
