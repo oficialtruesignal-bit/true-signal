@@ -9,7 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight } from "lucide-react";
+import { Trophy, XCircle, Clock, ShieldAlert, Trash2, ScanLine, Copy, Check, Zap, PenLine, Crown, UserPlus, Loader2, Brain, LayoutDashboard, Flame, Target, Activity, RefreshCw, AlertTriangle, ChevronRight, Gift, Star } from "lucide-react";
 import { Signal } from "@/lib/mock-data";
 import { useAuth } from "@/hooks/use-auth";
 import { useLocation } from "wouter";
@@ -34,7 +34,7 @@ interface LivePressureData {
   alertType?: string;
 }
 
-type AdminTab = 'tickets' | 'live' | 'ai' | 'bots';
+type AdminTab = 'tickets' | 'free' | 'live' | 'ai' | 'bots';
 
 export default function Admin() {
   const queryClient = useQueryClient();
@@ -177,6 +177,24 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     }
   });
 
+  const setFreeMutation = useMutation({
+    mutationFn: async ({ id, isFree }: { id: string; isFree: boolean }) => {
+      const response = await axios.patch(`/api/tips/${id}/free`, {
+        isFree,
+        adminEmail: user?.email,
+        adminUserId: user?.id,
+      });
+      return response.data.tip;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['tips'] });
+      toast.success(variables.isFree ? "Bilhete marcado como FREE!" : "Bilhete removido do FREE");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Erro ao atualizar bilhete free.");
+    }
+  });
+
   const handleCreateTip = (formData: any) => {
     if (user?.role !== 'admin' && user?.email !== 'kwillianferreira@gmail.com') {
       toast.error("Apenas administradores podem criar tips.");
@@ -185,8 +203,11 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
     createMutation.mutate(formData);
   };
 
+  const freeTip = signals.find(s => s.isFree);
+  
   const tabs = [
     { id: 'tickets' as const, label: 'Bilhetes', icon: LayoutDashboard, color: 'from-[#33b864] to-emerald-600', badge: signals.length },
+    { id: 'free' as const, label: 'Bilhete Free', icon: Gift, color: 'from-yellow-500 to-orange-500', badge: freeTip ? 1 : 0 },
     { id: 'live' as const, label: 'Jogos Quentes', icon: Flame, color: 'from-orange-500 to-red-500' },
     { id: 'ai' as const, label: 'IA Preditiva', icon: Brain, color: 'from-purple-500 to-pink-500' },
     { id: 'bots' as const, label: 'Multi-Bot', icon: Target, color: 'from-cyan-500 to-blue-500' },
@@ -513,7 +534,137 @@ ${signal.betLink ? `🔗 ${signal.betLink}` : ''}
         </div>
       )}
 
-      {/* TAB 2: JOGOS QUENTES - EM CONSTRUÇÃO */}
+      {/* TAB 2: BILHETE FREE - Para usuários não-Prime */}
+      {activeTab === 'free' && (
+        <div className="space-y-6">
+          {/* Explicação */}
+          <Card className="border-yellow-500/30 bg-gradient-to-br from-yellow-500/5 to-orange-500/5">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Gift className="w-6 h-6 text-yellow-500" />
+                Bilhete Grátis do Dia
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                Selecione 1 bilhete que será visível para usuários não-Prime. Eles verão este bilhete + 10 bilhetes bloqueados como preview.
+              </CardDescription>
+            </CardHeader>
+          </Card>
+
+          {/* Bilhete FREE Atual */}
+          {freeTip ? (
+            <Card className="border-[#33b864] bg-gradient-to-br from-[#33b864]/10 to-green-900/10">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2 text-base text-[#33b864]">
+                    <Star className="w-5 h-5 fill-[#33b864]" />
+                    Bilhete FREE Ativo
+                  </CardTitle>
+                  <Button
+                    onClick={() => setFreeMutation.mutate({ id: freeTip.id, isFree: false })}
+                    variant="outline"
+                    size="sm"
+                    className="border-red-500/50 text-red-400 hover:bg-red-500/20"
+                    data-testid="button-remove-free"
+                  >
+                    <XCircle className="w-4 h-4 mr-1" />
+                    Remover
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-[#0d1117] rounded-xl p-4 border border-[#33b864]/30">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">FREE</Badge>
+                        <span className="text-xs text-gray-500">{freeTip.league}</span>
+                      </div>
+                      <h4 className="text-white font-bold">{freeTip.homeTeam} vs {freeTip.awayTeam}</h4>
+                      <p className="text-gray-400 text-sm">{freeTip.market}</p>
+                    </div>
+                    <div className="bg-[#33b864]/20 border border-[#33b864] rounded-lg px-3 py-1 text-center">
+                      <span className="text-xs text-[#33b864] block">ODD</span>
+                      <span className="text-lg font-bold text-[#33b864]">{freeTip.odd.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="border-yellow-500/30 border-dashed">
+              <CardContent className="py-10 text-center">
+                <Gift className="w-12 h-12 mx-auto mb-3 text-yellow-500/50" />
+                <p className="text-gray-400">Nenhum bilhete FREE selecionado</p>
+                <p className="text-sm text-gray-500 mt-1">Selecione um bilhete abaixo</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Lista de Bilhetes para selecionar */}
+          <Card className="border-white/10">
+            <CardHeader className="pb-3 border-b border-white/10">
+              <CardTitle className="text-base">Selecionar Bilhete FREE</CardTitle>
+              <CardDescription className="text-gray-400">
+                Apenas bilhetes pendentes podem ser selecionados
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pt-4 space-y-3">
+              {signals.filter(s => s.status === 'pending').length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <Clock className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                  <p>Nenhum bilhete pendente disponível</p>
+                </div>
+              ) : (
+                signals.filter(s => s.status === 'pending').map((signal) => (
+                  <div
+                    key={signal.id}
+                    className={cn(
+                      "flex items-center justify-between p-4 rounded-xl border transition-all",
+                      signal.isFree 
+                        ? "border-[#33b864] bg-[#33b864]/10" 
+                        : "border-white/10 bg-white/5 hover:border-yellow-500/50"
+                    )}
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        {signal.isFree && <Star className="w-4 h-4 text-[#33b864] fill-[#33b864]" />}
+                        <span className="text-xs text-gray-500">{signal.league}</span>
+                      </div>
+                      <h4 className="text-white font-bold text-sm">{signal.homeTeam} vs {signal.awayTeam}</h4>
+                      <p className="text-gray-400 text-xs">{signal.market.split('\n')[0]}</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="text-right">
+                        <span className="text-xs text-gray-500 block">ODD</span>
+                        <span className="text-lg font-bold text-[#33b864]">{signal.odd.toFixed(2)}</span>
+                      </div>
+                      <Button
+                        onClick={() => setFreeMutation.mutate({ id: signal.id, isFree: !signal.isFree })}
+                        disabled={setFreeMutation.isPending}
+                        className={cn(
+                          "h-10 px-4 rounded-xl font-bold transition-all",
+                          signal.isFree 
+                            ? "bg-[#33b864] text-black" 
+                            : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/50 hover:bg-yellow-500 hover:text-black"
+                        )}
+                        data-testid={`button-set-free-${signal.id}`}
+                      >
+                        {signal.isFree ? (
+                          <><Check className="w-4 h-4 mr-1" />FREE</>
+                        ) : (
+                          <><Gift className="w-4 h-4 mr-1" />Marcar</>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* TAB 3: JOGOS QUENTES - EM CONSTRUÇÃO */}
       {activeTab === 'live' && (
         <div className="flex flex-col items-center justify-center py-20">
           <Card className="border-orange-500/30 max-w-md w-full">
