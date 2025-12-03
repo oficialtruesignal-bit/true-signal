@@ -1,7 +1,7 @@
 import { Layout } from "@/components/layout";
 import { tipsService } from "@/lib/tips-service";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles, ArrowLeft } from "lucide-react";
+import { Target, AlertCircle, Ticket, ShieldCheck, LockKeyhole, Sparkles, ArrowLeft, Gift } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -11,6 +11,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { useAccessControl } from "@/hooks/use-access-control";
 import { useUnreadTips } from "@/hooks/use-unread-tips";
 import { useAuth } from "@/hooks/use-auth";
+import { Badge } from "@/components/ui/badge";
 
 const CHECKOUT_URL = '/checkout';
 
@@ -197,98 +198,112 @@ export default function TipsPage() {
       )}
 
       {!isLoading && !error && tips.length > 0 && (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {tips.map((tip, index) => {
-            // Usuários não-pagantes veem apenas 1 bilhete grátis
-            // A partir do 2º bilhete (índice 1+), mostra blur + paywall
-            const FREE_TIPS_LIMIT = 1;
-            const shouldBlur = !canSeeAllTips && index >= FREE_TIPS_LIMIT;
+        <div className="space-y-6">
+          {/* Para usuários não-Prime: mostra o bilhete FREE primeiro */}
+          {!canSeeAllTips && (() => {
+            const freeTip = tips.find(t => t.isFree);
+            const lockedTips = tips.filter(t => !t.isFree).slice(0, 10);
             
             return (
-              <div key={tip.id} className="relative" data-testid={`tip-container-${index}`}>
-                <div className={shouldBlur ? 'blur-sm pointer-events-none select-none' : ''}>
+              <>
+                {/* Bilhete FREE do dia */}
+                {freeTip ? (
+                  <div className="relative">
+                    <div className="absolute -top-3 left-4 z-10">
+                      <Badge className="bg-gradient-to-r from-yellow-500 to-orange-500 text-black font-bold px-3 py-1 text-xs border-0 shadow-lg">
+                        <Gift className="w-3 h-3 mr-1" />
+                        BILHETE GRÁTIS DO DIA
+                      </Badge>
+                    </div>
+                    <div className="border-2 border-yellow-500/50 rounded-xl overflow-hidden">
+                      <BetCard 
+                        signal={freeTip}
+                        onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
+                        unitValue={unitValue}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-6 text-center">
+                    <Gift className="w-10 h-10 mx-auto mb-3 text-yellow-500" />
+                    <h3 className="text-lg font-bold text-white mb-2">Bilhete Grátis em breve!</h3>
+                    <p className="text-gray-400 text-sm">O bilhete grátis do dia será postado em breve. Fique atento!</p>
+                  </div>
+                )}
+
+                {/* Bilhetes Premium Bloqueados */}
+                {lockedTips.length > 0 && (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <LockKeyhole className="w-5 h-5 text-[#33b864]" />
+                        Bilhetes Premium
+                      </h3>
+                      <Badge className="bg-[#33b864]/20 text-[#33b864] border-[#33b864]/30">
+                        {lockedTips.length} disponíveis
+                      </Badge>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {lockedTips.map((tip, index) => (
+                        <div key={tip.id} className="relative" data-testid={`tip-locked-${index}`}>
+                          <div className="blur-sm pointer-events-none select-none">
+                            <BetCard 
+                              signal={tip}
+                              onDelete={() => {}}
+                              unitValue={unitValue}
+                            />
+                          </div>
+                          
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl border-2 border-[#33b864]/30">
+                            <div className="text-center p-6">
+                              <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
+                                <LockKeyhole className="w-7 h-7 text-[#33b864]" />
+                              </div>
+                              <h3 className="text-lg font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
+                                Exclusivo Prime
+                              </h3>
+                              <p className="text-gray-300 text-sm mb-4">
+                                Desbloqueie todos os sinais
+                              </p>
+                              <a href={CHECKOUT_URL} data-testid={`button-unlock-${index}`}>
+                                <button className="px-5 py-2.5 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto text-sm">
+                                  <Sparkles className="w-4 h-4" />
+                                  Assinar
+                                </button>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            );
+          })()}
+          
+          {/* Para usuários Prime: mostra todos os bilhetes normalmente */}
+          {canSeeAllTips && (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              {tips.map((tip, index) => (
+                <div key={tip.id} className="relative" data-testid={`tip-container-${index}`}>
+                  {tip.isFree && (
+                    <div className="absolute -top-2 left-4 z-10">
+                      <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30 text-xs">
+                        <Gift className="w-3 h-3 mr-1" />
+                        FREE
+                      </Badge>
+                    </div>
+                  )}
                   <BetCard 
                     signal={tip}
                     onDelete={() => queryClient.invalidateQueries({ queryKey: ['tips'] })}
                     unitValue={unitValue}
                   />
                 </div>
-                
-                {shouldBlur && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl border-2 border-[#33b864]/30" data-testid={`paywall-overlay-${index}`}>
-                    <div className="text-center p-6">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
-                        <LockKeyhole className="w-8 h-8 text-[#33b864]" />
-                      </div>
-                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
-                        Exclusivo True Signal Prime
-                      </h3>
-                      <p className="text-gray-300 text-sm mb-4">
-                        Desbloqueie todos os sinais e maximize seus lucros
-                      </p>
-                      <a
-                        href={CHECKOUT_URL}
-                        data-testid="button-unlock-signal"
-                      >
-                        <button className="px-6 py-3 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto">
-                          <Sparkles className="w-4 h-4" />
-                          Assinar Agora
-                        </button>
-                      </a>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-          
-          {/* Placeholder cards bloqueados para mostrar valor do premium quando há poucos bilhetes */}
-          {!canSeeAllTips && tips.length < 3 && (
-            <>
-              {[...Array(Math.max(0, 3 - tips.length))].map((_, idx) => (
-                <div key={`placeholder-${idx}`} className="relative" data-testid={`placeholder-locked-${idx}`}>
-                  <div className="blur-sm pointer-events-none select-none">
-                    <div className="bg-[#121212] border border-[#33b864]/20 rounded-xl p-6 h-48">
-                      <div className="flex items-center gap-3 mb-4">
-                        <div className="w-10 h-10 bg-gray-700/50 rounded-lg animate-pulse"></div>
-                        <div className="flex-1">
-                          <div className="h-4 bg-gray-700/50 rounded w-3/4 mb-2 animate-pulse"></div>
-                          <div className="h-3 bg-gray-700/30 rounded w-1/2 animate-pulse"></div>
-                        </div>
-                      </div>
-                      <div className="space-y-3">
-                        <div className="h-3 bg-gray-700/30 rounded w-full animate-pulse"></div>
-                        <div className="h-3 bg-gray-700/30 rounded w-2/3 animate-pulse"></div>
-                      </div>
-                      <div className="mt-4 flex justify-between items-center">
-                        <div className="h-8 bg-gray-700/50 rounded w-20 animate-pulse"></div>
-                        <div className="h-6 bg-[#33b864]/20 rounded-full w-16 animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm rounded-xl border-2 border-[#33b864]/30">
-                    <div className="text-center p-6">
-                      <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-[#33b864]/20 border-2 border-[#33b864] flex items-center justify-center">
-                        <LockKeyhole className="w-8 h-8 text-[#33b864]" />
-                      </div>
-                      <h3 className="text-xl font-bold text-white mb-2" style={{ fontFamily: 'Sora, sans-serif' }}>
-                        +{idx + 1} Sinais Exclusivos
-                      </h3>
-                      <p className="text-gray-300 text-sm mb-4">
-                        Disponíveis apenas para assinantes Prime
-                      </p>
-                      <a href={CHECKOUT_URL} data-testid={`button-unlock-placeholder-${idx}`}>
-                        <button className="px-6 py-3 bg-[#33b864] hover:bg-[#2ea558] text-black font-bold rounded-xl transition-all duration-300 hover:scale-105 shadow-xl shadow-[#33b864]/40 flex items-center gap-2 mx-auto">
-                          <Sparkles className="w-4 h-4" />
-                          Desbloquear
-                        </button>
-                      </a>
-                    </div>
-                  </div>
-                </div>
               ))}
-            </>
+            </div>
           )}
         </div>
       )}
