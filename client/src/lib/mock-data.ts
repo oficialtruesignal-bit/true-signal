@@ -30,6 +30,7 @@ export interface Signal {
   isHot?: boolean;
   betLink?: string;
   isLive?: boolean;
+  isFree?: boolean; // Free tip visible to non-premium users
   isCombo?: boolean; // Whether this is a combo/accumulator bet
   totalOdd?: number; // Total combined odd for combos
   legs?: BetLeg[]; // Multiple selections for combo bets

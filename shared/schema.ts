@@ -94,6 +94,8 @@ export const tips = pgTable("tips", {
   betLink: text("bet_link"),
   imageUrl: text("image_url"),
   isLive: boolean("is_live").notNull().default(false),
+  // Free tip - visible to non-premium users
+  isFree: boolean("is_free").notNull().default(false),
   // Combo bet fields
   isCombo: boolean("is_combo").notNull().default(false),
   totalOdd: decimal("total_odd", { precision: 6, scale: 2 }),
