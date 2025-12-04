@@ -55,33 +55,41 @@ export default function AuthPage() {
     resolver: zodResolver(registerSchema),
   });
 
-  // --- LOGIN CORRIGIDO ---
-  const handleLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
+const handleLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
+      // 1. Faz o login
       await login(data.email, data.password);
+      
+      // 2. Rastreia
       analytics.trackLogin();
-      // FORÇA O REDIRECIONAMENTO PARA O DASHBOARD
+
+      // 3. A CORREÇÃO: Força a entrada no Dashboard
       window.location.href = '/dashboard';
+      
     } catch (error) {
-      // O erro geralmente é tratado no hook useAuth com toast, mas se não, pode adicionar aqui
-      console.error("Erro no login", error);
+      // Se der erro, o próprio hook costuma avisar, mas o console ajuda a debugar
+      console.error("Erro ao logar:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // --- REGISTRO CORRIGIDO ---
-  const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
+const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
+      // 1. Cria a conta
       await register(data.name, data.email, data.password);
+      
+      // 2. Rastreia
       analytics.trackRegistration(data.email);
       analytics.trackTrialStart();
-      // FORÇA O REDIRECIONAMENTO PARA O DASHBOARD
+
+      // 3. A CORREÇÃO: Redireciona o novo usuário também
       window.location.href = '/dashboard';
+      
     } catch (error) {
-      toast.error("Erro ao criar conta. Tente novamente.");
+      toast.error("Erro ao criar conta");
     } finally {
       setIsLoading(false);
     }
