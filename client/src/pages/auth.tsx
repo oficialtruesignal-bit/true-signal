@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -44,6 +44,7 @@ export default function AuthPage() {
   const { login, register } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
+  const [, setLocation] = useLocation(); // Hook do wouter para navegação (opcional se usar window.location)
 
   // Forms
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -54,39 +55,33 @@ export default function AuthPage() {
     resolver: zodResolver(registerSchema),
   });
 
+  // --- LOGIN CORRIGIDO ---
   const handleLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
-      // 1. Faz o login no Supabase
       await login(data.email, data.password);
-      
-      // 2. Registra no analytics (opcional)
       analytics.trackLogin();
-      
-      // 3. A CORREÇÃO MÁGICA: Força a ida para o painel
-      // Isso garante que o navegador saia da tela de login e carregue o dashboard
-      window.location.href = '/dashboard'; 
-      
+      // FORÇA O REDIRECIONAMENTO PARA O DASHBOARD
+      window.location.href = '/dashboard';
     } catch (error) {
-      // Se der erro, o toast já costuma ser tratado no hook, mas você pode por um console.log
-      console.error("Erro no login:", error);
+      // O erro geralmente é tratado no hook useAuth com toast, mas se não, pode adicionar aqui
+      console.error("Erro no login", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-   const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
+  // --- REGISTRO CORRIGIDO ---
+  const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
       await register(data.name, data.email, data.password);
       analytics.trackRegistration(data.email);
       analytics.trackTrialStart();
-      
-      // CORREÇÃO: Redirecionar após criar conta
+      // FORÇA O REDIRECIONAMENTO PARA O DASHBOARD
       window.location.href = '/dashboard';
-      
     } catch (error) {
-      toast.error("Erro ao criar conta");
+      toast.error("Erro ao criar conta. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
