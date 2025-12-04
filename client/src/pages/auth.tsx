@@ -65,7 +65,7 @@ const handleLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
       analytics.trackLogin();
 
       // 3. A CORREÇÃO: Força a entrada no Dashboard
-      window.location.href = '/dashboard';
+      setLocation("/dashboard");
       
     } catch (error) {
       // Se der erro, o próprio hook costuma avisar, mas o console ajuda a debugar
