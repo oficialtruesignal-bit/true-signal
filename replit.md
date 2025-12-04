@@ -28,7 +28,7 @@ TRUE SIGNAL is an AI-powered sports betting intelligence platform that delivers 
 
 ## Contact Information
 
-- **Email**: suporte@truesignal.com.br
+- **Email**: support@apptruesignal.com
 - **Website**: www.truesignal.com.br
 - **WhatsApp**: +55 16 99325-3866
 

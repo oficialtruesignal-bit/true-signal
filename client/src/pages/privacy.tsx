@@ -129,7 +129,7 @@ export default function PrivacyPage() {
             </ul>
             <div className="bg-blue-950/20 border border-blue-500/30 rounded-xl p-6 mt-4">
               <p className="text-blue-300 font-semibold mb-2">Para exercer seus direitos, entre em contato:</p>
-              <p className="text-gray-300">E-mail: <a href="mailto:suporte@truesignal.com.br" className="text-[#33b864] underline hover:text-[#2ea558]">suporte@truesignal.com.br</a></p>
+              <p className="text-gray-300">E-mail: <a href="mailto:support@apptruesignal.com" className="text-[#33b864] underline hover:text-[#2ea558]">support@apptruesignal.com</a></p>
               <p className="text-gray-300">WhatsApp: <a href="https://wa.me/5516993253866" className="text-[#33b864] underline hover:text-[#2ea558]">+55 16 99325-3866</a></p>
               <p className="text-gray-300">Prazo de resposta: <strong className="text-white">15 dias úteis</strong></p>
             </div>
@@ -177,7 +177,7 @@ export default function PrivacyPage() {
             <h2 className="text-2xl font-bold text-white mb-4">12. Contato</h2>
             <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
               <p className="text-gray-300 mb-2"><strong className="text-white">Site:</strong> <a href="https://www.truesignal.com.br" className="text-[#33b864] underline">www.truesignal.com.br</a></p>
-              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:suporte@truesignal.com.br" className="text-[#33b864] underline">suporte@truesignal.com.br</a></p>
+              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:support@apptruesignal.com" className="text-[#33b864] underline">support@apptruesignal.com</a></p>
               <p className="text-gray-300"><strong className="text-white">WhatsApp:</strong> <a href="https://wa.me/5516993253866" className="text-[#33b864] underline">+55 16 99325-3866</a></p>
             </div>
           </section>

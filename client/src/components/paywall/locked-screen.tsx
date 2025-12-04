@@ -127,8 +127,8 @@ export function LockedScreen() {
         {/* Footer note */}
         <p className="text-center text-sm text-gray-500">
           Tem dúvidas? Entre em contato com nosso suporte:{' '}
-          <a href="mailto:suporte@truesignal.com" className="text-[#33b864] hover:underline">
-            suporte@truesignal.com
+          <a href="mailto:support@apptruesignal.com" className="text-[#33b864] hover:underline">
+            support@apptruesignal.com
           </a>
         </p>
       </motion.div>

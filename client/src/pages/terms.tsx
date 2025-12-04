@@ -150,7 +150,7 @@ export default function TermsPage() {
             </p>
             <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
               <p className="text-gray-300 mb-2"><strong className="text-white">Site:</strong> <a href="https://www.truesignal.com.br" className="text-[#33b864] underline">www.truesignal.com.br</a></p>
-              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:suporte@truesignal.com.br" className="text-[#33b864] underline">suporte@truesignal.com.br</a></p>
+              <p className="text-gray-300 mb-2"><strong className="text-white">E-mail:</strong> <a href="mailto:support@apptruesignal.com" className="text-[#33b864] underline">support@apptruesignal.com</a></p>
               <p className="text-gray-300"><strong className="text-white">WhatsApp:</strong> <a href="https://wa.me/5516993253866" className="text-[#33b864] underline">+55 16 99325-3866</a></p>
             </div>
           </section>

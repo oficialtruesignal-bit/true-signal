@@ -107,8 +107,8 @@ function Footer() {
             <h5 className="text-white font-bold mb-4">Contato</h5>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>
-                <a href="mailto:suporte@truesignal.com.br" className="hover:text-[#33b864] transition-colors">
-                  suporte@truesignal.com.br
+                <a href="mailto:support@apptruesignal.com" className="hover:text-[#33b864] transition-colors">
+                  support@apptruesignal.com
                 </a>
               </li>
               <li>
