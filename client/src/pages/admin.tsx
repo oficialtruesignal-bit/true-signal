@@ -575,6 +575,63 @@ function OraculoTab({ user }: { user: any }) {
                       {opp.rejectionReason && (
                         <p className="mt-2 text-xs text-gray-400 italic">{opp.rejectionReason}</p>
                       )}
+                      
+                      {/* Botão Publicar - disponível para todos */}
+                      <Button
+                        size="sm"
+                        className={cn(
+                          "w-full mt-3 font-bold text-xs",
+                          opp.status === 'APPROVED' 
+                            ? "bg-gradient-to-r from-[#33b864] to-emerald-500 hover:from-[#2da557] hover:to-emerald-600 text-white"
+                            : "bg-gradient-to-r from-yellow-600 to-orange-500 hover:from-yellow-700 hover:to-orange-600 text-white"
+                        )}
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          try {
+                            const signalData = {
+                              fixtureId: opp.fixtureId,
+                              league: opp.league,
+                              leagueLogo: opp.leagueLogo,
+                              homeTeam: opp.homeTeam,
+                              awayTeam: opp.awayTeam,
+                              homeTeamLogo: opp.homeTeamLogo,
+                              awayTeamLogo: opp.awayTeamLogo,
+                              matchDate: opp.matchDate,
+                              matchTime: opp.matchTime,
+                              market: opp.market,
+                              prediction: opp.market,
+                              probability: opp.probability,
+                              bookmakerOdd: opp.bookmakerOdd || opp.fairOdd * 0.95,
+                              fairOdd: opp.fairOdd,
+                              expectedValue: opp.expectedValue || 0,
+                              badgeType: opp.potentialBadge || 'SILVER',
+                              confidenceScore: opp.probability,
+                              reasoning: {
+                                primary: `Análise estatística com ${opp.probability}% de probabilidade`,
+                                homeAnalysis: '',
+                                awayAnalysis: '',
+                                h2hInsight: '',
+                                contextInsight: opp.rejectionReason || ''
+                              }
+                            };
+                            const response = await axios.post('/api/elite/publish', {
+                              signal: signalData,
+                              adminEmail: user?.email,
+                              adminUserId: user?.id,
+                            });
+                            if (response.data.success) {
+                              toast.success(`✅ Publicado! ${opp.homeTeam} vs ${opp.awayTeam}`);
+                              setShowAnalyzedModal(false);
+                            }
+                          } catch (error: any) {
+                            toast.error(error.response?.data?.error || 'Erro ao publicar');
+                          }
+                        }}
+                        data-testid={`publish-analyzed-${idx}`}
+                      >
+                        <PlusCircle className="w-3 h-3 mr-1" />
+                        {opp.status === 'APPROVED' ? 'PUBLICAR' : 'PUBLICAR MESMO ASSIM'}
+                      </Button>
                     </div>
                   ))}
                 </div>
