@@ -1,12 +1,18 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These will be populated by the user in the .env file
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder';
+// NO VITE/VERCEL, OBRIGATORIAMENTE USAMOS import.meta.env
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Debug de Segurança (Para vermos no console se as chaves carregaram)
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('❌ ERRO CRÍTICO: Chaves do Supabase não encontradas!');
+  console.error('Verifique as Environment Variables na Vercel.');
+} else {
+  console.log('✅ Supabase Client Iniciado');
+}
 
-// Mock helper to check if we are in "Real Mode"
-export const isSupabaseConfigured = () => {
-  return import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY;
-};
+export const supabase = createClient(
+  supabaseUrl || '', 
+  supabaseAnonKey || ''
+);
