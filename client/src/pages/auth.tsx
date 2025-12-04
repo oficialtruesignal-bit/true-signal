@@ -57,21 +57,34 @@ export default function AuthPage() {
   const handleLoginSubmit = async (data: z.infer<typeof loginSchema>) => {
     setIsLoading(true);
     try {
+      // 1. Faz o login no Supabase
       await login(data.email, data.password);
+      
+      // 2. Registra no analytics (opcional)
       analytics.trackLogin();
+      
+      // 3. A CORREÇÃO MÁGICA: Força a ida para o painel
+      // Isso garante que o navegador saia da tela de login e carregue o dashboard
+      window.location.href = '/dashboard'; 
+      
     } catch (error) {
-      // Error handled in hook
+      // Se der erro, o toast já costuma ser tratado no hook, mas você pode por um console.log
+      console.error("Erro no login:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
+   const handleRegisterSubmit = async (data: z.infer<typeof registerSchema>) => {
     setIsLoading(true);
     try {
       await register(data.name, data.email, data.password);
       analytics.trackRegistration(data.email);
       analytics.trackTrialStart();
+      
+      // CORREÇÃO: Redirecionar após criar conta
+      window.location.href = '/dashboard';
+      
     } catch (error) {
       toast.error("Erro ao criar conta");
     } finally {
